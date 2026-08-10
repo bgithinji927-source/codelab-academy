@@ -5,7 +5,9 @@
       "npm ci",
       "npm run build"
     ],
-    "env": {}
+    "env": {
+      "NPM_CONFIG_PRODUCTION": "false"
+    }
   },
   "run": {
     "command": "npm start",
