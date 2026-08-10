@@ -2,6 +2,16 @@ const express = require("express");
 
 const router = express.Router();
 
+// Ensure fetch is available in Node (works for Node 18+ and older Node versions)
+/*
+  - If running on Node 18+, globalThis.fetch will be used.
+  - Otherwise we dynamically import `node-fetch` and use it.
+  - This keeps the file CommonJS but supports ESM-only node-fetch via dynamic import.
+*/
+const fetch =
+  globalThis.fetch ||
+  ((...args) => import("node-fetch").then((m) => m.default(...args)));
+
 // ============================================
 // GROQ API
 // ============================================
@@ -26,6 +36,10 @@ router.post("/", async (req, res) => {
     // ========================================
     // CHECK GROQ API KEY
     // ========================================
+    console.log(
+      "GROQ_API_KEY present:",
+      !!process.env.GROQ_API_KEY
+    );
 
     if (!process.env.GROQ_API_KEY) {
       console.error(
@@ -358,7 +372,8 @@ Teach conversationally and finish by asking me a simple question.
 
     if (!response.ok) {
       console.error(
-        "Groq API error:",
+        "Groq API error (status):",
+        response.status,
         data
       );
 
