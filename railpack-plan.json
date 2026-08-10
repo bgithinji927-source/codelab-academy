@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "build": {
+    "commands": [
+      "npm ci",
+      "npm run build"
+    ],
+    "env": {}
+  },
+  "run": {
+    "command": "npm start",
+    "env": {}
+  }
+}
