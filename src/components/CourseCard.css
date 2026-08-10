@@ -1,0 +1,161 @@
+/* =================================
+   CODELAB ACADEMY
+   COURSE CARD
+   White + Purple Theme
+================================= */
+
+.course-card {
+  background: #ffffff;
+  border: 1px solid #eee9f7;
+  border-radius: 12px;
+  padding: 18px;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 220px;
+  box-sizing: border-box;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-3px);
+  border-color: #d8c2f7;
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.08);
+}
+
+/* TOP */
+
+.course-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.course-card-icon {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 10px;
+
+  background: #f3e8ff;
+  color: #7c3aed;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.course-level {
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  background: #faf8ff;
+  border: 1px solid #e5d9fa;
+
+  color: #7c3aed;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* CONTENT */
+
+.course-card-content {
+  flex: 1;
+}
+
+.course-card h3 {
+  margin: 16px 0 6px;
+
+  color: #222222;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.course-card p {
+  margin: 0;
+
+  color: #777777;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* META */
+
+.course-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  margin-top: 14px;
+
+  color: #777777;
+
+  font-size: 12px;
+}
+
+.course-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.course-card-meta svg {
+  color: #7c3aed;
+}
+
+/* BUTTON */
+
+.course-card-button {
+  width: 100%;
+
+  margin-top: 16px;
+
+  border: none;
+  border-radius: 8px;
+
+  padding: 9px 13px;
+
+  background: #7c3aed;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  transition: background 0.2s ease;
+}
+
+.course-card-button:hover {
+  background: #6d28d9;
+}
+
+.course-card-button:active {
+  transform: scale(0.98);
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .course-card {
+    padding: 15px;
+  }
+
+  .course-card h3 {
+    font-size: 17px;
+  }
+}

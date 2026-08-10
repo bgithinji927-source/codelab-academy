@@ -1,0 +1,737 @@
+/* =================================
+   CODELAB COURSE CONVERSATION
+================================= */
+
+.learn-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #ffffff;
+  color: #222222;
+}
+
+
+/* =================================
+   NAVBAR
+================================= */
+
+.learn-navbar {
+  width: 100%;
+  height: 66px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border-bottom: 1px solid #eee9f7;
+}
+
+.learn-back {
+  border: 1px solid #e5d9fa;
+  background: #ffffff;
+  color: #7c3aed;
+
+  padding: 8px 13px;
+
+  border-radius: 9px;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.learn-back:hover {
+  background: #f7f2ff;
+}
+
+.learn-course-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  color: #222222;
+}
+
+.learn-course-title svg {
+  color: #7c3aed;
+}
+
+.learn-progress {
+  font-size: 13px;
+  color: #777777;
+}
+
+
+/* =================================
+   CONVERSATION
+   NO LARGE SIDE MARGINS
+================================= */
+
+.conversation-container {
+  width: 100%;
+  max-width: none;
+
+  margin: 0;
+
+  padding: 35px 20px 70px;
+
+  box-sizing: border-box;
+}
+
+
+/* =================================
+   INTRO
+================================= */
+
+.conversation-intro {
+  width: 100%;
+  margin-bottom: 35px;
+}
+
+.lesson-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #7c3aed;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 0.5px;
+}
+
+.conversation-intro h1 {
+  margin: 10px 0 7px;
+
+  font-size: 30px;
+  line-height: 1.2;
+
+  color: #171717;
+}
+
+.conversation-intro > p {
+  margin: 0;
+
+  color: #777777;
+
+  font-size: 14px;
+}
+
+
+/* =================================
+   CHAT ROW
+================================= */
+
+.chat-row {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-bottom: 28px;
+
+  box-sizing: border-box;
+}
+
+
+/* =================================
+   KAI — LEFT
+================================= */
+
+.kai-row {
+  justify-content: flex-start;
+}
+
+
+/* =================================
+   LEARNER — RIGHT
+================================= */
+
+.learner-row {
+  justify-content: flex-end;
+}
+
+
+/* =================================
+   CHAT GROUP
+   Avatar + name + bubble stay together
+================================= */
+
+.chat-group {
+  display: flex;
+  flex-direction: column;
+
+  max-width: 700px;
+  min-width: 0;
+}
+
+
+/* Learner group stays on right */
+.learner-row .chat-group {
+  align-items: flex-end;
+}
+
+
+/* =================================
+   SMALL AVATARS
+================================= */
+
+.chat-avatar {
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kai-avatar-small {
+  background: #7c3aed;
+  color: #ffffff;
+
+  box-shadow: 0 5px 14px rgba(124, 58, 237, 0.18);
+}
+
+.learner-avatar {
+  background: #eee9ff;
+  color: #7c3aed;
+}
+
+
+/* =================================
+   CHAT HEADER
+   ICON ABOVE MESSAGE CARD
+================================= */
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 7px;
+}
+
+
+/* Learner header goes right */
+.learner-row .chat-header {
+  justify-content: flex-end;
+}
+
+
+/* =================================
+   CHAT NAME
+================================= */
+
+.chat-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  color: #222222;
+}
+
+.chat-name span {
+  color: #999999;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+
+/* =================================
+   CHAT CONTENT
+================================= */
+
+.chat-content {
+  max-width: 700px;
+  min-width: 0;
+}
+
+
+/* =================================
+   CHAT BUBBLES
+================================= */
+
+.chat-bubble {
+  padding: 15px 17px;
+
+  border-radius: 14px;
+
+  font-size: 14px;
+  line-height: 1.65;
+
+  box-sizing: border-box;
+}
+
+.chat-bubble p {
+  margin: 0 0 10px;
+}
+
+.chat-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =================================
+   KAI BUBBLE
+================================= */
+
+.kai-bubble {
+  background: #faf8ff;
+
+  border: 1px solid #e7dcfa;
+
+  border-top-left-radius: 4px;
+
+  color: #444444;
+}
+
+
+/* =================================
+   LEARNER BUBBLE
+================================= */
+
+.learner-bubble {
+  background: #7c3aed;
+
+  color: #ffffff;
+
+  border: 1px solid #7c3aed;
+
+  border-top-right-radius: 4px;
+
+  max-width: 560px;
+
+  text-align: left;
+}
+
+
+/* =================================
+   TYPING CURSOR
+================================= */
+
+.typing-cursor {
+  color: #7c3aed;
+
+  font-weight: 800;
+
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+
+/* =================================
+   KAI TIP
+================================= */
+
+.kai-tip {
+  display: flex;
+  gap: 11px;
+
+  margin-top: 15px;
+  padding: 12px;
+
+  border-radius: 10px;
+
+  background: #f3e8ff;
+
+  color: #555555;
+}
+
+.kai-tip > svg {
+  flex-shrink: 0;
+  color: #7c3aed;
+}
+
+.kai-tip strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #7c3aed;
+
+  font-size: 12px;
+}
+
+.kai-tip p {
+  margin: 0;
+
+  font-size: 12px;
+}
+
+
+/* =================================
+   CODE EXAMPLE
+================================= */
+
+.code-example {
+  margin: 14px 0;
+
+  overflow: hidden;
+
+  border-radius: 10px;
+
+  background: #17151f;
+
+  color: #ffffff;
+}
+
+.code-example-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 9px 12px;
+
+  border-bottom: 1px solid #302c3b;
+
+  color: #c4b5fd;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.code-example pre {
+  margin: 0;
+
+  padding: 15px;
+
+  overflow-x: auto;
+
+  font-family:
+    Consolas,
+    Monaco,
+    monospace;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* =================================
+   QUESTION
+================================= */
+
+.question-bubble strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #222222;
+}
+
+
+/* =================================
+   LEARNER INPUT
+================================= */
+
+.learner-input-area {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-top: 15px;
+  margin-bottom: 35px;
+
+  padding: 8px;
+
+  border: 1px solid #e4daf4;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow: 0 5px 20px rgba(124, 58, 237, 0.05);
+
+  box-sizing: border-box;
+}
+
+.input-avatar {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eee9ff;
+  color: #7c3aed;
+}
+
+.learner-input-area input {
+  flex: 1;
+
+  min-width: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  padding: 8px;
+
+  font-size: 14px;
+}
+
+.learner-input-area button {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #7c3aed;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.learner-input-area button:hover {
+  background: #6d28d9;
+}
+
+
+/* =================================
+   ACTIONS
+================================= */
+
+.lesson-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding-top: 25px;
+
+  border-top: 1px solid #eee9f7;
+}
+
+.back-lesson,
+.next-lesson {
+  border-radius: 9px;
+
+  padding: 10px 15px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.back-lesson {
+  border: 1px solid #e5d9fa;
+
+  background: #ffffff;
+  color: #7c3aed;
+}
+
+.next-lesson {
+  border: none;
+
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+.next-lesson:hover {
+  background: #6d28d9;
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media (max-width: 600px) {
+
+  .learn-navbar {
+    height: 58px;
+    padding: 0 12px;
+  }
+
+  .learn-course-title {
+    font-size: 13px;
+  }
+
+  .learn-progress {
+    display: none;
+  }
+
+  .conversation-container {
+    padding: 25px 10px 50px;
+  }
+
+  .conversation-intro h1 {
+    font-size: 25px;
+  }
+
+  .chat-group {
+    max-width: calc(100% - 10px);
+  }
+
+  .chat-bubble {
+    font-size: 13px;
+    padding: 13px 14px;
+  }
+
+  .learner-bubble {
+    max-width: 85%;
+  }
+
+  .learner-input-area {
+    position: sticky;
+    bottom: 10px;
+  }
+
+  .lesson-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .back-lesson,
+  .next-lesson {
+    justify-content: center;
+  }
+}
+/* =================================
+   MESSAGE HEADER
+================================= */
+
+.kai-message-header,
+.learner-message-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.kai-message-header .chat-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+}
+
+.learner-message-header {
+  justify-content: flex-end;
+}
+
+.learner-message-header .chat-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+}
+
+.kai-message-header .chat-name,
+.learner-message-header .chat-name {
+  margin: 0;
+}
+
+.kai-message-text p,
+.learner-message-text p {
+  margin: 0 0 10px;
+}
+
+.kai-message-text p:last-child,
+.learner-message-text p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =================================
+   KAI THINKING ANIMATION
+================================= */
+
+.kai-thinking {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 0 2px;
+}
+
+.kai-thinking span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7c3aed;
+
+  animation: kaiThinking 1.2s infinite ease-in-out;
+}
+
+.kai-thinking span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.kai-thinking span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes kaiThinking {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+
+/* =================================
+   DISABLED INPUT
+================================= */
+
+.learner-input-area input:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.learner-input-area button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
