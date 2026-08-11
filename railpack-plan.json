@@ -10,7 +10,7 @@
     }
   },
   "run": {
-    "command": "npm start",
+    "command": "npm ci && npm start",
     "env": {}
   }
 }
