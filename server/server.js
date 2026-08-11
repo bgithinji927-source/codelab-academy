@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 
 const User = require("./models/User");
 const authRoutes = require("./routes/auth");
@@ -21,6 +22,15 @@ app.use((req, res, next) => {
   console.log("REQUEST:", req.method, req.originalUrl);
   next();
 });
+
+// Serve static files in production
+if (process.env.NODE_ENV === "production") {
+  const distPath = path.join(__dirname, "../../dist");
+  app.use(express.static(distPath));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
+  });
+}
 
 // ============================================
 // AUTH ROUTES
