@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 
 const User = require("./models/User");
 const authRoutes = require("./routes/auth");
@@ -76,6 +77,18 @@ app.get("/api/health", (req, res) => {
     success: true,
     message: "CodeLab Academy backend is running",
   });
+});
+
+// ============================================
+// PRODUCTION FRONTEND
+// ============================================
+
+// Railway runs the API and the Vite build from one service.
+const frontendPath = path.join(__dirname, "..", "dist");
+app.use(express.static(frontendPath));
+
+app.get(/^(?!\/api(?:\/|$)).*/, (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 // ============================================

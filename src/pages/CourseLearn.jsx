@@ -101,7 +101,7 @@ function CourseLearn({ course, onBack }) {
       setDisplayedKaiText("");
 
       const response = await fetch(
-        "/api/kai/teach",
+        "/api/kai",
         {
           method: "POST",
 
@@ -110,7 +110,10 @@ function CourseLearn({ course, onBack }) {
           },
 
           body: JSON.stringify({
-            courseTitle,
+            course: {
+              ...course,
+              title: courseTitle,
+            },
 
             lesson,
 
@@ -132,8 +135,8 @@ function CourseLearn({ course, onBack }) {
         );
       }
 
-      // Our backend returns "message"
-      const kaiReply = data.message || "";
+      // The backend returns the assistant text as "reply".
+      const kaiReply = data.reply || "";
 
       if (!kaiReply) {
         throw new Error(
