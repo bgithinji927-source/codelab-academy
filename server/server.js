@@ -1,4 +1,10 @@
-require("dotenv").config();
+try {
+  require("dotenv").config();
+} catch (error) {
+  console.warn(
+    "dotenv is not installed in this runtime; continuing without .env loading"
+  );
+}
 
 const express = require("express");
 const mongoose = require("mongoose");
