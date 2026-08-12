@@ -26,14 +26,27 @@ function Dashboard({ user, onLogout, onViewCourses }) {
   const baseStore = createStore();
   const [state, setState] = useState(() => baseStore.getState());
 
-  // When a user is present, try to load their real progress from the server
+  // When a user is present, load their real progress from the server
+  // and build the UI state as: (zero baseline) + (user progress)
   useEffect(() => {
     let mounted = true;
 
     async function loadUserProgress() {
+      const baseline = baseStore.getState();
+
+      // Default baseline: zero out counts so UI starts from 0
+      baseline.courses = baseline.courses.map((c) => ({ ...c, progress: 0, completed: 0, status: "not-started" }));
+      baseline.userProgress = {
+        totalXP: 0,
+        dayStreak: 0,
+        coursesStarted: 0,
+        badges: 0,
+        level: 1,
+      };
+
+      // If no authenticated user, show zeroed baseline
       if (!user?.id) {
-        // No authenticated user — reset to store defaults
-        setState(baseStore.getState());
+        setState(baseline);
         return;
       }
 
@@ -46,8 +59,8 @@ function Dashboard({ user, onLogout, onViewCourses }) {
         if (res.ok && data.success && data.user) {
           const userProgressData = data.user;
 
-          // Merge server user progress into the frontend course list.
-          const mergedCourses = baseStore.getState().courses.map((c) => {
+          // Build merged courses: start from baseline (all zeros), then apply per-course records
+          const mergedCourses = baseline.courses.map((c) => {
             const cp = (userProgressData.courseProgress || []).find(
               (p) => String(p.courseId) === String(c.id) || Number(p.courseId) === c.id
             );
@@ -55,32 +68,41 @@ function Dashboard({ user, onLogout, onViewCourses }) {
             if (cp) {
               const total = cp.totalLessons || c.lessons || 0;
               const lessonsCompleted = cp.lessonsCompleted || 0;
-              const progressPercent = total ? Math.round((lessonsCompleted / total) * 100) : (typeof cp.progress === 'number' ? cp.progress : 0);
+              const progressPercent = total ? Math.round((lessonsCompleted / total) * 100) : (typeof cp.progress === "number" ? cp.progress : 0);
+
+              const status = progressPercent === 0 ? "not-started" : (progressPercent === 100 ? "completed" : "in-progress");
 
               return {
                 ...c,
                 progress: progressPercent,
                 completed: lessonsCompleted,
-                status: lessonsCompleted > 0 ? (progressPercent === 100 ? "completed" : "in-progress") : "locked",
+                status,
               };
             }
 
-            // No progress record for this user -> start at zero for new users
-            return { ...c, progress: 0, completed: 0, status: c.status === "completed" ? "locked" : c.status };
+            // No user data for this course: keep zero baseline
+            return { ...c };
           });
 
-          // Use explicit checks for numeric fields so we don't accidentally pick up falsy defaults
+          // Build userProgress entirely from server values, falling back to zero
           const serverXP = typeof userProgressData.xp === "number" ? userProgressData.xp : 0;
-          const serverCompletedLessons = typeof userProgressData.completedLessons === "number" ? userProgressData.completedLessons : 0;
-          const serverLevel = typeof userProgressData.level === "number" ? userProgressData.level : (baseStore.getState().userProgress.level || 1);
+          const serverDayStreak = typeof userProgressData.dayStreak === "number" ? userProgressData.dayStreak : 0;
+          const serverBadges = typeof userProgressData.badges === "number" ? userProgressData.badges : 0;
+          const serverLevel = typeof userProgressData.level === "number" ? userProgressData.level : 1;
+
+          // If server doesn't supply coursesStarted, compute it from courseProgress
+          const serverCoursesStarted = typeof userProgressData.coursesStarted === "number"
+            ? userProgressData.coursesStarted
+            : (userProgressData.courseProgress || []).filter((p) => (p.lessonsCompleted || 0) > 0).length;
 
           const newState = {
-            ...baseStore.getState(),
+            ...baseline,
             courses: mergedCourses,
             userProgress: {
-              ...baseStore.getState().userProgress,
               totalXP: serverXP,
-              completedLessons: serverCompletedLessons,
+              dayStreak: serverDayStreak,
+              coursesStarted: serverCoursesStarted,
+              badges: serverBadges,
               level: serverLevel,
             },
           };
@@ -89,33 +111,12 @@ function Dashboard({ user, onLogout, onViewCourses }) {
           return;
         }
 
-        // If server returned no data, fall back to store state but zero out progress to avoid seeded values
-        const zeroed = baseStore.getState();
-        zeroed.courses = zeroed.courses.map((c) => ({ ...c, progress: 0, completed: 0 }));
-        zeroed.userProgress = {
-          ...zeroed.userProgress,
-          totalXP: 0,
-          completedLessons: 0,
-          level: 1,
-          coursesStarted: 0,
-          badges: 0,
-        };
-        setState(zeroed);
+        // If server returned no data, keep zero baseline
+        setState(baseline);
       } catch (err) {
         console.error("Failed to load user progress:", err);
-
-        // On error, keep store defaults but avoid showing pre-populated progress for new users
-        const fallback = baseStore.getState();
-        fallback.courses = fallback.courses.map((c) => ({ ...c, progress: 0, completed: 0 }));
-        fallback.userProgress = {
-          ...fallback.userProgress,
-          totalXP: 0,
-          completedLessons: 0,
-          level: 1,
-          coursesStarted: 0,
-          badges: 0,
-        };
-        setState(fallback);
+        // On error, keep zero baseline
+        setState(baseline);
       }
     }
 
@@ -143,7 +144,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
 
   // Calculate stats from real data
   const completedChallenges = state.dailyChallenges.filter((c) => c.completed).length;
-  const inProgressCourses = state.courses.filter((c) => c.status === "in-progress").length;
+  const inProgressCourses = state.courses.filter((c) => c.status === "in-progress" || (c.progress > 0 && c.progress < 100)).length;
 
   // Dashboard view
   return (
@@ -287,7 +288,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
 
           {inProgressCourses > 0 ? (
             <div className="courses-list">
-              {state.courses.filter((c) => c.status === "in-progress").map((course) => (
+              {state.courses.filter((c) => c.status === "in-progress" || (c.progress > 0 && c.progress < 100)).map((course) => (
                 <div key={course.id} className="course-item">
                   <div className="course-header">
                     <h3>{course.title}</h3>
