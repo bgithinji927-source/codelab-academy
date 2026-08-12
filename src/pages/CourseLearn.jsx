@@ -20,6 +20,15 @@ function CourseLearn({ course, onBack }) {
   const [isKaiTyping, setIsKaiTyping] = useState(false);
   const [displayedKaiText, setDisplayedKaiText] = useState("");
   const [lesson, setLesson] = useState(null);
+  
+  // ============================================
+  // LESSON PROGRESSION STATE
+  // ============================================
+  
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
+  const [allLessons, setAllLessons] = useState([]);
+  const [previousLessonSummary, setPreviousLessonSummary] = useState("");
+  const [lessonCompletionReady, setLessonCompletionReady] = useState(false);
 
   const typingTimerRef = useRef(null);
 
@@ -45,13 +54,13 @@ function CourseLearn({ course, onBack }) {
   };
 
   // ============================================
-  // LOAD FIRST LESSON
+  // LOAD ALL LESSONS FOR COURSE
   // ============================================
 
   useEffect(() => {
     let cancelled = false;
 
-    async function loadLesson() {
+    async function loadCourseLessons() {
       try {
         const lessonModule = await import("../data/lessons.js");
 
@@ -61,11 +70,14 @@ function CourseLearn({ course, onBack }) {
         const courseLessons =
           lessonData?.[course?.id] || [];
 
-        const firstLesson =
-          courseLessons[0] || null;
-
         if (!cancelled) {
-          setLesson(firstLesson);
+          setAllLessons(courseLessons);
+          
+          if (courseLessons.length > 0) {
+            setLesson(courseLessons[0]);
+            setCurrentLessonIndex(0);
+            setPreviousLessonSummary("");
+          }
         }
       } catch (error) {
         console.error(
@@ -74,12 +86,13 @@ function CourseLearn({ course, onBack }) {
         );
 
         if (!cancelled) {
+          setAllLessons([]);
           setLesson(null);
         }
       }
     }
 
-    loadLesson();
+    loadCourseLessons();
 
     return () => {
       cancelled = true;
@@ -132,12 +145,13 @@ function CourseLearn({ course, onBack }) {
   };
 
   // ============================================
-  // ASK KAI
+  // ASK KAI (WITH PROGRESSION SUPPORT)
   // ============================================
 
   const askKai = async ({
     learnerMessage = "",
     conversation = [],
+    nextLesson = false,
   } = {}) => {
     try {
       stopTyping();
@@ -162,6 +176,12 @@ function CourseLearn({ course, onBack }) {
           learnerMessage,
 
           messages: conversation,
+
+          // NEW: Progression context
+          nextLesson,
+          previousLessonSummary,
+          currentLessonIndex,
+          totalLessons: allLessons.length,
         }),
       });
 
@@ -184,6 +204,37 @@ function CourseLearn({ course, onBack }) {
         throw new Error(
           "Kai returned an empty response."
         );
+      }
+
+      // ========================================
+      // HANDLE LESSON PROGRESSION FROM KAI
+      // ========================================
+
+      if (
+        data.nextLessonReady &&
+        currentLessonIndex < allLessons.length - 1
+      ) {
+        // Kai decided we should move to next lesson
+        const lessonSummary =
+          data.lessonSummary || kaiReply;
+        
+        setPreviousLessonSummary(lessonSummary);
+        setMessages([]);
+        setAnswer("");
+        setDisplayedKaiText("");
+        
+        const nextIndex = currentLessonIndex + 1;
+        setCurrentLessonIndex(nextIndex);
+        setLesson(allLessons[nextIndex]);
+        setLessonCompletionReady(false);
+        
+        // The lesson change effect will trigger Kai intro
+        return;
+      }
+
+      // Check if Kai indicated readiness for next lesson
+      if (data.readyForNextLesson) {
+        setLessonCompletionReady(true);
       }
 
       setMessages((previous) => [
@@ -230,11 +281,14 @@ function CourseLearn({ course, onBack }) {
       setMessages([]);
       setAnswer("");
       setDisplayedKaiText("");
+      setLessonCompletionReady(false);
 
       if (cancelled) return;
 
-      await askKai({
-        learnerMessage: `
+      const lessonNumber = currentLessonIndex + 1;
+      const totalLessons = allLessons.length;
+      
+      let startMessage = `
 Start teaching me this lesson.
 
 You are Kai, my personal AI instructor.
@@ -258,8 +312,21 @@ Adapt your explanation to my answers.
 Never output the word "undefined" unless you are specifically explaining what the JavaScript value undefined means.
 
 Keep the conversation natural and focused on learning.
-        `.trim(),
+      `.trim();
 
+      // Add context if continuing from previous lesson
+      if (currentLessonIndex > 0 && previousLessonSummary) {
+        startMessage = `
+In the previous lesson, we covered: ${previousLessonSummary}
+
+Now let's move to lesson ${lessonNumber} of ${totalLessons}.
+
+${startMessage}
+        `.trim();
+      }
+
+      await askKai({
+        learnerMessage: startMessage,
         conversation: [],
       });
     }
@@ -663,6 +730,14 @@ Keep the conversation natural and focused on learning.
   };
 
   // ============================================
+  // CALCULATE PROGRESS PERCENTAGE
+  // ============================================
+
+  const progressPercentage = allLessons.length > 0
+    ? Math.round(((currentLessonIndex + 1) / allLessons.length) * 100)
+    : 0;
+
+  // ============================================
   // MAIN UI
   // ============================================
 
@@ -691,18 +766,18 @@ Keep the conversation natural and focused on learning.
 
         <div className="learn-progress">
           <span className="progress-label">
-            Lesson 1
+            Lesson {currentLessonIndex + 1}
           </span>
 
           <div className="progress-track">
             <div
               className="progress-fill"
-              style={{ width: "10%" }}
+              style={{ width: `${progressPercentage}%` }}
             />
           </div>
 
           <span className="progress-percent">
-            10%
+            {progressPercentage}%
           </span>
         </div>
 
@@ -724,7 +799,7 @@ Keep the conversation natural and focused on learning.
 
             <div className="lesson-label">
               <Code2 size={15} />
-              <span>LESSON 1</span>
+              <span>LESSON {currentLessonIndex + 1}</span>
             </div>
 
             <h1>
@@ -907,17 +982,29 @@ Keep the conversation natural and focused on learning.
 
             <div className="lesson-status">
               <CheckCircle2 size={16} />
-              <span>Lesson in progress</span>
+              <span>
+                {lessonCompletionReady
+                  ? "Ready for next lesson!"
+                  : "Lesson in progress"}
+              </span>
             </div>
 
             <button
               type="button"
               className="next-lesson"
               onClick={() => {
-                alert(
-                  "Next lesson will be added next."
-                );
+                askKai({
+                  learnerMessage:
+                    "I feel ready to move to the next lesson. Can we continue?",
+                  conversation: messages,
+                  nextLesson: true,
+                });
               }}
+              disabled={
+                currentLessonIndex >=
+                  allLessons.length - 1 ||
+                isKaiTyping
+              }
             >
               Continue to Next Lesson
               <ArrowRight size={17} />
