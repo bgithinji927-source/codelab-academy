@@ -1,180 +1,15 @@
 import { useState } from "react";
 import { ArrowLeft, Map, Lock, CheckCircle2, Zap, BookOpen, Trophy, ArrowRight } from "lucide-react";
+import createStore from "../data/store";
 import "./LearningRoadmap.css";
 
 function LearningRoadmap({ onBack }) {
+  const store = createStore();
+  const state = store.getState();
+  
   const [selectedPath, setSelectedPath] = useState("frontend");
   const [expandedModule, setExpandedModule] = useState(null);
-
-  const paths = {
-    frontend: {
-      title: "Frontend Developer",
-      description: "Master HTML, CSS, JavaScript, and React",
-      duration: "12 weeks",
-      difficulty: "Beginner → Advanced",
-      modules: [
-        {
-          id: 1,
-          title: "HTML Fundamentals",
-          duration: "2 weeks",
-          lessons: 15,
-          xp: 300,
-          status: "completed",
-          lessons_list: [
-            "HTML Structure & Semantics",
-            "Forms & Input Elements",
-            "Accessibility Best Practices",
-          ],
-        },
-        {
-          id: 2,
-          title: "CSS & Styling",
-          duration: "2 weeks",
-          lessons: 18,
-          xp: 350,
-          status: "in-progress",
-          lessons_list: [
-            "CSS Selectors & Box Model",
-            "Flexbox & Grid Layouts",
-            "Responsive Design",
-          ],
-        },
-        {
-          id: 3,
-          title: "JavaScript Basics",
-          duration: "3 weeks",
-          lessons: 24,
-          xp: 500,
-          status: "locked",
-          lessons_list: [
-            "Variables & Data Types",
-            "Functions & Scope",
-            "DOM Manipulation",
-          ],
-        },
-        {
-          id: 4,
-          title: "React Fundamentals",
-          duration: "3 weeks",
-          lessons: 20,
-          xp: 450,
-          status: "locked",
-          lessons_list: [
-            "Components & JSX",
-            "State & Props",
-            "Hooks & Side Effects",
-          ],
-        },
-        {
-          id: 5,
-          title: "Advanced React",
-          duration: "2 weeks",
-          lessons: 16,
-          xp: 400,
-          status: "locked",
-          lessons_list: [
-            "Context API",
-            "Performance Optimization",
-            "Testing Components",
-          ],
-        },
-      ],
-    },
-    backend: {
-      title: "Backend Developer",
-      description: "Learn Node.js, Express, and databases",
-      duration: "14 weeks",
-      difficulty: "Intermediate → Advanced",
-      modules: [
-        {
-          id: 1,
-          title: "Node.js Basics",
-          duration: "2 weeks",
-          lessons: 14,
-          xp: 300,
-          status: "locked",
-          lessons_list: [
-            "Node.js Runtime",
-            "NPM & Packages",
-            "Async Programming",
-          ],
-        },
-        {
-          id: 2,
-          title: "Express Framework",
-          duration: "3 weeks",
-          lessons: 20,
-          xp: 400,
-          status: "locked",
-          lessons_list: [
-            "Routing & Middleware",
-            "REST APIs",
-            "Error Handling",
-          ],
-        },
-        {
-          id: 3,
-          title: "Databases",
-          duration: "3 weeks",
-          lessons: 18,
-          xp: 380,
-          status: "locked",
-          lessons_list: [
-            "MongoDB & Mongoose",
-            "SQL Basics",
-            "Database Design",
-          ],
-        },
-      ],
-    },
-    fullstack: {
-      title: "Full Stack Developer",
-      description: "Combine frontend and backend skills",
-      duration: "20 weeks",
-      difficulty: "Advanced",
-      modules: [
-        {
-          id: 1,
-          title: "Frontend Essentials",
-          duration: "4 weeks",
-          lessons: 32,
-          xp: 600,
-          status: "locked",
-          lessons_list: [
-            "HTML, CSS, JavaScript",
-            "React Framework",
-            "State Management",
-          ],
-        },
-        {
-          id: 2,
-          title: "Backend Essentials",
-          duration: "4 weeks",
-          lessons: 28,
-          xp: 550,
-          status: "locked",
-          lessons_list: [
-            "Node.js & Express",
-            "API Development",
-            "Authentication",
-          ],
-        },
-        {
-          id: 3,
-          title: "Full Stack Project",
-          duration: "3 weeks",
-          lessons: 12,
-          xp: 500,
-          status: "locked",
-          lessons_list: [
-            "Project Planning",
-            "Building Together",
-            "Deployment",
-          ],
-        },
-      ],
-    },
-  };
+  const [paths, setPaths] = useState(state.learningPaths);
 
   const currentPath = paths[selectedPath];
 
@@ -191,18 +26,34 @@ function LearningRoadmap({ onBack }) {
     }
   };
 
-  const getStatusLabel = (status) => {
-    switch (status) {
-      case "completed":
-        return "Completed";
-      case "in-progress":
-        return "In Progress";
-      case "locked":
-        return "Locked";
-      default:
-        return "";
+  const handleModuleClick = (moduleId) => {
+    const module = currentPath.modules.find(m => m.id === moduleId);
+    if (module && module.status !== "locked") {
+      setExpandedModule(expandedModule === moduleId ? null : moduleId);
     }
   };
+
+  const handleCompleteLesson = (moduleId) => {
+    const updatedPaths = { ...paths };
+    const module = updatedPaths[selectedPath].modules.find(m => m.id === moduleId);
+    
+    if (module && module.progress < 100) {
+      // Increment progress
+      const progressStep = Math.round(100 / module.lessons);
+      module.progress = Math.min(module.progress + progressStep, 100);
+      
+      if (module.progress === 100) {
+        module.status = "completed";
+      }
+      
+      setPaths(updatedPaths);
+      store.updateModuleProgress(selectedPath, moduleId, module.progress);
+    }
+  };
+
+  const totalProgress = currentPath.modules.length > 0 
+    ? Math.round(currentPath.modules.reduce((sum, m) => sum + m.progress, 0) / currentPath.modules.length)
+    : 0;
 
   return (
     <div className="roadmap-page">
@@ -216,7 +67,7 @@ function LearningRoadmap({ onBack }) {
           <Map size={32} className="roadmap-icon" />
           <div>
             <h1>Learning Roadmap</h1>
-            <p>Choose your learning path and follow a structured curriculum</p>
+            <p>Follow your structured learning path to mastery</p>
           </div>
         </div>
       </header>
@@ -238,6 +89,12 @@ function LearningRoadmap({ onBack }) {
                   <h3>{path.title}</h3>
                 </div>
                 <p>{path.description}</p>
+                <div className="path-progress">
+                  <div className="progress-bar-small">
+                    <div className="progress-fill-small" style={{ width: `${path.progress}%` }}></div>
+                  </div>
+                  <span className="progress-text">{path.progress}% Complete</span>
+                </div>
                 <div className="path-meta">
                   <span>{path.duration}</span>
                   <span>{path.difficulty}</span>
@@ -261,11 +118,7 @@ function LearningRoadmap({ onBack }) {
                 {idx > 0 && <div className="module-connector"></div>}
                 <div
                   className={`module-card module-${module.status}`}
-                  onClick={() =>
-                    setExpandedModule(
-                      expandedModule === module.id ? null : module.id
-                    )
-                  }
+                  onClick={() => handleModuleClick(module.id)}
                 >
                   <div className="module-header">
                     <div className="module-status">
@@ -273,6 +126,9 @@ function LearningRoadmap({ onBack }) {
                     </div>
                     <div className="module-info">
                       <h3>{module.title}</h3>
+                      <div className="module-progress-bar">
+                        <div className="module-progress-fill" style={{ width: `${module.progress}%` }}></div>
+                      </div>
                       <div className="module-meta">
                         <span>
                           <BookOpen size={14} />
@@ -283,6 +139,7 @@ function LearningRoadmap({ onBack }) {
                           +{module.xp} XP
                         </span>
                         <span>{module.duration}</span>
+                        <span className="progress-percent">{module.progress}%</span>
                       </div>
                     </div>
                     <div className="module-expand">
@@ -302,9 +159,13 @@ function LearningRoadmap({ onBack }) {
                           <li key={i}>{lesson}</li>
                         ))}
                       </ul>
-                      <button className="module-action-btn" disabled={module.status === "locked"}>
-                        {module.status === "completed" && "Review Module"}
-                        {module.status === "in-progress" && "Continue Learning"}
+                      <button 
+                        className="module-action-btn" 
+                        disabled={module.status === "locked"}
+                        onClick={() => handleCompleteLesson(module.id)}
+                      >
+                        {module.status === "completed" && "✓ Module Completed"}
+                        {module.status === "in-progress" && `Continue Learning (${module.progress}%)`}
                         {module.status === "locked" && "Unlock After Previous Module"}
                       </button>
                     </div>
@@ -320,23 +181,26 @@ function LearningRoadmap({ onBack }) {
           <div className="progress-card">
             <div className="progress-header">
               <Trophy size={24} />
-              <h3>Your Progress</h3>
+              <h3>{currentPath.title} Progress</h3>
             </div>
             <div className="progress-stats">
               <div className="stat">
-                <strong>45%</strong>
+                <strong>{totalProgress}%</strong>
                 <p>Path Complete</p>
               </div>
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: "45%" }}></div>
+                <div className="progress-fill" style={{ width: `${totalProgress}%` }}></div>
               </div>
               <div className="stat">
-                <strong>2,150 XP</strong>
+                <strong>{state.userProgress.totalXP} XP</strong>
                 <p>Total Earned</p>
               </div>
             </div>
             <p className="progress-message">
-              Keep going! Complete the JavaScript module to unlock React.
+              {totalProgress === 100 
+                ? "🎉 Congratulations! You've completed this path!" 
+                : `Keep going! You're ${totalProgress}% through ${currentPath.title}. Complete the next module to unlock the one after!`
+              }
             </p>
           </div>
         </section>
