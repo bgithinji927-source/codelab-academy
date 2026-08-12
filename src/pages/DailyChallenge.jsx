@@ -1,47 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Flame, Clock, Code, Trophy, CheckCircle2, Zap } from "lucide-react";
+import createStore from "../data/store";
 import "./DailyChallenge.css";
 
 function DailyChallenge({ onBack }) {
+  const store = createStore();
+  const state = store.getState();
+  
   const [selectedTab, setSelectedTab] = useState("challenge");
   const [completed, setCompleted] = useState(false);
+  const [currentChallenge, setCurrentChallenge] = useState(state.dailyChallenges[0]);
   const [timeLeft, setTimeLeft] = useState("23h 45m");
+  const [leaderboard, setLeaderboard] = useState([
+    { rank: 1, name: "Alex Chen", xp: 4250, badges: 12, completed: 28 },
+    { rank: 2, name: "Jordan Smith", xp: 3890, badges: 10, completed: 25 },
+    { rank: 3, name: "Casey Rivera", xp: 3650, badges: 9, completed: 23 },
+    { rank: 4, name: "Morgan Davis", xp: 3420, badges: 8, completed: 20 },
+    { rank: 5, name: "You", xp: state.userProgress.totalXP, badges: state.userProgress.badges, completed: state.dailyChallenges.filter(c => c.completed).length, isUser: true },
+  ]);
 
-  const challenge = {
-    title: "Build a Todo App",
-    difficulty: "Intermediate",
-    xp: 150,
-    description:
-      "Create a simple todo application with add, delete, and mark complete functionality using HTML, CSS, and JavaScript.",
-    requirements: [
-      "Create an input field to add new todos",
-      "Display all todos in a list",
-      "Add a delete button for each todo",
-      "Add a checkbox to mark todos as complete",
-      "Persist data using localStorage",
-    ],
-    starter: `// Create your todo app here
-const todoApp = {
-  todos: [],
-  addTodo(task) {
-    // Your code here
-  },
-  removeTodo(id) {
-    // Your code here
-  },
-  toggleComplete(id) {
-    // Your code here
-  }
-};`,
+  // Timer countdown effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        const [hours, minutes] = prev.split("h ").join(" ").split("m")[0].split(" ");
+        let h = parseInt(hours);
+        let m = parseInt(minutes);
+        
+        m -= 1;
+        if (m < 0) {
+          m = 59;
+          h -= 1;
+        }
+        if (h < 0) {
+          h = 23;
+          m = 59;
+        }
+        
+        return `${h}h ${m}m`;
+      });
+    }, 60000); // Update every minute
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleCompleteChallenge = () => {
+    setCompleted(!completed);
+    
+    if (!completed) {
+      // Mark challenge as completed
+      store.completeDailyChallenge(currentChallenge.id);
+      
+      // Update leaderboard
+      const updatedLeaderboard = leaderboard.map(entry => {
+        if (entry.isUser) {
+          return {
+            ...entry,
+            xp: entry.xp + currentChallenge.xp,
+            completed: entry.completed + 1,
+          };
+        }
+        return entry;
+      });
+      
+      setLeaderboard(updatedLeaderboard.sort((a, b) => b.xp - a.xp).map((entry, idx) => ({ ...entry, rank: idx + 1 })));
+    }
   };
-
-  const leaderboard = [
-    { rank: 1, name: "Alex Chen", xp: 4250, badges: 12 },
-    { rank: 2, name: "Jordan Smith", xp: 3890, badges: 10 },
-    { rank: 3, name: "Casey Rivera", xp: 3650, badges: 9 },
-    { rank: 4, name: "Morgan Davis", xp: 3420, badges: 8 },
-    { rank: 5, name: "You", xp: 1850, badges: 5, isUser: true },
-  ];
 
   return (
     <div className="challenge-page">
@@ -62,14 +86,14 @@ const todoApp = {
             <div className="challenge-card">
               <div className="challenge-header-info">
                 <div>
-                  <h1>{challenge.title}</h1>
+                  <h1>{currentChallenge.title}</h1>
                   <div className="challenge-meta">
                     <span className="difficulty-badge">
-                      {challenge.difficulty}
+                      {currentChallenge.difficulty}
                     </span>
                     <span className="xp-badge">
                       <Zap size={14} />
-                      +{challenge.xp} XP
+                      +{currentChallenge.xp} XP
                     </span>
                   </div>
                 </div>
@@ -99,7 +123,7 @@ const todoApp = {
               {selectedTab === "challenge" && (
                 <div className="challenge-details">
                   <p className="challenge-description">
-                    {challenge.description}
+                    {currentChallenge.description}
                   </p>
 
                   <h3>
@@ -107,7 +131,7 @@ const todoApp = {
                     Requirements
                   </h3>
                   <ul className="requirements-list">
-                    {challenge.requirements.map((req, idx) => (
+                    {currentChallenge.requirements.map((req, idx) => (
                       <li key={idx}>{req}</li>
                     ))}
                   </ul>
@@ -115,7 +139,7 @@ const todoApp = {
                   <div className="challenge-actions">
                     <button
                       className="submit-btn"
-                      onClick={() => setCompleted(!completed)}
+                      onClick={handleCompleteChallenge}
                     >
                       <CheckCircle2 size={18} />
                       {completed ? "Mark as Incomplete" : "Submit Solution"}
@@ -124,8 +148,8 @@ const todoApp = {
                       <div className="success-message">
                         <Trophy size={20} />
                         <div>
-                          <strong>Challenge Completed!</strong>
-                          <p>You earned +{challenge.xp} XP 🎉</p>
+                          <strong>Challenge Completed! 🎉</strong>
+                          <p>You earned +{currentChallenge.xp} XP</p>
                         </div>
                       </div>
                     )}
@@ -139,19 +163,19 @@ const todoApp = {
                   <h3>Code Editor</h3>
                   <p>Write your solution here</p>
                   <pre className="code-block">
-                    <code>{challenge.starter}</code>
+                    <code>{currentChallenge.starter}</code>
                   </pre>
                 </div>
               )}
             </div>
           </div>
 
-          {/* RIGHT: LEADERBOARD */}
+          {/* RIGHT: LEADERBOARD & STATS */}
           <aside className="challenge-sidebar">
             <div className="leaderboard-card">
               <h3>
                 <Flame size={20} />
-                Leaderboard
+                Today's Leaderboard
               </h3>
               <div className="leaderboard-list">
                 {leaderboard.map((entry) => (
@@ -164,11 +188,21 @@ const todoApp = {
                     <span className="rank">{entry.rank}</span>
                     <div className="entry-info">
                       <strong>{entry.name}</strong>
-                      <p>{entry.xp} XP • {entry.badges} Badges</p>
+                      <p>{entry.xp} XP • {entry.badges} Badges • {entry.completed} Completed</p>
                     </div>
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="info-card">
+              <h4>📊 Your Progress Today</h4>
+              <ul>
+                <li><strong>Challenges Completed:</strong> {state.dailyChallenges.filter(c => c.completed).length}/{state.dailyChallenges.length}</li>
+                <li><strong>Total XP Earned:</strong> {state.userProgress.totalXP}</li>
+                <li><strong>Current Streak:</strong> {state.userProgress.dayStreak} days 🔥</li>
+                <li><strong>Level:</strong> {state.userProgress.level}</li>
+              </ul>
             </div>
 
             <div className="info-card">
