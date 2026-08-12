@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const router = express.Router();
@@ -41,9 +42,13 @@ router.post("/register", async (req, res) => {
       lessonSessions: [],
     });
 
+    const secret = process.env.JWT_SECRET || "devsecret";
+    const token = jwt.sign({ id: user._id }, secret, { expiresIn: "7d" });
+
     res.status(201).json({
       success: true,
       message: "Account created successfully",
+      token,
       user: {
         id: user._id,
         name: user.name,
@@ -97,9 +102,13 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    const secret = process.env.JWT_SECRET || "devsecret";
+    const token = jwt.sign({ id: user._id }, secret, { expiresIn: "7d" });
+
     res.json({
       success: true,
       message: "Login successful",
+      token,
       user: {
         id: user._id,
         name: user.name,
