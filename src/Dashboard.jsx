@@ -55,7 +55,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
             if (cp) {
               const total = cp.totalLessons || c.lessons || 0;
               const lessonsCompleted = cp.lessonsCompleted || 0;
-              const progressPercent = total ? Math.round((lessonsCompleted / total) * 100) : (cp.progress || 0);
+              const progressPercent = total ? Math.round((lessonsCompleted / total) * 100) : (typeof cp.progress === 'number' ? cp.progress : 0);
 
               return {
                 ...c,
@@ -69,14 +69,19 @@ function Dashboard({ user, onLogout, onViewCourses }) {
             return { ...c, progress: 0, completed: 0, status: c.status === "completed" ? "locked" : c.status };
           });
 
+          // Use explicit checks for numeric fields so we don't accidentally pick up falsy defaults
+          const serverXP = typeof userProgressData.xp === "number" ? userProgressData.xp : 0;
+          const serverCompletedLessons = typeof userProgressData.completedLessons === "number" ? userProgressData.completedLessons : 0;
+          const serverLevel = typeof userProgressData.level === "number" ? userProgressData.level : (baseStore.getState().userProgress.level || 1);
+
           const newState = {
             ...baseStore.getState(),
             courses: mergedCourses,
             userProgress: {
               ...baseStore.getState().userProgress,
-              totalXP: userProgressData.xp || baseStore.getState().userProgress.totalXP,
-              completedLessons: userProgressData.completedLessons || 0,
-              level: userProgressData.level || baseStore.getState().userProgress.level,
+              totalXP: serverXP,
+              completedLessons: serverCompletedLessons,
+              level: serverLevel,
             },
           };
 
@@ -87,15 +92,29 @@ function Dashboard({ user, onLogout, onViewCourses }) {
         // If server returned no data, fall back to store state but zero out progress to avoid seeded values
         const zeroed = baseStore.getState();
         zeroed.courses = zeroed.courses.map((c) => ({ ...c, progress: 0, completed: 0 }));
+        zeroed.userProgress = {
+          ...zeroed.userProgress,
+          totalXP: 0,
+          completedLessons: 0,
+          level: 1,
+          coursesStarted: 0,
+          badges: 0,
+        };
         setState(zeroed);
       } catch (err) {
         console.error("Failed to load user progress:", err);
 
         // On error, keep store defaults but avoid showing pre-populated progress for new users
         const fallback = baseStore.getState();
-        if (!user) {
-          fallback.courses = fallback.courses.map((c) => ({ ...c, progress: 0, completed: 0 }));
-        }
+        fallback.courses = fallback.courses.map((c) => ({ ...c, progress: 0, completed: 0 }));
+        fallback.userProgress = {
+          ...fallback.userProgress,
+          totalXP: 0,
+          completedLessons: 0,
+          level: 1,
+          coursesStarted: 0,
+          badges: 0,
+        };
         setState(fallback);
       }
     }
