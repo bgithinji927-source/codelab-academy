@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
     },
 
     // ============================================
-    // NEW: LESSON PROGRESS TRACKING
+    // LESSON PROGRESS TRACKING
     // ============================================
 
     currentCourse: {
@@ -92,6 +92,37 @@ const userSchema = new mongoose.Schema(
         summary: String,
       },
     ],
+
+    // ============================================
+    // DAILY CHALLENGE
+    // - Stores the assigned challenge for the current day for this user
+    // - date: ISO date string (YYYY-MM-DD)
+    // - challengeId: references the challenge bank id
+    // - assignedAt, attempts, completed, completedAt
+    // ============================================
+
+    dailyChallenge: {
+      date: String,
+      challengeId: String,
+      assignedAt: Date,
+      attempts: {
+        type: Number,
+        default: 0,
+      },
+      completed: {
+        type: Boolean,
+        default: false,
+      },
+      completedAt: Date,
+      // optional: last submitted answer (stored for audit/feedback)
+      lastAnswer: String,
+    },
+
+    // total number of daily challenges completed historically
+    dailyChallengesCompleted: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
