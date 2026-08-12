@@ -1,0 +1,395 @@
+/* LEARN WITH KAI PAGE */
+
+.kai-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f6ff 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+
+.kai-header {
+  background: white;
+  border-bottom: 1px solid #e9e8ef;
+  padding: 24px 5%;
+  box-shadow: 0 2px 8px rgba(112, 64, 232, 0.08);
+}
+
+.kai-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #7040e8;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 16px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.kai-back-btn:hover {
+  gap: 12px;
+  color: #5b2bd6;
+}
+
+.kai-header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.kai-icon {
+  color: #7040e8;
+}
+
+.kai-header-title h1 {
+  font-size: 28px;
+  color: #101426;
+  margin: 0;
+}
+
+.kai-header-title p {
+  color: #687083;
+  font-size: 14px;
+  margin: 4px 0 0 0;
+}
+
+/* MAIN CONTENT */
+
+.kai-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  padding: 24px 5%;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.kai-container {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e9e8ef;
+  box-shadow: 0 8px 25px rgba(40, 25, 80, 0.04);
+  overflow: hidden;
+}
+
+/* CHAT WRAPPER */
+
+.kai-chat-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 500px;
+  max-height: 600px;
+}
+
+.kai-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.kai-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.kai-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kai-messages::-webkit-scrollbar-thumb {
+  background: #d9d5e8;
+  border-radius: 3px;
+}
+
+.kai-messages::-webkit-scrollbar-thumb:hover {
+  background: #bbb5d0;
+}
+
+.message {
+  display: flex;
+  gap: 12px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-message {
+  justify-content: flex-end;
+}
+
+.user-message .message-bubble {
+  background: linear-gradient(135deg, #7040e8, #6532db);
+  color: white;
+}
+
+.kai-message .message-bubble {
+  background: #f5f3fa;
+  color: #101426;
+}
+
+.kai-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7040e8, #8d5df0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+/* SAMPLE QUESTIONS */
+
+.sample-questions {
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(240, 237, 255, 0.5), rgba(245, 243, 250, 0.3));
+  border-top: 1px solid #e9e8ef;
+}
+
+.sample-questions h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #7040e8;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.questions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.sample-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: white;
+  border: 1px solid #d9d5e8;
+  border-radius: 8px;
+  color: #7040e8;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sample-btn:hover {
+  background: #f5f3fa;
+  border-color: #7040e8;
+  transform: translateY(-2px);
+}
+
+/* INPUT AREA */
+
+.kai-input-area {
+  padding: 20px;
+  background: white;
+  border-top: 1px solid #e9e8ef;
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.kai-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #d9d5e8;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.kai-input:focus {
+  outline: none;
+  border-color: #7040e8;
+  box-shadow: 0 0 0 3px rgba(112, 64, 232, 0.1);
+}
+
+.send-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #7040e8, #6532db);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.send-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 20px rgba(112, 64, 232, 0.3);
+  transform: translateY(-2px);
+}
+
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-hint {
+  font-size: 12px;
+  color: #9198a6;
+  margin: 0;
+}
+
+/* SIDEBAR */
+
+.kai-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar-card {
+  background: white;
+  border: 1px solid #e9e8ef;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(40, 25, 80, 0.04);
+}
+
+.sidebar-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #101426;
+  margin: 0 0 12px 0;
+}
+
+.sidebar-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-card li {
+  font-size: 13px;
+  color: #687083;
+  margin-bottom: 8px;
+  padding-left: 16px;
+  position: relative;
+}
+
+.sidebar-card li:last-child {
+  margin-bottom: 0;
+}
+
+.sidebar-card li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #7040e8;
+  font-weight: bold;
+}
+
+.topics-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topic-tag {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #f1eaff;
+  color: #7040e8;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #e9deff;
+}
+
+/* TABLET */
+
+@media (max-width: 1100px) {
+  .kai-main {
+    grid-template-columns: 1fr;
+  }
+
+  .message-bubble {
+    max-width: 85%;
+  }
+
+  .questions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 760px) {
+  .kai-header {
+    padding: 16px;
+  }
+
+  .kai-header-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .kai-header-title h1 {
+    font-size: 22px;
+  }
+
+  .kai-main {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .kai-chat-wrapper {
+    min-height: 400px;
+  }
+
+  .message-bubble {
+    max-width: 100%;
+  }
+
+  .kai-sidebar {
+    display: none;
+  }
+
+  .questions-grid {
+    grid-template-columns: 1fr;
+  }
+}
