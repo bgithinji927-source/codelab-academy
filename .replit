@@ -3,14 +3,12 @@ modules = ["nodejs-20", "web"]
 [deployment]
 router = "application"
 deploymentTarget = "autoscale"
-run = ["bash", "-c", "node artifacts/api-server/dist/index.mjs"]
-build = ["bash", "-c", "pnpm install && pnpm --filter @workspace/admin-dashboard run build && pnpm --filter @workspace/api-server run build"]
+run = ["bash", "-c", "node index.js"]
+build = ["bash", "-c", "npm ci && npm run build"]
 
 [deployment.postBuild]
-args = ["pnpm", "store", "prune"]
+args = ["npm", "cache", "clean", "--force"]
 env = { "CI" = "true" }
-
-[workflows]
 
 [agent]
 stack = "BEST_EFFORT_FALLBACK"
@@ -28,13 +26,29 @@ timeoutMs = 20000
 [[ports]]
 localPort = 5000
 
-[[ports]]
-localPort = 5173
-externalPort = 5173
-
-[[ports]]
-localPort = 8080
-externalPort = 8080
-
 [nix]
 channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node index.js"
+waitForPort = 5000

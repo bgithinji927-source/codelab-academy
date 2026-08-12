@@ -56,17 +56,23 @@ console.log(
 // MONGODB CONNECTION
 // ============================================
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log("MongoDB connected successfully");
-  })
-  .catch((error) => {
-    console.error(
-      "MongoDB connection failed:",
-      error.message
-    );
-  });
+if (process.env.MONGODB_URI) {
+  mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => {
+      console.log("MongoDB connected successfully");
+    })
+    .catch((error) => {
+      console.error(
+        "MongoDB connection failed:",
+        error.message
+      );
+    });
+} else {
+  console.warn(
+    "MONGODB_URI is not configured; starting without database access."
+  );
+}
 
 // ============================================
 // HEALTH CHECK
