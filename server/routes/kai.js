@@ -1,26 +1,278 @@
 const express = require("express");
+const User = require("../models/User");
 
 const router = express.Router();
 
-// Ensure fetch is available in Node (works for Node 18+ and older Node versions)
-/*
-  - If running on Node 18+, globalThis.fetch will be used.
-  - Otherwise we dynamically import `node-fetch` and use it.
-  - This keeps the file CommonJS but supports ESM-only node-fetch via dynamic import.
-*/
+// Ensure fetch is available in Node
 const fetch =
   globalThis.fetch ||
   ((...args) => import("node-fetch").then((m) => m.default(...args)));
-
-// ============================================
-// GROQ API
-// ============================================
 
 const GROQ_API_URL =
   "https://api.groq.com/openai/v1/chat/completions";
 
 // ============================================
-// KAI TEACHING
+// HELPER: LOAD OR CREATE SESSION
+// ============================================
+
+async function getOrCreateLessonSession(
+  userId,
+  courseId,
+  lessonId,
+  lessonIndex
+) {
+  try {
+    const user = await User.findById(userId);
+    if (!user) return null;
+
+    // Find existing session
+    let session = user.lessonSessions.find(
+      (s) =>
+        s.courseId === courseId &&
+        s.lessonId === lessonId
+    );
+
+    // Create new session if doesn't exist
+    if (!session) {
+      session = {
+        courseId,
+        lessonId,
+        lessonIndex,
+        conversationHistory: [],
+        startedAt: new Date(),
+        lastAccessedAt: new Date(),
+        completed: false,
+        summary: "",
+      };
+
+      user.lessonSessions.push(session);
+      await user.save();
+    } else {
+      // Update last accessed
+      session.lastAccessedAt = new Date();
+      await user.save();
+    }
+
+    return session;
+  } catch (error) {
+    console.error(
+      "Error getting/creating lesson session:",
+      error
+    );
+    return null;
+  }
+}
+
+// ============================================
+// HELPER: SAVE CONVERSATION
+// ============================================
+
+async function saveConversation(
+  userId,
+  courseId,
+  lessonId,
+  role,
+  content
+) {
+  try {
+    const user = await User.findById(userId);
+    if (!user) return;
+
+    const session = user.lessonSessions.find(
+      (s) =>
+        s.courseId === courseId &&
+        s.lessonId === lessonId
+    );
+
+    if (session) {
+      session.conversationHistory.push({
+        role,
+        content,
+        timestamp: new Date(),
+      });
+
+      session.lastAccessedAt = new Date();
+      await user.save();
+    }
+  } catch (error) {
+    console.error(
+      "Error saving conversation:",
+      error
+    );
+  }
+}
+
+// ============================================
+// HELPER: MARK LESSON COMPLETE
+// ============================================
+
+async function markLessonComplete(
+  userId,
+  courseId,
+  lessonId,
+  summary
+) {
+  try {
+    const user = await User.findById(userId);
+    if (!user) return null;
+
+    // Update lesson session
+    const session = user.lessonSessions.find(
+      (s) =>
+        s.courseId === courseId &&
+        s.lessonId === lessonId
+    );
+
+    if (session) {
+      session.completed = true;
+      session.completedAt = new Date();
+      session.summary = summary;
+    }
+
+    // Update course progress
+    let courseProgress =
+      user.courseProgress.find(
+        (cp) => cp.courseId === courseId
+      );
+
+    if (!courseProgress) {
+      courseProgress = {
+        courseId,
+        lessonsCompleted: 0,
+        completedLessonIds: [],
+        lastAccessedAt: new Date(),
+      };
+
+      user.courseProgress.push(courseProgress);
+    }
+
+    // Add to completed if not already there
+    if (
+      !courseProgress.completedLessonIds.includes(
+        lessonId
+      )
+    ) {
+      courseProgress.completedLessonIds.push(
+        lessonId
+      );
+      courseProgress.lessonsCompleted += 1;
+      user.completedLessons += 1;
+      user.xp += 100; // Award XP
+    }
+
+    courseProgress.lastAccessedAt = new Date();
+    await user.save();
+
+    return user;
+  } catch (error) {
+    console.error(
+      "Error marking lesson complete:",
+      error
+    );
+    return null;
+  }
+}
+
+// ============================================
+// GET USER PROGRESS
+// GET /api/kai/progress/:userId
+// ============================================
+
+router.get("/progress/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        xp: user.xp,
+        level: user.level,
+        completedLessons: user.completedLessons,
+        currentCourse: user.currentCourse,
+        currentLesson: user.currentLesson,
+        courseProgress: user.courseProgress,
+      },
+    });
+  } catch (error) {
+    console.error("Error getting progress:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get user progress",
+    });
+  }
+});
+
+// ============================================
+// GET LESSON SESSION
+// GET /api/kai/session/:userId/:courseId/:lessonId
+// ============================================
+
+router.get(
+  "/session/:userId/:courseId/:lessonId",
+  async (req, res) => {
+    try {
+      const { userId, courseId, lessonId } =
+        req.params;
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      const session = user.lessonSessions.find(
+        (s) =>
+          s.courseId === courseId &&
+          s.lessonId === lessonId
+      );
+
+      if (!session) {
+        return res.json({
+          success: true,
+          session: null,
+          message: "No session found",
+        });
+      }
+
+      return res.json({
+        success: true,
+        session: {
+          conversationHistory:
+            session.conversationHistory || [],
+          completed: session.completed,
+          summary: session.summary,
+          lastAccessedAt: session.lastAccessedAt,
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Error getting lesson session:",
+        error
+      );
+
+      return res.status(500).json({
+        success: false,
+        message: "Failed to get lesson session",
+      });
+    }
+  }
+);
+
+// ============================================
+// KAI TEACHING (UPDATED WITH SESSION PERSISTENCE)
 // POST /api/kai
 // ============================================
 
@@ -31,16 +283,10 @@ router.post("/", async (req, res) => {
       lesson,
       messages = [],
       learnerMessage,
+      userId,
     } = req.body;
 
-    // ========================================
-    // CHECK GROQ API KEY
-    // ========================================
-    console.log(
-      "GROQ_API_KEY present:",
-      !!process.env.GROQ_API_KEY
-    );
-
+    // Check GROQ API Key
     if (!process.env.GROQ_API_KEY) {
       console.error(
         "GROQ_API_KEY is missing from environment variables."
@@ -54,23 +300,28 @@ router.post("/", async (req, res) => {
     }
 
     // ========================================
-    // COURSE INFORMATION
+    // LOAD OR CREATE LESSON SESSION
     // ========================================
+
+    if (userId && lesson?.id) {
+      await getOrCreateLessonSession(
+        userId,
+        course?.id,
+        lesson?.id,
+        0
+      );
+    }
 
     const courseTitle =
       course?.title || "Programming";
-
     const lessonTitle =
       lesson?.title || "Introduction";
-
     const lessonDescription =
       lesson?.description || "";
-
     const lessonLevel =
       lesson?.level ||
       course?.level ||
       "Beginner";
-
     const objectives =
       Array.isArray(lesson?.objectives)
         ? lesson.objectives
@@ -107,7 +358,7 @@ ${
 `;
 
     // ========================================
-    // KAI SYSTEM PROMPT
+    // KAI SYSTEM PROMPT (ENHANCED FOR COMPLETION)
     // ========================================
 
     const systemPrompt = `
@@ -134,120 +385,48 @@ YOUR PERSONALITY:
 TEACHING RULES:
 
 1. Teach concepts instead of only giving answers.
-
 2. Explain WHY something works, not only WHAT to type.
-
 3. Start with the basics.
-
 4. Use simple language when introducing difficult concepts.
-
 5. Use practical coding examples.
-
 6. Explain important code carefully.
-
 7. Ask the learner questions during the lesson.
-
 8. Give the learner opportunities to practice.
-
 9. Do not immediately reveal challenge answers.
-
 10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.
-
 11. Gradually increase difficulty.
-
 12. Do not overwhelm beginners with unnecessary advanced information.
-
 13. If the learner is confused, explain the concept again using a simpler example.
-
 14. Connect new concepts to things the learner already understands.
-
 15. Explain what is happening behind the scenes when useful.
-
 16. Connect programming concepts to real-world development.
-
 17. Teach one important concept at a time.
-
 18. Do not dump the entire lesson into one response.
-
 19. Use the lesson information provided to guide what you teach.
-
 20. Continue naturally from the conversation history.
 
-TEACHING FLOW:
+LESSON COMPLETION:
 
-Use this progression when appropriate:
-
-1. Introduction
-2. Foundation
-3. Mental Model
-4. Simple Example
-5. Line-by-Line Explanation
-6. Deep Dive
-7. Real-World Connection
-8. Guided Practice
-9. Challenge
-10. Knowledge Check
-11. Correction
-12. Summary
-
-INTERACTIVE TEACHING:
-
-Do not teach the entire lesson immediately.
-
-Instead:
-
-- Explain one concept.
-- Give an example.
-- Ask the learner a question.
-- Wait for the learner's response.
-- Correct misunderstandings.
-- Then continue to the next concept.
-
-CHALLENGES:
-
-If the learner is solving a coding challenge:
-
-First attempt:
-Give a useful hint instead of the complete answer.
-
-Second attempt:
-Give a stronger hint.
-
-Repeated mistakes:
-Explain the underlying concept again using a simpler example.
-
-Correct answer:
-Congratulate the learner and explain briefly why their solution works.
-
-QUIZZES:
-
-Before the learner answers:
-Ask them to choose an answer.
-
-If correct:
-Explain why the answer is correct.
-
-If incorrect:
-Do not simply say "wrong".
-
-Explain the misconception and give them another opportunity.
+- Track progress through the conversation naturally
+- After 6-8 meaningful exchanges where the learner demonstrates understanding, they are ready to complete
+- When you believe the learner has mastered the key concepts, END your response with this EXACT format:
+  [LESSON_COMPLETE: Brief 1-2 sentence summary of what they learned]
+- Do NOT include [LESSON_COMPLETE:] unless you are genuinely confident they understand
+- When a lesson is complete, offer encouragement to continue to the next lesson
 
 CODE:
 
 When showing code:
-
-- Use Markdown fenced code blocks.
-- Keep examples practical.
-- Explain important lines.
-- Explain why the code works.
-- Mention common beginner mistakes when useful.
+- Use Markdown fenced code blocks
+- Keep examples practical
+- Explain important lines
+- Explain why the code works
+- Mention common beginner mistakes when useful
 
 RESPONSE LENGTH:
 
 Keep responses conversational and reasonably sized.
-
 Do not create huge walls of text.
-
 Use headings, bullets and code blocks when they improve readability.
 
 Always behave as Kai.
@@ -299,10 +478,10 @@ Start with the first important concept.
 Do not teach the entire lesson at once.
 
 Teach conversationally and finish by asking me a simple question.
-`;
+      `;
 
     // ========================================
-    // FINAL GROQ MESSAGE ARRAY
+    // GROQ MESSAGES
     // ========================================
 
     const groqMessages = [
@@ -319,17 +498,12 @@ Teach conversationally and finish by asking me a simple question.
       },
     ];
 
-    // ========================================
-    // DEBUG
-    // ========================================
-
     console.log(
       "Kai teaching:",
       courseTitle,
       "->",
       lessonTitle
     );
-
     console.log(
       "Conversation messages:",
       groqMessages.length
@@ -361,18 +535,14 @@ Teach conversationally and finish by asking me a simple question.
     });
 
     // ========================================
-    // READ GROQ RESPONSE
+    // READ RESPONSE
     // ========================================
 
     const data = await response.json();
 
-    // ========================================
-    // GROQ ERROR
-    // ========================================
-
     if (!response.ok) {
       console.error(
-        "Groq API error (status):",
+        "Groq API error:",
         response.status,
         data
       );
@@ -384,10 +554,6 @@ Teach conversationally and finish by asking me a simple question.
           "Groq request failed.",
       });
     }
-
-    // ========================================
-    // GET KAI RESPONSE
-    // ========================================
 
     const reply =
       data?.choices?.[0]?.message?.content;
@@ -406,25 +572,91 @@ Teach conversationally and finish by asking me a simple question.
     }
 
     // ========================================
-    // SEND RESPONSE TO FRONTEND
+    // CHECK FOR LESSON COMPLETION
+    // ========================================
+
+    const isLessonComplete =
+      reply.includes("[LESSON_COMPLETE:");
+    
+    const summaryMatch = reply.match(
+      /\[LESSON_COMPLETE:\s*(.*?)\]/
+    );
+    const lessonSummary = summaryMatch
+      ? summaryMatch[1].trim()
+      : "";
+
+    // Clean reply for display
+    const cleanReply = reply
+      .replace(/\[LESSON_COMPLETE:.*?\]/g, "")
+      .trim();
+
+    // ========================================
+    // SAVE CONVERSATION TO DATABASE
+    // ========================================
+
+    if (userId && lesson?.id) {
+      if (learnerMessage) {
+        await saveConversation(
+          userId,
+          course?.id,
+          lesson?.id,
+          "user",
+          learnerMessage
+        );
+      }
+
+      await saveConversation(
+        userId,
+        course?.id,
+        lesson?.id,
+        "assistant",
+        cleanReply
+      );
+
+      // Mark lesson complete if Kai indicates it
+      if (isLessonComplete) {
+        const updatedUser = await markLessonComplete(
+          userId,
+          course?.id,
+          lesson?.id,
+          lessonSummary
+        );
+
+        if (updatedUser) {
+          return res.json({
+            success: true,
+            reply: cleanReply,
+            instructor: "Kai",
+            course: courseTitle,
+            lesson: lessonTitle,
+            lessonComplete: true,
+            lessonSummary,
+            userProgress: {
+              xp: updatedUser.xp,
+              level: updatedUser.level,
+              completedLessons:
+                updatedUser.completedLessons,
+            },
+          });
+        }
+      }
+    }
+
+    // ========================================
+    // SEND RESPONSE
     // ========================================
 
     return res.json({
       success: true,
-      reply,
+      reply: cleanReply,
       instructor: "Kai",
       course: courseTitle,
       lesson: lessonTitle,
+      lessonComplete: isLessonComplete,
+      lessonSummary,
     });
   } catch (error) {
-    // ========================================
-    // SERVER ERROR
-    // ========================================
-
-    console.error(
-      "Kai teaching error:",
-      error
-    );
+    console.error("Kai teaching error:", error);
 
     return res.status(500).json({
       success: false,
