@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import Login from "./Login";
+import Signup from "./Signup";
 import Dashboard from "./Dashboard";
 import Courses from "./pages/Courses";
 
@@ -45,6 +46,7 @@ const categories = [
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
   const [user, setUser] = useState(null);
   const [showCourses, setShowCourses] = useState(false);
 
@@ -78,6 +80,16 @@ function App() {
 
     setUser(loggedInUser);
     setShowLogin(false);
+  };
+
+  // ================================
+  // SIGNUP
+  // ================================
+
+  const handleSignupSuccess = (newUser) => {
+    localStorage.setItem("codelabUser", JSON.stringify(newUser));
+    setUser(newUser);
+    setShowSignup(false);
   };
 
   // ================================
@@ -201,7 +213,7 @@ function App() {
           <button
             type="button"
             className="get-started"
-            onClick={() => setShowLogin(true)}
+            onClick={() => setShowSignup(true)}
           >
             Get Started
           </button>
@@ -242,7 +254,7 @@ function App() {
               <button
                 type="button"
                 className="primary-button"
-                onClick={() => setShowLogin(true)}
+                onClick={() => setShowSignup(true)}
               >
                 🚀 Get Started Free
               </button>
@@ -479,6 +491,13 @@ function App() {
         <Login
           onClose={() => setShowLogin(false)}
           onLoginSuccess={handleLoginSuccess}
+        />
+      )}
+
+      {showSignup && !user && (
+        <Signup
+          onClose={() => setShowSignup(false)}
+          onSignupSuccess={handleSignupSuccess}
         />
       )}
 
