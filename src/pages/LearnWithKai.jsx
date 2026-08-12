@@ -1,16 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send, ArrowLeft, Bot, Lightbulb, Code } from "lucide-react";
+import createStore from "../data/store";
 import "./LearnWithKai.css";
 
 function LearnWithKai({ onBack }) {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: "kai",
-      text: "Hi there! 👋 I'm Kai, your AI instructor. What would you like to learn today? I can help you with concepts, code problems, debugging, or project guidance.",
-    },
-  ]);
+  const store = createStore();
+  const state = store.getState();
+  
+  const [messages, setMessages] = useState(state.kaiConversations);
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const sampleQuestions = [
     "Explain closures in JavaScript",
@@ -19,28 +18,57 @@ function LearnWithKai({ onBack }) {
     "Help me understand async/await",
   ];
 
-  const handleSendMessage = () => {
+  const kaiResponses = {
+    closure: "A closure is a function that has access to variables from its outer scope, even after that outer scope has returned. This is powerful for creating private variables and callbacks. Would you like me to show you an example?",
+    react: "To debug React components, you can use React DevTools browser extension, console.log() in render methods, and the debugger keyword. What specific issue are you trying to debug?",
+    rest: "REST (Representational State Transfer) uses HTTP methods (GET, POST, PUT, DELETE) on endpoints, while GraphQL uses a single endpoint with queries and mutations. REST is simpler, GraphQL is more flexible. Which one interests you more?",
+    async: "Async/await makes asynchronous code look synchronous. 'async' marks a function as asynchronous, and 'await' pauses execution until a Promise resolves. This makes code much more readable than callbacks or .then() chains!",
+  };
+
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
-    // Add user message
     const userMessage = {
       id: messages.length + 1,
       type: "user",
       text: inputValue,
+      timestamp: new Date(),
     };
-    setMessages([...messages, userMessage]);
-
-    // Simulate Kai response
-    setTimeout(() => {
-      const kaiResponse = {
-        id: messages.length + 2,
-        type: "kai",
-        text: "That's a great question! Let me explain that for you. This is an AI response placeholder that would be replaced with actual Groq API responses. I can help you understand the concept step by step, provide code examples, and answer follow-up questions.",
-      };
-      setMessages((prev) => [...prev, kaiResponse]);
-    }, 800);
-
+    
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    store.addKaiMessage(inputValue, "user");
     setInputValue("");
+    setIsLoading(true);
+
+    // Simulate AI response delay
+    setTimeout(() => {
+      let responseText = "That's a great question! Let me help you understand that better. ";
+      
+      const input = inputValue.toLowerCase();
+      if (input.includes("closure")) {
+        responseText += kaiResponses.closure;
+      } else if (input.includes("debug") && input.includes("react")) {
+        responseText += kaiResponses.react;
+      } else if (input.includes("rest") || input.includes("graphql")) {
+        responseText += kaiResponses.rest;
+      } else if (input.includes("async") || input.includes("await")) {
+        responseText += kaiResponses.async;
+      } else {
+        responseText += "That's interesting! I'd love to help. Can you tell me more about what you're working on? You can ask me about JavaScript, React, CSS, APIs, or any web development topic.";
+      }
+
+      const kaiMessage = {
+        id: newMessages.length + 1,
+        type: "kai",
+        text: responseText,
+        timestamp: new Date(),
+      };
+      
+      setMessages([...newMessages, kaiMessage]);
+      store.addKaiMessage(responseText, "kai");
+      setIsLoading(false);
+    }, 800);
   };
 
   const handleSampleQuestion = (question) => {
@@ -59,7 +87,7 @@ function LearnWithKai({ onBack }) {
           <Bot size={32} className="kai-icon" />
           <div>
             <h1>Learn with Kai</h1>
-            <p>Your AI instructor is here to help</p>
+            <p>Your AI instructor is here to help you learn</p>
           </div>
         </div>
       </header>
@@ -85,6 +113,16 @@ function LearnWithKai({ onBack }) {
                   </div>
                 </div>
               ))}
+              {isLoading && (
+                <div className="message kai-message">
+                  <div className="kai-avatar">
+                    <Bot size={24} />
+                  </div>
+                  <div className="message-bubble loading">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* SAMPLE QUESTIONS (shown if few messages) */}
@@ -126,7 +164,7 @@ function LearnWithKai({ onBack }) {
               <button
                 className="send-btn"
                 onClick={handleSendMessage}
-                disabled={!inputValue.trim()}
+                disabled={!inputValue.trim() || isLoading}
               >
                 <Send size={20} />
               </button>
@@ -159,6 +197,16 @@ function LearnWithKai({ onBack }) {
               <span className="topic-tag">Databases</span>
               <span className="topic-tag">DevTools</span>
             </div>
+          </div>
+
+          <div className="sidebar-card">
+            <h3>📊 Your Stats</h3>
+            <ul>
+              <li><strong>{state.userProgress.totalXP}</strong> Total XP</li>
+              <li><strong>{state.userProgress.dayStreak}</strong> Day Streak 🔥</li>
+              <li><strong>{state.userProgress.level}</strong> Level</li>
+              <li><strong>{state.userProgress.badges}</strong> Badges 🏆</li>
+            </ul>
           </div>
         </aside>
       </main>
