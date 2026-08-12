@@ -106,11 +106,13 @@ async function saveConversation(
 // HELPER: MARK LESSON COMPLETE
 // ============================================
 
+// xpAward defaults to environment LESSON_XP_DEFAULT or 5
 async function markLessonComplete(
   userId,
   courseId,
   lessonId,
-  summary
+  summary,
+  xpAward = Number(process.env.LESSON_XP_DEFAULT) || 5
 ) {
   try {
     const user = await User.findById(userId);
@@ -132,14 +134,16 @@ async function markLessonComplete(
     // Update course progress
     let courseProgress =
       user.courseProgress.find(
-        (cp) => cp.courseId === courseId
+        (cp) => String(cp.courseId) === String(courseId)
       );
 
     if (!courseProgress) {
       courseProgress = {
         courseId,
         lessonsCompleted: 0,
+        totalLessons: 0,
         completedLessonIds: [],
+        lastLessonIndex: 0,
         lastAccessedAt: new Date(),
       };
 
@@ -157,7 +161,7 @@ async function markLessonComplete(
       );
       courseProgress.lessonsCompleted += 1;
       user.completedLessons += 1;
-      user.xp += 100; // Award XP
+      user.xp += xpAward; // Award configurable XP
     }
 
     courseProgress.lastAccessedAt = new Date();
@@ -172,6 +176,84 @@ async function markLessonComplete(
     return null;
   }
 }
+
+// ============================================
+// START A COURSE FOR A USER
+// POST /api/kai/courses/:courseId/start
+// Body: { userId, courseTitle, totalLessons }
+// ============================================
+
+router.post("/courses/:courseId/start", async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { userId, courseTitle, totalLessons = 0 } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "userId required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    let cp = user.courseProgress.find((p) => String(p.courseId) === String(courseId));
+    if (!cp) {
+      cp = {
+        courseId,
+        courseTitle: courseTitle || "",
+        lessonsCompleted: 0,
+        totalLessons: totalLessons,
+        lastLessonIndex: 0,
+        completedLessonIds: [],
+        lastAccessedAt: new Date(),
+      };
+
+      user.courseProgress.push(cp);
+    }
+
+    user.currentCourse = { id: courseId, title: courseTitle || "" };
+    user.currentLesson = { id: null, title: null, index: 0, completed: false };
+
+    await user.save();
+
+    return res.json({ success: true, courseProgress: cp, user: { id: user._id, xp: user.xp, level: user.level } });
+  } catch (err) {
+    console.error("Error starting course:", err);
+    return res.status(500).json({ success: false, message: "Failed to start course" });
+  }
+});
+
+// ============================================
+// EXPLICIT LESSON COMPLETE ENDPOINT
+// POST /api/kai/lesson/complete
+// Body: { userId, courseId, lessonId, summary, xpAward }
+// ============================================
+
+router.post("/lesson/complete", async (req, res) => {
+  try {
+    const { userId, courseId, lessonId, summary = "", xpAward } = req.body;
+
+    if (!userId || !courseId || !lessonId) {
+      return res.status(400).json({ success: false, message: "userId, courseId and lessonId are required" });
+    }
+
+    const awardedXP = typeof xpAward === 'number' ? xpAward : Number(process.env.LESSON_XP_DEFAULT) || 5;
+
+    const updatedUser = await markLessonComplete(userId, courseId, lessonId, summary, awardedXP);
+
+    if (!updatedUser) {
+      return res.status(500).json({ success: false, message: "Could not mark lesson complete" });
+    }
+
+    const cp = updatedUser.courseProgress.find((p) => String(p.courseId) === String(courseId)) || null;
+
+    return res.json({ success: true, user: { id: updatedUser._id, xp: updatedUser.xp, level: updatedUser.level, completedLessons: updatedUser.completedLessons }, courseProgress: cp });
+  } catch (err) {
+    console.error("Error in lesson complete endpoint:", err);
+    return res.status(500).json({ success: false, message: "Failed to complete lesson" });
+  }
+});
 
 // ============================================
 // GET USER PROGRESS
@@ -399,11 +481,10 @@ TEACHING RULES:
 13. If the learner is confused, explain the concept again using a simpler example.
 14. Connect new concepts to things the learner already understands.
 15. Explain what is happening behind the scenes when useful.
-16. Connect programming concepts to real-world development.
-17. Teach one important concept at a time.
-18. Do not dump the entire lesson into one response.
-19. Use the lesson information provided to guide what you teach.
-20. Continue naturally from the conversation history.
+16. Teach one important concept at a time.
+17. Do not dump the entire lesson into one response.
+18. Use the lesson information provided to guide what you teach.
+19. Continue naturally from the conversation history.
 
 LESSON COMPLETION:
 
