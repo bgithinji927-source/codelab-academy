@@ -1,0 +1,332 @@
+// Store for managing user data
+const createStore = () => {
+  const initialState = {
+    user: null,
+    courses: [
+      {
+        id: 1,
+        title: "HTML Fundamentals",
+        category: "Frontend",
+        progress: 100,
+        lessons: 15,
+        completed: 15,
+        xp: 300,
+        status: "completed",
+      },
+      {
+        id: 2,
+        title: "CSS & Styling",
+        category: "Frontend",
+        progress: 60,
+        lessons: 18,
+        completed: 11,
+        xp: 350,
+        status: "in-progress",
+      },
+      {
+        id: 3,
+        title: "JavaScript Basics",
+        category: "Frontend",
+        progress: 0,
+        lessons: 24,
+        completed: 0,
+        xp: 500,
+        status: "locked",
+      },
+    ],
+    userProgress: {
+      totalXP: 650,
+      dayStreak: 3,
+      coursesStarted: 2,
+      badges: 5,
+      level: 5,
+    },
+    dailyChallenges: [
+      {
+        id: 1,
+        title: "Build a Todo App",
+        description: "Create a simple todo application with add, delete, and mark complete functionality",
+        difficulty: "Intermediate",
+        xp: 150,
+        timeLimit: "1h",
+        completed: false,
+        requirements: [
+          "Create an input field to add new todos",
+          "Display all todos in a list",
+          "Add a delete button for each todo",
+          "Add a checkbox to mark todos as complete",
+          "Persist data using localStorage",
+        ],
+        starter: `// Create your todo app here
+const todoApp = {
+  todos: [],
+  addTodo(task) {
+    // Your code here
+  },
+  removeTodo(id) {
+    // Your code here
+  },
+  toggleComplete(id) {
+    // Your code here
+  }
+};`,
+      },
+      {
+        id: 2,
+        title: "Create a Weather App",
+        description: "Fetch weather data from an API and display it beautifully",
+        difficulty: "Intermediate",
+        xp: 200,
+        timeLimit: "2h",
+        completed: false,
+        requirements: [
+          "Use OpenWeather API or similar",
+          "Get user's location",
+          "Display temperature and weather",
+          "Show 5-day forecast",
+          "Add search functionality",
+        ],
+        starter: `// Weather app starter
+async function getWeather(city) {
+  try {
+    const response = await fetch(\`https://api.weather...\`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}`,
+      },
+    ],
+    learningPaths: {
+      frontend: {
+        title: "Frontend Developer",
+        description: "Master HTML, CSS, JavaScript, and React",
+        duration: "12 weeks",
+        difficulty: "Beginner → Advanced",
+        progress: 45,
+        modules: [
+          {
+            id: 1,
+            title: "HTML Fundamentals",
+            duration: "2 weeks",
+            lessons: 15,
+            xp: 300,
+            status: "completed",
+            progress: 100,
+            lessons_list: [
+              "HTML Structure & Semantics",
+              "Forms & Input Elements",
+              "Accessibility Best Practices",
+            ],
+          },
+          {
+            id: 2,
+            title: "CSS & Styling",
+            duration: "2 weeks",
+            lessons: 18,
+            xp: 350,
+            status: "in-progress",
+            progress: 60,
+            lessons_list: [
+              "CSS Selectors & Box Model",
+              "Flexbox & Grid Layouts",
+              "Responsive Design",
+            ],
+          },
+          {
+            id: 3,
+            title: "JavaScript Basics",
+            duration: "3 weeks",
+            lessons: 24,
+            xp: 500,
+            status: "locked",
+            progress: 0,
+            lessons_list: [
+              "Variables & Data Types",
+              "Functions & Scope",
+              "DOM Manipulation",
+            ],
+          },
+          {
+            id: 4,
+            title: "React Fundamentals",
+            duration: "3 weeks",
+            lessons: 20,
+            xp: 450,
+            status: "locked",
+            progress: 0,
+            lessons_list: [
+              "Components & JSX",
+              "State & Props",
+              "Hooks & Side Effects",
+            ],
+          },
+          {
+            id: 5,
+            title: "Advanced React",
+            duration: "2 weeks",
+            lessons: 16,
+            xp: 400,
+            status: "locked",
+            progress: 0,
+            lessons_list: [
+              "Context API",
+              "Performance Optimization",
+              "Testing Components",
+            ],
+          },
+        ],
+      },
+      backend: {
+        title: "Backend Developer",
+        description: "Learn Node.js, Express, and databases",
+        duration: "14 weeks",
+        difficulty: "Intermediate → Advanced",
+        progress: 0,
+        modules: [
+          {
+            id: 1,
+            title: "Node.js Basics",
+            duration: "2 weeks",
+            lessons: 14,
+            xp: 300,
+            status: "locked",
+            progress: 0,
+            lessons_list: [
+              "Node.js Runtime",
+              "NPM & Packages",
+              "Async Programming",
+            ],
+          },
+          {
+            id: 2,
+            title: "Express Framework",
+            duration: "3 weeks",
+            lessons: 20,
+            xp: 400,
+            status: "locked",
+            progress: 0,
+            lessons_list: [
+              "Routing & Middleware",
+              "REST APIs",
+              "Error Handling",
+            ],
+          },
+          {
+            id: 3,
+            title: "Databases",
+            duration: "3 weeks",
+            lessons: 18,
+            xp: 380,
+            status: "locked",
+            progress: 0,
+            lessons_list: [
+              "MongoDB & Mongoose",
+              "SQL Basics",
+              "Database Design",
+            ],
+          },
+        ],
+      },
+      fullstack: {
+        title: "Full Stack Developer",
+        description: "Combine frontend and backend skills",
+        duration: "20 weeks",
+        difficulty: "Advanced",
+        progress: 0,
+        modules: [],
+      },
+    },
+    kaiConversations: [
+      {
+        id: 1,
+        type: "kai",
+        text: "Hi there! 👋 I'm Kai, your AI instructor. What would you like to learn today? I can help you with concepts, code problems, debugging, or project guidance.",
+        timestamp: new Date(),
+      },
+    ],
+  };
+
+  // Store in localStorage
+  const save = () => {
+    localStorage.setItem("codelabStore", JSON.stringify(initialState));
+  };
+
+  const load = () => {
+    try {
+      const stored = localStorage.getItem("codelabStore");
+      if (stored) {
+        Object.assign(initialState, JSON.parse(stored));
+      }
+    } catch (error) {
+      console.error("Could not load store:", error);
+    }
+  };
+
+  const getState = () => initialState;
+
+  const updateUserProgress = (updates) => {
+    initialState.userProgress = { ...initialState.userProgress, ...updates };
+    save();
+  };
+
+  const completeDailyChallenge = (challengeId) => {
+    const challenge = initialState.dailyChallenges.find(c => c.id === challengeId);
+    if (challenge) {
+      challenge.completed = true;
+      initialState.userProgress.totalXP += challenge.xp;
+      save();
+    }
+  };
+
+  const addKaiMessage = (text, type = "user") => {
+    initialState.kaiConversations.push({
+      id: initialState.kaiConversations.length + 1,
+      type,
+      text,
+      timestamp: new Date(),
+    });
+    save();
+  };
+
+  const updateModuleProgress = (pathKey, moduleId, progress) => {
+    const module = initialState.learningPaths[pathKey].modules.find(m => m.id === moduleId);
+    if (module) {
+      module.progress = progress;
+      if (progress === 100) {
+        module.status = "completed";
+        initialState.userProgress.totalXP += module.xp;
+      }
+      save();
+    }
+  };
+
+  const completeLesson = (courseId) => {
+    const course = initialState.courses.find(c => c.id === courseId);
+    if (course && course.completed < course.lessons) {
+      course.completed += 1;
+      course.progress = Math.round((course.completed / course.lessons) * 100);
+      if (course.completed === course.lessons) {
+        course.status = "completed";
+        initialState.userProgress.totalXP += course.xp;
+      }
+      save();
+    }
+  };
+
+  load();
+
+  return {
+    getState,
+    save,
+    load,
+    updateUserProgress,
+    completeDailyChallenge,
+    addKaiMessage,
+    updateModuleProgress,
+    completeLesson,
+  };
+};
+
+export default createStore;
