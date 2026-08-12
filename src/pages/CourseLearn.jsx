@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -7,6 +7,9 @@ import {
   Code2,
   UserRound,
   Send,
+  Sparkles,
+  CheckCircle2,
+  GraduationCap,
 } from "lucide-react";
 
 import "./CourseLearn.css";
@@ -18,7 +21,28 @@ function CourseLearn({ course, onBack }) {
   const [displayedKaiText, setDisplayedKaiText] = useState("");
   const [lesson, setLesson] = useState(null);
 
+  const typingTimerRef = useRef(null);
+
   const courseTitle = course?.title || "Programming";
+
+  // ============================================
+  // CLEAN KAI RESPONSE
+  // ============================================
+
+  const cleanKaiResponse = (value) => {
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    let text = String(value);
+
+    // Prevent the UI from displaying accidental
+    // "undefined" or "null" from the API.
+    text = text.replace(/\s*undefined\s*$/i, "");
+    text = text.replace(/\s*null\s*$/i, "");
+
+    return text.trim();
+  };
 
   // ============================================
   // LOAD FIRST LESSON
@@ -63,29 +87,48 @@ function CourseLearn({ course, onBack }) {
   }, [course?.id]);
 
   // ============================================
+  // STOP TYPING ANIMATION
+  // ============================================
+
+  const stopTyping = () => {
+    if (typingTimerRef.current) {
+      clearInterval(typingTimerRef.current);
+      typingTimerRef.current = null;
+    }
+
+    setIsKaiTyping(false);
+  };
+
+  // ============================================
   // TYPE KAI RESPONSE
   // ============================================
 
   const typeKaiMessage = (text) => {
+    stopTyping();
+
+    const cleanText = cleanKaiResponse(text);
+
     setDisplayedKaiText("");
     setIsKaiTyping(true);
 
     let index = 0;
 
-    const timer = setInterval(() => {
-      if (index < text.length) {
-        setDisplayedKaiText((previous) => {
-          return previous + text[index];
-        });
-
-        index += 1;
-      } else {
-        clearInterval(timer);
+    typingTimerRef.current = setInterval(() => {
+      if (index >= cleanText.length) {
+        clearInterval(typingTimerRef.current);
+        typingTimerRef.current = null;
         setIsKaiTyping(false);
+        return;
       }
-    }, 18);
 
-    return () => clearInterval(timer);
+      const character = cleanText[index];
+
+      setDisplayedKaiText((previous) => {
+        return previous + character;
+      });
+
+      index += 1;
+    }, 15);
   };
 
   // ============================================
@@ -97,32 +140,30 @@ function CourseLearn({ course, onBack }) {
     conversation = [],
   } = {}) => {
     try {
-      setIsKaiTyping(true);
+      stopTyping();
       setDisplayedKaiText("");
+      setIsKaiTyping(true);
 
-      const response = await fetch(
-        "/api/kai",
-        {
-          method: "POST",
+      const response = await fetch("/api/kai", {
+        method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          course: {
+            ...course,
+            title: courseTitle,
           },
 
-          body: JSON.stringify({
-            course: {
-              ...course,
-              title: courseTitle,
-            },
+          lesson,
 
-            lesson,
+          learnerMessage,
 
-            learnerMessage,
-
-            messages: conversation,
-          }),
-        }
-      );
+          messages: conversation,
+        }),
+      });
 
       const data = await response.json();
 
@@ -135,8 +176,9 @@ function CourseLearn({ course, onBack }) {
         );
       }
 
-      // The backend returns the assistant text as "reply".
-      const kaiReply = data.reply || "";
+      const kaiReply = cleanKaiResponse(
+        data.reply
+      );
 
       if (!kaiReply) {
         throw new Error(
@@ -176,7 +218,7 @@ function CourseLearn({ course, onBack }) {
   };
 
   // ============================================
-  // START KAI
+  // START LESSON
   // ============================================
 
   useEffect(() => {
@@ -186,6 +228,7 @@ function CourseLearn({ course, onBack }) {
 
     async function startKai() {
       setMessages([]);
+      setAnswer("");
       setDisplayedKaiText("");
 
       if (cancelled) return;
@@ -194,17 +237,27 @@ function CourseLearn({ course, onBack }) {
         learnerMessage: `
 Start teaching me this lesson.
 
-Introduce yourself as Kai.
+You are Kai, my personal AI instructor.
 
-Start with the first important concept.
+Teach me this lesson step by step instead of giving me the whole lesson at once.
 
-Do not teach the entire lesson at once.
+Start by:
+1. Introducing yourself briefly.
+2. Explaining the first important concept.
+3. Giving a practical example.
+4. Showing code when useful using proper Markdown code fences.
+5. Explaining the code clearly.
+6. Checking my understanding with one simple question.
 
-Teach conversationally.
+Teach deeply but do not overwhelm me.
 
-Explain the concept simply.
+Do not simply dump the lesson content.
 
-Finish by asking me a simple question so I can participate.
+Adapt your explanation to my answers.
+
+Never output the word "undefined" unless you are specifically explaining what the JavaScript value undefined means.
+
+Keep the conversation natural and focused on learning.
         `.trim(),
 
         conversation: [],
@@ -215,9 +268,10 @@ Finish by asking me a simple question so I can participate.
 
     return () => {
       cancelled = true;
+      stopTyping();
     };
 
-    // We intentionally only start when the lesson changes.
+    // We intentionally restart when the lesson changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson]);
 
@@ -242,7 +296,6 @@ Finish by asking me a simple question so I can participate.
       learnerMessage,
     ];
 
-    // Show learner message immediately
     setMessages((previous) => [
       ...previous,
       learnerMessage,
@@ -254,6 +307,254 @@ Finish by asking me a simple question so I can participate.
       learnerMessage: trimmedAnswer,
       conversation,
     });
+  };
+
+  // ============================================
+  // INLINE MARKDOWN
+  // ============================================
+
+  const renderInlineMarkdown = (text) => {
+    const parts = String(text).split(
+      /(`[^`]+`|\*\*[^*]+\*\*)/g
+    );
+
+    return parts.map((part, index) => {
+      if (
+        part.startsWith("`") &&
+        part.endsWith("`")
+      ) {
+        return (
+          <code
+            key={index}
+            className="kai-inline-code"
+          >
+            {part.slice(1, -1)}
+          </code>
+        );
+      }
+
+      if (
+        part.startsWith("**") &&
+        part.endsWith("**")
+      ) {
+        return (
+          <strong key={index}>
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+
+      return (
+        <span key={index}>
+          {part}
+        </span>
+      );
+    });
+  };
+
+  // ============================================
+  // MARKDOWN RENDERER
+  // ============================================
+
+  const renderMarkdown = (content) => {
+    const text = cleanKaiResponse(content);
+
+    if (!text) {
+      return null;
+    }
+
+    const lines = text.split("\n");
+    const elements = [];
+
+    let insideCodeBlock = false;
+    let codeLanguage = "code";
+    let codeLines = [];
+
+    const addCodeBlock = (key) => {
+      if (!codeLines.length) {
+        return;
+      }
+
+      elements.push(
+        <div
+          className="kai-code-wrapper"
+          key={`code-${key}`}
+        >
+          <div className="kai-code-header">
+            <div className="kai-code-title">
+              <Code2 size={13} />
+
+              <span>
+                {codeLanguage || "code"}
+              </span>
+            </div>
+
+            <span className="kai-code-label">
+              Example
+            </span>
+          </div>
+
+          <pre className="kai-code-block">
+            <code>
+              {codeLines.join("\n")}
+            </code>
+          </pre>
+        </div>
+      );
+
+      codeLines = [];
+      codeLanguage = "code";
+    };
+
+    lines.forEach((line, index) => {
+      const trimmed = line.trim();
+
+      // Markdown code fence
+      if (trimmed.startsWith("```")) {
+        if (!insideCodeBlock) {
+          insideCodeBlock = true;
+
+          codeLanguage =
+            trimmed
+              .replace(/^```/, "")
+              .trim() || "code";
+        } else {
+          insideCodeBlock = false;
+          addCodeBlock(index);
+        }
+
+        return;
+      }
+
+      if (insideCodeBlock) {
+        codeLines.push(line);
+        return;
+      }
+
+      // Empty line
+      if (!trimmed) {
+        elements.push(
+          <div
+            className="kai-message-spacer"
+            key={`space-${index}`}
+          />
+        );
+
+        return;
+      }
+
+      // Heading 3
+      if (trimmed.startsWith("### ")) {
+        elements.push(
+          <h4 key={index}>
+            {renderInlineMarkdown(
+              trimmed.slice(4)
+            )}
+          </h4>
+        );
+
+        return;
+      }
+
+      // Heading 2
+      if (trimmed.startsWith("## ")) {
+        elements.push(
+          <h3 key={index}>
+            {renderInlineMarkdown(
+              trimmed.slice(3)
+            )}
+          </h3>
+        );
+
+        return;
+      }
+
+      // Heading 1
+      if (trimmed.startsWith("# ")) {
+        elements.push(
+          <h2 key={index}>
+            {renderInlineMarkdown(
+              trimmed.slice(2)
+            )}
+          </h2>
+        );
+
+        return;
+      }
+
+      // Bullet
+      if (
+        trimmed.startsWith("- ") ||
+        trimmed.startsWith("* ")
+      ) {
+        elements.push(
+          <div
+            className="kai-list-item"
+            key={index}
+          >
+            <span className="kai-list-dot">
+              •
+            </span>
+
+            <span>
+              {renderInlineMarkdown(
+                trimmed.slice(2)
+              )}
+            </span>
+          </div>
+        );
+
+        return;
+      }
+
+      // Numbered list
+      const numbered =
+        trimmed.match(
+          /^(\d+)\.\s+(.*)$/
+        );
+
+      if (numbered) {
+        elements.push(
+          <div
+            className="kai-list-item kai-numbered"
+            key={index}
+          >
+            <span className="kai-number">
+              {numbered[1]}
+            </span>
+
+            <span>
+              {renderInlineMarkdown(
+                numbered[2]
+              )}
+            </span>
+          </div>
+        );
+
+        return;
+      }
+
+      // Normal paragraph
+      elements.push(
+        <p key={index}>
+          {renderInlineMarkdown(trimmed)}
+
+          {isKaiTyping &&
+            index === lines.length - 1 && (
+              <span className="typing-cursor">
+                |
+              </span>
+            )}
+        </p>
+      );
+    });
+
+    // Protect against an unfinished code block.
+    if (insideCodeBlock) {
+      addCodeBlock("unfinished");
+    }
+
+    return elements;
   };
 
   // ============================================
@@ -291,46 +592,26 @@ Finish by asking me a simple question so I can participate.
       >
         <div className="chat-content">
 
+          <div className="kai-message-header">
+            <div className="chat-avatar kai-avatar-small">
+              <Bot size={18} />
+            </div>
+
+            <div className="chat-name">
+              <strong>Kai</strong>
+              <span>AI Instructor</span>
+            </div>
+
+            <div className="kai-online">
+              <span />
+              Online
+            </div>
+          </div>
+
           <div className="chat-bubble kai-bubble">
-
-            {/* KAI ICON AT TOP */}
-            <div className="kai-message-header">
-
-              <div className="chat-avatar kai-avatar-small">
-                <Bot size={19} />
-              </div>
-
-              <div className="chat-name">
-                Kai
-                <span>AI Instructor</span>
-              </div>
-
-            </div>
-
-            {/* KAI MESSAGE */}
             <div className="kai-message-text">
-
-              {text
-                .split("\n")
-                .map((line, index) => (
-                  <p key={index}>
-                    {line}
-
-                    {isLatest &&
-                      isKaiTyping &&
-                      index ===
-                        text.split("\n")
-                          .length -
-                          1 && (
-                        <span className="typing-cursor">
-                          |
-                        </span>
-                      )}
-                  </p>
-                ))}
-
+              {renderMarkdown(text)}
             </div>
-
           </div>
 
         </div>
@@ -351,41 +632,32 @@ Finish by asking me a simple question so I can participate.
         className="chat-row learner-row"
         key={`learner-${messageIndex}`}
       >
+        <div className="chat-content learner-content">
 
-        <div className="chat-content">
-
-          <div className="chat-bubble learner-bubble">
-
-            {/* LEARNER ICON AT TOP */}
-            <div className="learner-message-header">
-
-              <div className="chat-name learner-name">
-                You
-                <span>Learner</span>
-              </div>
-
-              <div className="chat-avatar learner-avatar">
-                <UserRound size={19} />
-              </div>
-
+          <div className="learner-message-header">
+            <div className="chat-name learner-name">
+              <strong>You</strong>
+              <span>Learner</span>
             </div>
 
-            <div className="learner-message-text">
+            <div className="chat-avatar learner-avatar">
+              <UserRound size={18} />
+            </div>
+          </div>
 
-              {content
+          <div className="chat-bubble learner-bubble">
+            <div className="learner-message-text">
+              {String(content)
                 .split("\n")
                 .map((line, index) => (
                   <p key={index}>
-                    {line}
+                    {line || "\u00A0"}
                   </p>
                 ))}
-
             </div>
-
           </div>
 
         </div>
-
       </div>
     );
   };
@@ -409,56 +681,93 @@ Finish by asking me a simple question so I can participate.
           onClick={onBack}
         >
           <ArrowLeft size={17} />
-          Courses
+          <span>Courses</span>
         </button>
 
         <div className="learn-course-title">
           <BookOpen size={18} />
-          {courseTitle}
+          <span>{courseTitle}</span>
         </div>
 
         <div className="learn-progress">
-          Lesson 1
+          <span className="progress-label">
+            Lesson 1
+          </span>
+
+          <div className="progress-track">
+            <div
+              className="progress-fill"
+              style={{ width: "10%" }}
+            />
+          </div>
+
+          <span className="progress-percent">
+            10%
+          </span>
         </div>
 
       </header>
 
       {/* ========================================
-          CONVERSATION
+          MAIN
       ======================================== */}
 
       <main className="conversation-container">
 
-        {/* INTRO */}
+        {/* ======================================
+            LESSON INTRO
+        ====================================== */}
 
-        <div className="conversation-intro">
+        <section className="conversation-intro">
 
-          <span className="lesson-label">
-            <Code2 size={15} />
-            LESSON 1
-          </span>
+          <div className="intro-main">
 
-          <h1>
-            {lesson?.title ||
-              `Introduction to ${courseTitle}`}
-          </h1>
+            <div className="lesson-label">
+              <Code2 size={15} />
+              <span>LESSON 1</span>
+            </div>
 
-          <p>
-            Learn through an interactive
-            conversation with Kai.
-          </p>
+            <h1>
+              {lesson?.title ||
+                `Introduction to ${courseTitle}`}
+            </h1>
 
-        </div>
+            <p>
+              Learn step by step with Kai,
+              your AI programming instructor.
+            </p>
+
+          </div>
+
+          <div className="intro-card">
+
+            <div className="intro-card-icon">
+              <GraduationCap size={20} />
+            </div>
+
+            <div>
+              <strong>
+                Interactive lesson
+              </strong>
+
+              <span>
+                Ask questions and test your
+                understanding as you learn.
+              </span>
+            </div>
+
+          </div>
+
+        </section>
 
         {/* ======================================
             CHAT
         ====================================== */}
 
-        <div className="conversation-messages">
+        <section className="conversation-messages">
 
           {messages.map(
             (message, index) => {
-
               if (
                 message.role ===
                 "assistant"
@@ -485,28 +794,30 @@ Finish by asking me a simple question so I can participate.
           {/* KAI THINKING */}
 
           {isKaiTyping &&
-            displayedKaiText.length ===
-              0 && (
+            displayedKaiText.length === 0 && (
               <div className="chat-row kai-row">
 
                 <div className="chat-content">
 
-                  <div className="chat-bubble kai-bubble">
-
-                    <div className="kai-message-header">
-
-                      <div className="chat-avatar kai-avatar-small">
-                        <Bot size={19} />
-                      </div>
-
-                      <div className="chat-name">
-                        Kai
-                        <span>
-                          AI Instructor
-                        </span>
-                      </div>
-
+                  <div className="kai-message-header">
+                    <div className="chat-avatar kai-avatar-small">
+                      <Bot size={18} />
                     </div>
+
+                    <div className="chat-name">
+                      <strong>Kai</strong>
+                      <span>
+                        AI Instructor
+                      </span>
+                    </div>
+
+                    <div className="kai-online">
+                      <span />
+                      Thinking
+                    </div>
+                  </div>
+
+                  <div className="chat-bubble kai-bubble">
 
                     <div className="kai-thinking">
                       <span />
@@ -521,7 +832,7 @@ Finish by asking me a simple question so I can participate.
               </div>
             )}
 
-        </div>
+        </section>
 
         {/* ======================================
             INPUT
@@ -530,7 +841,7 @@ Finish by asking me a simple question so I can participate.
         <div className="learner-input-area">
 
           <div className="input-avatar">
-            <UserRound size={19} />
+            <UserRound size={18} />
           </div>
 
           <input
@@ -552,10 +863,11 @@ Finish by asking me a simple question so I can participate.
             }}
             placeholder={
               isKaiTyping
-                ? "Kai is teaching..."
-                : "Ask Kai something..."
+                ? "Kai is thinking..."
+                : "Answer Kai or ask a question..."
             }
             disabled={isKaiTyping}
+            autoComplete="off"
           />
 
           <button
@@ -565,14 +877,19 @@ Finish by asking me a simple question so I can participate.
               isKaiTyping ||
               !answer.trim()
             }
+            aria-label="Send message"
           >
-            <Send size={18} />
+            <Send size={17} />
           </button>
 
         </div>
 
+        <div className="input-hint">
+          Press <kbd>Enter</kbd> to send
+        </div>
+
         {/* ======================================
-            ACTIONS
+            LESSON ACTIONS
         ====================================== */}
 
         <div className="lesson-actions">
@@ -582,22 +899,31 @@ Finish by asking me a simple question so I can participate.
             className="back-lesson"
             onClick={onBack}
           >
-            <ArrowLeft size={17} />
+            <ArrowLeft size={16} />
             Back to Courses
           </button>
 
-          <button
-            type="button"
-            className="next-lesson"
-            onClick={() => {
-              alert(
-                "Next lesson will be added next."
-              );
-            }}
-          >
-            Continue to Next Lesson
-            <ArrowRight size={17} />
-          </button>
+          <div className="lesson-actions-right">
+
+            <div className="lesson-status">
+              <CheckCircle2 size={16} />
+              <span>Lesson in progress</span>
+            </div>
+
+            <button
+              type="button"
+              className="next-lesson"
+              onClick={() => {
+                alert(
+                  "Next lesson will be added next."
+                );
+              }}
+            >
+              Continue to Next Lesson
+              <ArrowRight size={17} />
+            </button>
+
+          </div>
 
         </div>
 
