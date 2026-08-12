@@ -16,7 +16,7 @@
 
 /* ================================
    COURSES NAVBAR
-================================ */
+=============================== */
 
 .courses-navbar {
   width: 100%;
@@ -93,7 +93,7 @@
 
 /* ================================
    HERO
-================================ */
+=============================== */
 
 .courses-hero {
   width: 100%;
@@ -150,7 +150,7 @@
 
 /* ================================
    MAIN
-================================ */
+=============================== */
 
 .courses-container {
   width: 100%;
@@ -164,7 +164,7 @@
 
 /* ================================
    CATEGORY
-================================ */
+=============================== */
 
 .course-category {
   width: 100%;
@@ -236,7 +236,7 @@
 
 /* ================================
    COURSE GRID
-================================ */
+=============================== */
 
 .course-grid {
   width: 100%;
@@ -255,7 +255,7 @@
 
 /* ================================
    COURSE CARD
-================================ */
+=============================== */
 
 .course-card {
   width: 100%;
@@ -389,7 +389,7 @@
 
 /* ================================
    EMPTY CATEGORY
-================================ */
+=============================== */
 
 .empty-category {
   width: 100%;
@@ -417,7 +417,7 @@
 
 /* ================================
    RESPONSIVE
-================================ */
+=============================== */
 
 @media (max-width: 900px) {
   .course-grid {
@@ -468,5 +468,100 @@
 
   .courses-back-button {
     padding: 6px 9px;
+  }
+}
+
+
+/* =========================================
+   FULL-BLEED OVERRIDES FOR COURSE LEARN / KAI
+   Removes empty side margins so the page uses full width
+========================================= */
+
+/* NOTE: These overrides are intentionally scoped to selectors used by
+   the CourseLearn React component (learn-page, learn-navbar, conversation-*)
+   so they won't affect the rest of the site. */
+
+/* Make the learn-page full-width */
+.learn-page {
+  margin: 0; /* remove outer spacing from body or layout */
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Stretch the sticky navbar to full width */
+.learn-navbar {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Make the main conversation container full-bleed while keeping internal padding for readability */
+.conversation-container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 auto;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  box-sizing: border-box;
+}
+
+/* Reduce the intro spacing so it lines up with page edges */
+.conversation-intro {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Allow intro card to shrink on very wide screens */
+.intro-card {
+  width: auto;
+}
+
+/* Ensure chat content stretches to available space */
+.chat-content {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.learner-content {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Let code blocks and message blocks use the page padding rather than an extra centered column */
+.kai-code-wrapper,
+.kai-message-text,
+.learner-message-text {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Images and media should fill available width */
+.conversation-messages img,
+.conversation-messages video,
+.conversation-messages iframe {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Tweak responsive paddings for tablet/mobile */
+@media (max-width: 850px) {
+  .conversation-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .conversation-intro {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .conversation-container {
+    padding-left: 11px !important;
+    padding-right: 11px !important;
   }
 }
