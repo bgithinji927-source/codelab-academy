@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Dashboard.css";
 
 import {
@@ -21,10 +21,91 @@ import createStore from "./data/store";
 
 function Dashboard({ user, onLogout, onViewCourses }) {
   const [activeView, setActiveView] = useState("dashboard");
-  
-  // Initialize store and get current state
-  const store = createStore();
-  const state = store.getState();
+
+  // Initialize store and load current state into local component state
+  const baseStore = createStore();
+  const [state, setState] = useState(() => baseStore.getState());
+
+  // When a user is present, try to load their real progress from the server
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadUserProgress() {
+      if (!user?.id) {
+        // No authenticated user — reset to store defaults
+        setState(baseStore.getState());
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/kai/progress/${user.id}`);
+        const data = await res.json();
+
+        if (!mounted) return;
+
+        if (res.ok && data.success && data.user) {
+          const userProgressData = data.user;
+
+          // Merge server user progress into the frontend course list.
+          const mergedCourses = baseStore.getState().courses.map((c) => {
+            const cp = (userProgressData.courseProgress || []).find(
+              (p) => String(p.courseId) === String(c.id) || Number(p.courseId) === c.id
+            );
+
+            if (cp) {
+              const total = cp.totalLessons || c.lessons || 0;
+              const lessonsCompleted = cp.lessonsCompleted || 0;
+              const progressPercent = total ? Math.round((lessonsCompleted / total) * 100) : (cp.progress || 0);
+
+              return {
+                ...c,
+                progress: progressPercent,
+                completed: lessonsCompleted,
+                status: lessonsCompleted > 0 ? (progressPercent === 100 ? "completed" : "in-progress") : "locked",
+              };
+            }
+
+            // No progress record for this user -> start at zero for new users
+            return { ...c, progress: 0, completed: 0, status: c.status === "completed" ? "locked" : c.status };
+          });
+
+          const newState = {
+            ...baseStore.getState(),
+            courses: mergedCourses,
+            userProgress: {
+              ...baseStore.getState().userProgress,
+              totalXP: userProgressData.xp || baseStore.getState().userProgress.totalXP,
+              completedLessons: userProgressData.completedLessons || 0,
+              level: userProgressData.level || baseStore.getState().userProgress.level,
+            },
+          };
+
+          setState(newState);
+          return;
+        }
+
+        // If server returned no data, fall back to store state but zero out progress to avoid seeded values
+        const zeroed = baseStore.getState();
+        zeroed.courses = zeroed.courses.map((c) => ({ ...c, progress: 0, completed: 0 }));
+        setState(zeroed);
+      } catch (err) {
+        console.error("Failed to load user progress:", err);
+
+        // On error, keep store defaults but avoid showing pre-populated progress for new users
+        const fallback = baseStore.getState();
+        if (!user) {
+          fallback.courses = fallback.courses.map((c) => ({ ...c, progress: 0, completed: 0 }));
+        }
+        setState(fallback);
+      }
+    }
+
+    loadUserProgress();
+
+    return () => {
+      mounted = false;
+    };
+  }, [user]);
 
   // Show Learn with Kai page
   if (activeView === "kai") {
@@ -42,8 +123,8 @@ function Dashboard({ user, onLogout, onViewCourses }) {
   }
 
   // Calculate stats from real data
-  const completedChallenges = state.dailyChallenges.filter(c => c.completed).length;
-  const inProgressCourses = state.courses.filter(c => c.status === "in-progress").length;
+  const completedChallenges = state.dailyChallenges.filter((c) => c.completed).length;
+  const inProgressCourses = state.courses.filter((c) => c.status === "in-progress").length;
 
   // Dashboard view
   return (
@@ -187,7 +268,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
 
           {inProgressCourses > 0 ? (
             <div className="courses-list">
-              {state.courses.filter(c => c.status === "in-progress").map(course => (
+              {state.courses.filter((c) => c.status === "in-progress").map((course) => (
                 <div key={course.id} className="course-item">
                   <div className="course-header">
                     <h3>{course.title}</h3>

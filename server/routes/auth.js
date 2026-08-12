@@ -29,10 +29,16 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Explicitly initialize progress fields to avoid seeded values leaking into new accounts
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
+      xp: 0,
+      level: 1,
+      completedLessons: 0,
+      courseProgress: [],
+      lessonSessions: [],
     });
 
     res.status(201).json({
@@ -44,6 +50,9 @@ router.post("/register", async (req, res) => {
         email: user.email,
         xp: user.xp,
         level: user.level,
+        completedLessons: user.completedLessons,
+        courseProgress: user.courseProgress || [],
+        lessonSessions: user.lessonSessions || [],
       },
     });
   } catch (error) {
@@ -97,6 +106,9 @@ router.post("/login", async (req, res) => {
         email: user.email,
         xp: user.xp,
         level: user.level,
+        completedLessons: user.completedLessons,
+        courseProgress: user.courseProgress || [],
+        lessonSessions: user.lessonSessions || [],
       },
     });
   } catch (error) {
