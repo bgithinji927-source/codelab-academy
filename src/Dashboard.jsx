@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./Dashboard.css";
 
 import {
@@ -16,9 +17,14 @@ import {
 import LearnWithKai from "./pages/LearnWithKai";
 import DailyChallenge from "./pages/DailyChallenge";
 import LearningRoadmap from "./pages/LearningRoadmap";
+import createStore from "./data/store";
 
 function Dashboard({ user, onLogout, onViewCourses }) {
-  const [activeView, setActiveView] = React.useState("dashboard");
+  const [activeView, setActiveView] = useState("dashboard");
+  
+  // Initialize store and get current state
+  const store = createStore();
+  const state = store.getState();
 
   // Show Learn with Kai page
   if (activeView === "kai") {
@@ -34,6 +40,10 @@ function Dashboard({ user, onLogout, onViewCourses }) {
   if (activeView === "roadmap") {
     return <LearningRoadmap onBack={() => setActiveView("dashboard")} />;
   }
+
+  // Calculate stats from real data
+  const completedChallenges = state.dailyChallenges.filter(c => c.completed).length;
+  const inProgressCourses = state.courses.filter(c => c.status === "in-progress").length;
 
   // Dashboard view
   return (
@@ -100,7 +110,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
 
         </section>
 
-        {/* STATS */}
+        {/* REAL STATS */}
         <section className="dashboard-stats">
 
           <div className="stat-card">
@@ -109,7 +119,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
             </span>
 
             <div>
-              <strong>0</strong>
+              <strong>{state.userProgress.dayStreak}</strong>
               <p>Day Streak</p>
             </div>
           </div>
@@ -120,7 +130,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
             </span>
 
             <div>
-              <strong>0 XP</strong>
+              <strong>{state.userProgress.totalXP} XP</strong>
               <p>Total XP</p>
             </div>
           </div>
@@ -131,7 +141,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
             </span>
 
             <div>
-              <strong>0</strong>
+              <strong>{state.userProgress.coursesStarted}</strong>
               <p>Courses Started</p>
             </div>
           </div>
@@ -142,7 +152,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
             </span>
 
             <div>
-              <strong>0</strong>
+              <strong>{state.userProgress.badges}</strong>
               <p>Badges</p>
             </div>
           </div>
@@ -175,34 +185,53 @@ function Dashboard({ user, onLogout, onViewCourses }) {
 
           </div>
 
-          <div className="empty-course">
-
-            <div className="empty-course-icon">
-              <BookOpen
-                size={42}
-                strokeWidth={1.8}
-              />
+          {inProgressCourses > 0 ? (
+            <div className="courses-list">
+              {state.courses.filter(c => c.status === "in-progress").map(course => (
+                <div key={course.id} className="course-item">
+                  <div className="course-header">
+                    <h3>{course.title}</h3>
+                    <span className="course-progress-text">{course.progress}%</span>
+                  </div>
+                  <div className="course-progress-bar">
+                    <div className="course-progress-fill" style={{ width: `${course.progress}%` }}></div>
+                  </div>
+                  <p className="course-meta">
+                    {course.completed}/{course.lessons} lessons • {course.category}
+                  </p>
+                </div>
+              ))}
             </div>
+          ) : (
+            <div className="empty-course">
 
-            <h3>
-              Your learning journey starts here
-            </h3>
+              <div className="empty-course-icon">
+                <BookOpen
+                  size={42}
+                  strokeWidth={1.8}
+                />
+              </div>
 
-            <p>
-              Choose a course and start building your skills.
-            </p>
+              <h3>
+                Your learning journey starts here
+              </h3>
 
-            {/* EXPLORE COURSES */}
-            <button
-              type="button"
-              className="start-learning"
-              onClick={onViewCourses}
-            >
-              Explore Courses
-              <ArrowRight size={17} />
-            </button>
+              <p>
+                Choose a course and start building your skills.
+              </p>
 
-          </div>
+              {/* EXPLORE COURSES */}
+              <button
+                type="button"
+                className="start-learning"
+                onClick={onViewCourses}
+              >
+                Explore Courses
+                <ArrowRight size={17} />
+              </button>
+
+            </div>
+          )}
 
         </section>
 
@@ -254,6 +283,9 @@ function Dashboard({ user, onLogout, onViewCourses }) {
 
             <p>
               Complete today's coding challenge and earn XP.
+              {completedChallenges > 0 && (
+                <span className="badge">{completedChallenges} completed</span>
+              )}
             </p>
 
             <button 
@@ -302,5 +334,4 @@ function Dashboard({ user, onLogout, onViewCourses }) {
   );
 }
 
-import React from "react";
 export default Dashboard;
