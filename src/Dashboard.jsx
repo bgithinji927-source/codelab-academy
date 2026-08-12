@@ -13,7 +13,29 @@ import {
   Hand,
 } from "lucide-react";
 
+import LearnWithKai from "./pages/LearnWithKai";
+import DailyChallenge from "./pages/DailyChallenge";
+import LearningRoadmap from "./pages/LearningRoadmap";
+
 function Dashboard({ user, onLogout, onViewCourses }) {
+  const [activeView, setActiveView] = React.useState("dashboard");
+
+  // Show Learn with Kai page
+  if (activeView === "kai") {
+    return <LearnWithKai onBack={() => setActiveView("dashboard")} />;
+  }
+
+  // Show Daily Challenge page
+  if (activeView === "challenge") {
+    return <DailyChallenge onBack={() => setActiveView("dashboard")} />;
+  }
+
+  // Show Learning Roadmap page
+  if (activeView === "roadmap") {
+    return <LearningRoadmap onBack={() => setActiveView("dashboard")} />;
+  }
+
+  // Dashboard view
   return (
     <div className="dashboard-page">
 
@@ -206,7 +228,10 @@ function Dashboard({ user, onLogout, onViewCourses }) {
               answer questions and guide you through coding.
             </p>
 
-            <button type="button">
+            <button 
+              type="button"
+              onClick={() => setActiveView("kai")}
+            >
               Talk to Kai
               <ArrowRight size={17} />
             </button>
@@ -231,7 +256,10 @@ function Dashboard({ user, onLogout, onViewCourses }) {
               Complete today's coding challenge and earn XP.
             </p>
 
-            <button type="button">
+            <button 
+              type="button"
+              onClick={() => setActiveView("challenge")}
+            >
               Start Challenge
               <ArrowRight size={17} />
             </button>
@@ -256,7 +284,10 @@ function Dashboard({ user, onLogout, onViewCourses }) {
               Follow a structured path from beginner to developer.
             </p>
 
-            <button type="button">
+            <button 
+              type="button"
+              onClick={() => setActiveView("roadmap")}
+            >
               View Roadmap
               <ArrowRight size={17} />
             </button>
@@ -271,4 +302,5 @@ function Dashboard({ user, onLogout, onViewCourses }) {
   );
 }
 
+import React from "react";
 export default Dashboard;
