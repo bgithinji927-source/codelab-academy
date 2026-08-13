@@ -1,71 +1,129 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ArrowLeft, Flame, Clock, Code, Trophy, CheckCircle2, Zap } from "lucide-react";
 import createStore from "../data/store";
 import "./DailyChallenge.css";
 
 function DailyChallenge({ onBack }) {
-  const store = createStore();
-  const state = store.getState();
-  
+  // create store once
+  const store = useMemo(() => createStore(), []);
+  const initial = store.getState();
+
+  // UI state synced from store
+  const [userProgress, setUserProgress] = useState(initial.userProgress);
+  const [dailyChallenges, setDailyChallenges] = useState(initial.dailyChallenges);
+  const [leaderboard, setLeaderboard] = useState(initial.leaderboard || []);
   const [selectedTab, setSelectedTab] = useState("challenge");
-  const [completed, setCompleted] = useState(false);
-  const [currentChallenge, setCurrentChallenge] = useState(state.dailyChallenges[0]);
-  const [timeLeft, setTimeLeft] = useState("23h 45m");
-  const [leaderboard, setLeaderboard] = useState([
-    { rank: 1, name: "Alex Chen", xp: 4250, badges: 12, completed: 28 },
-    { rank: 2, name: "Jordan Smith", xp: 3890, badges: 10, completed: 25 },
-    { rank: 3, name: "Casey Rivera", xp: 3650, badges: 9, completed: 23 },
-    { rank: 4, name: "Morgan Davis", xp: 3420, badges: 8, completed: 20 },
-    { rank: 5, name: "You", xp: state.userProgress.totalXP, badges: state.userProgress.badges, completed: state.dailyChallenges.filter(c => c.completed).length, isUser: true },
-  ]);
+  const [timeLeft, setTimeLeft] = useState(computeTimeToMidnight());
+  const [currentChallenge, setCurrentChallenge] = useState(selectCurrentChallenge(initial.dailyChallenges));
 
-  // Timer countdown effect
+  // completed local flag for UI (keeps in sync with store)
+  const [completed, setCompleted] = useState(() => {
+    const ch = selectCurrentChallenge(initial.dailyChallenges);
+    return !!(ch && ch.completed);
+  });
+
+  // helper: choose the next uncompleted challenge, otherwise pick by day rotation
+  function selectCurrentChallenge(challenges) {
+    if (!Array.isArray(challenges) || challenges.length === 0) return null;
+    const next = challenges.find((c) => !c.completed);
+    if (next) return next;
+    // rotate by date if all completed
+    const day = new Date().getDate();
+    return challenges[day % challenges.length];
+  }
+
+  // compute time until next midnight as "HHh MMm"
+  function computeTimeToMidnight() {
+    const now = new Date();
+    const next = new Date(now);
+    next.setHours(24, 0, 0, 0);
+    const diff = next - now;
+    const mins = Math.floor(diff / 60000);
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${h}h ${m}m`;
+  }
+
+  // refresh UI state from store (call after commit)
+  function refreshFromStore() {
+    const s = store.getState();
+    setUserProgress({ ...s.userProgress });
+    setDailyChallenges([...s.dailyChallenges]);
+    setLeaderboard([...s.leaderboard]);
+    const ch = selectCurrentChallenge(s.dailyChallenges);
+    setCurrentChallenge(ch);
+    setCompleted(!!(ch && ch.completed));
+  }
+
+  // Timer to update countdown every minute
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        const [hours, minutes] = prev.split("h ").join(" ").split("m")[0].split(" ");
-        let h = parseInt(hours);
-        let m = parseInt(minutes);
-        
-        m -= 1;
-        if (m < 0) {
-          m = 59;
-          h -= 1;
-        }
-        if (h < 0) {
-          h = 23;
-          m = 59;
-        }
-        
-        return `${h}h ${m}m`;
-      });
-    }, 60000); // Update every minute
-
-    return () => clearInterval(timer);
+    setTimeLeft(computeTimeToMidnight());
+    const id = setInterval(() => {
+      setTimeLeft(computeTimeToMidnight());
+    }, 60_000);
+    return () => clearInterval(id);
   }, []);
 
+  // make sure UI reflects store when component mounts
+  useEffect(() => {
+    refreshFromStore();
+    // also listen for storage events if multiple tabs may change the store
+    function onStorage(e) {
+      if (e.key === "codelabStore") refreshFromStore();
+    }
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []); // run once
+
   const handleCompleteChallenge = () => {
-    setCompleted(!completed);
-    
-    if (!completed) {
-      // Mark challenge as completed
-      store.completeDailyChallenge(currentChallenge.id);
-      
-      // Update leaderboard
-      const updatedLeaderboard = leaderboard.map(entry => {
-        if (entry.isUser) {
-          return {
-            ...entry,
-            xp: entry.xp + currentChallenge.xp,
-            completed: entry.completed + 1,
-          };
-        }
-        return entry;
-      });
-      
-      setLeaderboard(updatedLeaderboard.sort((a, b) => b.xp - a.xp).map((entry, idx) => ({ ...entry, rank: idx + 1 })));
+    if (!currentChallenge) return;
+    // Ask store to complete; store will guard double-award and update streak/xp
+    const success = store.completeDailyChallenge(currentChallenge.id);
+    if (success) {
+      // Update UI from store (store.save() was called inside)
+      refreshFromStore();
+      // show completion UI
+      setCompleted(true);
+    } else {
+      // If store returned false, it was already completed — resync UI
+      refreshFromStore();
+      setCompleted(true);
     }
   };
+
+  if (!currentChallenge) {
+    return (
+      <div className="challenge-page">
+        <header className="challenge-header">
+          <button className="challenge-back-btn" onClick={onBack}>
+            <ArrowLeft size={20} />
+            Back to Dashboard
+          </button>
+        </header>
+        <main className="challenge-main">
+          <div className="challenge-container">
+            <div className="challenge-content">
+              <div className="challenge-card">
+                <h2>No daily challenge available</h2>
+                <p>Check back tomorrow for a new challenge 🎯</p>
+              </div>
+            </div>
+            <aside className="challenge-sidebar">
+              <div className="info-card">
+                <h4>📊 Your Progress Today</h4>
+                <ul>
+                  <li><strong>Challenges Completed:</strong> {dailyChallenges.filter(c => c.completed).length}/{dailyChallenges.length}</li>
+                  <li><strong>Total XP Earned:</strong> {userProgress.totalXP}</li>
+                  <li><strong>Current Streak:</strong> {userProgress.dayStreak} days 🔥</li>
+                  <li><strong>Level:</strong> {userProgress.level}</li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="challenge-page">
@@ -140,9 +198,10 @@ function DailyChallenge({ onBack }) {
                     <button
                       className="submit-btn"
                       onClick={handleCompleteChallenge}
+                      disabled={completed}
                     >
                       <CheckCircle2 size={18} />
-                      {completed ? "Mark as Incomplete" : "Submit Solution"}
+                      {completed ? "Completed" : "Submit Solution"}
                     </button>
                     {completed && (
                       <div className="success-message">
@@ -180,15 +239,13 @@ function DailyChallenge({ onBack }) {
               <div className="leaderboard-list">
                 {leaderboard.map((entry) => (
                   <div
-                    key={entry.rank}
-                    className={`leaderboard-entry ${
-                      entry.isUser ? "user-entry" : ""
-                    }`}
+                    key={entry.rank + entry.name}
+                    className={`leaderboard-entry ${entry.isUser ? "user-entry" : ""}`}
                   >
                     <span className="rank">{entry.rank}</span>
                     <div className="entry-info">
                       <strong>{entry.name}</strong>
-                      <p>{entry.xp} XP • {entry.badges} Badges • {entry.completed} Completed</p>
+                      <p>{entry.xp} XP • {entry.badges ?? 0} Badges • {entry.completed ?? 0} Completed</p>
                     </div>
                   </div>
                 ))}
@@ -198,10 +255,10 @@ function DailyChallenge({ onBack }) {
             <div className="info-card">
               <h4>📊 Your Progress Today</h4>
               <ul>
-                <li><strong>Challenges Completed:</strong> {state.dailyChallenges.filter(c => c.completed).length}/{state.dailyChallenges.length}</li>
-                <li><strong>Total XP Earned:</strong> {state.userProgress.totalXP}</li>
-                <li><strong>Current Streak:</strong> {state.userProgress.dayStreak} days 🔥</li>
-                <li><strong>Level:</strong> {state.userProgress.level}</li>
+                <li><strong>Challenges Completed:</strong> {dailyChallenges.filter(c => c.completed).length}/{dailyChallenges.length}</li>
+                <li><strong>Total XP Earned:</strong> {userProgress.totalXP}</li>
+                <li><strong>Current Streak:</strong> {userProgress.dayStreak} days 🔥</li>
+                <li><strong>Level:</strong> {userProgress.level}</li>
               </ul>
             </div>
 
