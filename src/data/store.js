@@ -40,6 +40,8 @@ const createStore = () => {
       coursesStarted: 2,
       badges: 5,
       level: 5,
+      // Track last date when a daily challenge was completed to maintain streaks
+      lastDailyChallengeDate: null,
     },
     dailyChallenges: [
       {
@@ -89,7 +91,8 @@ const todoApp = {
         starter: `// Weather app starter
 async function getWeather(city) {
   try {
-    const response = await fetch(\`https://api.weather...\`);
+    const response = await fetch(`https://api.weather...
+`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -97,6 +100,16 @@ async function getWeather(city) {
   }
 }`,
       },
+    ],
+    // Leaderboard: simple persistent leaderboard for this single-user demo app.
+    // In a real app this would come from a backend with many users.
+    leaderboard: [
+      { rank: 1, name: "Alex Chen", xp: 4250, badges: 12, completed: 28 },
+      { rank: 2, name: "Jordan Smith", xp: 3890, badges: 10, completed: 25 },
+      { rank: 3, name: "Casey Rivera", xp: 3650, badges: 9, completed: 23 },
+      { rank: 4, name: "Morgan Davis", xp: 3420, badges: 8, completed: 20 },
+      // The "You" row will be kept in sync with userProgress and dailyChallenges
+      { rank: 5, name: "You", xp: 650, badges: 5, completed: 0, isUser: true },
     ],
     learningPaths: {
       frontend: {
@@ -258,6 +271,9 @@ async function getWeather(city) {
       const stored = localStorage.getItem("codelabStore");
       if (stored) {
         Object.assign(initialState, JSON.parse(stored));
+      } else {
+        // Ensure the "You" leaderboard entry matches userProgress on first load
+        _syncUserRowWithProgress();
       }
     } catch (error) {
       console.error("Could not load store:", error);
@@ -266,18 +282,83 @@ async function getWeather(city) {
 
   const getState = () => initialState;
 
+  const _recomputeLeaderboard = () => {
+    // Ensure the user row exists and is synced
+    _syncUserRowWithProgress();
+
+    initialState.leaderboard = initialState.leaderboard
+      .slice()
+      .sort((a, b) => b.xp - a.xp)
+      .map((entry, idx) => ({ ...entry, rank: idx + 1 }));
+  };
+
+  const _syncUserRowWithProgress = () => {
+    const completedCount = initialState.dailyChallenges.filter(c => c.completed).length;
+    const userRowIndex = initialState.leaderboard.findIndex(e => e.isUser);
+    const userRow = {
+      rank: 0,
+      name: "You",
+      xp: initialState.userProgress.totalXP,
+      badges: initialState.userProgress.badges,
+      completed: completedCount,
+      isUser: true,
+    };
+
+    if (userRowIndex >= 0) {
+      initialState.leaderboard[userRowIndex] = { ...initialState.leaderboard[userRowIndex], ...userRow };
+    } else {
+      initialState.leaderboard.push(userRow);
+    }
+
+    // Recompute ranks
+    initialState.leaderboard = initialState.leaderboard
+      .slice()
+      .sort((a, b) => b.xp - a.xp)
+      .map((entry, idx) => ({ ...entry, rank: idx + 1 }));
+  };
+
   const updateUserProgress = (updates) => {
     initialState.userProgress = { ...initialState.userProgress, ...updates };
+    _syncUserRowWithProgress();
     save();
   };
 
   const completeDailyChallenge = (challengeId) => {
     const challenge = initialState.dailyChallenges.find(c => c.id === challengeId);
-    if (challenge) {
+    if (challenge && !challenge.completed) {
       challenge.completed = true;
+
+      // Award XP once
       initialState.userProgress.totalXP += challenge.xp;
+
+      // Update streak: if lastDailyChallengeDate is yesterday -> increment, if today -> do nothing, else reset to 1
+      const today = new Date();
+      const todayKey = today.toISOString().slice(0, 10);
+      const lastKey = initialState.userProgress.lastDailyChallengeDate;
+
+      if (!lastKey) {
+        initialState.userProgress.dayStreak = (initialState.userProgress.dayStreak || 0) + 1;
+      } else {
+        const last = new Date(lastKey);
+        const diffDays = Math.floor((today - last) / (1000 * 60 * 60 * 24));
+        if (diffDays === 1) {
+          initialState.userProgress.dayStreak = (initialState.userProgress.dayStreak || 0) + 1;
+        } else if (diffDays === 0) {
+          // already completed earlier today; do not increment
+        } else {
+          initialState.userProgress.dayStreak = 1;
+        }
+      }
+
+      initialState.userProgress.lastDailyChallengeDate = todayKey;
+
+      // Sync leaderboard user row
+      _syncUserRowWithProgress();
+
       save();
+      return true; // success
     }
+    return false; // already completed or not found
   };
 
   const addKaiMessage = (text, type = "user") => {
