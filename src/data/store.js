@@ -88,11 +88,12 @@ const todoApp = {
           "Show 5-day forecast",
           "Add search functionality",
         ],
+        // Fixed starter string to avoid nested template backticks which break the build
         starter: `// Weather app starter
 async function getWeather(city) {
   try {
-    const response = await fetch(`https://api.weather...
-`);
+    // Replace the URL below with a real API endpoint (e.g. OpenWeather)
+    const response = await fetch("https://api.weather.example/data?city=" + encodeURIComponent(city));
     const data = await response.json();
     return data;
   } catch (error) {
