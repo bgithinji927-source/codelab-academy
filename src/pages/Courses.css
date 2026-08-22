@@ -807,3 +807,26 @@
     margin-top: 38px;
   }
 }
+
+
+/* Dashboard-only elements do not appear on the standalone Courses page. */
+.courses-page .courses-hero,
+.courses-page .category-sidebar {
+  display: none;
+}
+
+.courses-page .courses-layout {
+  display: block;
+  max-width: 1220px;
+  padding: 34px 24px 54px;
+}
+
+.courses-page .courses-container {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .courses-page .courses-layout {
+    padding: 24px 12px 40px;
+  }
+}
