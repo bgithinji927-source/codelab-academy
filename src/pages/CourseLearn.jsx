@@ -88,13 +88,24 @@ function CourseLearn({ user, course, onBack }) {
 
     async function loadCourseLessons() {
       try {
-        const lessonModule = await import("../data/lessons.js");
+        let courseLessons = [];
+        let catalogLoaded = false;
+        const catalogResponse = await fetch(`/api/catalog/courses/${encodeURIComponent(course?.id || "")}/lessons`);
 
-        const lessonData =
-          lessonModule.default || lessonModule.lessons;
+        if (catalogResponse.ok) {
+          const catalogData = await catalogResponse.json();
+          if (catalogData.success && Array.isArray(catalogData.lessons)) {
+            courseLessons = catalogData.lessons;
+            catalogLoaded = true;
+          }
+        }
 
-        const courseLessons =
-          lessonData?.[course?.id] || [];
+        // Keep the bundled lesson catalog as a fallback for local/offline previews.
+        if (!catalogLoaded) {
+          const lessonModule = await import("../data/lessons.js");
+          const lessonData = lessonModule.default || lessonModule.lessons;
+          courseLessons = lessonData?.[course?.id] || [];
+        }
 
         if (!cancelled) {
           setAllLessons(courseLessons);

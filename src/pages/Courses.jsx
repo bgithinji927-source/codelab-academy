@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 
   ArrowLeft,
@@ -93,6 +93,18 @@ const categories = [
 function Courses({ initialCategory = null, onBack }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [courseCatalog, setCourseCatalog] = useState(courses);
+
+  useEffect(() => {
+    let mounted = true;
+    fetch("/api/catalog/courses")
+      .then((response) => response.json())
+      .then((data) => {
+        if (mounted && data.success && Array.isArray(data.courses)) setCourseCatalog(data.courses);
+      })
+      .catch((error) => console.error("Failed to load managed course catalog:", error));
+    return () => { mounted = false; };
+  }, []);
 
   if (selectedCourse) {
     return (
@@ -107,7 +119,7 @@ function Courses({ initialCategory = null, onBack }) {
     (category) => category.name === selectedCategory
   );
   const visibleCourses = selectedCategory
-    ? courses.filter((course) => course.category === selectedCategory)
+    ? courseCatalog.filter((course) => course.category === selectedCategory && course.active !== false)
     : [];
   const ActiveIcon = activeCategory?.icon || Layers3;
 
@@ -166,8 +178,8 @@ function Courses({ initialCategory = null, onBack }) {
           <nav className="category-nav">
             {categories.map((category) => {
               const Icon = category.icon;
-              const count = courses.filter(
-                (course) => course.category === category.name
+              const count = courseCatalog.filter(
+                (course) => course.category === category.name && course.active !== false
               ).length;
 
               return (

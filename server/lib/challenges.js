@@ -1,4 +1,5 @@
 const Challenge = require("../models/Challenge");
+const PlatformSettings = require("../models/PlatformSettings");
 
 const CHALLENGE_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const MAX_CHALLENGE_ATTEMPTS = 5;
@@ -68,6 +69,26 @@ const DEFAULT_CHALLENGES = [
   },
 ];
 
+async function getPlatformSettings() {
+  return PlatformSettings.findOneAndUpdate(
+    { _id: "platform" },
+    {
+      $setOnInsert: {
+        academyName: "CodeLab Academy",
+        challengeWindowHours: 24,
+        defaultChallengeXP: 10,
+        dailyChallengesEnabled: true,
+      },
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  ).lean();
+}
+
+function getChallengeWindowMs(settings) {
+  const hours = Number(settings?.challengeWindowHours || 24);
+  return Math.max(1, Math.min(168, hours)) * 60 * 60 * 1000;
+}
+
 function dateIndexForDateString(dateString, n) {
   let h = 0;
   for (let i = 0; i < dateString.length; i++) {
@@ -100,6 +121,8 @@ function hasActiveAssignment(user, now = Date.now()) {
 
 async function ensureDailyChallengeForUser(user) {
   const now = new Date();
+  const settings = await getPlatformSettings();
+  const challengeWindowMs = getChallengeWindowMs(settings);
   await ensureChallengeBank();
 
   // The assignment remains visible as completed or closed until its 24-hour
@@ -109,10 +132,10 @@ async function ensureDailyChallengeForUser(user) {
   const active = await Challenge.find({ active: true }).sort({ _id: 1 }).lean();
   if (!active.length) return user;
 
-  const assignmentKey = now.toISOString().slice(0, 10) + `-${Math.floor(now.getTime() / CHALLENGE_INTERVAL_MS)}`;
+  const assignmentKey = now.toISOString().slice(0, 10) + `-${Math.floor(now.getTime() / challengeWindowMs)}`;
   const idx = dateIndexForDateString(assignmentKey, active.length);
   const chosen = active[idx];
-  const expiresAt = new Date(now.getTime() + CHALLENGE_INTERVAL_MS);
+  const expiresAt = new Date(now.getTime() + challengeWindowMs);
 
   user.dailyChallenge = {
     date: now.toISOString().slice(0, 10),
@@ -188,6 +211,8 @@ module.exports = {
   DEFAULT_CHALLENGES,
   ensureChallengeBank,
   ensureDailyChallengeForUser,
+  getPlatformSettings,
+  getChallengeWindowMs,
   gradeChallengeAnswer,
   hasActiveAssignment,
 };

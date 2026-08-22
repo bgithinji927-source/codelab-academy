@@ -100,6 +100,16 @@ function DailyChallenge({ user, onBack }) {
 
         setAssigned(challengeData.assigned);
 
+        if (challengeData.disabled) {
+          setViewLocked(false);
+          setFeedback({
+            type: "disabled",
+            title: "Daily challenges paused",
+            message: challengeData.message || "Daily challenges are temporarily paused by an administrator.",
+          });
+          return;
+        }
+
         if (!challengeData.oneTimeViewAvailable || challengeData.viewed) {
           setViewLocked(true);
           setFeedback({

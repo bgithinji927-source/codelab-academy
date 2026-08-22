@@ -7,6 +7,8 @@ const User = require("./models/User");
 const authRoutes = require("./routes/auth");
 const kaiRoutes = require("./routes/kai");
 const challengeRoutes = require("./routes/challenges");
+const catalogRoutes = require("./routes/catalog");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 
@@ -36,6 +38,12 @@ app.use("/api/kai", kaiRoutes);
 
 // DAILY CHALLENGES
 app.use("/api/challenges", challengeRoutes);
+
+// PUBLIC LEARNER CATALOG WITH ADMIN OVERRIDES
+app.use("/api/catalog", catalogRoutes);
+
+// PROTECTED ADMIN CONTROL PANEL
+app.use("/api/admin", adminRoutes);
 
 // ============================================
 // DEBUG AUTH ROUTES

@@ -31,11 +31,12 @@ import LearnWithKai from "./pages/LearnWithKai";
 import CourseLearn from "./pages/CourseLearn";
 import DailyChallenge from "./pages/DailyChallenge";
 import LearningRoadmap from "./pages/LearningRoadmap";
+import AdminDashboard from "./pages/AdminDashboard";
 import createStore from "./data/store";
 import courses from "./data/course";
 
-function DashboardCategoryView({ category, onOpenCourse }) {
-  const visibleCourses = courses.filter((course) => course.category === category);
+function DashboardCategoryView({ category, onOpenCourse, courseCatalog }) {
+  const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
 
   return (
     <section className="dashboard-category-view">
@@ -81,10 +82,22 @@ function Dashboard({ user, onLogout, onViewCourses }) {
   const [activeView, setActiveView] = useState("dashboard");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [courseCatalog, setCourseCatalog] = useState(courses);
 
   // Initialize store and load current state into local component state
   const baseStore = createStore();
   const [state, setState] = useState(() => baseStore.getState());
+
+  useEffect(() => {
+    let mounted = true;
+    fetch("/api/catalog/courses")
+      .then((response) => response.json())
+      .then((data) => {
+        if (mounted && data.success && Array.isArray(data.courses)) setCourseCatalog(data.courses);
+      })
+      .catch((error) => console.error("Failed to load managed course catalog:", error));
+    return () => { mounted = false; };
+  }, []);
 
   // When a user is present, load their real progress from the server
   // and build the UI state as: (zero baseline) + (user progress)
@@ -219,6 +232,10 @@ function Dashboard({ user, onLogout, onViewCourses }) {
     return <LearningRoadmap user={user} onBack={() => setActiveView("dashboard")} />;
   }
 
+  if (activeView === "admin" && (user?.isAdmin || user?.role === "admin")) {
+    return <AdminDashboard user={user} onBack={() => setActiveView("dashboard")} />;
+  }
+
   // Calculate stats from real data
   const completedChallenges = state.userProgress.dailyChallengesCompleted || 0;
   const inProgressCourses = state.courses.filter((c) => c.status === "in-progress" || (c.progress > 0 && c.progress < 100)).length;
@@ -242,6 +259,13 @@ function Dashboard({ user, onLogout, onViewCourses }) {
             <Hand size={18} strokeWidth={2} />
             {user?.name || user?.email || "Student"}
           </span>
+
+          {(user?.isAdmin || user?.role === "admin") && (
+            <button type="button" className="admin-dashboard-launch" onClick={() => setActiveView("admin")}>
+              <ShieldCheck size={17} strokeWidth={2} />
+              Admin Control
+            </button>
+          )}
 
           <button
             type="button"
@@ -292,6 +316,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
         {selectedCategory ? (
           <DashboardCategoryView
             category={selectedCategory}
+            courseCatalog={courseCatalog}
             onOpenCourse={(course) => {
               setSelectedCourse(course);
               setActiveView("courseLearn");

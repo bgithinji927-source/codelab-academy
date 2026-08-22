@@ -79,6 +79,26 @@ function App() {
   const [showSignup, setShowSignup] = useState(false);
   const [user, setUser] = useState(null);
   const [showCourses, setShowCourses] = useState(false);
+  const [visibleCategories, setVisibleCategories] = useState(categories);
+
+  useEffect(() => {
+    let mounted = true;
+    fetch("/api/catalog/courses")
+      .then((response) => response.json())
+      .then((data) => {
+        if (!mounted || !data.success || !Array.isArray(data.courses)) return;
+        const counts = data.courses.reduce((result, course) => {
+          result[course.category] = (result[course.category] || 0) + 1;
+          return result;
+        }, {});
+        setVisibleCategories((current) => current.map((category) => ({
+          ...category,
+          courses: `${counts[category.title] || 0} Courses`,
+        })));
+      })
+      .catch((error) => console.error("Failed to load public course counts:", error));
+    return () => { mounted = false; };
+  }, []);
 
   // ================================
   // RESTORE USER
@@ -485,7 +505,7 @@ function App() {
 
           <div className="category-grid">
 
-            {categories.map((category) => (
+            {visibleCategories.map((category) => (
 
               <article
                 className="category-card"

@@ -436,6 +436,27 @@ router.post("/", async (req, res) => {
     const lessonDescription = lesson?.description || "";
     const lessonLevel = lesson?.level || course?.level || "Beginner";
     const objectives = Array.isArray(lesson?.objectives) ? lesson.objectives : [];
+    const teachingSections = Array.isArray(lesson?.sections)
+      ? lesson.sections.map((section) => {
+          if (section?.type === "quiz") {
+            return {
+              type: section.type,
+              title: section.title,
+              question: section.question,
+              options: section.options,
+            };
+          }
+          return {
+            type: section?.type,
+            title: section?.title,
+            content: section?.content,
+            code: section?.code,
+            explanation: section?.explanation,
+            instructions: section?.instructions,
+            starterCode: section?.starterCode,
+          };
+        })
+      : [];
 
     // ========================================
     // LESSON CONTEXT
@@ -445,6 +466,10 @@ router.post("/", async (req, res) => {
       objectives.length > 0
         ? objectives.map((objective, index) => `${index + 1}. ${objective}`).join("\n")
         : "Teach the fundamental concepts of this lesson."
+    }\n\nLESSON MATERIALS:\n${
+      teachingSections.length > 0
+        ? JSON.stringify(teachingSections, null, 2)
+        : "Use your own practical examples that match the lesson objectives."
     }\n`;
 
     // ========================================

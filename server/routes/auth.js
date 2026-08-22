@@ -5,6 +5,32 @@ const User = require("../models/User");
 
 const router = express.Router();
 
+function configuredAdminEmails() {
+  return String(process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function serializeUser(user) {
+  const email = String(user.email || "").toLowerCase();
+  const isAdmin = user.role === "admin" || configuredAdminEmails().includes(email);
+
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: isAdmin ? "admin" : "user",
+    isAdmin,
+    isActive: user.isActive !== false,
+    xp: user.xp,
+    level: user.level,
+    completedLessons: user.completedLessons,
+    courseProgress: user.courseProgress || [],
+    lessonSessions: user.lessonSessions || [],
+  };
+}
+
 // ===============================
 // REGISTER
 // ===============================
@@ -49,16 +75,7 @@ router.post("/register", async (req, res) => {
       success: true,
       message: "Account created successfully",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        xp: user.xp,
-        level: user.level,
-        completedLessons: user.completedLessons,
-        courseProgress: user.courseProgress || [],
-        lessonSessions: user.lessonSessions || [],
-      },
+      user: serializeUser(user),
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -102,6 +119,13 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    if (user.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: "This account has been disabled. Contact an administrator.",
+      });
+    }
+
     const secret = process.env.JWT_SECRET || "devsecret";
     const token = jwt.sign({ id: user._id }, secret, { expiresIn: "7d" });
 
@@ -109,16 +133,7 @@ router.post("/login", async (req, res) => {
       success: true,
       message: "Login successful",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        xp: user.xp,
-        level: user.level,
-        completedLessons: user.completedLessons,
-        courseProgress: user.courseProgress || [],
-        lessonSessions: user.lessonSessions || [],
-      },
+      user: serializeUser(user),
     });
   } catch (error) {
     console.error("Login error:", error);

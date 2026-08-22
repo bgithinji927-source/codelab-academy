@@ -6,10 +6,12 @@ const {
   MAX_CHALLENGE_ATTEMPTS,
   ensureChallengeBank,
   ensureDailyChallengeForUser,
+  getPlatformSettings,
   gradeChallengeAnswer,
   hasActiveAssignment,
 } = require("../lib/challenges");
 const ensureAuth = require("../middleware/ensureAuth");
+const ensureAdmin = require("../middleware/ensureAdmin");
 
 const router = express.Router();
 
@@ -59,7 +61,7 @@ function serializeChallenge(challenge) {
 }
 
 // ADMIN: create/list challenges. Admin authorization can be tightened later.
-router.post("/", ensureAuth, async (req, res) => {
+router.post("/", ensureAuth, ensureAdmin, async (req, res) => {
   try {
     const challenge = await Challenge.create(req.body);
     return res.json({ success: true, challenge: serializeChallenge(challenge) });
@@ -69,7 +71,7 @@ router.post("/", ensureAuth, async (req, res) => {
   }
 });
 
-router.get("/", ensureAuth, async (req, res) => {
+router.get("/", ensureAuth, ensureAdmin, async (req, res) => {
   try {
     const list = await Challenge.find({}).lean();
     return res.json({ success: true, challenges: list.map(serializeChallenge) });
@@ -85,6 +87,17 @@ router.get("/today", ensureAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const platformSettings = await getPlatformSettings();
+    if (platformSettings.dailyChallengesEnabled === false) {
+      return res.json({
+        success: true,
+        disabled: true,
+        challenge: null,
+        assigned: null,
+        message: "Daily challenges are temporarily paused by an administrator.",
+      });
+    }
 
     await ensureDailyChallengeForUser(user);
 
@@ -115,6 +128,17 @@ router.post("/view", ensureAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const platformSettings = await getPlatformSettings();
+    if (platformSettings.dailyChallengesEnabled === false) {
+      return res.json({
+        success: true,
+        disabled: true,
+        challenge: null,
+        assigned: null,
+        message: "Daily challenges are temporarily paused by an administrator.",
+      });
+    }
 
     await ensureDailyChallengeForUser(user);
     const assignment = user.dailyChallenge;
