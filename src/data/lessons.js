@@ -189,6 +189,171 @@ const courseLessonPlans = {
   ],
 };
 
+function makeExpansionLesson({ id, title, focus, snippet }) {
+  const concept = focus.toLowerCase();
+  return makeLesson({
+    id,
+    title,
+    focus,
+    code: snippet || `// ${title}\nconst concept = "${focus}";\nconsole.log(concept);`,
+    challenge: `Create a small practice exercise about ${concept}. Explain what it does, how you would test it, and what could go wrong.`,
+    starterCode: `const practice = {\n  topic: "${focus}",\n  notes: "",\n  test: ""\n};\n\nconsole.log(practice);`,
+    quizQuestion: `Which approach is most useful when learning ${concept}?`,
+    quizOptions: ["Build and test a small example", "Skip practice and testing", "Copy code without understanding it", "Avoid asking what can fail"],
+    quizAnswer: "Build and test a small example",
+  });
+}
+
+const extraCourseLessons = {
+  "devops-foundations": [
+    makeExpansionLesson({ id: "devops-foundations-automation", title: "Automation as a Habit", focus: "DevOps automation", snippet: "const checks = [\"lint\", \"test\", \"build\"];\nchecks.forEach((check) => console.log(`run:${check}`));" }),
+    makeExpansionLesson({ id: "devops-foundations-collaboration", title: "Shared Ownership", focus: "DevOps collaboration" }),
+    makeExpansionLesson({ id: "devops-foundations-monitoring", title: "Monitoring a Release", focus: "release monitoring" }),
+    makeExpansionLesson({ id: "devops-foundations-containers", title: "Containers in Delivery", focus: "containers in DevOps", snippet: "docker build -t codelab-api .\ndocker run --rm -p 3000:3000 codelab-api" }),
+    makeExpansionLesson({ id: "devops-foundations-capstone", title: "DevOps Delivery Plan", focus: "a complete DevOps delivery plan" }),
+  ],
+  "linux-for-devops": [
+    makeExpansionLesson({ id: "linux-for-devops-files", title: "Files and Shell Scripts", focus: "Linux shell scripting", snippet: "#!/usr/bin/env bash\nset -e\nmkdir -p reports\necho \"build complete\" > reports/status.txt" }),
+    makeExpansionLesson({ id: "linux-for-devops-networking", title: "Linux Networking", focus: "Linux networking" }),
+    makeExpansionLesson({ id: "linux-for-devops-security", title: "Hardening a Server", focus: "Linux server hardening" }),
+    makeExpansionLesson({ id: "linux-for-devops-containers", title: "Linux and Containers", focus: "Linux container operations" }),
+    makeExpansionLesson({ id: "linux-for-devops-capstone", title: "Operate a Small Service", focus: "a Linux service runbook" }),
+  ],
+  "ci-cd-pipelines": [
+    makeExpansionLesson({ id: "ci-cd-pipelines-as-code", title: "Pipelines as Code", focus: "pipelines as code" }),
+    makeExpansionLesson({ id: "ci-cd-pipelines-artifacts", title: "Build Artifacts", focus: "CI/CD build artifacts" }),
+    makeExpansionLesson({ id: "ci-cd-pipelines-branches", title: "Branches and Pull Requests", focus: "CI/CD branch strategy" }),
+    makeExpansionLesson({ id: "ci-cd-pipelines-deployment", title: "Deployment Strategies", focus: "deployment strategies" }),
+    makeExpansionLesson({ id: "ci-cd-pipelines-capstone", title: "Ship a Service Safely", focus: "a complete CI/CD workflow" }),
+  ],
+  "infrastructure-as-code": [
+    makeExpansionLesson({ id: "infrastructure-as-code-providers", title: "Providers and Resources", focus: "infrastructure providers" }),
+    makeExpansionLesson({ id: "infrastructure-as-code-variables", title: "Variables and Outputs", focus: "infrastructure variables" }),
+    makeExpansionLesson({ id: "infrastructure-as-code-remote-state", title: "Remote State", focus: "remote infrastructure state" }),
+    makeExpansionLesson({ id: "infrastructure-as-code-environments", title: "Multiple Environments", focus: "infrastructure environments" }),
+    makeExpansionLesson({ id: "infrastructure-as-code-capstone", title: "Provision a Web Stack", focus: "a complete infrastructure plan" }),
+  ],
+  "cybersecurity-fundamentals": [
+    makeExpansionLesson({ id: "cybersecurity-fundamentals-coding", title: "Secure Coding Basics", focus: "secure coding" }),
+    makeExpansionLesson({ id: "cybersecurity-fundamentals-cryptography", title: "Cryptography Concepts", focus: "applied cryptography" }),
+    makeExpansionLesson({ id: "cybersecurity-fundamentals-vulnerabilities", title: "Vulnerability Management", focus: "vulnerability management" }),
+    makeExpansionLesson({ id: "cybersecurity-fundamentals-awareness", title: "Security Awareness", focus: "security awareness" }),
+    makeExpansionLesson({ id: "cybersecurity-fundamentals-capstone", title: "Secure Platform Checklist", focus: "a practical security baseline" }),
+  ],
+  "network-security": [
+    makeExpansionLesson({ id: "network-security-protocols", title: "Protocols and Ports", focus: "network protocols and ports" }),
+    makeExpansionLesson({ id: "network-security-tls", title: "TLS and Certificates", focus: "TLS security" }),
+    makeExpansionLesson({ id: "network-security-vpn", title: "VPNs and Private Access", focus: "private network access" }),
+    makeExpansionLesson({ id: "network-security-ids", title: "Detection and Response", focus: "network intrusion detection" }),
+    makeExpansionLesson({ id: "network-security-capstone", title: "Design a Protected Network", focus: "a protected application network" }),
+  ],
+  "ethical-hacking-basics": [
+    makeExpansionLesson({ id: "ethical-hacking-basics-scanning", title: "Safe Scanning", focus: "authorized vulnerability scanning" }),
+    makeExpansionLesson({ id: "ethical-hacking-basics-web", title: "Web Application Testing", focus: "web application security testing" }),
+    makeExpansionLesson({ id: "ethical-hacking-basics-vulnerabilities", title: "Prioritizing Findings", focus: "security vulnerability prioritization" }),
+    makeExpansionLesson({ id: "ethical-hacking-basics-evidence", title: "Evidence and Reproduction", focus: "security testing evidence" }),
+    makeExpansionLesson({ id: "ethical-hacking-basics-capstone", title: "Write a Test Report", focus: "an ethical hacking engagement report" }),
+  ],
+  "identity-access-management": [
+    makeExpansionLesson({ id: "identity-access-management-mfa", title: "Passwords and MFA", focus: "multi-factor authentication" }),
+    makeExpansionLesson({ id: "identity-access-management-sessions", title: "Sessions and Tokens", focus: "secure sessions and tokens" }),
+    makeExpansionLesson({ id: "identity-access-management-rbac", title: "RBAC and ABAC", focus: "role-based access control" }),
+    makeExpansionLesson({ id: "identity-access-management-services", title: "Service Identities", focus: "machine identity management" }),
+    makeExpansionLesson({ id: "identity-access-management-capstone", title: "Protect a Learning Platform", focus: "an identity and access design" }),
+  ],
+  "mobile-development-foundations": [
+    makeExpansionLesson({ id: "mobile-development-foundations-accessibility", title: "Mobile Accessibility", focus: "mobile accessibility" }),
+    makeExpansionLesson({ id: "mobile-development-foundations-responsive", title: "Responsive Mobile Layouts", focus: "responsive mobile layouts" }),
+    makeExpansionLesson({ id: "mobile-development-foundations-storage", title: "Local Storage", focus: "mobile local storage" }),
+    makeExpansionLesson({ id: "mobile-development-foundations-api", title: "Mobile APIs and Offline States", focus: "mobile API and offline design" }),
+    makeExpansionLesson({ id: "mobile-development-foundations-capstone", title: "Plan a Mobile App", focus: "a complete mobile app foundation" }),
+  ],
+  "android-with-kotlin": [
+    makeExpansionLesson({ id: "android-with-kotlin-activities", title: "Screens and Activities", focus: "Android activities" }),
+    makeExpansionLesson({ id: "android-with-kotlin-networking", title: "Networking on Android", focus: "Android networking" }),
+    makeExpansionLesson({ id: "android-with-kotlin-persistence", title: "Local Persistence", focus: "Android data persistence" }),
+    makeExpansionLesson({ id: "android-with-kotlin-testing", title: "Testing Android Apps", focus: "Android app testing" }),
+    makeExpansionLesson({ id: "android-with-kotlin-capstone", title: "Build an Android Flow", focus: "a complete Android course flow" }),
+  ],
+  "ios-with-swift": [
+    makeExpansionLesson({ id: "ios-with-swift-structure", title: "App Structure", focus: "iOS app structure" }),
+    makeExpansionLesson({ id: "ios-with-swift-navigation", title: "SwiftUI Navigation", focus: "SwiftUI navigation" }),
+    makeExpansionLesson({ id: "ios-with-swift-networking", title: "Networking with Swift", focus: "iOS networking" }),
+    makeExpansionLesson({ id: "ios-with-swift-persistence", title: "Persisting App Data", focus: "iOS data persistence" }),
+    makeExpansionLesson({ id: "ios-with-swift-capstone", title: "Build an iOS Flow", focus: "a complete iOS course flow" }),
+  ],
+  "react-native": [
+    makeExpansionLesson({ id: "react-native-setup", title: "Project Setup", focus: "React Native project setup" }),
+    makeExpansionLesson({ id: "react-native-styling", title: "Styling and Layout", focus: "React Native styling" }),
+    makeExpansionLesson({ id: "react-native-networking", title: "Networking and Loading", focus: "React Native data loading" }),
+    makeExpansionLesson({ id: "react-native-storage", title: "Persisting Mobile State", focus: "React Native persistence" }),
+    makeExpansionLesson({ id: "react-native-capstone", title: "Build a Cross-Platform Flow", focus: "a complete React Native app flow" }),
+  ],
+  "game-development-foundations": [
+    makeExpansionLesson({ id: "game-development-foundations-camera", title: "Cameras and Viewports", focus: "game cameras and viewports" }),
+    makeExpansionLesson({ id: "game-development-foundations-assets", title: "Assets and Resources", focus: "game assets and resources" }),
+    makeExpansionLesson({ id: "game-development-foundations-audio", title: "Game Audio", focus: "game audio systems" }),
+    makeExpansionLesson({ id: "game-development-foundations-ui", title: "Game Interface", focus: "game UI design" }),
+    makeExpansionLesson({ id: "game-development-foundations-capstone", title: "Build a Small Game Loop", focus: "a complete small game prototype" }),
+  ],
+  "game-design": [
+    makeExpansionLesson({ id: "game-design-loops", title: "Core Gameplay Loops", focus: "core gameplay loops" }),
+    makeExpansionLesson({ id: "game-design-levels", title: "Level Design", focus: "game level design" }),
+    makeExpansionLesson({ id: "game-design-narrative", title: "Narrative and World Building", focus: "game narrative design" }),
+    makeExpansionLesson({ id: "game-design-accessibility", title: "Accessible Game Design", focus: "accessible game design" }),
+    makeExpansionLesson({ id: "game-design-capstone", title: "Design a Playable Concept", focus: "a complete game design concept" }),
+  ],
+  "unity-fundamentals": [
+    makeExpansionLesson({ id: "unity-fundamentals-scripting", title: "Unity Scripting", focus: "Unity scripting" }),
+    makeExpansionLesson({ id: "unity-fundamentals-input", title: "Unity Input", focus: "Unity input systems" }),
+    makeExpansionLesson({ id: "unity-fundamentals-animation", title: "Animation Controllers", focus: "Unity animation" }),
+    makeExpansionLesson({ id: "unity-fundamentals-ui", title: "Unity UI", focus: "Unity user interfaces" }),
+    makeExpansionLesson({ id: "unity-fundamentals-capstone", title: "Build a Unity Scene", focus: "a complete Unity scene" }),
+  ],
+  "game-programming": [
+    makeExpansionLesson({ id: "game-programming-cameras", title: "Camera Programming", focus: "game camera programming" }),
+    makeExpansionLesson({ id: "game-programming-ai", title: "Game AI", focus: "game artificial intelligence" }),
+    makeExpansionLesson({ id: "game-programming-animation", title: "Animation State", focus: "game animation state" }),
+    makeExpansionLesson({ id: "game-programming-optimization", title: "Game Performance", focus: "game performance optimization" }),
+    makeExpansionLesson({ id: "game-programming-capstone", title: "Build a Gameplay System", focus: "a complete gameplay system" }),
+  ],
+  "system-design-foundations": [
+    makeExpansionLesson({ id: "system-design-foundations-data", title: "Data Modeling", focus: "system data modeling" }),
+    makeExpansionLesson({ id: "system-design-foundations-api", title: "Interfaces Between Services", focus: "service interfaces" }),
+    makeExpansionLesson({ id: "system-design-foundations-storage", title: "Choosing Storage", focus: "system storage choices" }),
+    makeExpansionLesson({ id: "system-design-foundations-observability", title: "Designing for Operations", focus: "system observability" }),
+    makeExpansionLesson({ id: "system-design-foundations-capstone", title: "Design a Course Platform", focus: "a complete course platform architecture" }),
+  ],
+  "scalability-and-performance": [
+    makeExpansionLesson({ id: "scalability-and-performance-load", title: "Load Testing", focus: "system load testing" }),
+    makeExpansionLesson({ id: "scalability-and-performance-sharding", title: "Partitioning Data", focus: "data partitioning" }),
+    makeExpansionLesson({ id: "scalability-and-performance-cdn", title: "CDNs and Edge Delivery", focus: "CDN and edge delivery" }),
+    makeExpansionLesson({ id: "scalability-and-performance-reliability", title: "Reliability Budgets", focus: "service reliability" }),
+    makeExpansionLesson({ id: "scalability-and-performance-capstone", title: "Scale a Learning Service", focus: "a scalable learning service" }),
+  ],
+  "distributed-systems": [
+    makeExpansionLesson({ id: "distributed-systems-clocks", title: "Time and Ordering", focus: "time and ordering in distributed systems" }),
+    makeExpansionLesson({ id: "distributed-systems-consensus", title: "Consensus Concepts", focus: "distributed consensus" }),
+    makeExpansionLesson({ id: "distributed-systems-events", title: "Event-Driven Services", focus: "event-driven architecture" }),
+    makeExpansionLesson({ id: "distributed-systems-recovery", title: "Disaster Recovery", focus: "distributed disaster recovery" }),
+    makeExpansionLesson({ id: "distributed-systems-capstone", title: "Design for Failure", focus: "a fault-tolerant distributed system" }),
+  ],
+  "api-architecture": [
+    makeExpansionLesson({ id: "api-architecture-rest", title: "REST Resource Design", focus: "REST resource design" }),
+    makeExpansionLesson({ id: "api-architecture-validation", title: "Validation and Schemas", focus: "API validation" }),
+    makeExpansionLesson({ id: "api-architecture-errors", title: "Errors and Status Codes", focus: "API error design" }),
+    makeExpansionLesson({ id: "api-architecture-docs", title: "Documentation and Testing", focus: "API documentation and testing" }),
+    makeExpansionLesson({ id: "api-architecture-capstone", title: "Design a Production API", focus: "a complete production API" }),
+  ],
+};
+
+const expandedCourseLessonPlans = Object.fromEntries(
+  Object.entries(courseLessonPlans).map(([courseId, existingLessons]) => [
+    courseId,
+    [...existingLessons, ...(extraCourseLessons[courseId] || [])],
+  ])
+);
+
 export const lessons = {
   javascript: [
     {
@@ -533,7 +698,7 @@ print(language)`,
     },
   ],
 
-  ...courseLessonPlans,
+  ...expandedCourseLessonPlans,
 };
 
 // ============================================
