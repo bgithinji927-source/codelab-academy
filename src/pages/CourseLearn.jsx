@@ -836,6 +836,58 @@ ${startMessage}
         </section>
 
         {/* ======================================
+            LESSON ACTIONS
+            Keep lesson navigation visible above the conversation.
+        ====================================== */}
+
+        <div className="lesson-actions lesson-actions-top">
+
+          <button
+            type="button"
+            className="back-lesson"
+            onClick={onBack}
+          >
+            <ArrowLeft size={16} />
+            Back to Courses
+          </button>
+
+          <div className="lesson-actions-right">
+
+            <div className="lesson-status">
+              <CheckCircle2 size={16} />
+              <span>
+                {lessonCompletionReady
+                  ? "Ready for next lesson!"
+                  : "Lesson in progress"}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              className="next-lesson"
+              onClick={() => {
+                askKai({
+                  learnerMessage:
+                    "I feel ready to move to the next lesson. Can we continue?",
+                  conversation: messages,
+                  nextLesson: true,
+                });
+              }}
+              disabled={
+                currentLessonIndex >=
+                  allLessons.length - 1 ||
+                isKaiTyping
+              }
+            >
+              Continue to Next Lesson
+              <ArrowRight size={17} />
+            </button>
+
+          </div>
+
+        </div>
+
+        {/* ======================================
             CHAT
         ====================================== */}
 
@@ -961,57 +1013,6 @@ ${startMessage}
 
         <div className="input-hint">
           Press <kbd>Enter</kbd> to send
-        </div>
-
-        {/* ======================================
-            LESSON ACTIONS
-        ====================================== */}
-
-        <div className="lesson-actions">
-
-          <button
-            type="button"
-            className="back-lesson"
-            onClick={onBack}
-          >
-            <ArrowLeft size={16} />
-            Back to Courses
-          </button>
-
-          <div className="lesson-actions-right">
-
-            <div className="lesson-status">
-              <CheckCircle2 size={16} />
-              <span>
-                {lessonCompletionReady
-                  ? "Ready for next lesson!"
-                  : "Lesson in progress"}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              className="next-lesson"
-              onClick={() => {
-                askKai({
-                  learnerMessage:
-                    "I feel ready to move to the next lesson. Can we continue?",
-                  conversation: messages,
-                  nextLesson: true,
-                });
-              }}
-              disabled={
-                currentLessonIndex >=
-                  allLessons.length - 1 ||
-                isKaiTyping
-              }
-            >
-              Continue to Next Lesson
-              <ArrowRight size={17} />
-            </button>
-
-          </div>
-
         </div>
 
       </main>

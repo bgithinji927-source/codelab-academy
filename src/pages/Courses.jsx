@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -9,27 +8,55 @@ import {
   Bot,
   Wrench,
   Cpu,
+  Layers3,
 } from "lucide-react";
 
 import courses from "../data/course";
 import CourseLearn from "./CourseLearn";
 import "./Courses.css";
 
-const categoryIcons = {
-  Coding: Code2,
-  "Tech Engines": Cpu,
-  "AI Tools": Bot,
-  "Developer Tools": Wrench,
-  "Web Technologies": Globe,
-  Databases: Database,
-};
+const categories = [
+  {
+    name: "Coding",
+    description: "Python, JavaScript, Java, C++, and more.",
+    icon: Code2,
+    accent: "purple",
+  },
+  {
+    name: "Tech Engines",
+    description: "Understand the systems that power modern technology.",
+    icon: Cpu,
+    accent: "blue",
+  },
+  {
+    name: "AI Tools",
+    description: "Learn practical tools for building with artificial intelligence.",
+    icon: Bot,
+    accent: "pink",
+  },
+  {
+    name: "Developer Tools",
+    description: "Master the tools developers use every day.",
+    icon: Wrench,
+    accent: "orange",
+  },
+  {
+    name: "Web Technologies",
+    description: "Build modern websites and full-stack applications.",
+    icon: Globe,
+    accent: "green",
+  },
+  {
+    name: "Databases",
+    description: "Store, query, secure, and scale application data.",
+    icon: Database,
+    accent: "indigo",
+  },
+];
 
 function Courses({ onBack }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
-
-  // ================================
-  // OPEN COURSE
-  // ================================
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   if (selectedCourse) {
     return (
@@ -40,24 +67,22 @@ function Courses({ onBack }) {
     );
   }
 
-  const categories = [
-    "Coding",
-    "Tech Engines",
-    "AI Tools",
-    "Developer Tools",
-    "Web Technologies",
-    "Databases",
-  ];
+  const activeCategory = categories.find(
+    (category) => category.name === selectedCategory
+  );
+  const visibleCourses = selectedCategory
+    ? courses.filter((course) => course.category === selectedCategory)
+    : [];
+  const ActiveIcon = activeCategory?.icon || Layers3;
+
+  const selectCategory = (categoryName) => {
+    setSelectedCategory(categoryName);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="courses-page">
-
-      {/* ================================
-          NAVBAR
-      ================================= */}
-
       <header className="courses-navbar">
-
         <button
           type="button"
           className="courses-back-button"
@@ -73,155 +98,158 @@ function Courses({ onBack }) {
           <small>ACADEMY</small>
         </div>
 
-        <div />
-
+        <div className="courses-navbar-spacer" />
       </header>
 
-      {/* ================================
-          HERO
-      ================================= */}
-
       <section className="courses-hero">
-
         <div className="courses-hero-content">
-
           <div className="courses-hero-icon">
-            <BookOpen size={30} />
+            <ActiveIcon size={30} />
+          </div>
+          <span className="courses-eyebrow">
+            {selectedCategory ? "SUBCOURSE LIBRARY" : "LEARNING LIBRARY"}
+          </span>
+          <h1>
+            {selectedCategory ? `${selectedCategory} Courses` : "Explore All Courses"}
+          </h1>
+          <p>
+            {selectedCategory
+              ? `${visibleCourses.length} structured courses to help you build practical skills in ${selectedCategory.toLowerCase()}.`
+              : "Choose a category from the sidebar to explore focused courses, guided lessons, and practical projects."}
+          </p>
+        </div>
+      </section>
+
+      <div className="courses-layout">
+        <aside className="category-sidebar" aria-label="Course categories">
+          <div className="category-sidebar-heading">
+            <span>Browse library</span>
+            <strong>Categories</strong>
           </div>
 
-          <h1>
-            Explore All Courses
-          </h1>
+          <nav className="category-nav">
+            {categories.map((category) => {
+              const Icon = category.icon;
+              const count = courses.filter(
+                (course) => course.category === category.name
+              ).length;
 
-          <p>
-            Learn practical technology skills through structured
-            lessons, real-world projects, challenges, and deeper
-            guidance from Kai.
-          </p>
+              return (
+                <button
+                  type="button"
+                  key={category.name}
+                  className={`category-button ${
+                    selectedCategory === category.name ? "active" : ""
+                  }`}
+                  onClick={() => selectCategory(category.name)}
+                >
+                  <span className={`category-button-icon ${category.accent}`}>
+                    <Icon size={18} />
+                  </span>
+                  <span className="category-button-copy">
+                    <strong>{category.name}</strong>
+                    <small>{count} courses</small>
+                  </span>
+                  <ArrowRight size={15} className="category-arrow" />
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
 
-        </div>
-
-      </section>
-
-      {/* ================================
-          COURSES
-      ================================= */}
-
-      <section className="courses-container">
-
-        {categories.map((category) => {
-
-          const Icon = categoryIcons[category];
-
-          const categoryCourses = courses.filter(
-            (course) => course.category === category
-          );
-
-          return (
-            <section
-              className="course-category"
-              key={category}
-            >
-
-              {/* CATEGORY HEADER */}
-
-              <div className="course-category-heading">
-
-                <div className="course-category-title">
-
-                  <div className="course-category-icon">
-                    <Icon size={22} />
-                  </div>
-
-                  <div>
-
-                    <h2>
-                      {category}
-                    </h2>
-
-                    <p>
-                      {categoryCourses.length} courses available
-                    </p>
-
-                  </div>
-
+        <main className="courses-container">
+          {!selectedCategory ? (
+            <section className="category-overview">
+              <div className="category-overview-heading">
+                <div>
+                  <span className="section-kicker">START HERE</span>
+                  <h2>What do you want to learn?</h2>
+                  <p>Select a category to see its available courses.</p>
                 </div>
-
+                <Layers3 size={28} />
               </div>
 
-              {/* COURSE CARDS */}
+              <div className="category-overview-grid">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  const count = courses.filter(
+                    (course) => course.category === category.name
+                  ).length;
 
-              {categoryCourses.length > 0 ? (
-
-                <div className="course-grid">
-
-                  {categoryCourses.map((course) => (
-
-                    <article
-                      className="course-card"
-                      key={course.id}
+                  return (
+                    <button
+                      type="button"
+                      className="category-overview-card"
+                      key={category.name}
+                      onClick={() => selectCategory(category.name)}
                     >
-
-                      <div className="course-card-icon">
-                        <Icon size={28} />
-                      </div>
-
-                      <div className="course-card-content">
-
-                        <span className="course-level">
-                          {course.level || "Beginner"}
-                        </span>
-
-                        <h3>
-                          {course.title}
-                        </h3>
-
-                        <p>
-                          {course.description}
-                        </p>
-
-                        <button
-                          type="button"
-                          className="start-course-button"
-                          onClick={() => {
-                            console.log(
-                              "Opening course:",
-                              course.title
-                            );
-
-                            setSelectedCourse(course);
-                          }}
-                        >
-                          Start Learning
-                          <ArrowRight size={17} />
-                        </button>
-
-                      </div>
-
-                    </article>
-
-                  ))}
-
-                </div>
-
-              ) : (
-
-                <div className="empty-category">
-
-                  <p>
-                    No courses available yet.
-                  </p>
-
-                </div>
-
-              )}
-
+                      <span className={`overview-icon ${category.accent}`}>
+                        <Icon size={24} />
+                      </span>
+                      <span className="overview-card-copy">
+                        <strong>{category.name}</strong>
+                        <span>{category.description}</span>
+                        <small>{count} courses available</small>
+                      </span>
+                      <ArrowRight size={18} />
+                    </button>
+                  );
+                })}
+              </div>
             </section>
-          );
-        })}
+          ) : (
+            <section className="subcourse-page">
+              <div className="subcourse-heading">
+                <div>
+                  <button
+                    type="button"
+                    className="back-to-categories"
+                    onClick={() => setSelectedCategory(null)}
+                  >
+                    <ArrowLeft size={15} />
+                    All categories
+                  </button>
+                  <div className="course-category-title">
+                    <div className="course-category-icon">
+                      <ActiveIcon size={22} />
+                    </div>
+                    <div>
+                      <h2>{selectedCategory}</h2>
+                      <p>{visibleCourses.length} courses available</p>
+                    </div>
+                  </div>
+                </div>
+                <span className="subcourse-count">{visibleCourses.length} COURSES</span>
+              </div>
 
-      </section>
-
+              <div className="course-grid">
+                {visibleCourses.map((course) => (
+                  <article className="course-card" key={course.id}>
+                    <div className="course-card-icon">
+                      <ActiveIcon size={28} />
+                    </div>
+                    <div className="course-card-content">
+                      <span className="course-level">
+                        {course.level || "Beginner"}
+                      </span>
+                      <h3>{course.title}</h3>
+                      <p>{course.description}</p>
+                      <button
+                        type="button"
+                        className="start-course-button"
+                        onClick={() => setSelectedCourse(course)}
+                      >
+                        Start Learning
+                        <ArrowRight size={17} />
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

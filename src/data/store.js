@@ -7,21 +7,21 @@ const createStore = () => {
         id: 1,
         title: "HTML Fundamentals",
         category: "Frontend",
-        progress: 100,
+        progress: 0,
         lessons: 15,
-        completed: 15,
+        completed: 0,
         xp: 300,
-        status: "completed",
+        status: "in-progress",
       },
       {
         id: 2,
         title: "CSS & Styling",
         category: "Frontend",
-        progress: 60,
+        progress: 0,
         lessons: 18,
-        completed: 11,
+        completed: 0,
         xp: 350,
-        status: "in-progress",
+        status: "locked",
       },
       {
         id: 3,
@@ -35,11 +35,11 @@ const createStore = () => {
       },
     ],
     userProgress: {
-      totalXP: 650,
-      dayStreak: 3,
-      coursesStarted: 2,
-      badges: 5,
-      level: 5,
+      totalXP: 0,
+      dayStreak: 0,
+      coursesStarted: 0,
+      badges: 0,
+      level: 1,
       // Track last date when a daily challenge was completed to maintain streaks
       lastDailyChallengeDate: null,
     },
@@ -110,7 +110,7 @@ async function getWeather(city) {
       { rank: 3, name: "Casey Rivera", xp: 3650, badges: 9, completed: 23 },
       { rank: 4, name: "Morgan Davis", xp: 3420, badges: 8, completed: 20 },
       // The "You" row will be kept in sync with userProgress and dailyChallenges
-      { rank: 5, name: "You", xp: 650, badges: 5, completed: 0, isUser: true },
+      { rank: 5, name: "You", xp: 0, badges: 0, completed: 0, isUser: true },
     ],
     learningPaths: {
       frontend: {
@@ -118,7 +118,7 @@ async function getWeather(city) {
         description: "Master HTML, CSS, JavaScript, and React",
         duration: "12 weeks",
         difficulty: "Beginner → Advanced",
-        progress: 45,
+        progress: 0,
         modules: [
           {
             id: 1,
@@ -126,8 +126,8 @@ async function getWeather(city) {
             duration: "2 weeks",
             lessons: 15,
             xp: 300,
-            status: "completed",
-            progress: 100,
+            status: "in-progress",
+            progress: 0,
             lessons_list: [
               "HTML Structure & Semantics",
               "Forms & Input Elements",
@@ -140,8 +140,8 @@ async function getWeather(city) {
             duration: "2 weeks",
             lessons: 18,
             xp: 350,
-            status: "in-progress",
-            progress: 60,
+            status: "locked",
+            progress: 0,
             lessons_list: [
               "CSS Selectors & Box Model",
               "Flexbox & Grid Layouts",

@@ -87,6 +87,9 @@ function App() {
   // ================================
 
   const handleSignupSuccess = (newUser) => {
+    // The client store is shared by the browser, so never carry another
+    // account's learning progress into a newly created account.
+    localStorage.removeItem("codelabStore");
     localStorage.setItem("codelabUser", JSON.stringify(newUser));
     setUser(newUser);
     setShowSignup(false);
@@ -98,6 +101,7 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem("codelabUser");
+    localStorage.removeItem("codelabStore");
 
     setUser(null);
     setShowCourses(false);

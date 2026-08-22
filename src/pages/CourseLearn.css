@@ -139,6 +139,10 @@
   padding: 42px 14px 80px;
 
   box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 66px);
 }
 
 /* =========================================
@@ -250,6 +254,7 @@
 
 .conversation-messages {
   width: 100%;
+  flex: 1 0 auto;
 }
 
 .chat-row {
@@ -682,6 +687,10 @@
 .learner-input-area {
   width: 100%;
 
+  position: sticky;
+  bottom: 12px;
+  z-index: 20;
+
   display: flex;
   align-items: center;
 
@@ -826,6 +835,15 @@
   padding-top: 22px;
 
   border-top: 1px solid #eee9f7;
+}
+
+.lesson-actions-top {
+  margin-top: 0;
+  margin-bottom: 30px;
+  padding-top: 0;
+  padding-bottom: 22px;
+  border-top: none;
+  border-bottom: 1px solid #eee9f7;
 }
 
 .lesson-actions-right {
@@ -1087,6 +1105,12 @@
     flex-direction: column;
 
     margin-top: 25px;
+  }
+
+  .lesson-actions-top {
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding-top: 0;
   }
 
   .lesson-actions-right {
