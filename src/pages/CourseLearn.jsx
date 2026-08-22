@@ -9,7 +9,6 @@ import {
   Send,
   Sparkles,
   CheckCircle2,
-  GraduationCap,
 } from "lucide-react";
 
 import fetchWithAuth from "../utils/fetchWithAuth";
@@ -810,52 +809,6 @@ ${startMessage}
       ======================================== */}
 
       <main className="conversation-container">
-
-        {/* ======================================
-            LESSON INTRO
-        ====================================== */}
-
-        <section className="conversation-intro">
-
-          <div className="intro-main">
-
-            <div className="lesson-label">
-              <Code2 size={15} />
-              <span>LESSON {currentLessonIndex + 1}</span>
-            </div>
-
-            <h1>
-              {lesson?.title ||
-                `Introduction to ${courseTitle}`}
-            </h1>
-
-            <p>
-              Learn step by step with Kai,
-              your AI programming instructor.
-            </p>
-
-          </div>
-
-          <div className="intro-card">
-
-            <div className="intro-card-icon">
-              <GraduationCap size={20} />
-            </div>
-
-            <div>
-              <strong>
-                Interactive lesson
-              </strong>
-
-              <span>
-                Ask questions and test your
-                understanding as you learn.
-              </span>
-            </div>
-
-          </div>
-
-        </section>
 
 
         {/* ======================================
