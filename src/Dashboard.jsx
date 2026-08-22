@@ -11,12 +11,20 @@ import {
   Trophy,
   Zap,
   ArrowRight,
+  ChevronDown,
+  ChevronRight,
   Hand,
+  Home,
   Code2,
   Cpu,
   Wrench,
   Globe,
   Database,
+  Bookmark,
+  ShieldCheck,
+  Smartphone,
+  Gamepad2,
+  Boxes,
 } from "lucide-react";
 
 import LearnWithKai from "./pages/LearnWithKai";
@@ -24,13 +32,19 @@ import DailyChallenge from "./pages/DailyChallenge";
 import LearningRoadmap from "./pages/LearningRoadmap";
 import createStore from "./data/store";
 
-const courseCategories = [
-  ["Coding", Code2],
-  ["Tech Engines", Cpu],
-  ["AI Tools", Bot],
-  ["Developer Tools", Wrench],
-  ["Web Technologies", Globe],
-  ["Databases", Database],
+const sidebarItems = [
+  { label: "Dashboard", Icon: Home, view: "dashboard" },
+  { label: "Coding", Icon: Code2, category: "Coding" },
+  { label: "Tech Engines", Icon: Cpu, category: "Tech Engines" },
+  { label: "AI Tools", Icon: Bot, category: "AI Tools" },
+  { label: "Developer Tools", Icon: Wrench, category: "Developer Tools" },
+  { label: "Web Technologies", Icon: Globe, category: "Web Technologies" },
+  { label: "Databases", Icon: Database, category: "Databases" },
+  { label: "DevOps", Icon: Boxes, category: "Developer Tools" },
+  { label: "Cyber Security", Icon: ShieldCheck, category: "Developer Tools" },
+  { label: "Mobile Development", Icon: Smartphone, category: "Coding" },
+  { label: "Game Development", Icon: Gamepad2, category: "Tech Engines" },
+  { label: "System Design", Icon: Boxes, category: "Tech Engines" },
 ];
 
 function Dashboard({ user, onLogout, onViewCourses }) {
@@ -197,14 +211,35 @@ function Dashboard({ user, onLogout, onViewCourses }) {
       {/* MAIN DASHBOARD */}
       <main className="dashboard-main">
         <aside className="dashboard-course-sidebar" aria-label="Course categories">
-          <nav>
-            {courseCategories.map(([category, Icon]) => (
-              <button key={category} type="button" onClick={() => onViewCourses(category)}>
-                <Icon size={16} aria-hidden="true" />
-                <span>{category}</span>
+          <div className="dashboard-sidebar-brand" aria-label="CodeLab Academy">
+            <Code2 size={26} aria-hidden="true" />
+            <strong>Lab</strong>
+          </div>
+          <div className="dashboard-sidebar-label">LEARNING LIBRARY</div>
+          <nav className="dashboard-sidebar-nav">
+            {sidebarItems.map(({ label, Icon, category, view }) => (
+              <button
+                key={label}
+                type="button"
+                className={view === "dashboard" ? "active" : ""}
+                onClick={() => view === "dashboard" ? setActiveView("dashboard") : onViewCourses(category)}
+              >
+                <Icon size={17} aria-hidden="true" />
+                <span>{label}</span>
+                <ChevronRight size={15} aria-hidden="true" />
               </button>
             ))}
           </nav>
+          <div className="dashboard-sidebar-divider" />
+          <button className="dashboard-sidebar-bookmark" type="button">
+            <Bookmark size={17} aria-hidden="true" />
+            <span>Bookmarks</span>
+          </button>
+          <div className="dashboard-sidebar-profile">
+            <span className="dashboard-profile-avatar">K</span>
+            <span className="dashboard-profile-copy"><strong>Kai Learner</strong><small>View profile</small></span>
+            <ChevronDown size={16} aria-hidden="true" />
+          </div>
         </aside>
 
         {/* WELCOME */}
