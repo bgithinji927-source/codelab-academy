@@ -87,36 +87,56 @@ function AdminDashboard({ user, onBack }) {
     window.setTimeout(() => setNotice(null), 3200);
   };
 
+  const loadBundledCatalog = async () => {
+    const [courseModule, lessonModule] = await Promise.all([
+      import("../data/course.js"),
+      import("../data/lessons.js"),
+    ]);
+    const bundledCourses = courseModule.default || courseModule.courses || [];
+    const bundledLessons = lessonModule.default || lessonModule.lessons || {};
+    return bundledCourses.map((course) => ({
+      ...course,
+      active: true,
+      lessons: bundledLessons[course.id] || [],
+    }));
+  };
+
+  const setLoadedCourses = (loadedCourses) => {
+    setCourses(loadedCourses);
+    setExpandedCourses((current) => Object.keys(current).length > 0
+      ? current
+      : Object.fromEntries(loadedCourses.map((course) => [course.id, true])));
+  };
+
   const loadAdminData = async () => {
     setLoading(true);
     try {
-      const [summaryResponse, usersResponse, coursesResponse, challengesResponse, settingsResponse] = await Promise.all([
+      const responses = await Promise.all([
         fetchWithAuth("/api/admin/summary"),
         fetchWithAuth("/api/admin/users"),
         fetchWithAuth("/api/admin/courses"),
         fetchWithAuth("/api/admin/challenges"),
         fetchWithAuth("/api/admin/settings"),
       ]);
-      const [summaryData, usersData, coursesData, challengesData, settingsData] = await Promise.all([
-        summaryResponse.json(),
-        usersResponse.json(),
-        coursesResponse.json(),
-        challengesResponse.json(),
-        settingsResponse.json(),
-      ]);
+      const [summaryResponse, usersResponse, coursesResponse, challengesResponse, settingsResponse] = responses;
+      const payloads = await Promise.all(responses.map((response) => response.json().catch(() => ({}))));
+      const [summaryData, usersData, coursesData, challengesData, settingsData] = payloads;
 
-      if (!summaryResponse.ok || !summaryData.success) throw new Error(summaryData.message || "Admin access failed");
-      setSummary(summaryData.summary);
-      if (usersData.success) setUsers(usersData.users || []);
-      if (coursesData.success) {
-        const loadedCourses = coursesData.courses || [];
-        setCourses(loadedCourses);
-        setExpandedCourses((current) => Object.keys(current).length > 0
-          ? current
-          : Object.fromEntries(loadedCourses.map((course) => [course.id, true])));
+      if ([summaryResponse, usersResponse, coursesResponse, challengesResponse, settingsResponse].some((response) => response.status === 401 || response.status === 403)) {
+        throw new Error("Administrator authorization is required");
       }
-      if (challengesData.success) setChallenges(challengesData.challenges || []);
-      if (settingsData.success) setSettings(settingsData.settings);
+
+      if (summaryResponse.ok && summaryData.success) setSummary(summaryData.summary);
+      if (usersResponse.ok && usersData.success) setUsers(usersData.users || []);
+      if (coursesResponse.ok && coursesData.success && Array.isArray(coursesData.courses) && coursesData.courses.length > 0) {
+        setLoadedCourses(coursesData.courses);
+      } else {
+        const bundledCourses = await loadBundledCatalog();
+        setLoadedCourses(bundledCourses);
+        notify("error", "Managed catalog unavailable; showing the built-in course and lesson catalog");
+      }
+      if (challengesResponse.ok && challengesData.success) setChallenges(challengesData.challenges || []);
+      if (settingsResponse.ok && settingsData.success) setSettings(settingsData.settings);
     } catch (error) {
       notify("error", error.message || "Could not load admin data");
     } finally {
