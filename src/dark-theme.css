@@ -1,0 +1,385 @@
+/* CODELAB ACADEMY — APP-WIDE DARK THEME */
+:root {
+  color-scheme: dark;
+  --dark-bg: #07110d;
+  --dark-surface: #0d1b15;
+  --dark-surface-raised: #12271d;
+  --dark-surface-soft: #172f23;
+  --dark-border: #244536;
+  --dark-text: #e8f5ed;
+  --dark-muted: #9bb5a5;
+  --emerald: #22c55e;
+  --emerald-deep: #166534;
+  --emerald-shine: #34d399;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background: var(--dark-bg) !important;
+}
+
+body {
+  color: var(--dark-text) !important;
+}
+
+/* Public homepage */
+.app,
+.hero,
+.hero-visual {
+  background: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+.navbar {
+  background: rgba(7, 17, 13, 0.96) !important;
+  border-bottom-color: var(--dark-border) !important;
+}
+
+.nav-links a,
+.logo-text .code,
+.hero h1,
+.feature strong,
+.section-heading h2,
+.category-card h3 {
+  color: var(--dark-text) !important;
+}
+
+.logo-text small,
+.hero-description,
+.feature p,
+.section-heading p,
+.category-card p {
+  color: var(--dark-muted) !important;
+}
+
+.sign-in,
+.secondary-button,
+.kai-message,
+.category-card {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.sign-in:hover,
+.secondary-button:hover,
+.category-card:hover {
+  background: var(--dark-surface-raised) !important;
+}
+
+.eyebrow,
+.feature-icon,
+.category-icon {
+  background: var(--dark-surface-soft) !important;
+}
+
+.kai-message p {
+  color: var(--dark-muted) !important;
+}
+
+.categories {
+  background: #091711 !important;
+  border-top-color: var(--dark-border) !important;
+}
+
+/* Dashboard */
+.dashboard-page,
+.dashboard-main {
+  background: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+.dashboard-navbar {
+  background: rgba(7, 17, 13, 0.97) !important;
+  border-bottom-color: var(--dark-border) !important;
+}
+
+.dashboard-user-name,
+.dashboard-card h3,
+.dashboard-card strong,
+.dashboard-section-title,
+.dashboard-course-sidebar-heading strong {
+  color: var(--dark-text) !important;
+}
+
+.dashboard-card,
+.dashboard-course-sidebar,
+.dashboard-course-sidebar button,
+.continue-card,
+.stat-card {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.dashboard-course-sidebar button:hover {
+  background: var(--dark-surface-soft) !important;
+}
+
+.dashboard-card p,
+.dashboard-card span,
+.dashboard-user-name small {
+  color: var(--dark-muted) !important;
+}
+
+.dashboard-welcome {
+  background: linear-gradient(135deg, #0b3020, #14532d) !important;
+}
+
+/* Course catalog */
+.courses-page,
+.courses-container,
+.courses-layout,
+.category-overview,
+.subcourse-page {
+  background: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+.courses-navbar {
+  background: rgba(7, 17, 13, 0.97) !important;
+  border-bottom-color: var(--dark-border) !important;
+}
+
+.category-overview-card,
+.course-card {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2) !important;
+}
+
+.category-overview-card:hover,
+.course-card:hover {
+  background: var(--dark-surface-raised) !important;
+  border-color: #347052 !important;
+}
+
+.category-overview-heading h2,
+.subcourse-heading h2,
+.course-card h3,
+.course-card strong,
+.overview-card-copy h3 {
+  color: var(--dark-text) !important;
+}
+
+.category-overview-heading p,
+.subcourse-heading p,
+.course-card p,
+.overview-card-copy p {
+  color: var(--dark-muted) !important;
+}
+
+.category-button-icon.green,
+.overview-icon.green {
+  background: #153b28 !important;
+  color: var(--emerald-shine) !important;
+  border-color: #2c6b4a !important;
+}
+
+/* Kai lesson and chat pages */
+.learn-page,
+.conversation-container,
+.kai-page,
+.kai-main {
+  background: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+.learn-navbar,
+.kai-header {
+  background: rgba(7, 17, 13, 0.97) !important;
+  border-bottom-color: var(--dark-border) !important;
+}
+
+.learn-course-title,
+.conversation-intro h1,
+.kai-header-title h1,
+.kai-message h3,
+.kai-sidebar h3 {
+  color: var(--dark-text) !important;
+}
+
+.conversation-intro > .intro-main > p,
+.intro-card span,
+.kai-header-title p,
+.input-hint,
+.sidebar-card p {
+  color: var(--dark-muted) !important;
+}
+
+.intro-card,
+.kai-sidebar,
+.sidebar-card,
+.kai-input-area,
+.sample-questions {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.kai-bubble,
+.message-bubble {
+  background: var(--dark-surface-raised) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.kai-input,
+.challenge-answer {
+  background: #08150f !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.kai-input::placeholder,
+.challenge-answer::placeholder {
+  color: #789687 !important;
+}
+
+.sample-btn,
+.choice-button {
+  background: var(--dark-surface-soft) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+/* Daily Challenge */
+.challenge-page,
+.challenge-main {
+  background: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+.challenge-header,
+.challenge-card,
+.leaderboard-card,
+.info-card {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.challenge-header-info,
+.challenge-tabs {
+  border-color: var(--dark-border) !important;
+}
+
+.challenge-tabs {
+  background: var(--dark-surface-raised) !important;
+}
+
+.challenge-header-info h1,
+.challenge-details h3,
+.info-card h4,
+.entry-info strong {
+  color: var(--dark-text) !important;
+}
+
+.challenge-description,
+.info-card li,
+.entry-info p,
+.code-editor-placeholder p {
+  color: var(--dark-muted) !important;
+}
+
+.challenge-timer,
+.requirements-list,
+.leaderboard-entry {
+  background: var(--dark-surface-soft) !important;
+  color: var(--dark-text) !important;
+}
+
+.code-block {
+  background: #030806 !important;
+  color: #b7efc8 !important;
+  border: 1px solid var(--dark-border);
+}
+
+/* Learning Roadmap */
+.roadmap-page,
+.roadmap-main {
+  background: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
+}
+
+.roadmap-header,
+.path-card,
+.module-card,
+.progress-card {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.path-card:hover,
+.path-card.active,
+.module-card:hover {
+  background: var(--dark-surface-raised) !important;
+}
+
+.roadmap-title h1,
+.roadmap-info h2,
+.path-header h3,
+.module-info h3,
+.progress-header h3,
+.progress-message,
+.stat strong {
+  color: var(--dark-text) !important;
+}
+
+.roadmap-title p,
+.roadmap-info p,
+.path-card p,
+.path-meta,
+.module-meta,
+.module-details,
+.stat p {
+  color: var(--dark-muted) !important;
+}
+
+.path-progress,
+.module-progress-bar,
+.progress-bar-small,
+.progress-bar {
+  background: var(--dark-surface-soft) !important;
+}
+
+/* Authentication dialogs */
+.login-overlay {
+  background: rgba(0, 0, 0, 0.78) !important;
+}
+
+.login-modal {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.login-modal h2,
+.login-modal label,
+.login-logo .code {
+  color: var(--dark-text) !important;
+}
+
+.login-modal input {
+  background: #08150f !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.login-message {
+  color: #86efac !important;
+}
+
+/* Shared controls */
+button:disabled {
+  opacity: 0.55;
+}
+
+::selection {
+  background: rgba(34, 197, 94, 0.35);
+  color: #ffffff;
+}
