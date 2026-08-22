@@ -1386,3 +1386,55 @@ body,
 .kai-message-header .kai-online span {
   background: #39ff14 !important;
 }
+
+
+/* KAI RESPONSE CARDS: full-width teaching surface with centered instructor identity */
+.conversation-messages .kai-row {
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+.conversation-messages .kai-row .chat-content {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.conversation-messages .kai-row .kai-message-header {
+  width: 100% !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  margin-bottom: 12px !important;
+}
+
+.conversation-messages .kai-row .kai-avatar-small {
+  width: 42px !important;
+  height: 42px !important;
+  border: 1px solid #39ff14 !important;
+  background: linear-gradient(145deg, #15930b, #063c0b) !important;
+  color: #eaffec !important;
+  box-shadow: 0 0 16px rgba(57, 255, 20, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+.conversation-messages .kai-row .chat-name {
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.conversation-messages .kai-row .kai-online {
+  margin-left: 0 !important;
+  justify-content: center !important;
+}
+
+.conversation-messages .kai-row .kai-bubble {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 22px 26px !important;
+}
+
+@media (max-width: 700px) {
+  .conversation-messages .kai-row .kai-bubble {
+    padding: 17px 15px !important;
+  }
+}
