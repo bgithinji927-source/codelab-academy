@@ -4,6 +4,7 @@ import Login from "./Login";
 import Signup from "./Signup";
 import Dashboard from "./Dashboard";
 import Courses from "./pages/Courses";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const categories = [
   {
@@ -76,6 +77,7 @@ const categories = [
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
+  const [isAdminPath, setIsAdminPath] = useState(() => window.location.pathname.replace(/\/+$/, "") === "/admin");
   const [showSignup, setShowSignup] = useState(false);
   const [user, setUser] = useState(null);
   const [showCourses, setShowCourses] = useState(false);
@@ -99,6 +101,17 @@ function App() {
       .catch((error) => console.error("Failed to load public course counts:", error));
     return () => { mounted = false; };
   }, []);
+
+  useEffect(() => {
+    const handleHistoryChange = () => setIsAdminPath(window.location.pathname.replace(/\/+$/, "") === "/admin");
+    window.addEventListener("popstate", handleHistoryChange);
+    return () => window.removeEventListener("popstate", handleHistoryChange);
+  }, []);
+
+  const leaveAdminPath = () => {
+    window.history.pushState({}, "", "/");
+    setIsAdminPath(false);
+  };
 
   // ================================
   // RESTORE USER
@@ -173,6 +186,42 @@ function App() {
   const closeCourses = () => {
     setShowCourses(false);
   };
+
+  // ================================
+  // ADMIN PAGE
+  // ================================
+
+  if (isAdminPath && user) {
+    if (user.isAdmin || user.role === "admin") {
+      return <AdminDashboard user={user} onBack={leaveAdminPath} />;
+    }
+
+    return (
+      <div className="admin-route-gate">
+        <div className="admin-route-gate-card">
+          <div className="admin-route-gate-icon">!</div>
+          <span className="admin-route-gate-kicker">ACCESS DENIED</span>
+          <h1>Administrator access required</h1>
+          <p>This account is not configured as an administrator.</p>
+          <button type="button" onClick={leaveAdminPath}>Return to CodeLab Academy</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAdminPath && !user) {
+    return (
+      <div className="admin-route-gate">
+        <div className="admin-route-gate-card">
+          <div className="admin-route-gate-icon">+</div>
+          <span className="admin-route-gate-kicker">PROTECTED ADMIN AREA</span>
+          <h1>Administrator sign-in required</h1>
+          <p>Sign in with an account configured in the deployment’s ADMIN_EMAILS setting to continue.</p>
+          <button type="button" onClick={() => { setIsAdminPath(false); setShowLogin(true); }}>Open sign in</button>
+        </div>
+      </div>
+    );
+  }
 
   // ================================
   // COURSES PAGE
