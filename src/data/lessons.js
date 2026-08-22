@@ -354,6 +354,113 @@ const expandedCourseLessonPlans = Object.fromEntries(
   ])
 );
 
+const generatedTopicTemplates = {
+  coding: [
+    "Syntax and Program Structure",
+    "Variables and Types",
+    "Control Flow",
+    "Functions and Reusable Logic",
+    "Collections and Data",
+    "Object-Oriented Design",
+    "Errors, Testing, and Debugging",
+    "Build a Practical Project",
+  ],
+  engines: [
+    "The Core Pipeline",
+    "Inputs and Representation",
+    "Algorithms and Decisions",
+    "State and Memory",
+    "Performance Trade-offs",
+    "Reliability and Failure",
+    "Testing and Observability",
+    "Build an Engine-Inspired Project",
+  ],
+  ai: [
+    "Core Concepts and Terminology",
+    "Preparing Useful Inputs",
+    "Prompt and Task Design",
+    "Calling a Model or Tool",
+    "Evaluating Output Quality",
+    "Safety and Failure Handling",
+    "Testing and Observability",
+    "Build an AI-Powered Project",
+  ],
+  tools: [
+    "Installation and Setup",
+    "The Everyday Workflow",
+    "Projects, Files, and State",
+    "Automation and Scripting",
+    "Collaboration and Sharing",
+    "Security and Permissions",
+    "Troubleshooting and Recovery",
+    "Build a Repeatable Workflow",
+  ],
+  web: [
+    "Web Foundations",
+    "Structure and Semantics",
+    "State and Interaction",
+    "Requests and Responses",
+    "Components and Reuse",
+    "Validation and Security",
+    "Testing and Deployment",
+    "Build a Production Feature",
+  ],
+  data: [
+    "Data and Table Foundations",
+    "Queries and Filters",
+    "Relationships and Modeling",
+    "Indexes and Performance",
+    "Transactions and Consistency",
+    "Security and Backups",
+    "Testing and Operations",
+    "Build a Data-Driven Feature",
+  ],
+};
+
+const generatedCourseGroups = {
+  coding: ["java", "cpp", "c-programming", "csharp", "typescript", "go", "rust", "php", "kotlin", "swift"],
+  engines: ["game-engine", "search-engine", "browser-engine", "ai-engine", "rendering-engine", "recommendation-engine", "compiler-engine", "web-crawler"],
+  ai: ["ai-fundamentals", "prompt-engineering", "ai-api-development", "ai-agents", "ai-chatbots", "ai-applications"],
+  tools: ["git", "github", "docker", "vscode", "npm", "terminal", "postman", "vercel", "linux", "devtools"],
+  web: ["html", "css", "responsive-design", "react", "nodejs", "express", "rest-api", "nextjs", "tailwind", "web-security", "authentication", "websockets", "pwa", "frontend-projects", "fullstack"],
+  data: ["mongodb", "sql", "postgresql", "mysql", "firebase", "database-design", "database-security"],
+};
+
+function humanizeCourseId(courseId) {
+  return courseId
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function slugifyTopic(topic) {
+  return topic.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function makeGeneratedCourseLessons(courseId, topics) {
+  const courseLabel = humanizeCourseId(courseId);
+  return topics.map((topic, index) => {
+    const answer = `Apply ${topic} using a small tested example`;
+    return makeLesson({
+      id: `${courseId}-${String(index + 1).padStart(2, "0")}-${slugifyTopic(topic)}`,
+      title: `${courseLabel}: ${topic}`,
+      focus: `${courseLabel} ${topic}`,
+      code: `const lessonPlan = {\n  course: "${courseLabel}",\n  topic: "${topic}",\n  step: ${index + 1},\n  tested: true\n};\n\nconsole.log(lessonPlan);`,
+      challenge: `Create a small ${courseLabel} exercise that demonstrates ${topic.toLowerCase()}. Explain your design choice, test the happy path, and describe one failure case.`,
+      starterCode: `const exercise = {\n  course: "${courseLabel}",\n  topic: "${topic}",\n  result: null\n};\n\n// Implement and test the idea here\nconsole.log(exercise);`,
+      quizQuestion: `Which approach best supports ${topic.toLowerCase()}?`,
+      quizOptions: [answer, "Skip planning and testing", "Hide errors from users", "Give every component unlimited access"],
+      quizAnswer: answer,
+    });
+  });
+}
+
+const generatedMissingCourseLessons = Object.fromEntries(
+  Object.entries(generatedCourseGroups).flatMap(([group, courseIds]) =>
+    courseIds.map((courseId) => [courseId, makeGeneratedCourseLessons(courseId, generatedTopicTemplates[group])])
+  )
+);
+
 export const lessons = {
   javascript: [
     {
@@ -699,6 +806,7 @@ print(language)`,
   ],
 
   ...expandedCourseLessonPlans,
+  ...generatedMissingCourseLessons,
 };
 
 // ============================================

@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const Challenge = require("../models/Challenge");
 const User = require("../models/User");
 const CourseOverride = require("../models/CourseOverride");
@@ -57,6 +58,20 @@ function pickFields(source, allowed) {
 
 router.get("/summary", async (req, res) => {
   try {
+    const databaseReadyState = mongoose.connection.readyState;
+    const database = {
+      connected: databaseReadyState === 1,
+      state: databaseReadyState === 1 ? "connected" : databaseReadyState === 2 ? "connecting" : "unavailable",
+    };
+    if (!database.connected) {
+      return res.json({
+        success: true,
+        database,
+        message: "MongoDB is not connected; database metrics are unavailable.",
+        summary: { users: null, activeUsers: null, challenges: null, activeChallenges: null, courses: null, activeCourses: null },
+      });
+    }
+
     const [users, activeUsers, challengeCount, activeChallenges, courses] = await Promise.all([
       User.countDocuments({}),
       User.countDocuments({ isActive: { $ne: false } }),
@@ -67,7 +82,8 @@ router.get("/summary", async (req, res) => {
 
     return res.json({
       success: true,
-      summary: {
+        database,
+        summary: {
         users,
         activeUsers,
         challenges: challengeCount,
@@ -84,6 +100,9 @@ router.get("/summary", async (req, res) => {
 
 router.get("/users", async (req, res) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ success: false, databaseUnavailable: true, message: "MongoDB is not connected; user records are unavailable." });
+    }
     const users = await User.find({})
       .select("name email role isActive xp level dayStreak badges completedLessons coursesStarted courseProgress dailyChallenge createdAt updatedAt")
       .sort({ createdAt: -1 })

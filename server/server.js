@@ -89,9 +89,14 @@ if (process.env.MONGODB_URI) {
 // ============================================
 
 app.get("/api/health", (req, res) => {
+  const databaseReadyState = mongoose.connection.readyState;
   res.json({
     success: true,
     message: "CodeLab Academy backend is running",
+    database: {
+      connected: databaseReadyState === 1,
+      state: databaseReadyState === 1 ? "connected" : databaseReadyState === 2 ? "connecting" : "unavailable",
+    },
   });
 });
 
