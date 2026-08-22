@@ -174,6 +174,7 @@ function CourseLearn({ user, course, onBack }) {
 
           lesson,
 
+          userId: user?.id,
           learnerMessage,
 
           messages: conversation,

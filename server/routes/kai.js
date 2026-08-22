@@ -12,6 +12,11 @@ const fetch =
 const GROQ_API_URL =
   "https://api.groq.com/openai/v1/chat/completions";
 
+// Groq retired llama-3.3-70b-versatile. Keep this configurable while using
+// a current production model by default.
+const GROQ_MODEL =
+  process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+
 // ============================================
 // HELPER: LOAD OR CREATE SESSION
 // ============================================
@@ -497,7 +502,7 @@ router.post("/", async (req, res) => {
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: GROQ_MODEL,
         messages: groqMessages,
         temperature: 0.7,
         max_tokens: 1200,
