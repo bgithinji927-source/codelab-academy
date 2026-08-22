@@ -1037,3 +1037,25 @@ body,
     border-bottom-color: var(--terminal-green) !important;
   }
 }
+
+
+/* Continue Learning should not show empty stacked outline lines around a course row. */
+.continue-learning .course-item {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.continue-learning .course-progress-bar {
+  height: 6px !important;
+  margin: 8px 0 6px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.continue-learning .course-progress-fill {
+  height: 100% !important;
+  border-radius: 999px !important;
+}
