@@ -112,7 +112,8 @@ function App() {
   // ================================
 
   const openCourses = (category = null) => {
-    setShowCourses(category ? { category } : true);
+    const selectedCategory = typeof category === "string" ? category : null;
+    setShowCourses(selectedCategory ? { category: selectedCategory } : true);
   };
 
   // ================================
