@@ -110,8 +110,20 @@ function App() {
   }, []);
 
   const leaveAdminPath = () => {
+    sessionStorage.removeItem("codelabAdminReturn");
     window.history.pushState({}, "", "/");
     setIsAdminPath(false);
+  };
+
+  const startAdminLogin = () => {
+    sessionStorage.setItem("codelabAdminReturn", "1");
+    localStorage.removeItem("codelabUser");
+    localStorage.removeItem("codelabToken");
+    window.history.pushState({}, "", "/");
+    setUser(null);
+    setIsAdminPath(false);
+    setAdminLoginRequested(true);
+    setShowLogin(true);
   };
 
   // ================================
@@ -144,7 +156,9 @@ function App() {
 
     setUser(loggedInUser);
     setShowLogin(false);
-    if (adminLoginRequested) {
+    const shouldReturnToAdmin = adminLoginRequested || sessionStorage.getItem("codelabAdminReturn") === "1";
+    if (shouldReturnToAdmin) {
+      sessionStorage.removeItem("codelabAdminReturn");
       window.history.pushState({}, "", "/admin");
       setIsAdminPath(true);
       setAdminLoginRequested(false);
@@ -210,7 +224,7 @@ function App() {
           <span className="admin-route-gate-kicker">ACCESS DENIED</span>
           <h1>Administrator access required</h1>
           <p>This account is not configured as an administrator.</p>
-          <div className="admin-route-gate-actions"><button type="button" onClick={() => { localStorage.removeItem("codelabUser"); localStorage.removeItem("codelabToken"); window.history.pushState({}, "", "/"); setUser(null); setIsAdminPath(false); setAdminLoginRequested(true); setShowLogin(true); }}>Sign in as administrator</button><button type="button" className="admin-route-gate-secondary" onClick={leaveAdminPath}>Return to CodeLab Academy</button></div>
+          <div className="admin-route-gate-actions"><button type="button" onClick={startAdminLogin}>Sign in as administrator</button><button type="button" className="admin-route-gate-secondary" onClick={leaveAdminPath}>Return to CodeLab Academy</button></div>
         </div>
       </div>
     );
@@ -224,7 +238,7 @@ function App() {
           <span className="admin-route-gate-kicker">PROTECTED ADMIN AREA</span>
           <h1>Administrator sign-in required</h1>
           <p>Sign in with an account configured in the deployment’s ADMIN_EMAILS setting to continue.</p>
-          <button type="button" onClick={() => { setIsAdminPath(false); setShowLogin(true); }}>Open sign in</button>
+          <button type="button" onClick={startAdminLogin}>Open sign in</button>
         </div>
       </div>
     );
