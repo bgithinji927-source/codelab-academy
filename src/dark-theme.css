@@ -447,3 +447,298 @@ button:disabled {
   background: linear-gradient(145deg, #10271c, #09150f) !important;
   border-color: #28513c !important;
 }
+
+
+/* FINAL TERMINAL MODE: black surfaces + luminous green controls */
+:root {
+  --terminal-black: #020805;
+  --terminal-surface: #050d08;
+  --terminal-panel: #08140c;
+  --terminal-green: #39ff14;
+  --terminal-green-mid: #28cc0e;
+  --terminal-green-dark: #137a07;
+  --terminal-line: rgba(57, 255, 20, 0.62);
+  --terminal-muted: #86aa91;
+}
+
+body,
+.app,
+.dashboard-page,
+.dashboard-main,
+.courses-page,
+.learn-page,
+.kai-page,
+.challenge-page,
+.roadmap-page {
+  background: var(--terminal-black) !important;
+}
+
+/* Green terminal lines and panel edges */
+.navbar,
+.dashboard-navbar,
+.courses-navbar,
+.learn-navbar,
+.kai-header,
+.challenge-header,
+.roadmap-header {
+  background: #030a06 !important;
+  border-bottom: 1px solid var(--terminal-line) !important;
+}
+
+.dashboard-course-sidebar,
+.continue-learning,
+.stat-card,
+.dashboard-card,
+.course-item,
+.empty-course,
+.category-card,
+.category-overview-card,
+.course-card,
+.intro-card,
+.kai-sidebar,
+.sidebar-card,
+.kai-input-area,
+.challenge-card,
+.leaderboard-card,
+.info-card,
+.path-card,
+.module-card,
+.progress-card,
+.login-modal {
+  background: linear-gradient(145deg, #09180f, #030a06) !important;
+  border: 1px solid rgba(57, 255, 20, 0.34) !important;
+  color: #e7ffe9 !important;
+  box-shadow: inset 0 1px 0 rgba(57, 255, 20, 0.08), 0 12px 30px rgba(0, 0, 0, 0.28) !important;
+}
+
+.dashboard-welcome {
+  background:
+    radial-gradient(circle at 90% 12%, rgba(57, 255, 20, 0.18), transparent 25%),
+    linear-gradient(135deg, #031207 0%, #0a2b12 48%, #115b1c 100%) !important;
+  border: 1px solid var(--terminal-line) !important;
+  box-shadow: inset 0 1px 0 rgba(143, 255, 122, 0.18), 0 0 28px rgba(57, 255, 20, 0.12) !important;
+}
+
+/* All primary buttons are luminous terminal green. */
+.get-started,
+.primary-button,
+.start-learning,
+.start-course-button,
+.send-btn,
+.submit-btn,
+.next-lesson,
+.module-action-btn,
+.login-button {
+  background: linear-gradient(180deg, #55ff32 0%, #28cc0e 52%, #168309 100%) !important;
+  border: 1px solid #72ff58 !important;
+  color: #020702 !important;
+  box-shadow: 0 0 14px rgba(57, 255, 20, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.42) !important;
+  text-shadow: none !important;
+}
+
+.get-started:hover,
+.primary-button:hover,
+.start-learning:hover,
+.start-course-button:hover,
+.send-btn:hover,
+.submit-btn:hover,
+.next-lesson:hover,
+.module-action-btn:hover,
+.login-button:hover {
+  background: linear-gradient(180deg, #7aff60 0%, #39ff14 55%, #1ea60b 100%) !important;
+  color: #010401 !important;
+  box-shadow: 0 0 24px rgba(57, 255, 20, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.55) !important;
+}
+
+/* Secondary/back controls are black with luminous green outlines. */
+.sign-in,
+.secondary-button,
+.learn-back,
+.back-lesson,
+.courses-back-button,
+.kai-back-btn,
+.challenge-back-btn,
+.roadmap-back-btn,
+.login-close {
+  background: #020805 !important;
+  color: var(--terminal-green) !important;
+  border: 1px solid var(--terminal-green) !important;
+  box-shadow: 0 0 9px rgba(57, 255, 20, 0.2), inset 0 1px 0 rgba(57, 255, 20, 0.12) !important;
+}
+
+.sign-in:hover,
+.secondary-button:hover,
+.learn-back:hover,
+.back-lesson:hover,
+.courses-back-button:hover,
+.kai-back-btn:hover,
+.challenge-back-btn:hover,
+.roadmap-back-btn:hover,
+.login-close:hover {
+  background: rgba(57, 255, 20, 0.12) !important;
+  color: #8aff72 !important;
+}
+
+/* Dark controls and inputs; no white message boxes. */
+.kai-input,
+.challenge-answer,
+.login-modal input,
+.learner-input-area,
+.input-wrapper {
+  background: #010503 !important;
+  color: #e7ffe9 !important;
+  border-color: var(--terminal-line) !important;
+}
+
+.kai-input:focus,
+.challenge-answer:focus,
+.login-modal input:focus {
+  outline: none !important;
+  border-color: var(--terminal-green) !important;
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.32) !important;
+}
+
+.kai-input::placeholder,
+.challenge-answer::placeholder,
+.login-modal input::placeholder {
+  color: #5f886b !important;
+}
+
+/* Terminal lines, tracks, and progress fills. */
+.progress-track,
+.course-progress-bar,
+.course-progress-track,
+.progress-bar,
+.progress-bar-small,
+.module-progress-bar,
+.path-progress {
+  background: #102718 !important;
+  border: 1px solid rgba(57, 255, 20, 0.28) !important;
+}
+
+.progress-fill,
+.course-progress-fill,
+.progress-fill-small,
+.module-progress-fill {
+  background: linear-gradient(90deg, #137a07, #28cc0e, #55ff32) !important;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.52) !important;
+}
+
+/* Replace remaining purple accent text and lines with terminal green. */
+.view-all-courses,
+.nav-links a:hover,
+.logo-text .lab,
+.lesson-label,
+.learn-course-title svg,
+.progress-percent,
+.course-progress-text,
+.start-learning,
+.category-card strong,
+.category-icon,
+.kai-message h3,
+.chat-name strong,
+.section-heading a,
+.courses-eyebrow,
+.subcourse-count,
+.course-level,
+.category-sidebar-heading span,
+.category-sidebar-heading strong,
+.category-button-icon,
+.overview-icon,
+.tab.active,
+.tab:hover,
+.requirements-list li::before,
+.info-card li::before,
+.roadmap-icon,
+.path-card.active,
+.status-icon.in-progress,
+.kai-icon,
+.sample-btn svg,
+.kai-error {
+  color: var(--terminal-green) !important;
+}
+
+.tab.active {
+  border-bottom-color: var(--terminal-green) !important;
+}
+
+.category-icon,
+.feature-icon,
+.intro-card-icon,
+.course-card-icon,
+.course-category-icon,
+.courses-hero-icon,
+.card-icon,
+.empty-course-icon,
+.input-avatar,
+.kai-avatar,
+.learner-avatar {
+  background: #0d2d18 !important;
+  color: var(--terminal-green) !important;
+  border: 1px solid rgba(57, 255, 20, 0.36) !important;
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.18), inset 0 1px 0 rgba(57, 255, 20, 0.16) !important;
+}
+
+.kai-bubble,
+.message-bubble,
+.learner-bubble {
+  background: #07150c !important;
+  border-color: rgba(57, 255, 20, 0.35) !important;
+  color: #e7ffe9 !important;
+}
+
+.kai-code-wrapper,
+.code-block {
+  background: #000301 !important;
+  border-color: var(--terminal-line) !important;
+  color: #78ff5e !important;
+}
+
+.kai-online span {
+  background: var(--terminal-green) !important;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.9) !important;
+}
+
+::selection {
+  background: rgba(57, 255, 20, 0.42) !important;
+  color: #ffffff !important;
+}
+
+
+/* Final cleanup: no pale icon tiles or white utility buttons. */
+.category-button-icon,
+.overview-icon,
+.course-category-icon,
+.course-card-icon,
+.dashboard-user button,
+.login-close {
+  background: #06140a !important;
+  color: var(--terminal-green) !important;
+  border: 1px solid var(--terminal-line) !important;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.22), inset 0 1px 0 rgba(57, 255, 20, 0.18) !important;
+}
+
+.dashboard-user button:hover,
+.category-button-icon:hover,
+.overview-icon:hover {
+  background: rgba(57, 255, 20, 0.14) !important;
+  color: #8aff72 !important;
+}
+
+.course-card-icon svg,
+.course-category-icon svg,
+.category-button-icon svg,
+.overview-icon svg {
+  color: var(--terminal-green) !important;
+  filter: drop-shadow(0 0 4px rgba(57, 255, 20, 0.45));
+}
+
+/* Green line language for cards and section separators. */
+.dashboard-section-heading,
+.category-overview-heading,
+.subcourse-heading,
+.conversation-intro,
+.challenge-header-info,
+.roadmap-info {
+  border-color: var(--terminal-line) !important;
+}
