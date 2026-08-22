@@ -31,6 +31,35 @@ import LearnWithKai from "./pages/LearnWithKai";
 import DailyChallenge from "./pages/DailyChallenge";
 import LearningRoadmap from "./pages/LearningRoadmap";
 import createStore from "./data/store";
+import courses from "./data/course";
+
+function DashboardCategoryView({ category, onOpenCourses }) {
+  const visibleCourses = courses.filter((course) => course.category === category);
+
+  return (
+    <section className="dashboard-category-view">
+      <div className="dashboard-category-heading">
+        <div>
+          <span className="dashboard-category-kicker">COURSE LIBRARY</span>
+          <h1>{category}</h1>
+          <p>{visibleCourses.length} courses available in this learning category.</p>
+        </div>
+        <span className="dashboard-category-count">{visibleCourses.length} COURSES</span>
+      </div>
+      <div className="dashboard-category-grid">
+        {visibleCourses.map((course) => (
+          <article className="dashboard-course-card" key={course.id}>
+            <div className="dashboard-course-card-icon"><Code2 size={20} aria-hidden="true" /></div>
+            <span className="dashboard-course-level">{course.level}</span>
+            <h2>{course.title}</h2>
+            <p>{course.description}</p>
+            <button type="button" onClick={() => onOpenCourses(category)}>Start Learning <ArrowRight size={16} /></button>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 const sidebarItems = [
   { label: "Dashboard", Icon: Home, view: "dashboard" },
@@ -49,6 +78,7 @@ const sidebarItems = [
 
 function Dashboard({ user, onLogout, onViewCourses }) {
   const [activeView, setActiveView] = useState("dashboard");
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   // Initialize store and load current state into local component state
   const baseStore = createStore();
@@ -221,8 +251,8 @@ function Dashboard({ user, onLogout, onViewCourses }) {
               <button
                 key={label}
                 type="button"
-                className={view === "dashboard" ? "active" : ""}
-                onClick={() => view === "dashboard" ? setActiveView("dashboard") : onViewCourses(category)}
+                className={view === "dashboard" ? (!selectedCategory ? "active" : "") : (selectedCategory === category ? "active" : "")}
+                onClick={() => view === "dashboard" ? (setActiveView("dashboard"), setSelectedCategory(null)) : (setActiveView("dashboard"), setSelectedCategory(category))}
               >
                 <Icon size={17} aria-hidden="true" />
                 <span>{label}</span>
@@ -242,6 +272,10 @@ function Dashboard({ user, onLogout, onViewCourses }) {
           </div>
         </aside>
 
+        {selectedCategory ? (
+          <DashboardCategoryView category={selectedCategory} onOpenCourses={onViewCourses} />
+        ) : (
+          <>
         {/* WELCOME */}
         <section className="dashboard-welcome">
 
@@ -489,6 +523,8 @@ function Dashboard({ user, onLogout, onViewCourses }) {
           </div>
 
         </section>
+          </>
+        )}
 
       </main>
 
