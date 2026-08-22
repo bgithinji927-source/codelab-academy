@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Clock, Code, Trophy, CheckCircle2, Zap, LockKeyhole, RotateCcw } from "lucide-react";
 import fetchWithAuth from "../utils/fetchWithAuth";
 import "./DailyChallenge.css";
@@ -33,6 +33,10 @@ function DailyChallenge({ user, onBack }) {
   const [submitting, setSubmitting] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const [challengeRefreshKey, setChallengeRefreshKey] = useState(0);
+  const [viewToken, setViewToken] = useState("");
+  const [viewLocked, setViewLocked] = useState(false);
+  const [openingChallenge, setOpeningChallenge] = useState(false);
+  const viewRequestRef = useRef(null);
 
   const maxAttempts = assigned?.maxAttempts || DEFAULT_MAX_ATTEMPTS;
   const attempts = Number(assigned?.attempts || 0);
@@ -51,7 +55,8 @@ function DailyChallenge({ user, onBack }) {
       !submitting &&
       !isCompleted &&
       !isClosed &&
-      attemptsRemaining > 0
+      attemptsRemaining > 0 &&
+      Boolean(viewToken)
   );
 
   useEffect(() => {
@@ -64,6 +69,10 @@ function DailyChallenge({ user, onBack }) {
 
     async function loadChallenge() {
       setLoading(true);
+      setOpeningChallenge(false);
+      setChallenge(null);
+      setViewToken("");
+      setViewLocked(false);
       setFeedback(null);
 
       try {
@@ -76,35 +85,67 @@ function DailyChallenge({ user, onBack }) {
 
         if (!mounted) return;
 
-        if (challengeResponse.ok && challengeData.success) {
-          setChallenge(challengeData.challenge);
-          setAssigned(challengeData.assigned);
+        if (progressResponse.ok && progressData.success && progressData.user) {
+          setProgress(progressData.user);
+        }
 
-          if (challengeData.assigned?.completed) {
-            setFeedback({
-              type: "success",
-              title: "Challenge already completed",
-              message: "You already earned the XP for this 24-hour challenge.",
-            });
-          } else if (challengeData.assigned?.closed) {
-            setFeedback({
-              type: "closed",
-              title: "Challenge closed",
-              message: "This challenge reached the five-attempt limit.",
-            });
-          }
-        } else {
-          setChallenge(null);
+        if (!challengeResponse.ok || !challengeData.success) {
           setFeedback({
             type: "error",
             title: "No daily challenge available",
             message: challengeData.message || "Ask an administrator to publish an active challenge.",
           });
+          return;
         }
 
-        if (progressResponse.ok && progressData.success && progressData.user) {
-          setProgress(progressData.user);
+        setAssigned(challengeData.assigned);
+
+        if (!challengeData.oneTimeViewAvailable || challengeData.viewed) {
+          setViewLocked(true);
+          setFeedback({
+            type: challengeData.assigned?.closed ? "closed" : "locked",
+            title: challengeData.assigned?.closed ? "Challenge closed" : "Challenge already viewed",
+            message: challengeData.assigned?.closed
+              ? "This challenge reached the five-attempt limit and cannot be reopened."
+              : "This one-time challenge was already opened. It cannot be viewed again during this 24-hour cycle.",
+          });
+          return;
         }
+
+        setOpeningChallenge(true);
+        if (!viewRequestRef.current) {
+          viewRequestRef.current = fetchWithAuth("/api/challenges/view", {
+            method: "POST",
+            body: JSON.stringify({}),
+          })
+            .then(async (response) => ({
+              ok: response.ok,
+              data: await response.json(),
+            }))
+            .finally(() => {
+              viewRequestRef.current = null;
+            });
+        }
+
+        const viewResult = await viewRequestRef.current;
+        const viewData = viewResult.data;
+
+        if (!mounted) return;
+
+        if (!viewResult.ok || !viewData.success) {
+          setViewLocked(Boolean(viewData.alreadyViewed || viewData.locked));
+          setFeedback({
+            type: viewData.alreadyViewed || viewData.locked ? "locked" : "error",
+            title: viewData.alreadyViewed || viewData.locked ? "Challenge already viewed" : "Unable to open challenge",
+            message: viewData.message || "Please try again in a moment.",
+          });
+          return;
+        }
+
+        setChallenge(viewData.challenge);
+        setAssigned(viewData.assigned);
+        setViewToken(viewData.viewToken || "");
+        setViewLocked(false);
       } catch (error) {
         console.error("Unable to load daily challenge:", error);
         if (mounted) {
@@ -115,7 +156,10 @@ function DailyChallenge({ user, onBack }) {
           });
         }
       } finally {
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setOpeningChallenge(false);
+          setLoading(false);
+        }
       }
     }
 
@@ -168,6 +212,7 @@ function DailyChallenge({ user, onBack }) {
         body: JSON.stringify({
           challengeId: challenge.id,
           answer: answer.trim(),
+          viewToken,
         }),
       });
       const data = await response.json();
@@ -244,12 +289,15 @@ function DailyChallenge({ user, onBack }) {
           <div className="challenge-content">
             {loading ? (
               <div className="challenge-card challenge-loading-card">
-                <h2>Loading today’s challenge...</h2>
+                <h2>{openingChallenge ? "Opening your one-time challenge..." : "Loading today’s challenge..."}</h2>
+                <p>{openingChallenge ? "This challenge will be available in the current browser session only." : "Checking your 24-hour challenge window."}</p>
               </div>
             ) : !challenge ? (
-              <div className="challenge-card challenge-empty-card">
+              <div className={`challenge-card challenge-empty-card ${viewLocked ? "challenge-locked-card" : ""}`}>
+                {viewLocked ? <LockKeyhole size={34} /> : <Clock size={34} />}
                 <h2>{feedback?.title || "No daily challenge available"}</h2>
                 <p>{feedback?.message || "Ask an administrator to publish an active challenge."}</p>
+                {viewLocked && assigned?.expiresAt && <span className="challenge-lock-countdown">Next challenge window: {formatTimeLeft(assigned.expiresAt, now)}</span>}
               </div>
             ) : (
               <div className="challenge-card">

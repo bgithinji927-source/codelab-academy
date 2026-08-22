@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const express = require("express");
 const Challenge = require("../models/Challenge");
 const User = require("../models/User");
@@ -11,6 +12,10 @@ const {
 const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
+
+function hashViewToken(token) {
+  return crypto.createHash("sha256").update(String(token)).digest("hex");
+}
 
 function serializeAssignment(assignment) {
   if (!assignment) return null;
@@ -33,6 +38,8 @@ function serializeAssignment(assignment) {
     completedAt: plain.completedAt,
     closedAt: plain.closedAt,
     lastResult: plain.lastResult,
+    viewed: Boolean(plain.viewedAt),
+    oneTimeView: true,
   };
 }
 
@@ -84,11 +91,17 @@ router.get("/today", ensureAuth, async (req, res) => {
     const challenge = await Challenge.findById(user.dailyChallenge.challengeId).lean();
     if (!challenge) return res.status(404).json({ success: false, message: "No challenge available" });
 
+    const viewed = Boolean(user.dailyChallenge.viewedAt);
     return res.json({
       success: true,
-      challenge: serializeChallenge(challenge),
+      challenge: null,
       assigned: serializeAssignment(user.dailyChallenge),
       maxAttempts: MAX_CHALLENGE_ATTEMPTS,
+      oneTimeViewAvailable: !viewed,
+      viewed,
+      message: viewed
+        ? "This challenge has already been viewed and cannot be reopened during this cycle."
+        : "This challenge can be opened once."
     });
   } catch (err) {
     console.error("Get today's challenge error:", err);
@@ -96,11 +109,71 @@ router.get("/today", ensureAuth, async (req, res) => {
   }
 });
 
+// Open the current challenge exactly once. The returned token is kept only in
+// the active browser session and is required for answer submissions.
+router.post("/view", ensureAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    await ensureDailyChallengeForUser(user);
+    const assignment = user.dailyChallenge;
+    const challenge = await Challenge.findById(assignment.challengeId).lean();
+    if (!challenge) return res.status(404).json({ success: false, message: "No challenge available" });
+
+    const now = new Date();
+    const viewToken = crypto.randomBytes(32).toString("hex");
+    const viewTokenHash = hashViewToken(viewToken);
+    const updated = await User.findOneAndUpdate(
+      {
+        _id: user._id,
+        "dailyChallenge.challengeId": String(challenge._id),
+        "dailyChallenge.viewedAt": { $exists: false },
+        "dailyChallenge.expiresAt": { $gt: now },
+        "dailyChallenge.completed": { $ne: true },
+        "dailyChallenge.closed": { $ne: true },
+      },
+      {
+        $set: {
+          "dailyChallenge.viewedAt": now,
+          "dailyChallenge.viewTokenHash": viewTokenHash,
+          "dailyChallenge.viewRequestId": crypto.randomUUID(),
+        },
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      const current = await User.findById(user._id).lean();
+      return res.status(409).json({
+        success: false,
+        alreadyViewed: true,
+        locked: true,
+        message: "This challenge has already been viewed and cannot be reopened during this cycle.",
+        assigned: serializeAssignment(current?.dailyChallenge),
+      });
+    }
+
+    return res.json({
+      success: true,
+      oneTimeView: true,
+      viewToken,
+      viewRequestId: updated.dailyChallenge.viewRequestId,
+      challenge: serializeChallenge(challenge),
+      assigned: serializeAssignment(updated.dailyChallenge),
+    });
+  } catch (err) {
+    console.error("Open challenge error:", err);
+    return res.status(500).json({ success: false, message: "Could not open the challenge" });
+  }
+});
+
 // POST an answer for the learner's current challenge.
 router.post("/submit", ensureAuth, async (req, res) => {
   try {
-    const { challengeId, answer } = req.body;
+    const { challengeId, answer, viewToken } = req.body;
     if (!challengeId) return res.status(400).json({ success: false, message: "challengeId required" });
+    if (!viewToken) return res.status(403).json({ success: false, locked: true, message: "Open the challenge before submitting an answer" });
     if (typeof answer !== "string" || !answer.trim()) {
       return res.status(400).json({ success: false, message: "Answer required" });
     }
@@ -111,6 +184,10 @@ router.post("/submit", ensureAuth, async (req, res) => {
     const assignment = user.dailyChallenge;
     if (!assignment || String(assignment.challengeId) !== String(challengeId)) {
       return res.status(409).json({ success: false, stale: true, message: "This challenge is no longer assigned. Load the new challenge." });
+    }
+
+    if (!assignment.viewedAt || !assignment.viewTokenHash || hashViewToken(viewToken) !== assignment.viewTokenHash) {
+      return res.status(403).json({ success: false, locked: true, message: "This challenge can only be answered from its original view session." });
     }
 
     if (!hasActiveAssignment(user)) {
@@ -157,6 +234,7 @@ router.post("/submit", ensureAuth, async (req, res) => {
           "dailyChallenge.challengeId": String(challengeId),
           "dailyChallenge.completed": false,
           "dailyChallenge.closed": { $ne: true },
+          "dailyChallenge.viewTokenHash": hashViewToken(viewToken),
           "dailyChallenge.attempts": { $lt: MAX_CHALLENGE_ATTEMPTS },
         },
         {
