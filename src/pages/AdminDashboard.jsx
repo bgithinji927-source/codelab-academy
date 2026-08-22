@@ -23,6 +23,8 @@ import {
   Zap,
 } from "lucide-react";
 import fetchWithAuth from "../utils/fetchWithAuth";
+import bundledCourseCatalog from "../data/course";
+import bundledLessonCatalog from "../data/lessons";
 import "./AdminDashboard.css";
 
 const sections = [
@@ -64,11 +66,17 @@ function getLessonDraft(lesson) {
   };
 }
 
+const bundledAdminCourses = bundledCourseCatalog.map((course) => ({
+  ...course,
+  active: true,
+  lessons: bundledLessonCatalog[course.id] || [],
+}));
+
 function AdminDashboard({ user, onBack }) {
   const [section, setSection] = useState("overview");
   const [summary, setSummary] = useState(null);
   const [users, setUsers] = useState([]);
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState(bundledAdminCourses);
   const [challenges, setChallenges] = useState([]);
   const [settings, setSettings] = useState(null);
   const [challengeForm, setChallengeForm] = useState(emptyChallenge);
@@ -87,19 +95,7 @@ function AdminDashboard({ user, onBack }) {
     window.setTimeout(() => setNotice(null), 3200);
   };
 
-  const loadBundledCatalog = async () => {
-    const [courseModule, lessonModule] = await Promise.all([
-      import("../data/course.js"),
-      import("../data/lessons.js"),
-    ]);
-    const bundledCourses = courseModule.default || courseModule.courses || [];
-    const bundledLessons = lessonModule.default || lessonModule.lessons || {};
-    return bundledCourses.map((course) => ({
-      ...course,
-      active: true,
-      lessons: bundledLessons[course.id] || [],
-    }));
-  };
+  const loadBundledCatalog = async () => bundledAdminCourses;
 
   const setLoadedCourses = (loadedCourses) => {
     setCourses(loadedCourses);
@@ -110,24 +106,15 @@ function AdminDashboard({ user, onBack }) {
 
   const loadAdminData = async () => {
     setLoading(true);
-    try {
-      const responses = await Promise.all([
-        fetchWithAuth("/api/admin/summary"),
-        fetchWithAuth("/api/admin/users"),
-        fetchWithAuth("/api/admin/courses"),
-        fetchWithAuth("/api/admin/challenges"),
-        fetchWithAuth("/api/admin/settings"),
-      ]);
-      const [summaryResponse, usersResponse, coursesResponse, challengesResponse, settingsResponse] = responses;
-      const payloads = await Promise.all(responses.map((response) => response.json().catch(() => ({}))));
-      const [summaryData, usersData, coursesData, challengesData, settingsData] = payloads;
 
-      if ([summaryResponse, usersResponse, coursesResponse, challengesResponse, settingsResponse].some((response) => response.status === 401 || response.status === 403)) {
+    // Load the complete course/lesson inventory independently. A failure in a
+    // secondary widget must never prevent the catalog from appearing.
+    try {
+      const coursesResponse = await fetchWithAuth("/api/admin/courses");
+      const coursesData = await coursesResponse.json().catch(() => ({}));
+      if (coursesResponse.status === 401 || coursesResponse.status === 403) {
         throw new Error("Administrator authorization is required");
       }
-
-      if (summaryResponse.ok && summaryData.success) setSummary(summaryData.summary);
-      if (usersResponse.ok && usersData.success) setUsers(usersData.users || []);
       if (coursesResponse.ok && coursesData.success && Array.isArray(coursesData.courses) && coursesData.courses.length > 0) {
         setLoadedCourses(coursesData.courses);
       } else {
@@ -135,10 +122,45 @@ function AdminDashboard({ user, onBack }) {
         setLoadedCourses(bundledCourses);
         notify("error", "Managed catalog unavailable; showing the built-in course and lesson catalog");
       }
-      if (challengesResponse.ok && challengesData.success) setChallenges(challengesData.challenges || []);
-      if (settingsResponse.ok && settingsData.success) setSettings(settingsData.settings);
     } catch (error) {
-      notify("error", error.message || "Could not load admin data");
+      if (error.message === "Administrator authorization is required") {
+        notify("error", error.message);
+      } else {
+        try {
+          const bundledCourses = await loadBundledCatalog();
+          setLoadedCourses(bundledCourses);
+          notify("error", "Managed catalog unavailable; showing the built-in course and lesson catalog");
+        } catch (fallbackError) {
+          notify("error", fallbackError.message || "Could not load course catalog");
+        }
+      }
+    }
+
+    try {
+      const results = await Promise.allSettled([
+        fetchWithAuth("/api/admin/summary"),
+        fetchWithAuth("/api/admin/users"),
+        fetchWithAuth("/api/admin/challenges"),
+        fetchWithAuth("/api/admin/settings"),
+      ]);
+      const payloads = await Promise.all(results.map((result) => result.status === "fulfilled"
+        ? result.value.json().catch(() => ({}))
+        : Promise.resolve({})));
+      const [summaryResult, usersResult, challengesResult, settingsResult] = results;
+      const [summaryData, usersData, challengesData, settingsData] = payloads;
+      const responses = [summaryResult, usersResult, challengesResult, settingsResult]
+        .map((result) => result.status === "fulfilled" ? result.value : null)
+        .filter(Boolean);
+
+      if (responses.some((response) => response.status === 401 || response.status === 403)) {
+        throw new Error("Administrator authorization is required");
+      }
+      if (summaryResult.status === "fulfilled" && summaryResult.value.ok && summaryData.success) setSummary(summaryData.summary);
+      if (usersResult.status === "fulfilled" && usersResult.value.ok && usersData.success) setUsers(usersData.users || []);
+      if (challengesResult.status === "fulfilled" && challengesResult.value.ok && challengesData.success) setChallenges(challengesData.challenges || []);
+      if (settingsResult.status === "fulfilled" && settingsResult.value.ok && settingsData.success) setSettings(settingsData.settings);
+    } catch (error) {
+      notify("error", error.message || "Some admin controls could not be loaded");
     } finally {
       setLoading(false);
     }
@@ -353,7 +375,7 @@ function AdminDashboard({ user, onBack }) {
     { label: "Active Challenges", value: summary?.activeChallenges ?? "—", Icon: ClipboardCheck },
   ];
 
-  if (loading) {
+  if (loading && courses.length === 0) {
     return <div className="admin-page admin-loading"><RefreshCw className="admin-spin" size={28} /><p>Loading administrator controls...</p></div>;
   }
 
