@@ -31,8 +31,34 @@ function CourseLearn({ user, course, onBack }) {
   const [lessonCompletionReady, setLessonCompletionReady] = useState(false);
 
   const typingTimerRef = useRef(null);
+  const conversationEndRef = useRef(null);
+  const scrollFrameRef = useRef(null);
 
   const courseTitle = course?.title || "Programming";
+
+  // Keep the latest Kai text visible while the response is being typed.
+  // requestAnimationFrame coalesces the 15ms typing updates into one scroll
+  // per rendered frame instead of creating a queue of smooth scrolls.
+  useEffect(() => {
+    if (scrollFrameRef.current) {
+      cancelAnimationFrame(scrollFrameRef.current);
+    }
+
+    scrollFrameRef.current = requestAnimationFrame(() => {
+      conversationEndRef.current?.scrollIntoView({
+        behavior: isKaiTyping ? "auto" : "smooth",
+        block: "end",
+      });
+      scrollFrameRef.current = null;
+    });
+
+    return () => {
+      if (scrollFrameRef.current) {
+        cancelAnimationFrame(scrollFrameRef.current);
+        scrollFrameRef.current = null;
+      }
+    };
+  }, [displayedKaiText, isKaiTyping, messages.length]);
 
   // ============================================
   // CLEAN KAI RESPONSE
@@ -883,6 +909,12 @@ ${startMessage}
 
               </div>
             )}
+
+          <div
+            ref={conversationEndRef}
+            className="conversation-end-anchor"
+            aria-hidden="true"
+          />
 
         </section>
 
