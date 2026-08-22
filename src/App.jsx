@@ -214,7 +214,7 @@ function App() {
 
   if (isAdminPath && user) {
     if (user.isAdmin || user.role === "admin") {
-      return <AdminDashboard user={user} onBack={leaveAdminPath} />;
+      return <AdminDashboard user={user} onBack={leaveAdminPath} onReauthenticate={startAdminLogin} />;
     }
 
     return (

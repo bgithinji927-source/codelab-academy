@@ -1000,3 +1000,21 @@
     align-items: stretch;
   }
 }
+
+.admin-notice-action {
+  margin-left: auto;
+  border: 1px solid rgba(255, 207, 112, 0.65);
+  background: rgba(255, 207, 112, 0.12);
+  color: #ffcf70;
+  padding: 7px 12px;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.admin-notice-action:hover {
+  background: rgba(255, 207, 112, 0.22);
+}
