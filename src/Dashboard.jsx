@@ -394,14 +394,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
               </p>
             </div>
 
-            {/* VIEW ALL COURSES */}
-            <button
-              type="button"
-              onClick={onViewCourses}
-            >
-              View All Courses
-              <ArrowRight size={17} />
-            </button>
+
 
           </div>
 
