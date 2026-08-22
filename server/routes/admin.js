@@ -107,7 +107,12 @@ router.get("/users", async (req, res) => {
       .select("name email role isActive xp level dayStreak badges completedLessons coursesStarted courseProgress dailyChallenge createdAt updatedAt")
       .sort({ createdAt: -1 })
       .lean();
-    return res.json({ success: true, users: users.map(safeUser) });
+    return res.json({
+      success: true,
+      database: { connected: true, state: "connected", source: "mongodb" },
+      count: users.length,
+      users: users.map(safeUser),
+    });
   } catch (error) {
     console.error("Admin users error:", error);
     return res.status(500).json({ success: false, message: "Could not load users" });

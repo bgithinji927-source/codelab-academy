@@ -72,6 +72,10 @@ const bundledAdminCourses = bundledCourseCatalog.map((course) => ({
   lessons: bundledLessonCatalog[course.id] || [],
 }));
 
+const waitForAdminDatabase = (milliseconds) => new Promise((resolve) => {
+  window.setTimeout(resolve, milliseconds);
+});
+
 function AdminDashboard({ user, onBack }) {
   const [section, setSection] = useState("overview");
   const [summary, setSummary] = useState(null);
@@ -110,12 +114,22 @@ function AdminDashboard({ user, onBack }) {
     setLoading(true);
     setUsersStatus("loading");
 
-    fetch("/api/health")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success && data.database) setDatabaseStatus(data.database);
-      })
-      .catch((error) => console.error("Could not read database health:", error));
+    const loadHealthStatus = async () => {
+      for (let attempt = 0; attempt < 5; attempt += 1) {
+        try {
+          const response = await fetch("/api/health");
+          const data = await response.json();
+          if (data.success && data.database) {
+            setDatabaseStatus(data.database);
+            if (data.database.connected) return;
+          }
+        } catch (error) {
+          console.error("Could not read database health:", error);
+        }
+        await waitForAdminDatabase(1000);
+      }
+    };
+    loadHealthStatus();
 
     // Load the complete course/lesson inventory independently. A failure in a
     // secondary widget must never prevent the catalog from appearing.
@@ -147,15 +161,22 @@ function AdminDashboard({ user, onBack }) {
     }
 
     try {
-      const results = await Promise.allSettled([
-        fetchWithAuth("/api/admin/summary"),
-        fetchWithAuth("/api/admin/users"),
-        fetchWithAuth("/api/admin/challenges"),
-        fetchWithAuth("/api/admin/settings"),
-      ]);
-      const payloads = await Promise.all(results.map((result) => result.status === "fulfilled"
-        ? result.value.json().catch(() => ({}))
-        : Promise.resolve({})));
+      let results = [];
+      let payloads = [];
+      for (let attempt = 0; attempt < 5; attempt += 1) {
+        results = await Promise.allSettled([
+          fetchWithAuth("/api/admin/summary"),
+          fetchWithAuth("/api/admin/users"),
+          fetchWithAuth("/api/admin/challenges"),
+          fetchWithAuth("/api/admin/settings"),
+        ]);
+        payloads = await Promise.all(results.map((result) => result.status === "fulfilled"
+          ? result.value.json().catch(() => ({}))
+          : Promise.resolve({})));
+        const hasDatabaseRetryResponse = results.some((result) => result.status === "fulfilled" && result.value.status === 503);
+        if (!hasDatabaseRetryResponse || attempt === 4) break;
+        await waitForAdminDatabase(1000);
+      }
       const [summaryResult, usersResult, challengesResult, settingsResult] = results;
       const [summaryData, usersData, challengesData, settingsData] = payloads;
       const responses = [summaryResult, usersResult, challengesResult, settingsResult]
