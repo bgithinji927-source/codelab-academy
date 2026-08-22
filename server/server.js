@@ -6,6 +6,7 @@ const path = require("path");
 const User = require("./models/User");
 const authRoutes = require("./routes/auth");
 const kaiRoutes = require("./routes/kai");
+const challengeRoutes = require("./routes/challenges");
 
 const app = express();
 
@@ -32,6 +33,9 @@ app.use("/api/auth", authRoutes);
 // ============================================
 
 app.use("/api/kai", kaiRoutes);
+
+// DAILY CHALLENGES
+app.use("/api/challenges", challengeRoutes);
 
 // ============================================
 // DEBUG AUTH ROUTES

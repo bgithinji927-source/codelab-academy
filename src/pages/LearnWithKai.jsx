@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Send, ArrowLeft, Bot, Lightbulb, Code } from "lucide-react";
-import createStore from "../data/store";
+import fetchWithAuth from "../utils/fetchWithAuth";
 import "./LearnWithKai.css";
 
-function LearnWithKai({ onBack }) {
-  const store = createStore();
-  const state = store.getState();
-  
-  const [messages, setMessages] = useState(state.kaiConversations);
+function LearnWithKai({ user, onBack }) {
+  const course = useMemo(() => ({ id: "general", title: "Coding Fundamentals", level: "Beginner" }), []);
+  const lesson = useMemo(() => ({ id: "kai-general", title: "Ask Kai Anything", description: "Personalized coding guidance from your AI instructor." }), []);
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const sampleQuestions = [
     "Explain closures in JavaScript",
@@ -18,197 +18,61 @@ function LearnWithKai({ onBack }) {
     "Help me understand async/await",
   ];
 
-  const kaiResponses = {
-    closure: "A closure is a function that has access to variables from its outer scope, even after that outer scope has returned. This is powerful for creating private variables and callbacks. Would you like me to show you an example?",
-    react: "To debug React components, you can use React DevTools browser extension, console.log() in render methods, and the debugger keyword. What specific issue are you trying to debug?",
-    rest: "REST (Representational State Transfer) uses HTTP methods (GET, POST, PUT, DELETE) on endpoints, while GraphQL uses a single endpoint with queries and mutations. REST is simpler, GraphQL is more flexible. Which one interests you more?",
-    async: "Async/await makes asynchronous code look synchronous. 'async' marks a function as asynchronous, and 'await' pauses execution until a Promise resolves. This makes code much more readable than callbacks or .then() chains!",
-  };
+  useEffect(() => {
+    let mounted = true;
+    fetchWithAuth(`/api/kai/session/${user?.id}/${course.id}/${lesson.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (mounted && data.success && data.session?.conversationHistory?.length) {
+          setMessages(data.session.conversationHistory);
+        }
+      })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, [course.id, lesson.id, user?.id]);
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
-
-    const userMessage = {
-      id: messages.length + 1,
-      type: "user",
-      text: inputValue,
-      timestamp: new Date(),
-    };
-    
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
-    store.addKaiMessage(inputValue, "user");
+    const text = inputValue.trim();
+    if (!text || isLoading) return;
+    const learnerMessage = { role: "user", content: text };
+    const conversation = [...messages, learnerMessage];
+    setMessages(conversation);
     setInputValue("");
     setIsLoading(true);
+    setError("");
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      let responseText = "That's a great question! Let me help you understand that better. ";
-      
-      const input = inputValue.toLowerCase();
-      if (input.includes("closure")) {
-        responseText += kaiResponses.closure;
-      } else if (input.includes("debug") && input.includes("react")) {
-        responseText += kaiResponses.react;
-      } else if (input.includes("rest") || input.includes("graphql")) {
-        responseText += kaiResponses.rest;
-      } else if (input.includes("async") || input.includes("await")) {
-        responseText += kaiResponses.async;
-      } else {
-        responseText += "That's interesting! I'd love to help. Can you tell me more about what you're working on? You can ask me about JavaScript, React, CSS, APIs, or any web development topic.";
-      }
-
-      const kaiMessage = {
-        id: newMessages.length + 1,
-        type: "kai",
-        text: responseText,
-        timestamp: new Date(),
-      };
-      
-      setMessages([...newMessages, kaiMessage]);
-      store.addKaiMessage(responseText, "kai");
+    try {
+      const response = await fetchWithAuth("/api/kai", {
+        method: "POST",
+        body: JSON.stringify({ userId: user?.id, course, lesson, learnerMessage: text, messages: conversation }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || "Kai could not respond.");
+      setMessages((current) => [...current, { role: "assistant", content: data.reply }]);
+    } catch (err) {
+      setError(err.message || "Unable to reach Kai right now.");
+    } finally {
       setIsLoading(false);
-    }, 800);
-  };
-
-  const handleSampleQuestion = (question) => {
-    setInputValue(question);
+    }
   };
 
   return (
     <div className="kai-page">
-      {/* HEADER */}
       <header className="kai-header">
-        <button className="kai-back-btn" onClick={onBack}>
-          <ArrowLeft size={20} />
-          Back to Dashboard
-        </button>
-        <div className="kai-header-title">
-          <Bot size={32} className="kai-icon" />
-          <div>
-            <h1>Learn with Kai</h1>
-            <p>Your AI instructor is here to help you learn</p>
-          </div>
-        </div>
+        <button className="kai-back-btn" onClick={onBack}><ArrowLeft size={20} /> Back to Dashboard</button>
+        <div className="kai-header-title"><Bot size={32} className="kai-icon" /><div><h1>Learn with Kai</h1><p>Your AI instructor is here to help you learn</p></div></div>
       </header>
-
-      {/* MAIN CONTENT */}
       <main className="kai-main">
         <div className="kai-container">
-          {/* CHAT AREA */}
-          <div className="kai-chat-wrapper">
-            <div className="kai-messages">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`message ${message.type}-message`}
-                >
-                  {message.type === "kai" && (
-                    <div className="kai-avatar">
-                      <Bot size={24} />
-                    </div>
-                  )}
-                  <div className="message-bubble">
-                    {message.text}
-                  </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="message kai-message">
-                  <div className="kai-avatar">
-                    <Bot size={24} />
-                  </div>
-                  <div className="message-bubble loading">
-                    <span></span><span></span><span></span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* SAMPLE QUESTIONS (shown if few messages) */}
-            {messages.length <= 1 && (
-              <div className="sample-questions">
-                <h3>
-                  <Lightbulb size={18} />
-                  Try asking about:
-                </h3>
-                <div className="questions-grid">
-                  {sampleQuestions.map((question, idx) => (
-                    <button
-                      key={idx}
-                      className="sample-btn"
-                      onClick={() => handleSampleQuestion(question)}
-                    >
-                      <Code size={16} />
-                      {question}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className="kai-messages">
+            {messages.length === 0 && <div className="sample-questions"><h3><Lightbulb size={18} /> Try asking about:</h3><div className="questions-grid">{sampleQuestions.map((question) => <button key={question} className="sample-btn" onClick={() => setInputValue(question)}><Code size={16} />{question}</button>)}</div></div>}
+            {messages.map((message, index) => <div key={`${message.role}-${index}`} className={`message ${message.role === "assistant" ? "kai-message" : "user-message"}`}>{message.role === "assistant" && <div className="kai-avatar"><Bot size={24} /></div>}<div className="message-bubble">{message.content || message.text}</div></div>)}
+            {isLoading && <div className="message kai-message"><div className="kai-avatar"><Bot size={24} /></div><div className="message-bubble loading"><span></span><span></span><span></span></div></div>}
           </div>
-
-          {/* INPUT AREA */}
-          <div className="kai-input-area">
-            <div className="input-wrapper">
-              <input
-                type="text"
-                className="kai-input"
-                placeholder="Ask me anything about coding..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={(e) =>
-                  e.key === "Enter" && handleSendMessage()
-                }
-              />
-              <button
-                className="send-btn"
-                onClick={handleSendMessage}
-                disabled={!inputValue.trim() || isLoading}
-              >
-                <Send size={20} />
-              </button>
-            </div>
-            <p className="input-hint">
-              Kai can explain concepts, help with code, and answer questions about web development.
-            </p>
-          </div>
+          {error && <p className="kai-error">{error}</p>}
+          <div className="kai-input-area"><div className="input-wrapper"><input className="kai-input" placeholder="Ask me anything about coding..." value={inputValue} onChange={(event) => setInputValue(event.target.value)} onKeyDown={(event) => event.key === "Enter" && handleSendMessage()} disabled={isLoading} /><button className="send-btn" onClick={handleSendMessage} disabled={!inputValue.trim() || isLoading}><Send size={20} /></button></div><p className="input-hint">Kai uses your account session to continue your learning conversation.</p></div>
         </div>
-
-        {/* INFO SIDEBAR */}
-        <aside className="kai-sidebar">
-          <div className="sidebar-card">
-            <h3>💡 Tips</h3>
-            <ul>
-              <li>Ask follow-up questions for clarification</li>
-              <li>Request code examples and explanations</li>
-              <li>Ask about best practices</li>
-              <li>Get debugging help</li>
-            </ul>
-          </div>
-
-          <div className="sidebar-card">
-            <h3>🎯 Topics</h3>
-            <div className="topics-list">
-              <span className="topic-tag">JavaScript</span>
-              <span className="topic-tag">React</span>
-              <span className="topic-tag">CSS</span>
-              <span className="topic-tag">APIs</span>
-              <span className="topic-tag">Databases</span>
-              <span className="topic-tag">DevTools</span>
-            </div>
-          </div>
-
-          <div className="sidebar-card">
-            <h3>📊 Your Stats</h3>
-            <ul>
-              <li><strong>{state.userProgress.totalXP}</strong> Total XP</li>
-              <li><strong>{state.userProgress.dayStreak}</strong> Day Streak 🔥</li>
-              <li><strong>{state.userProgress.level}</strong> Level</li>
-              <li><strong>{state.userProgress.badges}</strong> Badges 🏆</li>
-            </ul>
-          </div>
-        </aside>
+        <aside className="kai-sidebar"><div className="sidebar-card"><h3>Tips</h3><ul><li>Ask follow-up questions</li><li>Request code examples</li><li>Ask about best practices</li><li>Get debugging help</li></ul></div><div className="sidebar-card"><h3>Your account</h3><p>{user?.name || user?.email}</p><p>Conversation history is saved to your account.</p></div></aside>
       </main>
     </div>
   );

@@ -42,6 +42,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
         coursesStarted: 0,
         badges: 0,
         level: 1,
+        dailyChallengesCompleted: 0,
       };
 
       // If no authenticated user, show zeroed baseline
@@ -104,6 +105,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
               coursesStarted: serverCoursesStarted,
               badges: serverBadges,
               level: serverLevel,
+              dailyChallengesCompleted: userProgressData.dailyChallengesCompleted || 0,
             },
           };
 
@@ -129,21 +131,21 @@ function Dashboard({ user, onLogout, onViewCourses }) {
 
   // Show Learn with Kai page
   if (activeView === "kai") {
-    return <LearnWithKai onBack={() => setActiveView("dashboard")} />;
+    return <LearnWithKai user={user} onBack={() => setActiveView("dashboard")} />;
   }
 
   // Show Daily Challenge page
   if (activeView === "challenge") {
-    return <DailyChallenge onBack={() => setActiveView("dashboard")} />;
+    return <DailyChallenge user={user} onBack={() => setActiveView("dashboard")} />;
   }
 
   // Show Learning Roadmap page
   if (activeView === "roadmap") {
-    return <LearningRoadmap onBack={() => setActiveView("dashboard")} />;
+    return <LearningRoadmap user={user} onBack={() => setActiveView("dashboard")} />;
   }
 
   // Calculate stats from real data
-  const completedChallenges = state.dailyChallenges.filter((c) => c.completed).length;
+  const completedChallenges = state.userProgress.dailyChallengesCompleted || 0;
   const inProgressCourses = state.courses.filter((c) => c.status === "in-progress" || (c.progress > 0 && c.progress < 100)).length;
 
   // Dashboard view

@@ -36,6 +36,21 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
 
+    dayStreak: {
+      type: Number,
+      default: 0,
+    },
+
+    coursesStarted: {
+      type: Number,
+      default: 0,
+    },
+
+    badges: {
+      type: Number,
+      default: 0,
+    },
+
     // ============================================
     // LESSON PROGRESS TRACKING
     // ============================================

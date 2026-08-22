@@ -1,15 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Map, Lock, CheckCircle2, Zap, BookOpen, Trophy, ArrowRight } from "lucide-react";
 import createStore from "../data/store";
+import fetchWithAuth from "../utils/fetchWithAuth";
 import "./LearningRoadmap.css";
 
-function LearningRoadmap({ onBack }) {
+function LearningRoadmap({ user, onBack }) {
   const store = createStore();
   const state = store.getState();
   
   const [selectedPath, setSelectedPath] = useState("frontend");
   const [expandedModule, setExpandedModule] = useState(null);
   const [paths, setPaths] = useState(state.learningPaths);
+  const [userProgress, setUserProgress] = useState({ xp: 0, courseProgress: [] });
+
+  useEffect(() => {
+    let mounted = true;
+    fetchWithAuth(`/api/kai/progress/${user?.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (!mounted || !data.success || !data.user) return;
+        setUserProgress(data.user);
+        const progressByCourse = new Map((data.user.courseProgress || []).map((item) => [String(item.courseId), item]));
+        setPaths((current) => Object.fromEntries(Object.entries(current).map(([pathKey, path]) => [pathKey, {
+          ...path,
+          modules: path.modules.map((module) => {
+            const saved = progressByCourse.get(`${pathKey}-${module.id}`);
+            const progress = saved?.totalLessons ? Math.min(100, Math.round(((saved.lessonsCompleted || 0) / saved.totalLessons) * 100)) : 0;
+            return { ...module, progress, status: progress === 100 ? "completed" : module.id === 1 || progress > 0 ? "in-progress" : "locked" };
+          }),
+        }])));
+      })
+      .catch(() => {})
+      ;
+    return () => { mounted = false; };
+  }, [user?.id]);
 
   const currentPath = paths[selectedPath];
 
@@ -33,7 +57,7 @@ function LearningRoadmap({ onBack }) {
     }
   };
 
-  const handleCompleteLesson = (moduleId) => {
+  const handleCompleteLesson = async (moduleId) => {
     const updatedPaths = { ...paths };
     const module = updatedPaths[selectedPath].modules.find(m => m.id === moduleId);
     
@@ -47,7 +71,21 @@ function LearningRoadmap({ onBack }) {
       }
       
       setPaths(updatedPaths);
-      store.updateModuleProgress(selectedPath, moduleId, module.progress);
+      try {
+        const completedCount = Math.round((module.progress / 100) * module.lessons);
+        const response = await fetchWithAuth("/api/kai/lesson/complete", {
+          method: "POST",
+          body: JSON.stringify({
+            courseId: `${selectedPath}-${moduleId}`,
+            lessonId: `${selectedPath}-${moduleId}-lesson-${completedCount}`,
+            summary: `Completed progress in ${module.title}`,
+          }),
+        });
+        const data = await response.json();
+        if (data.success && data.user) setUserProgress((current) => ({ ...current, ...data.user }));
+      } catch (error) {
+        console.error("Could not save roadmap progress:", error);
+      }
     }
   };
 
@@ -192,7 +230,7 @@ function LearningRoadmap({ onBack }) {
                 <div className="progress-fill" style={{ width: `${totalProgress}%` }}></div>
               </div>
               <div className="stat">
-                <strong>{state.userProgress.totalXP} XP</strong>
+                <strong>{userProgress.xp || 0} XP</strong>
                 <p>Total Earned</p>
               </div>
             </div>
