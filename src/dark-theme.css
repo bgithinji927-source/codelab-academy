@@ -1326,3 +1326,63 @@ body,
     flex: 1 !important;
   }
 }
+
+
+/* KAI MESSAGE CONTRAST: never allow markdown text to inherit dark-on-dark colors */
+.kai-bubble,
+.kai-bubble .kai-message-text,
+.kai-bubble .kai-message-text span,
+.kai-bubble .kai-message-text p,
+.kai-bubble .kai-message-text li,
+.kai-bubble .kai-list-item {
+  color: #eaffec !important;
+}
+
+.kai-bubble .kai-message-text h2,
+.kai-bubble .kai-message-text h3,
+.kai-bubble .kai-message-text h4,
+.kai-bubble .kai-message-text strong {
+  color: #39ff14 !important;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.22);
+}
+
+.kai-bubble .kai-message-text p {
+  color: #e7f7e8 !important;
+  line-height: 1.7 !important;
+}
+
+.kai-bubble .kai-message-text p span,
+.kai-bubble .kai-message-text .kai-list-item > span:last-child {
+  color: #e7f7e8 !important;
+}
+
+.kai-bubble .kai-message-text .kai-list-dot,
+.kai-bubble .kai-message-text .kai-number {
+  color: #39ff14 !important;
+  font-weight: 800 !important;
+}
+
+.kai-bubble .kai-inline-code {
+  background: #0a2411 !important;
+  border: 1px solid rgba(57, 255, 20, 0.45) !important;
+  color: #9aff86 !important;
+  box-shadow: 0 0 6px rgba(57, 255, 20, 0.12) !important;
+}
+
+.kai-bubble .kai-message-spacer {
+  min-height: 8px !important;
+}
+
+.kai-message-header .chat-name,
+.kai-message-header .chat-name strong {
+  color: #eaffec !important;
+}
+
+.kai-message-header .chat-name span,
+.kai-message-header .kai-online {
+  color: #8cb899 !important;
+}
+
+.kai-message-header .kai-online span {
+  background: #39ff14 !important;
+}
