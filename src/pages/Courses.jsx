@@ -54,9 +54,9 @@ const categories = [
   },
 ];
 
-function Courses({ onBack }) {
+function Courses({ initialCategory = null, onBack }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
 
   if (selectedCourse) {
     return (

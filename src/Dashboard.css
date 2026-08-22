@@ -562,3 +562,114 @@
     display: none;
   }
 }
+
+
+/* ================================
+   COURSE CATEGORY SIDEBAR
+================================ */
+
+.dashboard-main {
+  position: relative;
+  padding-left: 246px;
+}
+
+.dashboard-course-sidebar {
+  position: fixed;
+  top: 80px;
+  left: 8px;
+  width: 222px;
+  padding: 16px 10px;
+  border: 1px solid #eee9f7;
+  border-radius: 14px;
+  background: #fcfbff;
+  box-shadow: 0 8px 24px rgba(64, 35, 120, 0.06);
+  z-index: 10;
+}
+
+.dashboard-course-sidebar-heading {
+  padding: 2px 8px 13px;
+  border-bottom: 1px solid #eee9f7;
+}
+
+.dashboard-course-sidebar-heading span,
+.dashboard-course-sidebar-heading strong {
+  display: block;
+}
+
+.dashboard-course-sidebar-heading span {
+  color: #9a91a6;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.dashboard-course-sidebar-heading strong {
+  margin-top: 4px;
+  color: #24202e;
+  font-size: 16px;
+}
+
+.dashboard-course-sidebar nav {
+  display: grid;
+  gap: 5px;
+  margin-top: 11px;
+}
+
+.dashboard-course-sidebar button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 8px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #625a70;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.dashboard-course-sidebar button:hover {
+  background: #f3edff;
+  border-color: #e2d3fb;
+  color: #6d28d9;
+  transform: translateX(2px);
+}
+
+.dashboard-course-sidebar button svg:first-child {
+  color: #7c3aed;
+  flex-shrink: 0;
+}
+
+.dashboard-course-sidebar button span {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dashboard-course-sidebar button svg:last-child {
+  color: #b5a9c7;
+}
+
+@media (max-width: 900px) {
+  .dashboard-main {
+    padding-left: 8px;
+  }
+
+  .dashboard-course-sidebar {
+    position: static;
+    width: auto;
+    margin-bottom: 12px;
+  }
+
+  .dashboard-course-sidebar nav {
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .dashboard-course-sidebar button {
+    min-width: 145px;
+    flex: 0 0 auto;
+  }
+}

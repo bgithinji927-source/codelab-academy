@@ -12,12 +12,26 @@ import {
   Zap,
   ArrowRight,
   Hand,
+  Code2,
+  Cpu,
+  Wrench,
+  Globe,
+  Database,
 } from "lucide-react";
 
 import LearnWithKai from "./pages/LearnWithKai";
 import DailyChallenge from "./pages/DailyChallenge";
 import LearningRoadmap from "./pages/LearningRoadmap";
 import createStore from "./data/store";
+
+const courseCategories = [
+  ["Coding", Code2],
+  ["Tech Engines", Cpu],
+  ["AI Tools", Bot],
+  ["Developer Tools", Wrench],
+  ["Web Technologies", Globe],
+  ["Databases", Database],
+];
 
 function Dashboard({ user, onLogout, onViewCourses }) {
   const [activeView, setActiveView] = useState("dashboard");
@@ -182,6 +196,21 @@ function Dashboard({ user, onLogout, onViewCourses }) {
 
       {/* MAIN DASHBOARD */}
       <main className="dashboard-main">
+        <aside className="dashboard-course-sidebar" aria-label="Course categories">
+          <div className="dashboard-course-sidebar-heading">
+            <span>LEARNING LIBRARY</span>
+            <strong>Course categories</strong>
+          </div>
+          <nav>
+            {courseCategories.map(([category, Icon]) => (
+              <button key={category} type="button" onClick={() => onViewCourses(category)}>
+                <Icon size={17} />
+                <span>{category}</span>
+                <ArrowRight size={14} />
+              </button>
+            ))}
+          </nav>
+        </aside>
 
         {/* WELCOME */}
         <section className="dashboard-welcome">

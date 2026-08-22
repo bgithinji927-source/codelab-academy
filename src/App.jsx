@@ -111,8 +111,8 @@ function App() {
   // OPEN COURSES
   // ================================
 
-  const openCourses = () => {
-    setShowCourses(true);
+  const openCourses = (category = null) => {
+    setShowCourses(category ? { category } : true);
   };
 
   // ================================
@@ -130,6 +130,7 @@ function App() {
   if (showCourses) {
     return (
       <Courses
+        initialCategory={showCourses.category || null}
         onBack={closeCourses}
         onSelectCourse={(course) => {
           console.log("Selected course:", course);
