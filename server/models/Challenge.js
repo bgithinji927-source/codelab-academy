@@ -10,8 +10,10 @@ const challengeSchema = new mongoose.Schema({
   // - mcq: choice id (string)
   // - regex: string with regex pattern
   // - short_answer: string
-  // - code: object with tests (later)
+  // code: object with accepted normalized answers or tests
   canonicalAnswer: mongoose.Schema.Types.Mixed,
+  requirements: { type: [String], default: [] },
+  starter: { type: String, default: "" },
   xpReward: { type: Number, default: Number(process.env.CHALLENGE_XP_DEFAULT) || 5 },
   active: { type: Boolean, default: true },
   difficulty: { type: String, default: "easy" }

@@ -110,16 +110,17 @@ const userSchema = new mongoose.Schema(
 
     // ============================================
     // DAILY CHALLENGE
-    // - Stores the assigned challenge for the current day for this user
-    // - date: ISO date string (YYYY-MM-DD)
+    // - Stores the assigned challenge for a rolling 24-hour window
+    // - date: ISO date string (YYYY-MM-DD) for display/audit
     // - challengeId: references the challenge bank id
-    // - assignedAt, attempts, completed, completedAt
+    // - assignedAt, expiresAt, attempts, completed, closed
     // ============================================
 
     dailyChallenge: {
       date: String,
       challengeId: String,
       assignedAt: Date,
+      expiresAt: Date,
       attempts: {
         type: Number,
         default: 0,
@@ -128,7 +129,16 @@ const userSchema = new mongoose.Schema(
         type: Boolean,
         default: false,
       },
+      closed: {
+        type: Boolean,
+        default: false,
+      },
       completedAt: Date,
+      closedAt: Date,
+      lastResult: {
+        type: String,
+        enum: ["correct", "incorrect", "closed"],
+      },
       // optional: last submitted answer (stored for audit/feedback)
       lastAnswer: String,
     },

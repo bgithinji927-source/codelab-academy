@@ -1,16 +1,61 @@
 const express = require("express");
 const Challenge = require("../models/Challenge");
 const User = require("../models/User");
-const { ensureDailyChallengeForUser } = require("../lib/challenges");
+const {
+  MAX_CHALLENGE_ATTEMPTS,
+  ensureChallengeBank,
+  ensureDailyChallengeForUser,
+  gradeChallengeAnswer,
+  hasActiveAssignment,
+} = require("../lib/challenges");
 const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
-// ADMIN: create/list challenges (protect later with isAdmin)
+function serializeAssignment(assignment) {
+  if (!assignment) return null;
+
+  const plain = typeof assignment.toObject === "function"
+    ? assignment.toObject()
+    : assignment;
+  const attempts = Number(plain.attempts || 0);
+
+  return {
+    date: plain.date,
+    challengeId: plain.challengeId,
+    assignedAt: plain.assignedAt,
+    expiresAt: plain.expiresAt,
+    attempts,
+    maxAttempts: MAX_CHALLENGE_ATTEMPTS,
+    attemptsRemaining: Math.max(0, MAX_CHALLENGE_ATTEMPTS - attempts),
+    completed: Boolean(plain.completed),
+    closed: Boolean(plain.closed),
+    completedAt: plain.completedAt,
+    closedAt: plain.closedAt,
+    lastResult: plain.lastResult,
+  };
+}
+
+function serializeChallenge(challenge) {
+  if (!challenge) return null;
+
+  const plain = typeof challenge.toObject === "function"
+    ? challenge.toObject()
+    : challenge;
+  const { canonicalAnswer, ...publicChallenge } = plain;
+
+  return {
+    ...publicChallenge,
+    id: String(publicChallenge._id || publicChallenge.id),
+    xp: publicChallenge.xpReward || publicChallenge.xp || 0,
+  };
+}
+
+// ADMIN: create/list challenges. Admin authorization can be tightened later.
 router.post("/", ensureAuth, async (req, res) => {
   try {
-    const ch = await Challenge.create(req.body);
-    return res.json({ success: true, challenge: ch });
+    const challenge = await Challenge.create(req.body);
+    return res.json({ success: true, challenge: serializeChallenge(challenge) });
   } catch (err) {
     console.error("Create challenge error:", err);
     return res.status(500).json({ success: false, message: "Failed to create challenge" });
@@ -20,14 +65,15 @@ router.post("/", ensureAuth, async (req, res) => {
 router.get("/", ensureAuth, async (req, res) => {
   try {
     const list = await Challenge.find({}).lean();
-    return res.json({ success: true, challenges: list });
+    return res.json({ success: true, challenges: list.map(serializeChallenge) });
   } catch (err) {
     console.error("List challenges error:", err);
     return res.status(500).json({ success: false });
   }
 });
 
-// GET today's assigned challenge
+// GET the learner's current 24-hour challenge. A new one is assigned on the
+// first visit after the previous 24-hour assignment expires.
 router.get("/today", ensureAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -38,81 +84,158 @@ router.get("/today", ensureAuth, async (req, res) => {
     const challenge = await Challenge.findById(user.dailyChallenge.challengeId).lean();
     if (!challenge) return res.status(404).json({ success: false, message: "No challenge available" });
 
-    // Never send canonical answer to client
-    const { canonicalAnswer, ...publicChallenge } = challenge;
-    // Normalize some fields to match frontend expectations
-    publicChallenge.id = String(publicChallenge._id);
-    publicChallenge.xp = publicChallenge.xpReward || publicChallenge.xp || 0;
-
-    return res.json({ success: true, challenge: publicChallenge, assigned: user.dailyChallenge });
+    return res.json({
+      success: true,
+      challenge: serializeChallenge(challenge),
+      assigned: serializeAssignment(user.dailyChallenge),
+      maxAttempts: MAX_CHALLENGE_ATTEMPTS,
+    });
   } catch (err) {
     console.error("Get today's challenge error:", err);
-    return res.status(500).json({ success: false });
+    return res.status(500).json({ success: false, message: "Could not load today's challenge" });
   }
 });
 
-// POST submit answer for today's assigned challenge
+// POST an answer for the learner's current challenge.
 router.post("/submit", ensureAuth, async (req, res) => {
   try {
     const { challengeId, answer } = req.body;
     if (!challengeId) return res.status(400).json({ success: false, message: "challengeId required" });
+    if (typeof answer !== "string" || !answer.trim()) {
+      return res.status(400).json({ success: false, message: "Answer required" });
+    }
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-    const today = new Date().toISOString().slice(0, 10);
-    if (!user.dailyChallenge || user.dailyChallenge.date !== today || String(user.dailyChallenge.challengeId) !== String(challengeId)) {
-      return res.status(400).json({ success: false, message: "Challenge not assigned or stale" });
+    const assignment = user.dailyChallenge;
+    if (!assignment || String(assignment.challengeId) !== String(challengeId)) {
+      return res.status(409).json({ success: false, stale: true, message: "This challenge is no longer assigned. Load the new challenge." });
     }
 
-    if (user.dailyChallenge.completed) {
-      return res.json({ success: true, alreadyCompleted: true });
+    if (!hasActiveAssignment(user)) {
+      return res.status(409).json({ success: false, expired: true, message: "This challenge has expired. Load the next 24-hour challenge." });
+    }
+
+    if (assignment.completed) {
+      return res.json({
+        success: true,
+        alreadyCompleted: true,
+        completed: true,
+        awardedXP: 0,
+        attempts: assignment.attempts || 0,
+        attemptsRemaining: Math.max(0, MAX_CHALLENGE_ATTEMPTS - (assignment.attempts || 0)),
+      });
+    }
+
+    if (assignment.closed || Number(assignment.attempts || 0) >= MAX_CHALLENGE_ATTEMPTS) {
+      return res.json({
+        success: true,
+        correct: false,
+        closed: true,
+        attempts: Math.min(MAX_CHALLENGE_ATTEMPTS, Number(assignment.attempts || 0)),
+        attemptsRemaining: 0,
+        message: "This challenge is closed after five attempts.",
+      });
     }
 
     const challenge = await Challenge.findById(challengeId);
-    if (!challenge) return res.status(404).json({ success: false, message: "Challenge not found" });
-
-    // grading logic
-    let correct = false;
-    if (challenge.type === "mcq") {
-      correct = String(answer) === String(challenge.canonicalAnswer);
-    } else if (challenge.type === "regex") {
-      try {
-        const rx = new RegExp(challenge.canonicalAnswer);
-        correct = rx.test(String(answer || ""));
-      } catch (e) {
-        correct = false;
-      }
-    } else if (challenge.type === "short_answer") {
-      const normalize = (s) => String(s || "").trim().toLowerCase();
-      correct = normalize(answer) === normalize(challenge.canonicalAnswer);
-    } else if (challenge.type === "code") {
-      // For now mark code as pending review (do not auto-award)
-      correct = false;
+    if (!challenge || !challenge.active) {
+      return res.status(404).json({ success: false, message: "Challenge not found or inactive" });
     }
 
+    const correct = gradeChallengeAnswer(challenge, answer);
+    const currentAttempts = Number(assignment.attempts || 0);
+    const nextAttempts = currentAttempts + 1;
+    const attemptsRemaining = Math.max(0, MAX_CHALLENGE_ATTEMPTS - nextAttempts);
+
     if (correct) {
-      // atomic award
+      const awardedXP = Number(challenge.xpReward || process.env.CHALLENGE_XP_DEFAULT || 5);
       const updated = await User.findOneAndUpdate(
-        { _id: user._id, "dailyChallenge.challengeId": String(challengeId), "dailyChallenge.completed": false },
         {
-          $inc: { xp: challenge.xpReward || Number(process.env.CHALLENGE_XP_DEFAULT) || 5, dailyChallengesCompleted: 1, "dailyChallenge.attempts": 1 },
-          $set: { "dailyChallenge.completed": true, "dailyChallenge.completedAt": new Date(), "dailyChallenge.lastAnswer": String(answer) }
+          _id: user._id,
+          "dailyChallenge.challengeId": String(challengeId),
+          "dailyChallenge.completed": false,
+          "dailyChallenge.closed": { $ne: true },
+          "dailyChallenge.attempts": { $lt: MAX_CHALLENGE_ATTEMPTS },
+        },
+        {
+          $inc: {
+            xp: awardedXP,
+            dailyChallengesCompleted: 1,
+            "dailyChallenge.attempts": 1,
+          },
+          $set: {
+            "dailyChallenge.completed": true,
+            "dailyChallenge.completedAt": new Date(),
+            "dailyChallenge.lastResult": "correct",
+            "dailyChallenge.lastAnswer": answer,
+          },
         },
         { new: true }
       );
 
       if (!updated) {
-        // race condition or already updated
-        return res.json({ success: true, alreadyCompleted: true });
+        return res.json({ success: true, alreadyCompleted: true, completed: true, awardedXP: 0 });
       }
 
-      return res.json({ success: true, correct: true, awardedXP: challenge.xpReward || Number(process.env.CHALLENGE_XP_DEFAULT) || 5 });
-    } else {
-      // increment attempts and save lastAnswer
-      await User.updateOne({ _id: user._id }, { $inc: { "dailyChallenge.attempts": 1 }, $set: { "dailyChallenge.lastAnswer": String(answer) } });
-      return res.json({ success: true, correct: false, attempts: (user.dailyChallenge.attempts || 0) + 1 });
+      return res.json({
+        success: true,
+        correct: true,
+        completed: true,
+        awardedXP,
+        attempts: nextAttempts,
+        attemptsRemaining,
+      });
     }
+
+    const closed = nextAttempts >= MAX_CHALLENGE_ATTEMPTS;
+    const update = {
+      $inc: { "dailyChallenge.attempts": 1 },
+      $set: {
+        "dailyChallenge.lastAnswer": answer,
+        "dailyChallenge.lastResult": closed ? "closed" : "incorrect",
+      },
+    };
+
+    if (closed) {
+      update.$set["dailyChallenge.closed"] = true;
+      update.$set["dailyChallenge.closedAt"] = new Date();
+    }
+
+    const updated = await User.findOneAndUpdate(
+      {
+        _id: user._id,
+        "dailyChallenge.challengeId": String(challengeId),
+        "dailyChallenge.completed": false,
+        "dailyChallenge.closed": { $ne: true },
+        "dailyChallenge.attempts": { $lt: MAX_CHALLENGE_ATTEMPTS },
+      },
+      update,
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.json({
+        success: true,
+        correct: false,
+        closed: true,
+        attempts: MAX_CHALLENGE_ATTEMPTS,
+        attemptsRemaining: 0,
+        message: "This challenge is closed after five attempts.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      correct: false,
+      closed,
+      attempts: nextAttempts,
+      attemptsRemaining,
+      message: closed
+        ? "This challenge is now closed after five incorrect attempts. Try again with the next challenge."
+        : "That answer is not correct yet. Review the challenge and try again.",
+    });
   } catch (err) {
     console.error("Submit challenge error:", err);
     return res.status(500).json({ success: false, message: "Submission failed" });
