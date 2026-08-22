@@ -76,6 +76,16 @@ const waitForAdminDatabase = (milliseconds) => new Promise((resolve) => {
   window.setTimeout(resolve, milliseconds);
 });
 
+async function fetchAdminWithTimeout(url, options = {}, timeout = 7000) {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), timeout);
+  try {
+    return await fetchWithAuth(url, { ...options, signal: controller.signal });
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
+
 function AdminDashboard({ user, onBack }) {
   const [section, setSection] = useState("overview");
   const [summary, setSummary] = useState(null);
@@ -117,7 +127,7 @@ function AdminDashboard({ user, onBack }) {
     const loadHealthStatus = async () => {
       for (let attempt = 0; attempt < 5; attempt += 1) {
         try {
-          const response = await fetch("/api/health");
+          const response = await fetchAdminWithTimeout("/api/health", {}, 5000);
           const data = await response.json();
           if (data.success && data.database) {
             setDatabaseStatus(data.database);
@@ -134,7 +144,7 @@ function AdminDashboard({ user, onBack }) {
     // Load the complete course/lesson inventory independently. A failure in a
     // secondary widget must never prevent the catalog from appearing.
     try {
-      const coursesResponse = await fetchWithAuth("/api/admin/courses");
+      const coursesResponse = await fetchAdminWithTimeout("/api/admin/courses");
       const coursesData = await coursesResponse.json().catch(() => ({}));
       if (coursesResponse.status === 401 || coursesResponse.status === 403) {
         throw new Error("Administrator authorization is required");
@@ -165,10 +175,10 @@ function AdminDashboard({ user, onBack }) {
       let payloads = [];
       for (let attempt = 0; attempt < 5; attempt += 1) {
         results = await Promise.allSettled([
-          fetchWithAuth("/api/admin/summary"),
-          fetchWithAuth("/api/admin/users"),
-          fetchWithAuth("/api/admin/challenges"),
-          fetchWithAuth("/api/admin/settings"),
+          fetchAdminWithTimeout("/api/admin/summary"),
+          fetchAdminWithTimeout("/api/admin/users"),
+          fetchAdminWithTimeout("/api/admin/challenges"),
+          fetchAdminWithTimeout("/api/admin/settings"),
         ]);
         payloads = await Promise.all(results.map((result) => result.status === "fulfilled"
           ? result.value.json().catch(() => ({}))

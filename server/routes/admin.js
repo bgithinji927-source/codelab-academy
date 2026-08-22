@@ -73,10 +73,10 @@ router.get("/summary", async (req, res) => {
     }
 
     const [users, activeUsers, challengeCount, activeChallenges, courses] = await Promise.all([
-      User.countDocuments({}),
-      User.countDocuments({ isActive: { $ne: false } }),
-      Challenge.countDocuments({}),
-      Challenge.countDocuments({ active: true }),
+      User.countDocuments({}).maxTimeMS(5000),
+      User.countDocuments({ isActive: { $ne: false } }).maxTimeMS(5000),
+      Challenge.countDocuments({}).maxTimeMS(5000),
+      Challenge.countDocuments({ active: true }).maxTimeMS(5000),
       getCatalogCourses({ includeInactive: true }),
     ]);
 
@@ -104,6 +104,7 @@ router.get("/users", async (req, res) => {
       return res.status(503).json({ success: false, databaseUnavailable: true, message: "MongoDB is not connected; user records are unavailable." });
     }
     const users = await User.find({})
+      .maxTimeMS(5000)
       .select("name email role isActive xp level dayStreak badges completedLessons coursesStarted courseProgress dailyChallenge createdAt updatedAt")
       .sort({ createdAt: -1 })
       .lean();

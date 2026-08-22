@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+mongoose.set("bufferCommands", false);
 const cors = require("cors");
 const path = require("path");
 
@@ -68,7 +69,10 @@ console.log(
 
 if (process.env.MONGODB_URI) {
   mongoose
-    .connect(process.env.MONGODB_URI)
+    .connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
+    })
     .then(() => {
       console.log("MongoDB connected successfully");
     })
