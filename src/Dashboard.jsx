@@ -70,11 +70,11 @@ const sidebarItems = [
   { label: "Developer Tools", Icon: Wrench, category: "Developer Tools" },
   { label: "Web Technologies", Icon: Globe, category: "Web Technologies" },
   { label: "Databases", Icon: Database, category: "Databases" },
-  { label: "DevOps", Icon: Boxes, category: "Developer Tools" },
-  { label: "Cyber Security", Icon: ShieldCheck, category: "Developer Tools" },
-  { label: "Mobile Development", Icon: Smartphone, category: "Coding" },
-  { label: "Game Development", Icon: Gamepad2, category: "Tech Engines" },
-  { label: "System Design", Icon: Boxes, category: "Tech Engines" },
+  { label: "DevOps", Icon: Boxes, category: "DevOps" },
+  { label: "Cyber Security", Icon: ShieldCheck, category: "Cyber Security" },
+  { label: "Mobile Development", Icon: Smartphone, category: "Mobile Development" },
+  { label: "Game Development", Icon: Gamepad2, category: "Game Development" },
+  { label: "System Design", Icon: Boxes, category: "System Design" },
 ];
 
 function Dashboard({ user, onLogout, onViewCourses }) {

@@ -434,6 +434,171 @@ const courses = [
     description: "Learn how to protect application databases and data.",
     level: "Advanced",
   },
+
+  // =========================
+  // DEVOPS — 4 COURSES
+  // =========================
+
+  {
+    id: "devops-foundations",
+    title: "DevOps Foundations",
+    category: "DevOps",
+    description: "Learn the culture, practices, and automation behind reliable software delivery.",
+    level: "Beginner",
+  },
+  {
+    id: "linux-for-devops",
+    title: "Linux for DevOps",
+    category: "DevOps",
+    description: "Use the Linux command line, processes, permissions, and logs with confidence.",
+    level: "Beginner",
+  },
+  {
+    id: "ci-cd-pipelines",
+    title: "CI/CD Pipelines",
+    category: "DevOps",
+    description: "Build automated workflows that test, package, and ship applications safely.",
+    level: "Intermediate",
+  },
+  {
+    id: "infrastructure-as-code",
+    title: "Infrastructure as Code",
+    category: "DevOps",
+    description: "Manage repeatable infrastructure with declarative configuration and reviewable changes.",
+    level: "Advanced",
+  },
+
+  // =========================
+  // CYBER SECURITY — 4 COURSES
+  // =========================
+
+  {
+    id: "cybersecurity-fundamentals",
+    title: "Cyber Security Fundamentals",
+    category: "Cyber Security",
+    description: "Build a practical foundation in threats, risk, defense, and secure behavior.",
+    level: "Beginner",
+  },
+  {
+    id: "network-security",
+    title: "Network Security",
+    category: "Cyber Security",
+    description: "Understand how networks are protected with segmentation, firewalls, and monitoring.",
+    level: "Intermediate",
+  },
+  {
+    id: "ethical-hacking-basics",
+    title: "Ethical Hacking Basics",
+    category: "Cyber Security",
+    description: "Learn authorized security testing, reconnaissance, and responsible reporting.",
+    level: "Intermediate",
+  },
+  {
+    id: "identity-access-management",
+    title: "Identity and Access Management",
+    category: "Cyber Security",
+    description: "Design safer authentication, authorization, roles, and least-privilege access.",
+    level: "Intermediate",
+  },
+
+  // =========================
+  // MOBILE DEVELOPMENT — 4 COURSES
+  // =========================
+
+  {
+    id: "mobile-development-foundations",
+    title: "Mobile Development Foundations",
+    category: "Mobile Development",
+    description: "Learn mobile UI structure, navigation, state, and the app development lifecycle.",
+    level: "Beginner",
+  },
+  {
+    id: "android-with-kotlin",
+    title: "Android with Kotlin",
+    category: "Mobile Development",
+    description: "Build Android screens and interactions with Kotlin and modern app patterns.",
+    level: "Intermediate",
+  },
+  {
+    id: "ios-with-swift",
+    title: "iOS with Swift",
+    category: "Mobile Development",
+    description: "Create iOS interfaces and app logic using Swift and SwiftUI concepts.",
+    level: "Intermediate",
+  },
+  {
+    id: "react-native",
+    title: "React Native",
+    category: "Mobile Development",
+    description: "Build cross-platform mobile experiences with React Native components and state.",
+    level: "Intermediate",
+  },
+
+  // =========================
+  // GAME DEVELOPMENT — 4 COURSES
+  // =========================
+
+  {
+    id: "game-development-foundations",
+    title: "Game Development Foundations",
+    category: "Game Development",
+    description: "Learn the game loop, player input, scenes, assets, and interactive systems.",
+    level: "Beginner",
+  },
+  {
+    id: "game-design",
+    title: "Game Design Principles",
+    category: "Game Development",
+    description: "Design engaging game rules, feedback loops, difficulty curves, and player goals.",
+    level: "Beginner",
+  },
+  {
+    id: "unity-fundamentals",
+    title: "Unity Fundamentals",
+    category: "Game Development",
+    description: "Explore scenes, game objects, components, prefabs, and scripts in Unity.",
+    level: "Intermediate",
+  },
+  {
+    id: "game-programming",
+    title: "Game Programming",
+    category: "Game Development",
+    description: "Program movement, collisions, state machines, and gameplay systems.",
+    level: "Intermediate",
+  },
+
+  // =========================
+  // SYSTEM DESIGN — 4 COURSES
+  // =========================
+
+  {
+    id: "system-design-foundations",
+    title: "System Design Foundations",
+    category: "System Design",
+    description: "Learn how to break products into reliable services and make clear architecture choices.",
+    level: "Intermediate",
+  },
+  {
+    id: "scalability-and-performance",
+    title: "Scalability and Performance",
+    category: "System Design",
+    description: "Design systems that handle growing traffic, data, and latency requirements.",
+    level: "Intermediate",
+  },
+  {
+    id: "distributed-systems",
+    title: "Distributed Systems",
+    category: "System Design",
+    description: "Understand coordination, consistency, availability, and failure in distributed services.",
+    level: "Advanced",
+  },
+  {
+    id: "api-architecture",
+    title: "API Architecture",
+    category: "System Design",
+    description: "Design maintainable APIs with clear contracts, versioning, security, and observability.",
+    level: "Intermediate",
+  },
 ];
 
 export default courses;

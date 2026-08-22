@@ -42,6 +42,36 @@ const categories = [
     description: "MongoDB, SQL, Firebase & more",
     courses: "7 Courses",
   },
+  {
+    icon: "⌘",
+    title: "DevOps",
+    description: "Automation, CI/CD, Linux & infrastructure",
+    courses: "4 Courses",
+  },
+  {
+    icon: "◈",
+    title: "Cyber Security",
+    description: "Threats, networks, identity & defense",
+    courses: "4 Courses",
+  },
+  {
+    icon: "▯",
+    title: "Mobile Development",
+    description: "Android, iOS, React Native & more",
+    courses: "4 Courses",
+  },
+  {
+    icon: "◇",
+    title: "Game Development",
+    description: "Game design, Unity & gameplay systems",
+    courses: "4 Courses",
+  },
+  {
+    icon: "◎",
+    title: "System Design",
+    description: "Scalable services, APIs & distributed systems",
+    courses: "4 Courses",
+  },
 ];
 
 function App() {

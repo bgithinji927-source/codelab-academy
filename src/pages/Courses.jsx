@@ -11,6 +11,10 @@ import {
   Wrench,
   Cpu,
   Layers3,
+  Boxes,
+  ShieldCheck,
+  Smartphone,
+  Gamepad2,
 } from "lucide-react";
 
 import courses from "../data/course";
@@ -52,6 +56,36 @@ const categories = [
     name: "Databases",
     description: "Store, query, secure, and scale application data.",
     icon: Database,
+    accent: "indigo",
+  },
+  {
+    name: "DevOps",
+    description: "Automate testing, deployment, infrastructure, and operations.",
+    icon: Boxes,
+    accent: "green",
+  },
+  {
+    name: "Cyber Security",
+    description: "Protect systems, networks, identities, and application data.",
+    icon: ShieldCheck,
+    accent: "blue",
+  },
+  {
+    name: "Mobile Development",
+    description: "Build useful Android, iOS, and cross-platform mobile apps.",
+    icon: Smartphone,
+    accent: "pink",
+  },
+  {
+    name: "Game Development",
+    description: "Design and program interactive games and real-time experiences.",
+    icon: Gamepad2,
+    accent: "orange",
+  },
+  {
+    name: "System Design",
+    description: "Design scalable services, APIs, and distributed systems.",
+    icon: Boxes,
     accent: "indigo",
   },
 ];
