@@ -197,16 +197,11 @@ function Dashboard({ user, onLogout, onViewCourses }) {
       {/* MAIN DASHBOARD */}
       <main className="dashboard-main">
         <aside className="dashboard-course-sidebar" aria-label="Course categories">
-          <div className="dashboard-course-sidebar-heading">
-            <span>LEARNING LIBRARY</span>
-            <strong>Course categories</strong>
-          </div>
           <nav>
             {courseCategories.map(([category, Icon]) => (
               <button key={category} type="button" onClick={() => onViewCourses(category)}>
-                <Icon size={17} />
+                <Icon size={16} aria-hidden="true" />
                 <span>{category}</span>
-                <ArrowRight size={14} />
               </button>
             ))}
           </nav>

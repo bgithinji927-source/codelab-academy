@@ -742,3 +742,88 @@ body,
 .roadmap-info {
   border-color: var(--terminal-line) !important;
 }
+
+
+/* CLEAN VERTICAL CATEGORY NAVIGATION */
+.dashboard-course-sidebar {
+  width: 190px !important;
+  padding: 12px 0 !important;
+  border: 1px solid rgba(57, 255, 20, 0.45) !important;
+  border-radius: 2px !important;
+  background: #030a06 !important;
+  box-shadow: 0 0 16px rgba(57, 255, 20, 0.08) !important;
+}
+
+.dashboard-course-sidebar nav {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  margin: 0 !important;
+}
+
+.dashboard-course-sidebar button {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 11px !important;
+  padding: 10px 15px !important;
+  border: 0 !important;
+  border-left: 2px solid transparent !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #d8f7df !important;
+  text-align: left !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.dashboard-course-sidebar button:hover,
+.dashboard-course-sidebar button:focus-visible {
+  border-left-color: var(--terminal-green) !important;
+  background: rgba(57, 255, 20, 0.1) !important;
+  color: var(--terminal-green) !important;
+  outline: none !important;
+}
+
+.dashboard-course-sidebar button svg:first-child {
+  width: 16px !important;
+  height: 16px !important;
+  flex: 0 0 16px !important;
+  color: var(--terminal-green) !important;
+  filter: drop-shadow(0 0 4px rgba(57, 255, 20, 0.55));
+}
+
+.dashboard-course-sidebar button span {
+  flex: 1 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 900px) {
+  .dashboard-course-sidebar {
+    width: 100% !important;
+    padding: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .dashboard-course-sidebar nav {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+  }
+
+  .dashboard-course-sidebar button {
+    width: auto !important;
+    padding: 11px 14px !important;
+    border-left: 0 !important;
+    border-bottom: 2px solid transparent !important;
+  }
+
+  .dashboard-course-sidebar button:hover,
+  .dashboard-course-sidebar button:focus-visible {
+    border-bottom-color: var(--terminal-green) !important;
+  }
+}
