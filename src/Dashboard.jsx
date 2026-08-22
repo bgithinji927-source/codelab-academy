@@ -306,6 +306,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
 
         </section>
 
+        <div className="dashboard-content-container">
         {/* REAL STATS */}
         <section className="dashboard-stats">
 
@@ -523,6 +524,7 @@ function Dashboard({ user, onLogout, onViewCourses }) {
           </div>
 
         </section>
+        </div>
           </>
         )}
 
