@@ -28,12 +28,13 @@ import {
 } from "lucide-react";
 
 import LearnWithKai from "./pages/LearnWithKai";
+import CourseLearn from "./pages/CourseLearn";
 import DailyChallenge from "./pages/DailyChallenge";
 import LearningRoadmap from "./pages/LearningRoadmap";
 import createStore from "./data/store";
 import courses from "./data/course";
 
-function DashboardCategoryView({ category, onOpenCourses }) {
+function DashboardCategoryView({ category, onOpenCourse }) {
   const visibleCourses = courses.filter((course) => course.category === category);
 
   return (
@@ -53,7 +54,7 @@ function DashboardCategoryView({ category, onOpenCourses }) {
             <span className="dashboard-course-level">{course.level}</span>
             <h2>{course.title}</h2>
             <p>{course.description}</p>
-            <button type="button" onClick={() => onOpenCourses(category)}>Start Learning <ArrowRight size={16} /></button>
+            <button type="button" onClick={() => onOpenCourse(course)}>Start Learning <ArrowRight size={16} /></button>
           </article>
         ))}
       </div>
@@ -79,6 +80,7 @@ const sidebarItems = [
 function Dashboard({ user, onLogout, onViewCourses }) {
   const [activeView, setActiveView] = useState("dashboard");
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
   // Initialize store and load current state into local component state
   const baseStore = createStore();
@@ -187,6 +189,21 @@ function Dashboard({ user, onLogout, onViewCourses }) {
     };
   }, [user]);
 
+  // Open the selected course in the real Kai teaching screen
+  if (activeView === "courseLearn" && selectedCourse) {
+    return (
+      <CourseLearn
+        user={user}
+        course={selectedCourse}
+        onBack={() => {
+          setSelectedCourse(null);
+          setActiveView("dashboard");
+          setSelectedCategory(null);
+        }}
+      />
+    );
+  }
+
   // Show Learn with Kai page
   if (activeView === "kai") {
     return <LearnWithKai user={user} onBack={() => setActiveView("dashboard")} />;
@@ -273,7 +290,13 @@ function Dashboard({ user, onLogout, onViewCourses }) {
         </aside>
 
         {selectedCategory ? (
-          <DashboardCategoryView category={selectedCategory} onOpenCourses={onViewCourses} />
+          <DashboardCategoryView
+            category={selectedCategory}
+            onOpenCourse={(course) => {
+              setSelectedCourse(course);
+              setActiveView("courseLearn");
+            }}
+          />
         ) : (
           <>
         {/* WELCOME */}

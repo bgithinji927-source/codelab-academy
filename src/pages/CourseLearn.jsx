@@ -12,9 +12,10 @@ import {
   GraduationCap,
 } from "lucide-react";
 
+import fetchWithAuth from "../utils/fetchWithAuth";
 import "./CourseLearn.css";
 
-function CourseLearn({ course, onBack }) {
+function CourseLearn({ user, course, onBack }) {
   const [messages, setMessages] = useState([]);
   const [answer, setAnswer] = useState("");
   const [isKaiTyping, setIsKaiTyping] = useState(false);
@@ -158,7 +159,7 @@ function CourseLearn({ course, onBack }) {
       setDisplayedKaiText("");
       setIsKaiTyping(true);
 
-      const response = await fetch("/api/kai", {
+      const response = await fetchWithAuth("/api/kai", {
         method: "POST",
 
         headers: {
@@ -166,6 +167,7 @@ function CourseLearn({ course, onBack }) {
         },
 
         body: JSON.stringify({
+          userId: user?.id,
           course: {
             ...course,
             title: courseTitle,
