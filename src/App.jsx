@@ -82,6 +82,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [showCourses, setShowCourses] = useState(false);
   const [visibleCategories, setVisibleCategories] = useState(categories);
+  const [adminLoginRequested, setAdminLoginRequested] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -143,6 +144,11 @@ function App() {
 
     setUser(loggedInUser);
     setShowLogin(false);
+    if (adminLoginRequested) {
+      window.history.pushState({}, "", "/admin");
+      setIsAdminPath(true);
+      setAdminLoginRequested(false);
+    }
   };
 
   // ================================
@@ -168,6 +174,7 @@ function App() {
 
     setUser(null);
     setShowCourses(false);
+    setAdminLoginRequested(false);
   };
 
   // ================================
@@ -203,7 +210,7 @@ function App() {
           <span className="admin-route-gate-kicker">ACCESS DENIED</span>
           <h1>Administrator access required</h1>
           <p>This account is not configured as an administrator.</p>
-          <button type="button" onClick={leaveAdminPath}>Return to CodeLab Academy</button>
+          <div className="admin-route-gate-actions"><button type="button" onClick={() => { localStorage.removeItem("codelabUser"); localStorage.removeItem("codelabToken"); window.history.pushState({}, "", "/"); setUser(null); setIsAdminPath(false); setAdminLoginRequested(true); setShowLogin(true); }}>Sign in as administrator</button><button type="button" className="admin-route-gate-secondary" onClick={leaveAdminPath}>Return to CodeLab Academy</button></div>
         </div>
       </div>
     );
