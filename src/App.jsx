@@ -35,7 +35,7 @@ const categories = [
     icon: "☁",
     title: "Cloud Engineering",
     description: "AWS, Azure, GCP, containers & infrastructure",
-    courses: "1 Course",
+    courses: "12 Courses",
   },
   {
     icon: "🤖",

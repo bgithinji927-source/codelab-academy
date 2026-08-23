@@ -436,15 +436,92 @@ const courses = [
   },
 
   // =========================
-  // CLOUD ENGINEERING — PRIMARY COURSE
+  // CLOUD ENGINEERING — 12 COURSES
   // =========================
 
   {
-    id: "cloud-engineering",
-    title: "Cloud Engineering",
+    id: "cloud-foundations-providers",
+    title: "Cloud Foundations and AWS / Azure / GCP Provider Choices",
     category: "Cloud Engineering",
-    description: "Learn cloud platforms, infrastructure, deployment, security, and reliable operations from the ground up.",
-    level: "Beginner → Advanced",
+    description: "Understand cloud service models, shared responsibility, and how to choose between AWS, Azure, and GCP.",
+    level: "Beginner",
+  },
+  {
+    id: "cloud-linux-operations",
+    title: "Linux for Cloud Operators",
+    category: "Cloud Engineering",
+    description: "Operate Linux cloud servers, inspect services, manage permissions, and investigate logs safely.",
+    level: "Beginner",
+  },
+  {
+    id: "cloud-networking",
+    title: "Cloud Networking Fundamentals",
+    category: "Cloud Engineering",
+    description: "Design VPCs, subnets, routes, security boundaries, and private paths between cloud services.",
+    level: "Intermediate",
+  },
+  {
+    id: "cloud-containers",
+    title: "Docker and Containers",
+    category: "Cloud Engineering",
+    description: "Package applications into portable containers and prepare images for reliable cloud delivery.",
+    level: "Intermediate",
+  },
+  {
+    id: "cloud-kubernetes",
+    title: "Kubernetes Workloads",
+    category: "Cloud Engineering",
+    description: "Run resilient container workloads with Kubernetes Deployments, Services, health checks, and scaling.",
+    level: "Intermediate",
+  },
+  {
+    id: "cloud-cicd",
+    title: "CI/CD for Cloud Delivery",
+    category: "Cloud Engineering",
+    description: "Build automated pipelines that test, scan, deploy, observe, and safely promote cloud services.",
+    level: "Intermediate",
+  },
+  {
+    id: "cloud-terraform",
+    title: "Terraform and Infrastructure as Code",
+    category: "Cloud Engineering",
+    description: "Define repeatable infrastructure with Terraform plans, state, modules, and reviewed changes.",
+    level: "Advanced",
+  },
+  {
+    id: "cloud-security",
+    title: "Cloud Security Foundations",
+    category: "Cloud Engineering",
+    description: "Apply identity, least privilege, secrets, encryption, audit logging, and defense-in-depth practices.",
+    level: "Intermediate",
+  },
+  {
+    id: "cloud-monitoring-logging",
+    title: "Monitoring and Logging",
+    category: "Cloud Engineering",
+    description: "Use metrics, logs, traces, alerts, and service-level signals to operate cloud systems with confidence.",
+    level: "Intermediate",
+  },
+  {
+    id: "cloud-dns-https-proxies",
+    title: "DNS, HTTPS, and Reverse Proxies",
+    category: "Cloud Engineering",
+    description: "Trace internet requests through DNS, TLS certificates, reverse proxies, and private application services.",
+    level: "Intermediate",
+  },
+  {
+    id: "cloud-load-balancing",
+    title: "Load Balancing and High Availability",
+    category: "Cloud Engineering",
+    description: "Distribute traffic, perform health checks, design failover, and keep services available during failures.",
+    level: "Advanced",
+  },
+  {
+    id: "cloud-serverless-databases",
+    title: "Serverless and Cloud Databases",
+    category: "Cloud Engineering",
+    description: "Choose managed databases and serverless functions while balancing scale, cost, latency, and operations.",
+    level: "Advanced",
   },
 
   // =========================
