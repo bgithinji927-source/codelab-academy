@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/User");
 const ensureAuth = require("../middleware/ensureAuth");
+const { getCatalogLessons } = require("../lib/catalog");
 
 const router = express.Router();
 
@@ -16,6 +17,28 @@ const GROQ_API_URL =
 // a current production model by default.
 const GROQ_MODEL =
   process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+
+function sessionPayload(session) {
+  if (!session) return null;
+  return {
+    conversationHistory: session.conversationHistory || [],
+    completed: Boolean(session.completed),
+    summary: session.summary || "",
+    lastAccessedAt: session.lastAccessedAt,
+  };
+}
+
+async function markCurrentLessonComplete(userId, courseId, lessonId) {
+  return User.findOneAndUpdate(
+    {
+      _id: userId,
+      "currentCourse.id": courseId,
+      "currentLesson.id": lessonId,
+    },
+    { $set: { "currentLesson.completed": true } },
+    { new: true }
+  );
+}
 
 // ============================================
 // HELPER: LOAD OR CREATE SESSION
@@ -54,7 +77,9 @@ async function getOrCreateLessonSession(
       user.lessonSessions.push(session);
       await user.save();
     } else {
-      // Update last accessed
+      // Update last accessed and repair the index for sessions created by the
+      // earlier persistence implementation, which defaulted every lesson to 0.
+      session.lessonIndex = Number(lessonIndex) || 0;
       session.lastAccessedAt = new Date();
       await user.save();
     }
@@ -112,7 +137,8 @@ async function markLessonComplete(
   courseId,
   lessonId,
   summary,
-  xpAward = Number(process.env.LESSON_XP_DEFAULT) || 5
+  xpAward = Number(process.env.LESSON_XP_DEFAULT) || 5,
+  lessonIndex = 0
 ) {
   try {
     // First: try an atomic update where the courseProgress element exists
@@ -132,6 +158,7 @@ async function markLessonComplete(
           "courseProgress.$.completedLessonIds": lessonId,
         },
         $set: {
+          "courseProgress.$.lastLessonIndex": Number(lessonIndex) || 0,
           "courseProgress.$.lastAccessedAt": new Date(),
         },
       },
@@ -165,7 +192,7 @@ async function markLessonComplete(
             lessonsCompleted: 1,
             totalLessons: 0,
             completedLessonIds: [lessonId],
-            lastLessonIndex: 0,
+            lastLessonIndex: Number(lessonIndex) || 0,
             lastAccessedAt: new Date(),
           },
         },
@@ -210,9 +237,14 @@ async function markLessonComplete(
 router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
   try {
     const { courseId } = req.params;
-    const { courseTitle, totalLessons = 0 } = req.body;
+    const {
+      courseTitle,
+      totalLessons = 0,
+      firstLessonId,
+      firstLessonTitle,
+    } = req.body;
 
-    const userId = req.user?.id || req.body.userId;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ success: false, message: "Authentication required" });
@@ -223,27 +255,83 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    const catalogLessons = await getCatalogLessons(courseId);
+    const catalogTotal = catalogLessons.length;
+    const actualTotalLessons = catalogTotal || Number(totalLessons) || 0;
+    const firstCatalogLesson = catalogLessons[0] || null;
+
     let cp = user.courseProgress.find((p) => String(p.courseId) === String(courseId));
     if (!cp) {
       cp = {
         courseId,
         courseTitle: courseTitle || "",
         lessonsCompleted: 0,
-        totalLessons: totalLessons,
+        totalLessons: actualTotalLessons,
         lastLessonIndex: 0,
         completedLessonIds: [],
         lastAccessedAt: new Date(),
       };
-
       user.courseProgress.push(cp);
+    } else {
+      cp.courseTitle = courseTitle || cp.courseTitle || "";
+      if (actualTotalLessons > 0) cp.totalLessons = actualTotalLessons;
+      cp.lastAccessedAt = new Date();
     }
 
-    user.currentCourse = { id: courseId, title: courseTitle || "" };
-    user.currentLesson = { id: null, title: null, index: 0, completed: false };
+    const sameCourseIsActive = String(user.currentCourse?.id || "") === String(courseId);
+    const storedIndex = Number.isInteger(Number(user.currentLesson?.index))
+      ? Number(user.currentLesson.index)
+      : Number(cp.lastLessonIndex) || 0;
+    const progressIndex = Math.min(Math.max(Number(cp.lastLessonIndex) || 0, 0), Math.max(actualTotalLessons - 1, 0));
+    const activeIndex = sameCourseIsActive && user.currentLesson?.id
+      ? Math.min(Math.max(storedIndex, 0), Math.max(actualTotalLessons - 1, 0))
+      : progressIndex;
+    const activeCatalogLesson = catalogLessons[activeIndex] || firstCatalogLesson;
+    const storedLessonIsValid = activeCatalogLesson
+      && String(user.currentLesson?.id || "") === String(activeCatalogLesson.id)
+      && activeIndex === storedIndex;
+
+    user.currentCourse = { id: courseId, title: courseTitle || cp.courseTitle || "" };
+    user.currentLesson = {
+      id: storedLessonIsValid ? user.currentLesson.id : activeCatalogLesson?.id || firstLessonId || null,
+      title: storedLessonIsValid ? user.currentLesson.title : activeCatalogLesson?.title || firstLessonTitle || null,
+      index: storedLessonIsValid ? activeIndex : progressIndex,
+      completed: storedLessonIsValid
+        ? Boolean(user.currentLesson.completed)
+        : Boolean(activeCatalogLesson && cp.completedLessonIds?.includes(activeCatalogLesson.id)),
+    };
+
+    const catalogIndexById = new Map(catalogLessons.map((item, index) => [String(item.id), index]));
+    user.lessonSessions
+      .filter((item) => item.courseId === courseId)
+      .forEach((item) => {
+        const catalogIndex = catalogIndexById.get(String(item.lessonId));
+        if (catalogIndex !== undefined) item.lessonIndex = catalogIndex;
+      });
 
     await user.save();
 
-    return res.json({ success: true, courseProgress: cp, user: { id: user._id, xp: user.xp, level: user.level } });
+    const currentLessonId = user.currentLesson?.id;
+    const session = currentLessonId
+      ? user.lessonSessions.find((item) => item.courseId === courseId && item.lessonId === currentLessonId)
+      : null;
+    const sessions = user.lessonSessions
+      .filter((item) => item.courseId === courseId)
+      .sort((left, right) => Number(left.lessonIndex || 0) - Number(right.lessonIndex || 0))
+      .map((item) => ({
+        lessonId: item.lessonId,
+        lessonIndex: Number(item.lessonIndex || 0),
+        ...sessionPayload(item),
+      }));
+
+    return res.json({
+      success: true,
+      courseProgress: cp,
+      currentLesson: user.currentLesson,
+      session: sessionPayload(session),
+      sessions,
+      user: { id: user._id, xp: user.xp, level: user.level },
+    });
   } catch (err) {
     console.error("Error starting course:", err);
     return res.status(500).json({ success: false, message: "Failed to start course" });
@@ -261,23 +349,41 @@ router.post("/lesson/complete", ensureAuth, async (req, res) => {
   try {
     const { courseId, lessonId, summary = "", xpAward } = req.body;
 
-    const userId = req.user?.id || req.body.userId;
+    const userId = req.user?.id;
 
     if (!userId || !courseId || !lessonId) {
-      return res.status(400).json({ success: false, message: "userId, courseId and lessonId are required" });
+      return res.status(400).json({ success: false, message: "courseId and lessonId are required" });
+    }
+
+    const learner = await User.findById(userId);
+    const catalogLessons = await getCatalogLessons(courseId);
+    const isCatalogCourse = catalogLessons.length > 0;
+    const isActiveLesson = learner
+      && String(learner.currentCourse?.id || "") === String(courseId)
+      && String(learner.currentLesson?.id || "") === String(lessonId);
+    if (isCatalogCourse && !isActiveLesson) {
+      return res.status(409).json({ success: false, message: "Only the server-owned active lesson can be completed" });
     }
 
     const awardedXP = typeof xpAward === "number" ? xpAward : Number(process.env.LESSON_XP_DEFAULT) || 5;
 
-    const updatedUser = await markLessonComplete(userId, courseId, lessonId, summary, awardedXP);
+    const updatedUser = await markLessonComplete(
+      userId,
+      courseId,
+      lessonId,
+      summary,
+      awardedXP,
+      Number(learner.currentLesson?.index) || 0
+    );
 
     if (!updatedUser) {
       return res.status(500).json({ success: false, message: "Could not mark lesson complete" });
     }
 
+    const stateUpdatedUser = await markCurrentLessonComplete(userId, courseId, lessonId);
     const cp = updatedUser.courseProgress.find((p) => String(p.courseId) === String(courseId)) || null;
 
-    return res.json({ success: true, user: { id: updatedUser._id, xp: updatedUser.xp, level: updatedUser.level, completedLessons: updatedUser.completedLessons }, courseProgress: cp });
+    return res.json({ success: true, user: { id: updatedUser._id, xp: updatedUser.xp, level: updatedUser.level, completedLessons: updatedUser.completedLessons }, courseProgress: cp, lessonComplete: true, readyForNextLesson: Boolean(stateUpdatedUser || updatedUser) });
   } catch (err) {
     console.error("Error in lesson complete endpoint:", err);
     return res.status(500).json({ success: false, message: "Failed to complete lesson" });
@@ -380,12 +486,7 @@ router.get(
 
       return res.json({
         success: true,
-        session: {
-          conversationHistory: session.conversationHistory || [],
-          completed: session.completed,
-          summary: session.summary,
-          lastAccessedAt: session.lastAccessedAt,
-        },
+        session: sessionPayload(session),
       });
     } catch (error) {
       console.error("Error getting lesson session:", error);
@@ -403,15 +504,124 @@ router.get(
 // POST /api/kai
 // ============================================
 
-router.post("/", async (req, res) => {
+router.post("/", ensureAuth, async (req, res) => {
   try {
     const {
       course,
       lesson,
       messages = [],
       learnerMessage,
-      userId,
+      currentLessonIndex = 0,
+      totalLessons = 0,
+      nextLesson = false,
+      nextLessonIndex,
+      nextLessonId,
+      nextLessonTitle,
+      isIntro = false,
     } = req.body;
+
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+
+    // Lesson progression is server-authoritative. Kai may unlock the next
+    // lesson only after the current lesson is already marked complete.
+    if (nextLesson) {
+      if (!course?.id || !lesson?.id || !Number.isInteger(Number(nextLessonIndex))) {
+        return res.status(400).json({ success: false, message: "Current and next lesson details are required" });
+      }
+
+      const learner = await User.findById(userId);
+      if (!learner) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+
+      const progress = learner.courseProgress.find((item) => String(item.courseId) === String(course.id));
+      const currentSession = learner.lessonSessions.find((item) => item.courseId === course.id && item.lessonId === lesson.id);
+      const serverCurrentIndex = Number(learner.currentLesson?.index ?? progress?.lastLessonIndex ?? 0);
+      const currentLessonIsActive = String(learner.currentCourse?.id || "") === String(course.id)
+        && String(learner.currentLesson?.id || "") === String(lesson.id)
+        && serverCurrentIndex === Number(currentLessonIndex);
+      const currentLessonComplete = Boolean(currentSession?.completed || progress?.completedLessonIds?.includes(lesson.id));
+
+      if (!currentLessonIsActive) {
+        return res.status(409).json({ success: false, message: "This is not the learner's active lesson", readyForNextLesson: false });
+      }
+
+      if (!currentLessonComplete) {
+        return res.status(409).json({ success: false, message: "Kai has not completed this lesson yet", readyForNextLesson: false });
+      }
+
+      // Backfill the currentLesson flag for sessions completed before this
+      // server-authoritative progression flow was deployed.
+      if (!learner.currentLesson?.completed) {
+        learner.currentLesson.completed = true;
+        await learner.save();
+      }
+
+      const requestedNextIndex = Number(nextLessonIndex);
+      const expectedNextIndex = serverCurrentIndex + 1;
+      if (requestedNextIndex !== expectedNextIndex) {
+        return res.status(409).json({ success: false, message: "Lessons must be completed in order", readyForNextLesson: false });
+      }
+
+      const catalogLessons = await getCatalogLessons(course.id);
+      const serverTotalLessons = catalogLessons.length || Number(progress?.totalLessons || totalLessons || 0);
+      const serverNextLesson = catalogLessons[requestedNextIndex];
+      if (serverNextLesson && (String(nextLessonId) !== String(serverNextLesson.id) || String(nextLessonTitle) !== String(serverNextLesson.title))) {
+        return res.status(409).json({ success: false, message: "The requested lesson is not the next lesson in the course", readyForNextLesson: false });
+      }
+      if (!serverNextLesson && requestedNextIndex < serverTotalLessons) {
+        return res.status(409).json({ success: false, message: "The next lesson is not available", readyForNextLesson: false });
+      }
+
+      if (requestedNextIndex >= serverTotalLessons) {
+        if (progress) {
+          progress.lastLessonIndex = Math.max(Number(progress.lastLessonIndex || 0), Number(currentLessonIndex));
+        }
+        learner.currentLesson = { id: lesson.id, title: lesson.title || "", index: Number(currentLessonIndex), completed: true };
+        await learner.save();
+        return res.json({
+          success: true,
+          lessonAdvanced: false,
+          courseComplete: true,
+          lessonComplete: true,
+          lessonSummary: currentSession?.summary || "Course completed",
+        });
+      }
+
+      if (!serverNextLesson || !nextLessonId || !nextLessonTitle) {
+        return res.status(400).json({ success: false, message: "Next lesson details are required" });
+      }
+
+      if (progress) {
+        progress.lastLessonIndex = requestedNextIndex;
+        progress.lastAccessedAt = new Date();
+      }
+      learner.currentCourse = { id: course.id, title: course.title || "" };
+      learner.currentLesson = { id: nextLessonId, title: nextLessonTitle, index: requestedNextIndex, completed: false };
+      await learner.save();
+
+      const nextSession = await getOrCreateLessonSession(
+        userId,
+        course.id,
+        nextLessonId,
+        requestedNextIndex
+      );
+
+      return res.json({
+        success: true,
+        lessonAdvanced: true,
+        nextLessonIndex: requestedNextIndex,
+        nextLessonId,
+        nextLessonTitle,
+        previousLessonSummary: currentSession?.summary || "",
+        session: sessionPayload(nextSession),
+        lessonComplete: true,
+      });
+    }
 
     // Check GROQ API Key
     if (!process.env.GROQ_API_KEY) {
@@ -423,13 +633,34 @@ router.post("/", async (req, res) => {
       });
     }
 
+    if (!course?.id || !lesson?.id) {
+      return res.status(400).json({ success: false, message: "Course and lesson details are required" });
+    }
+
+    const learner = await User.findById(userId);
+    if (!learner) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Sequenced course requests must match the server-owned active lesson.
+    // The general Ask Kai page remains a free-form chat and has no course state.
+    if (course.id !== "general") {
+      const activeIndex = Number(learner.currentLesson?.index ?? 0);
+      if (String(learner.currentCourse?.id || "") !== String(course.id)
+        || String(learner.currentLesson?.id || "") !== String(lesson.id)
+        || activeIndex !== Number(currentLessonIndex)) {
+        return res.status(409).json({ success: false, message: "This lesson is not the learner's active lesson" });
+      }
+      if (learner.currentLesson?.completed) {
+        return res.status(409).json({ success: false, message: "Kai has completed this lesson. Use Continue to Next Lesson." });
+      }
+    }
+
     // ========================================
     // LOAD OR CREATE LESSON SESSION
     // ========================================
 
-    if (userId && lesson?.id) {
-      await getOrCreateLessonSession(userId, course?.id, lesson?.id, 0);
-    }
+    await getOrCreateLessonSession(userId, course.id, lesson.id, Number(currentLessonIndex) || 0);
 
     const courseTitle = course?.title || "Programming";
     const lessonTitle = lesson?.title || "Introduction";
@@ -573,15 +804,25 @@ router.post("/", async (req, res) => {
     // ========================================
 
     if (userId && lesson?.id) {
-      if (learnerMessage) {
-        await saveConversation(userId, course?.id, lesson?.id, "user", learnerMessage);
+      if (learnerMessage && !isIntro) {
+        await saveConversation(userId, course.id, lesson.id, "user", learnerMessage);
       }
 
       await saveConversation(userId, course?.id, lesson?.id, "assistant", cleanReply);
 
       // Mark lesson complete if Kai indicates it
       if (isLessonComplete) {
-        const updatedUser = await markLessonComplete(userId, course?.id, lesson?.id, lessonSummary);
+        const updatedUser = await markLessonComplete(
+          userId,
+          course.id,
+          lesson.id,
+          lessonSummary,
+          Number(process.env.LESSON_XP_DEFAULT) || 5,
+          Number(currentLessonIndex) || 0
+        );
+        const stateUpdatedUser = updatedUser
+          ? await markCurrentLessonComplete(userId, course.id, lesson.id)
+          : null;
 
         if (updatedUser) {
           return res.json({
@@ -591,6 +832,7 @@ router.post("/", async (req, res) => {
             course: courseTitle,
             lesson: lessonTitle,
             lessonComplete: true,
+            readyForNextLesson: Boolean(stateUpdatedUser || updatedUser),
             lessonSummary,
             userProgress: {
               xp: updatedUser.xp,
@@ -613,6 +855,7 @@ router.post("/", async (req, res) => {
       course: courseTitle,
       lesson: lessonTitle,
       lessonComplete: isLessonComplete,
+      readyForNextLesson: false,
       lessonSummary,
     });
   } catch (error) {

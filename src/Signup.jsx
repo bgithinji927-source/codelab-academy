@@ -24,6 +24,9 @@ function Signup({ onClose, onSignupSuccess }) {
 
       if (data.success) {
         setMessage("Account created! 🎉");
+        if (data.token) {
+          localStorage.setItem("codelabToken", data.token);
+        }
         localStorage.setItem("codelabUser", JSON.stringify(data.user));
         if (onSignupSuccess) onSignupSuccess(data.user);
       } else {

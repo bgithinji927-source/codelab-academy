@@ -29,8 +29,13 @@ function CourseLearn({ user, course, onBack }) {
   const [allLessons, setAllLessons] = useState([]);
   const [previousLessonSummary, setPreviousLessonSummary] = useState("");
   const [lessonCompletionReady, setLessonCompletionReady] = useState(false);
+  const [courseStateLoaded, setCourseStateLoaded] = useState(false);
+  const [courseStateError, setCourseStateError] = useState("");
+  const [isAdvancing, setIsAdvancing] = useState(false);
+  const [savedLessonSessions, setSavedLessonSessions] = useState([]);
 
   const typingTimerRef = useRef(null);
+  const lessonStartKeyRef = useRef("");
   const conversationEndRef = useRef(null);
   const scrollFrameRef = useRef(null);
 
@@ -87,6 +92,16 @@ function CourseLearn({ user, course, onBack }) {
     let cancelled = false;
 
     async function loadCourseLessons() {
+      setCourseStateLoaded(false);
+      setCourseStateError("");
+      lessonStartKeyRef.current = "";
+      setMessages([]);
+      setSavedLessonSessions([]);
+      setLesson(null);
+      setLessonCompletionReady(false);
+      setCurrentLessonIndex(0);
+      setPreviousLessonSummary("");
+
       try {
         let courseLessons = [];
         let catalogLoaded = false;
@@ -100,31 +115,77 @@ function CourseLearn({ user, course, onBack }) {
           }
         }
 
-        // Keep the bundled lesson catalog as a fallback for local/offline previews.
+        // Keep the bundled lesson catalog as a fallback for local previews,
+        // while progression state always comes from the authenticated server.
         if (!catalogLoaded) {
           const lessonModule = await import("../data/lessons.js");
           const lessonData = lessonModule.default || lessonModule.lessons;
           courseLessons = lessonData?.[course?.id] || [];
         }
 
-        if (!cancelled) {
-          setAllLessons(courseLessons);
-          
-          if (courseLessons.length > 0) {
-            setLesson(courseLessons[0]);
-            setCurrentLessonIndex(0);
-            setPreviousLessonSummary("");
-          }
+        if (cancelled) return;
+
+        setAllLessons(courseLessons);
+
+        if (!courseLessons.length) {
+          setCourseStateError("No lessons are available for this course yet.");
+          setCourseStateLoaded(true);
+          return;
         }
+
+        const firstLesson = courseLessons[0];
+        const stateResponse = await fetchWithAuth(`/api/kai/courses/${encodeURIComponent(course?.id || "")}/start`, {
+          method: "POST",
+          body: JSON.stringify({
+            courseTitle,
+            totalLessons: courseLessons.length,
+            firstLessonId: firstLesson.id,
+            firstLessonTitle: firstLesson.title,
+          }),
+        });
+        const stateData = await stateResponse.json();
+
+        if (!stateResponse.ok || !stateData.success) {
+          throw new Error(stateData.message || "Could not load your saved Kai lesson state.");
+        }
+
+        const serverLesson = stateData.currentLesson || {};
+        const idIndex = courseLessons.findIndex((item) => String(item.id) === String(serverLesson.id));
+        const serverIndex = Number.isInteger(Number(serverLesson.index)) ? Number(serverLesson.index) : 0;
+        const safeIndex = idIndex >= 0
+          ? idIndex
+          : Math.min(Math.max(serverIndex, 0), courseLessons.length - 1);
+        const activeLesson = courseLessons[safeIndex];
+        const normalizeHistory = (history) => Array.isArray(history)
+          ? history
+              .filter((message) => message && (message.role === "user" || message.role === "assistant") && typeof message.content === "string" && message.content.trim())
+              .map((message) => ({ role: message.role, content: message.content }))
+          : [];
+        const savedHistory = normalizeHistory(stateData.session?.conversationHistory);
+        const savedSessions = Array.isArray(stateData.sessions)
+          ? stateData.sessions
+              .filter((session) => Number(session.lessonIndex) < safeIndex)
+              .map((session) => ({
+                ...session,
+                conversationHistory: normalizeHistory(session.conversationHistory),
+              }))
+          : [];
+
+        setCurrentLessonIndex(safeIndex);
+        setLesson(activeLesson);
+        setPreviousLessonSummary(stateData.session?.summary || "");
+        setSavedLessonSessions(savedSessions);
+        setMessages(savedHistory);
+        setLessonCompletionReady(Boolean(serverLesson.completed || stateData.session?.completed));
+        setCourseStateLoaded(true);
       } catch (error) {
-        console.error(
-          "Could not load lesson data:",
-          error
-        );
+        console.error("Could not load lesson data or saved Kai state:", error);
 
         if (!cancelled) {
           setAllLessons([]);
           setLesson(null);
+          setCourseStateError(error.message || "Could not load your saved Kai lesson state.");
+          setCourseStateLoaded(true);
         }
       }
     }
@@ -133,7 +194,11 @@ function CourseLearn({ user, course, onBack }) {
 
     return () => {
       cancelled = true;
+      stopTyping();
     };
+    // The course id identifies the persisted course state. The title is read
+    // from the current course object when the request is made.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [course?.id]);
 
   // ============================================
@@ -189,6 +254,10 @@ function CourseLearn({ user, course, onBack }) {
     learnerMessage = "",
     conversation = [],
     nextLesson = false,
+    nextLessonIndex,
+    nextLessonId,
+    nextLessonTitle,
+    isIntro = false,
   } = {}) => {
     try {
       stopTyping();
@@ -216,8 +285,12 @@ function CourseLearn({ user, course, onBack }) {
 
           messages: conversation,
 
-          // NEW: Progression context
+          // Server-authoritative progression context.
           nextLesson,
+          nextLessonIndex,
+          nextLessonId,
+          nextLessonTitle,
+          isIntro,
           previousLessonSummary,
           currentLessonIndex,
           totalLessons: allLessons.length,
@@ -245,35 +318,13 @@ function CourseLearn({ user, course, onBack }) {
         );
       }
 
-      // ========================================
-      // HANDLE LESSON PROGRESSION FROM KAI
-      // ========================================
-
-      if (
-        data.nextLessonReady &&
-        currentLessonIndex < allLessons.length - 1
-      ) {
-        // Kai decided we should move to next lesson
-        const lessonSummary =
-          data.lessonSummary || kaiReply;
-        
-        setPreviousLessonSummary(lessonSummary);
-        setMessages([]);
-        setAnswer("");
-        setDisplayedKaiText("");
-        
-        const nextIndex = currentLessonIndex + 1;
-        setCurrentLessonIndex(nextIndex);
-        setLesson(allLessons[nextIndex]);
-        setLessonCompletionReady(false);
-        
-        // The lesson change effect will trigger Kai intro
-        return;
-      }
-
-      // Check if Kai indicated readiness for next lesson
-      if (data.readyForNextLesson) {
-        setLessonCompletionReady(true);
+      // Kai’s completion decision is persisted by the server. It unlocks the
+      // button, but it never changes the lesson automatically.
+      if (data.lessonComplete || data.readyForNextLesson) {
+        setLessonCompletionReady(Boolean(data.readyForNextLesson || data.lessonComplete));
+        if (data.lessonSummary) {
+          setPreviousLessonSummary(data.lessonSummary);
+        }
       }
 
       setMessages((previous) => [
@@ -308,16 +359,26 @@ function CourseLearn({ user, course, onBack }) {
   };
 
   // ============================================
-  // START LESSON
+  // START LESSON ONLY WHEN THERE IS NO SAVED SESSION
   // ============================================
 
   useEffect(() => {
-    if (!lesson) return;
+    if (!courseStateLoaded || !lesson || !allLessons.length) return;
 
+    const lessonKey = `${course?.id}:${lesson.id}`;
+    if (lessonStartKeyRef.current === lessonKey) return;
+
+    // A restored session already contains the intro and teaching. Do not
+    // clear it or ask Kai to start a duplicate conversation on refresh.
+    if (messages.length > 0 || lessonCompletionReady) {
+      lessonStartKeyRef.current = lessonKey;
+      return;
+    }
+
+    lessonStartKeyRef.current = lessonKey;
     let cancelled = false;
 
     async function startKai() {
-      setMessages([]);
       setAnswer("");
       setDisplayedKaiText("");
       setLessonCompletionReady(false);
@@ -367,6 +428,7 @@ ${startMessage}
       await askKai({
         learnerMessage: startMessage,
         conversation: [],
+        isIntro: true,
       });
     }
 
@@ -377,9 +439,85 @@ ${startMessage}
       stopTyping();
     };
 
-    // We intentionally restart when the lesson changes.
+    // The ref prevents React StrictMode and state hydration from sending
+    // duplicate automatic intros for the same persisted lesson.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lesson]);
+  }, [courseStateLoaded, lesson, messages.length, lessonCompletionReady]);
+
+  // ============================================
+  // ADVANCE ONLY AFTER SERVER-SAVED COMPLETION
+  // ============================================
+
+  const handleNextLesson = async () => {
+    if (
+      !lessonCompletionReady ||
+      isKaiTyping ||
+      isAdvancing ||
+      currentLessonIndex >= allLessons.length - 1
+    ) {
+      return;
+    }
+
+    const nextIndex = currentLessonIndex + 1;
+    const nextLesson = allLessons[nextIndex];
+    if (!nextLesson) return;
+
+    setIsAdvancing(true);
+
+    try {
+      const response = await fetchWithAuth("/api/kai", {
+        method: "POST",
+        body: JSON.stringify({
+          course: { ...course, title: courseTitle },
+          lesson,
+          messages,
+          learnerMessage: "I feel ready to move to the next lesson. Can we continue?",
+          nextLesson: true,
+          nextLessonIndex: nextIndex,
+          nextLessonId: nextLesson.id,
+          nextLessonTitle: nextLesson.title,
+          currentLessonIndex,
+          totalLessons: allLessons.length,
+        }),
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success || !data.lessonAdvanced) {
+        throw new Error(data.message || "Kai could not unlock the next lesson.");
+      }
+
+      stopTyping();
+      setCourseStateError("");
+      setAnswer("");
+      setDisplayedKaiText("");
+      setPreviousLessonSummary(data.previousLessonSummary || previousLessonSummary);
+      setSavedLessonSessions((previous) => [
+        ...previous.filter((session) => Number(session.lessonIndex) !== currentLessonIndex),
+        {
+          lessonId: lesson.id,
+          lessonIndex: currentLessonIndex,
+          conversationHistory: messages,
+          completed: true,
+          summary: data.previousLessonSummary || previousLessonSummary,
+        },
+      ].sort((left, right) => Number(left.lessonIndex) - Number(right.lessonIndex)));
+      setCurrentLessonIndex(nextIndex);
+      setLesson(nextLesson);
+      setMessages(
+        Array.isArray(data.session?.conversationHistory)
+          ? data.session.conversationHistory
+              .filter((message) => message && (message.role === "user" || message.role === "assistant") && typeof message.content === "string")
+              .map((message) => ({ role: message.role, content: message.content }))
+          : []
+      );
+      setLessonCompletionReady(Boolean(data.session?.completed));
+    } catch (error) {
+      console.error("Could not advance lesson:", error);
+      setCourseStateError(error.message || "Kai could not unlock the next lesson.");
+    } finally {
+      setIsAdvancing(false);
+    }
+  };
 
   // ============================================
   // SEND LEARNER MESSAGE
@@ -823,17 +961,24 @@ ${startMessage}
         <div className="learn-top-actions">
           <div className="lesson-status">
             <CheckCircle2 size={16} />
-            <span>{lessonCompletionReady ? "Ready for next lesson!" : "Lesson in progress"}</span>
+            <span>
+              {currentLessonIndex >= allLessons.length - 1 && lessonCompletionReady
+                ? "Course complete"
+                : lessonCompletionReady
+                  ? "Ready for next lesson!"
+                  : "Lesson in progress"}
+            </span>
           </div>
           <button
             type="button"
             className="next-lesson"
-            onClick={() => askKai({
-              learnerMessage: "I feel ready to move to the next lesson. Can we continue?",
-              conversation: messages,
-              nextLesson: true,
-            })}
-            disabled={currentLessonIndex >= allLessons.length - 1 || isKaiTyping}
+            onClick={handleNextLesson}
+            disabled={
+              currentLessonIndex >= allLessons.length - 1 ||
+              !lessonCompletionReady ||
+              isKaiTyping ||
+              isAdvancing
+            }
           >
             Continue to Next Lesson
             <ArrowRight size={17} />
@@ -855,24 +1000,52 @@ ${startMessage}
 
         <section className="conversation-messages">
 
+          {courseStateError && (
+            <div className="course-state-error" role="alert">
+              {courseStateError}
+            </div>
+          )}
+
+          {savedLessonSessions.map((session) => {
+            const savedLesson = allLessons[Number(session.lessonIndex)] || {};
+            return (
+              <div className="saved-lesson-session" key={`saved-session-${session.lessonId || session.lessonIndex}`}>
+                <div className="saved-lesson-heading">
+                  <CheckCircle2 size={15} />
+                  <span>Lesson {Number(session.lessonIndex) + 1}: {savedLesson.title || "Completed lesson"}</span>
+                  <span className="saved-lesson-status">Completed</span>
+                </div>
+                {(session.conversationHistory || []).map((message, index) => {
+                  if (message.role === "assistant") {
+                    return renderKaiMessage(message.content, `saved-${session.lessonIndex}-${index}`);
+                  }
+                  if (message.role === "user") {
+                    return renderLearnerMessage(message.content, `saved-${session.lessonIndex}-${index}`);
+                  }
+                  return null;
+                })}
+              </div>
+            );
+          })}
+
           {messages.map(
             (message, index) => {
               if (
                 message.role ===
                 "assistant"
               ) {
-                return renderKaiMessage(
+                  return renderKaiMessage(
                   message.content,
-                  index
+                  `active-${index}`
                 );
               }
 
               if (
                 message.role === "user"
               ) {
-                return renderLearnerMessage(
+                  return renderLearnerMessage(
                   message.content,
-                  index
+                  `active-${index}`
                 );
               }
 
@@ -961,7 +1134,7 @@ ${startMessage}
                 ? "Kai is thinking..."
                 : "Answer Kai or ask a question..."
             }
-            disabled={isKaiTyping}
+            disabled={isKaiTyping || lessonCompletionReady || isAdvancing}
             autoComplete="off"
           />
 
@@ -970,6 +1143,8 @@ ${startMessage}
             onClick={handleSend}
             disabled={
               isKaiTyping ||
+              lessonCompletionReady ||
+              isAdvancing ||
               !answer.trim()
             }
             aria-label="Send message"
