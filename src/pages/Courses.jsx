@@ -10,6 +10,7 @@ import {
   Bot,
   Wrench,
   Cpu,
+  Cloud,
   Layers3,
   Boxes,
   ShieldCheck,
@@ -33,6 +34,12 @@ const categories = [
     name: "Tech Engines",
     description: "Understand the systems that power modern technology.",
     icon: Cpu,
+    accent: "blue",
+  },
+  {
+    name: "Cloud Engineering",
+    description: "Build, secure, deploy, and operate reliable cloud systems.",
+    icon: Cloud,
     accent: "blue",
   },
   {

@@ -436,6 +436,18 @@ const courses = [
   },
 
   // =========================
+  // CLOUD ENGINEERING — PRIMARY COURSE
+  // =========================
+
+  {
+    id: "cloud-engineering",
+    title: "Cloud Engineering",
+    category: "Cloud Engineering",
+    description: "Learn cloud platforms, infrastructure, deployment, security, and reliable operations from the ground up.",
+    level: "Beginner → Advanced",
+  },
+
+  // =========================
   // DEVOPS — 4 COURSES
   // =========================
 

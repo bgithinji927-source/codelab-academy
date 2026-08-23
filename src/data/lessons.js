@@ -87,6 +87,292 @@ Next, practice explaining the idea in your own words and use the challenge as a 
 }
 
 const courseLessonPlans = {
+  "cloud-engineering": [
+    makeLesson({
+      id: "cloud-engineering-foundations",
+      title: "Cloud Foundations and Provider Choices",
+      focus: "AWS, Azure, and GCP cloud foundations",
+      code: `const cloudPlan = {
+  provider: "AWS",
+  region: "us-east-1",
+  services: ["compute", "storage", "database"]
+};
+
+console.log(cloudPlan);`,
+      challenge: "Compare AWS, Azure, and GCP for a small learning platform. Choose one provider, one region, and three managed services, then explain your trade-offs.",
+      starterCode: `const providerDecision = {
+  provider: "",
+  region: "",
+  services: [],
+  reason: ""
+};
+
+console.log(providerDecision);`,
+      quizQuestion: "What is a sensible first step when choosing a cloud provider?",
+      quizOptions: ["Match provider services and regions to the system requirements", "Choose only by logo color", "Put every workload in every region immediately", "Avoid documenting the decision"],
+      quizAnswer: "Match provider services and regions to the system requirements",
+    }),
+    makeLesson({
+      id: "cloud-engineering-linux",
+      title: "Linux for Cloud Operators",
+      focus: "Linux operations in the cloud",
+      code: `pwd
+ls -la
+systemctl status nginx
+tail -f /var/log/app.log`,
+      challenge: "Write a safe first-response checklist for a Linux server whose web application is unavailable. Include status checks, logs, and one escalation point.",
+      starterCode: `const incidentChecks = [
+  "",
+  "",
+  ""
+];
+
+console.log(incidentChecks);`,
+      quizQuestion: "Why is Linux knowledge important for cloud engineering?",
+      quizOptions: ["Many cloud workloads run on Linux and require operational debugging", "Linux removes the need for monitoring", "Linux automatically chooses a region", "Linux replaces infrastructure planning"],
+      quizAnswer: "Many cloud workloads run on Linux and require operational debugging",
+    }),
+    makeLesson({
+      id: "cloud-engineering-networking",
+      title: "Cloud Networking Fundamentals",
+      focus: "cloud networking, subnets, and access boundaries",
+      code: `const network = {
+  vpc: "10.0.0.0/16",
+  publicSubnet: "10.0.1.0/24",
+  privateSubnet: "10.0.2.0/24",
+  databaseIsPublic: false
+};
+
+console.log(network);`,
+      challenge: "Place a load balancer, application server, and database into public or private network areas. Explain which traffic should be allowed between them.",
+      starterCode: `const networkPlan = {
+  public: [],
+  private: [],
+  allowedTraffic: []
+};
+
+console.log(networkPlan);`,
+      quizQuestion: "Why keep a cloud database in a private subnet?",
+      quizOptions: ["To reduce direct exposure and allow access through controlled services", "To make it reachable from every port", "To avoid backups", "To disable application authentication"],
+      quizAnswer: "To reduce direct exposure and allow access through controlled services",
+    }),
+    makeLesson({
+      id: "cloud-engineering-docker",
+      title: "Docker and Containers",
+      focus: "Docker containers",
+      code: `FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+CMD ["node", "server.js"]`,
+      challenge: "Describe how you would package a small web API into a container. Include the base image, application files, port, and startup command.",
+      starterCode: `const containerPlan = {
+  baseImage: "",
+  port: 0,
+  command: "",
+  healthCheck: ""
+};
+
+console.log(containerPlan);`,
+      quizQuestion: "What is a main benefit of a container image?",
+      quizOptions: ["It packages an application and its runtime assumptions consistently", "It guarantees unlimited CPU", "It replaces all security controls", "It makes source control unnecessary"],
+      quizAnswer: "It packages an application and its runtime assumptions consistently",
+    }),
+    makeLesson({
+      id: "cloud-engineering-kubernetes",
+      title: "Kubernetes Workloads",
+      focus: "Kubernetes workloads and services",
+      code: `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lessons-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lessons-api`,
+      challenge: "Design a Kubernetes deployment for an API with three replicas. Name the service, health check, and resource limit you would add.",
+      starterCode: `const kubernetesWorkload = {
+  replicas: 0,
+  service: "",
+  healthCheck: "",
+  resourceLimit: ""
+};
+
+console.log(kubernetesWorkload);`,
+      quizQuestion: "What does a Kubernetes Deployment help manage?",
+      quizOptions: ["The desired number and version of running application replicas", "A user's cloud billing password", "DNS registration only", "The contents of a source repository"],
+      quizAnswer: "The desired number and version of running application replicas",
+    }),
+    makeLesson({
+      id: "cloud-engineering-cicd",
+      title: "CI/CD for Cloud Delivery",
+      focus: "cloud CI/CD delivery pipelines",
+      code: `stages:
+  - install
+  - test
+  - build-image
+  - deploy-staging
+  - promote-production`,
+      challenge: "Create a pipeline order for a containerized service. Add tests, an image scan, staging deployment, approval, and rollback readiness.",
+      starterCode: `const pipeline = [
+  "",
+  "",
+  "",
+  "",
+  ""
+];
+
+console.log(pipeline);`,
+      quizQuestion: "What should normally happen before a production promotion?",
+      quizOptions: ["Tests and deployment checks pass in an environment that can be observed", "Monitoring is disabled", "The image is never scanned", "Every approval is skipped"],
+      quizAnswer: "Tests and deployment checks pass in an environment that can be observed",
+    }),
+    makeLesson({
+      id: "cloud-engineering-terraform",
+      title: "Terraform and Infrastructure as Code",
+      focus: "Terraform infrastructure as code",
+      code: `resource "aws_s3_bucket" "lessons" {
+  bucket = "codelab-lessons-example"
+
+  tags = {
+    Environment = "learning"
+  }
+}`,
+      challenge: "Write the desired state for one application resource. Explain why a plan should be reviewed before Terraform applies it.",
+      starterCode: `resource "cloud_resource" "app" {
+  name   = ""
+  region = ""
+  tier   = ""
+}`,
+      quizQuestion: "What does Terraform primarily describe?",
+      quizOptions: ["The desired infrastructure state and the changes needed to reach it", "A one-time manual server login", "A browser layout", "A replacement for application tests"],
+      quizAnswer: "The desired infrastructure state and the changes needed to reach it",
+    }),
+    makeLesson({
+      id: "cloud-engineering-security",
+      title: "Cloud Security Foundations",
+      focus: "cloud security and least privilege",
+      code: `const accessPolicy = {
+  principal: "lessons-api",
+  actions: ["read:lessons"],
+  resources: ["course-data"],
+  expires: true
+};
+
+console.log(accessPolicy);`,
+      challenge: "Define a least-privilege policy for an API that reads course content and writes learner progress. Keep unrelated administration actions out of the policy.",
+      starterCode: `const policy = {
+  principal: "",
+  actions: [],
+  resources: [],
+  auditLog: true
+};
+
+console.log(policy);`,
+      quizQuestion: "What is least privilege in a cloud account?",
+      quizOptions: ["Granting only the access required for a task", "Giving every workload administrator access", "Sharing one root credential", "Turning off audit logs"],
+      quizAnswer: "Granting only the access required for a task",
+    }),
+    makeLesson({
+      id: "cloud-engineering-observability",
+      title: "Monitoring and Logging",
+      focus: "cloud monitoring and logging",
+      code: `const serviceHealth = {
+  requestsPerMinute: 820,
+  errorRate: 0.02,
+  p95LatencyMs: 240
+};
+
+if (serviceHealth.errorRate > 0.05) {
+  console.log("Investigate errors");
+}`,
+      challenge: "Choose two metrics, two structured log fields, and one alert for a cloud API. Explain what action each signal should trigger.",
+      starterCode: `const observabilityPlan = {
+  metrics: [],
+  logFields: [],
+  alerts: []
+};
+
+console.log(observabilityPlan);`,
+      quizQuestion: "What is the purpose of monitoring and logging?",
+      quizOptions: ["To create evidence about system behavior and failures", "To hide incidents from operators", "To replace backups", "To remove the need for testing"],
+      quizAnswer: "To create evidence about system behavior and failures",
+    }),
+    makeLesson({
+      id: "cloud-engineering-edge",
+      title: "DNS, HTTPS, and Reverse Proxies",
+      focus: "DNS, HTTPS, and reverse proxies",
+      code: `server {
+  listen 443 ssl;
+  server_name learn.example.com;
+
+  location / {
+    proxy_pass http://lessons_api;
+  }
+}`,
+      challenge: "Trace a browser request from a domain name to a private application server. Include DNS, TLS termination, and reverse-proxy forwarding.",
+      starterCode: `const requestPath = [
+  "",
+  "",
+  "",
+  ""
+];
+
+console.log(requestPath);`,
+      quizQuestion: "What is a reverse proxy commonly responsible for?",
+      quizOptions: ["Receiving client traffic and forwarding it to an appropriate backend", "Storing every database backup", "Replacing DNS records", "Granting all users administrator access"],
+      quizAnswer: "Receiving client traffic and forwarding it to an appropriate backend",
+    }),
+    makeLesson({
+      id: "cloud-engineering-load-balancing",
+      title: "Load Balancing and High Availability",
+      focus: "cloud load balancing and high availability",
+      code: `const targets = [
+  { id: "api-a", healthy: true },
+  { id: "api-b", healthy: true },
+  { id: "api-c", healthy: false }
+];
+
+const healthyTargets = targets.filter((target) => target.healthy);`,
+      challenge: "Design a health-check and failover policy for three API instances. Explain what should happen when one instance becomes unhealthy.",
+      starterCode: `const loadBalancer = {
+  targets: [],
+  healthCheckPath: "",
+  unhealthyAction: ""
+};
+
+console.log(loadBalancer);`,
+      quizQuestion: "How does a load balancer improve availability?",
+      quizOptions: ["It routes traffic away from unhealthy targets and distributes work across healthy ones", "It removes the need for health checks", "It sends all traffic to one server", "It makes private databases public"],
+      quizAnswer: "It routes traffic away from unhealthy targets and distributes work across healthy ones",
+    }),
+    makeLesson({
+      id: "cloud-engineering-serverless",
+      title: "Serverless and Cloud Databases",
+      focus: "serverless functions and cloud databases",
+      code: `export async function handler(event) {
+  const course = await courses.get(event.courseId);
+  return {
+    statusCode: 200,
+    body: JSON.stringify(course)
+  };
+}`,
+      challenge: "Choose a serverless function and a managed cloud database for a small feature. Explain the trigger, data access, scaling behavior, and one operational trade-off.",
+      starterCode: `const managedFeature = {
+  trigger: "",
+  function: "",
+  database: "",
+  tradeOff: ""
+};
+
+console.log(managedFeature);`,
+      quizQuestion: "What is a useful reason to choose a managed database or serverless function?",
+      quizOptions: ["The provider handles much of the underlying operations while you focus on the feature", "It guarantees every query is free", "It removes the need for access control", "It prevents all cold starts and outages"],
+      quizAnswer: "The provider handles much of the underlying operations while you focus on the feature",
+    }),
+  ],
   "devops-foundations": [
     makeLesson({ id: "devops-foundations-culture", title: "DevOps Culture and Delivery", focus: "DevOps culture", code: "const workflow = {\n  build: true,\n  test: true,\n  deploy: \"repeatable\"\n};\n\nconsole.log(workflow);", challenge: "Write down three steps that should happen before software reaches production. For each step, explain how automation could make it repeatable.", starterCode: "const deliverySteps = [];\n\n// Add build, test, and deploy steps here\nconsole.log(deliverySteps);", quizQuestion: "What is a central goal of DevOps?", quizOptions: ["Make releases repeatable and collaborative", "Remove all testing", "Avoid monitoring", "Deploy only once"], quizAnswer: "Make releases repeatable and collaborative" }),
     makeLesson({ id: "devops-foundations-observability", title: "Feedback and Observability", focus: "DevOps observability", code: "const health = {\n  status: \"ok\",\n  latencyMs: 120\n};\n\nif (health.latencyMs > 500) {\n  console.log(\"Investigate latency\");\n}", challenge: "Choose one application metric, one log event, and one alert that would help you detect a failing release.", starterCode: "const metric = \"\";\nconst logEvent = \"\";\nconst alert = \"\";\n\nconsole.log(metric, logEvent, alert);", quizQuestion: "Why do teams collect metrics and logs?", quizOptions: ["To create feedback about system behavior", "To hide failures", "To replace source code", "To disable releases"], quizAnswer: "To create feedback about system behavior" }),
