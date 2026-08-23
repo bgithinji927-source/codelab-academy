@@ -6,7 +6,17 @@ import Dashboard from "./Dashboard";
 import Courses from "./pages/Courses";
 import AdminDashboard from "./pages/AdminDashboard";
 import ThemeToggle from "./components/ThemeToggle";
+import {
+  AboutPage,
+  AiTutorPage,
+  ChallengesPage,
+  DemoPage,
+  PricingPage,
+  RoadmapsPage,
+} from "./pages/PublicPages";
 import { applyAppearance, appearanceStorageKey, normalizeAppearance } from "./utils/appearance";
+
+const PUBLIC_PATHS = new Set(["/ai-tutor", "/roadmaps", "/challenges", "/pricing", "/about", "/demo"]);
 
 const categories = [
   {
@@ -80,9 +90,13 @@ const categories = [
 function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [isAdminPath, setIsAdminPath] = useState(() => window.location.pathname.replace(/\/+$/, "") === "/admin");
+  const [publicPath, setPublicPath] = useState(() => {
+    const path = window.location.pathname.replace(/\/+$/, "") || "/";
+    return PUBLIC_PATHS.has(path) ? path : null;
+  });
   const [showSignup, setShowSignup] = useState(false);
   const [user, setUser] = useState(null);
-  const [showCourses, setShowCourses] = useState(false);
+  const [showCourses, setShowCourses] = useState(() => window.location.pathname.replace(/\/+$/, "") === "/courses");
   const [visibleCategories, setVisibleCategories] = useState(categories);
   const [adminLoginRequested, setAdminLoginRequested] = useState(false);
 
@@ -106,15 +120,31 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const handleHistoryChange = () => setIsAdminPath(window.location.pathname.replace(/\/+$/, "") === "/admin");
+    const handleHistoryChange = () => {
+      const path = window.location.pathname.replace(/\/+$/, "") || "/";
+      setIsAdminPath(path === "/admin");
+      setPublicPath(PUBLIC_PATHS.has(path) ? path : null);
+      setShowCourses(path === "/courses");
+    };
     window.addEventListener("popstate", handleHistoryChange);
     return () => window.removeEventListener("popstate", handleHistoryChange);
   }, []);
+
+  const navigatePublic = (path) => {
+    const nextPath = path === "/" ? "/" : path;
+    window.history.pushState({}, "", nextPath);
+    setPublicPath(PUBLIC_PATHS.has(nextPath) ? nextPath : null);
+    setIsAdminPath(nextPath === "/admin");
+    if (nextPath === "/courses") setShowCourses(true);
+    else setShowCourses(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const leaveAdminPath = () => {
     sessionStorage.removeItem("codelabAdminReturn");
     window.history.pushState({}, "", "/");
     setIsAdminPath(false);
+    setPublicPath(null);
   };
 
   const startAdminLogin = () => {
@@ -211,6 +241,8 @@ function App() {
 
   const openCourses = (category = null) => {
     const selectedCategory = typeof category === "string" ? category : null;
+    setPublicPath(null);
+    window.history.pushState({}, "", "/courses");
     setShowCourses(selectedCategory ? { category: selectedCategory } : true);
   };
 
@@ -220,7 +252,16 @@ function App() {
 
   const closeCourses = () => {
     setShowCourses(false);
+    navigatePublic("/");
   };
+
+  const renderPublicWithAuth = (page) => (
+    <>
+      {page}
+      {showLogin && !user && <Login onClose={() => setShowLogin(false)} onLoginSuccess={handleLoginSuccess} />}
+      {showSignup && !user && <Signup onClose={() => setShowSignup(false)} onSignupSuccess={handleSignupSuccess} />}
+    </>
+  );
 
   // ================================
   // ADMIN PAGE
@@ -256,6 +297,34 @@ function App() {
         </div>
       </div>
     );
+  }
+
+  // ================================
+  // PUBLIC PAGES
+  // ================================
+
+  if (publicPath === "/ai-tutor") {
+    return renderPublicWithAuth(<AiTutorPage onNavigate={navigatePublic} onSignIn={() => setShowLogin(true)} onGetStarted={() => setShowSignup(true)} />);
+  }
+
+  if (publicPath === "/roadmaps") {
+    return renderPublicWithAuth(<RoadmapsPage onNavigate={navigatePublic} onSignIn={() => setShowLogin(true)} onGetStarted={() => setShowSignup(true)} />);
+  }
+
+  if (publicPath === "/challenges") {
+    return renderPublicWithAuth(<ChallengesPage onNavigate={navigatePublic} onSignIn={() => setShowLogin(true)} onGetStarted={() => setShowSignup(true)} />);
+  }
+
+  if (publicPath === "/pricing") {
+    return renderPublicWithAuth(<PricingPage onNavigate={navigatePublic} onSignIn={() => setShowLogin(true)} onGetStarted={() => setShowSignup(true)} />);
+  }
+
+  if (publicPath === "/about") {
+    return renderPublicWithAuth(<AboutPage onNavigate={navigatePublic} onSignIn={() => setShowLogin(true)} onGetStarted={() => setShowSignup(true)} />);
+  }
+
+  if (publicPath === "/demo") {
+    return renderPublicWithAuth(<DemoPage onNavigate={navigatePublic} onSignIn={() => setShowLogin(true)} onGetStarted={() => setShowSignup(true)} />);
   }
 
   // ================================
@@ -319,25 +388,25 @@ function App() {
             Courses
           </button>
 
-          <a href="#kai">
+          <button type="button" onClick={() => navigatePublic("/ai-tutor")}>
             AI Tutor (Kai)
-          </a>
+          </button>
 
-          <a href="#roadmaps">
+          <button type="button" onClick={() => navigatePublic("/roadmaps")}>
             Roadmaps
-          </a>
+          </button>
 
-          <a href="#challenges">
+          <button type="button" onClick={() => navigatePublic("/challenges")}>
             Challenges
-          </a>
+          </button>
 
-          <a href="#pricing">
+          <button type="button" onClick={() => navigatePublic("/pricing")}>
             Pricing
-          </a>
+          </button>
 
-          <a href="#about">
+          <button type="button" onClick={() => navigatePublic("/about")}>
             About
-          </a>
+          </button>
 
         </nav>
 
@@ -405,6 +474,7 @@ function App() {
               <button
                 type="button"
                 className="secondary-button"
+                onClick={() => navigatePublic("/demo")}
               >
                 ▷ &nbsp; Watch Demo
               </button>
