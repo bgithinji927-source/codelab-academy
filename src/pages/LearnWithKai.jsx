@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Send, ArrowLeft, Bot, Lightbulb, Code, X } from "lucide-react";
 import fetchWithAuth from "../utils/fetchWithAuth";
+import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import "./LearnWithKai.css";
 
 function LearnWithKai({ user, onBack }) {
@@ -11,6 +12,8 @@ function LearnWithKai({ user, onBack }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeVideo, setActiveVideo] = useState(null);
+  const [resolvedVideoUrl, setResolvedVideoUrl] = useState("");
+  const [videoPlaybackError, setVideoPlaybackError] = useState("");
 
   const sampleQuestions = [
     "Explain closures in JavaScript",
@@ -18,6 +21,25 @@ function LearnWithKai({ user, onBack }) {
     "What's the difference between REST and GraphQL?",
     "Help me understand async/await",
   ];
+
+  useEffect(() => {
+    let cancelled = false;
+    setResolvedVideoUrl("");
+    setVideoPlaybackError("");
+    if (!activeVideo) return undefined;
+
+    resolveVideoPlaybackUrl(activeVideo)
+      .then((playbackUrl) => {
+        if (!cancelled) setResolvedVideoUrl(playbackUrl);
+      })
+      .catch((error) => {
+        if (!cancelled) setVideoPlaybackError(error.message || "Could not prepare this video.");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeVideo]);
 
   useEffect(() => {
     if (!activeVideo) return undefined;
@@ -87,7 +109,7 @@ function LearnWithKai({ user, onBack }) {
           {error && <p className="kai-error">{error}</p>}
           <div className="kai-input-area"><div className="input-wrapper"><input className="kai-input" placeholder="Ask me anything about coding..." value={inputValue} onChange={(event) => setInputValue(event.target.value)} onKeyDown={(event) => event.key === "Enter" && handleSendMessage()} disabled={isLoading} /><button className="send-btn" onClick={handleSendMessage} disabled={!inputValue.trim() || isLoading}><Send size={20} /></button></div><p className="input-hint">Kai uses your account session to continue your learning conversation.</p></div>
         </div>
-        {activeVideo && <div className="kai-video-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveVideo(null); }}><section className="kai-video-modal" role="dialog" aria-modal="true" aria-labelledby="general-kai-video-title"><div className="kai-video-modal-header"><div><span className="kai-video-kicker">KAI VISUAL SUPPLEMENT</span><h2 id="general-kai-video-title">{activeVideo.title}</h2></div><button type="button" className="kai-video-modal-close" onClick={() => setActiveVideo(null)} aria-label="Close video"><X size={19} /></button></div><div className="kai-video-player-frame">{activeVideo.playerType === "embed" ? <iframe src={activeVideo.playbackUrl} title={activeVideo.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /> : <video src={activeVideo.playbackUrl} controls autoPlay playsInline preload="metadata" />}</div><p className="kai-video-modal-description">{activeVideo.description}</p><div className="kai-video-modal-topics">{(activeVideo.topics || []).map((topic) => <span key={topic}>{topic}</span>)}</div></section></div>}
+        {activeVideo && <div className="kai-video-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveVideo(null); }}><section className="kai-video-modal" role="dialog" aria-modal="true" aria-labelledby="general-kai-video-title"><div className="kai-video-modal-header"><div><span className="kai-video-kicker">KAI VISUAL SUPPLEMENT</span><h2 id="general-kai-video-title">{activeVideo.title}</h2></div><button type="button" className="kai-video-modal-close" onClick={() => setActiveVideo(null)} aria-label="Close video"><X size={19} /></button></div><div className="kai-video-player-frame">{activeVideo.playerType === "embed" ? <iframe src={activeVideo.playbackUrl} title={activeVideo.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /> : resolvedVideoUrl ? <video src={resolvedVideoUrl} controls autoPlay playsInline preload="metadata" referrerPolicy="no-referrer" /> : <div className="kai-video-player-status">{videoPlaybackError || "Preparing secure video playback..."}</div>}</div><p className="kai-video-modal-description">{activeVideo.description}</p><div className="kai-video-modal-topics">{(activeVideo.topics || []).map((topic) => <span key={topic}>{topic}</span>)}</div></section></div>}
         <aside className="kai-sidebar"><div className="sidebar-card"><h3>Tips</h3><ul><li>Ask follow-up questions</li><li>Request code examples</li><li>Ask about best practices</li><li>Get debugging help</li></ul></div><div className="sidebar-card"><h3>Your account</h3><p>{user?.name || user?.email}</p><p>Conversation history is saved to your account.</p></div></aside>
       </main>
     </div>

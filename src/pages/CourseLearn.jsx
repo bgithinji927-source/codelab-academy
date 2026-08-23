@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import fetchWithAuth from "../utils/fetchWithAuth";
+import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import "./CourseLearn.css";
 
 function CourseLearn({ user, course, onBack }) {
@@ -36,6 +37,8 @@ function CourseLearn({ user, course, onBack }) {
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [savedLessonSessions, setSavedLessonSessions] = useState([]);
   const [activeVideo, setActiveVideo] = useState(null);
+  const [resolvedVideoUrl, setResolvedVideoUrl] = useState("");
+  const [videoPlaybackError, setVideoPlaybackError] = useState("");
 
   const typingTimerRef = useRef(null);
   const lessonStartKeyRef = useRef("");
@@ -43,6 +46,25 @@ function CourseLearn({ user, course, onBack }) {
   const scrollFrameRef = useRef(null);
 
   const courseTitle = course?.title || "Programming";
+
+  useEffect(() => {
+    let cancelled = false;
+    setResolvedVideoUrl("");
+    setVideoPlaybackError("");
+    if (!activeVideo) return undefined;
+
+    resolveVideoPlaybackUrl(activeVideo)
+      .then((playbackUrl) => {
+        if (!cancelled) setResolvedVideoUrl(playbackUrl);
+      })
+      .catch((error) => {
+        if (!cancelled) setVideoPlaybackError(error.message || "Could not prepare this video.");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeVideo]);
 
   useEffect(() => {
     if (!activeVideo) return undefined;
@@ -1245,8 +1267,10 @@ ${startMessage}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                 />
+              ) : resolvedVideoUrl ? (
+                <video src={resolvedVideoUrl} controls autoPlay playsInline preload="metadata" referrerPolicy="no-referrer" />
               ) : (
-                <video src={activeVideo.playbackUrl} controls autoPlay playsInline preload="metadata" />
+                <div className="kai-video-player-status">{videoPlaybackError || "Preparing secure video playback..."}</div>
               )}
             </div>
 
