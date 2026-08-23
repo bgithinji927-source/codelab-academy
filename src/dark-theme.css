@@ -3398,3 +3398,143 @@ html[data-appearance="contrast"] .dashboard-content-container {
   border-radius: 0 !important;
   box-shadow: none !important;
 }
+
+
+/* FLAT DASHBOARD CONTENT: only the outer dashboard-content-container keeps
+   a surrounding panel. Its learning sections are intentionally seamless. */
+.dashboard-content-container > .dashboard-welcome,
+.dashboard-content-container > .dashboard-stats,
+.dashboard-content-container > .continue-learning,
+.dashboard-content-container > .dashboard-grid,
+.dashboard-content-container .stat-card,
+.dashboard-content-container .continue-learning,
+.dashboard-content-container .empty-course,
+.dashboard-content-container .dashboard-card {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.dashboard-content-container > .dashboard-welcome {
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.24) !important;
+}
+
+.dashboard-content-container > .dashboard-stats {
+  gap: 0 !important;
+  padding: 12px 0 !important;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.24) !important;
+}
+
+.dashboard-content-container .stat-card {
+  min-height: 70px;
+  border-right: 1px solid rgba(57, 255, 20, 0.2) !important;
+  padding: 12px 16px !important;
+}
+
+.dashboard-content-container .stat-card:last-child {
+  border-right: 0 !important;
+}
+
+.dashboard-content-container > .continue-learning {
+  padding: 16px 14px !important;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.24) !important;
+}
+
+.dashboard-content-container > .dashboard-grid {
+  gap: 0 !important;
+  padding-top: 12px !important;
+}
+
+.dashboard-content-container .dashboard-card {
+  min-height: 180px;
+  padding: 18px 16px !important;
+  border-right: 1px solid rgba(57, 255, 20, 0.2) !important;
+}
+
+.dashboard-content-container .dashboard-card:last-child {
+  border-right: 0 !important;
+}
+
+html[data-theme="light"] .dashboard-content-container > .dashboard-welcome,
+html[data-theme="light"] .dashboard-content-container > .dashboard-stats,
+html[data-theme="light"] .dashboard-content-container > .continue-learning,
+html[data-theme="light"] .dashboard-content-container > .dashboard-grid,
+html[data-theme="light"] .dashboard-content-container .stat-card,
+html[data-theme="light"] .dashboard-content-container .continue-learning,
+html[data-theme="light"] .dashboard-content-container .empty-course,
+html[data-theme="light"] .dashboard-content-container .dashboard-card,
+html[data-appearance="clean"] .dashboard-content-container > .dashboard-welcome,
+html[data-appearance="clean"] .dashboard-content-container > .dashboard-stats,
+html[data-appearance="clean"] .dashboard-content-container > .continue-learning,
+html[data-appearance="clean"] .dashboard-content-container > .dashboard-grid,
+html[data-appearance="clean"] .dashboard-content-container .stat-card,
+html[data-appearance="clean"] .dashboard-content-container .continue-learning,
+html[data-appearance="clean"] .dashboard-content-container .empty-course,
+html[data-appearance="clean"] .dashboard-content-container .dashboard-card {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .dashboard-content-container > .dashboard-welcome,
+html[data-theme="light"] .dashboard-content-container > .dashboard-stats,
+html[data-theme="light"] .dashboard-content-container > .continue-learning,
+html[data-theme="light"] .dashboard-content-container > .dashboard-grid,
+html[data-appearance="clean"] .dashboard-content-container > .dashboard-welcome,
+html[data-appearance="clean"] .dashboard-content-container > .dashboard-stats,
+html[data-appearance="clean"] .dashboard-content-container > .continue-learning,
+html[data-appearance="clean"] .dashboard-content-container > .dashboard-grid {
+  border-bottom-color: rgba(22, 138, 50, 0.2) !important;
+}
+
+html[data-theme="light"] .dashboard-content-container .stat-card,
+html[data-theme="light"] .dashboard-content-container .dashboard-card,
+html[data-appearance="clean"] .dashboard-content-container .stat-card,
+html[data-appearance="clean"] .dashboard-content-container .dashboard-card {
+  border-right-color: rgba(22, 138, 50, 0.18) !important;
+}
+
+html[data-appearance="forest"] .dashboard-content-container > .dashboard-welcome,
+html[data-appearance="forest"] .dashboard-content-container > .dashboard-stats,
+html[data-appearance="forest"] .dashboard-content-container > .continue-learning,
+html[data-appearance="forest"] .dashboard-content-container > .dashboard-grid,
+html[data-appearance="forest"] .dashboard-content-container .stat-card,
+html[data-appearance="forest"] .dashboard-content-container .continue-learning,
+html[data-appearance="forest"] .dashboard-content-container .empty-course,
+html[data-appearance="forest"] .dashboard-content-container .dashboard-card,
+html[data-appearance="contrast"] .dashboard-content-container > .dashboard-welcome,
+html[data-appearance="contrast"] .dashboard-content-container > .dashboard-stats,
+html[data-appearance="contrast"] .dashboard-content-container > .continue-learning,
+html[data-appearance="contrast"] .dashboard-content-container > .dashboard-grid,
+html[data-appearance="contrast"] .dashboard-content-container .stat-card,
+html[data-appearance="contrast"] .dashboard-content-container .continue-learning,
+html[data-appearance="contrast"] .dashboard-content-container .empty-course,
+html[data-appearance="contrast"] .dashboard-content-container .dashboard-card {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-appearance="forest"] .dashboard-content-container > .dashboard-welcome,
+html[data-appearance="forest"] .dashboard-content-container > .dashboard-stats,
+html[data-appearance="forest"] .dashboard-content-container > .continue-learning,
+html[data-appearance="forest"] .dashboard-content-container > .dashboard-grid,
+html[data-appearance="contrast"] .dashboard-content-container > .dashboard-welcome,
+html[data-appearance="contrast"] .dashboard-content-container > .dashboard-stats,
+html[data-appearance="contrast"] .dashboard-content-container > .continue-learning,
+html[data-appearance="contrast"] .dashboard-content-container > .dashboard-grid {
+  border-bottom-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+@media (max-width: 900px) {
+  .dashboard-content-container .dashboard-card,
+  .dashboard-content-container .stat-card {
+    border-right: 0 !important;
+  }
+
+  .dashboard-content-container .stat-card:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(57, 255, 20, 0.2) !important;
+  }
+}
