@@ -6,6 +6,7 @@ import Dashboard from "./Dashboard";
 import Courses from "./pages/Courses";
 import AdminDashboard from "./pages/AdminDashboard";
 import ThemeToggle from "./components/ThemeToggle";
+import { applyAppearance, appearanceStorageKey, normalizeAppearance } from "./utils/appearance";
 
 const categories = [
   {
@@ -145,6 +146,18 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const savedAppearance = user?.appearancePreset
+      || localStorage.getItem(appearanceStorageKey(user?.id))
+      || localStorage.getItem("codelabAppearance:guest");
+    applyAppearance(normalizeAppearance(savedAppearance));
+  }, [user]);
+
+  const handleUserUpdated = (updatedUser) => {
+    localStorage.setItem("codelabUser", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  };
+
   // ================================
   // LOGIN
   // ================================
@@ -271,6 +284,7 @@ function App() {
         user={user}
         onLogout={handleLogout}
         onViewCourses={openCourses}
+        onUserUpdated={handleUserUpdated}
       />
     );
   }

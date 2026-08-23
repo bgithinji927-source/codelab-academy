@@ -25,6 +25,7 @@ import {
   Smartphone,
   Gamepad2,
   Boxes,
+  Palette,
 } from "lucide-react";
 
 import LearnWithKai from "./pages/LearnWithKai";
@@ -35,6 +36,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import createStore from "./data/store";
 import courses from "./data/course";
 import ThemeToggle from "./components/ThemeToggle";
+import AppearanceSettings from "./pages/AppearanceSettings";
 
 function DashboardCategoryView({ category, onOpenCourse, courseCatalog }) {
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
@@ -77,9 +79,10 @@ const sidebarItems = [
   { label: "Mobile Development", Icon: Smartphone, category: "Mobile Development" },
   { label: "Game Development", Icon: Gamepad2, category: "Game Development" },
   { label: "System Design", Icon: Boxes, category: "System Design" },
+  { label: "Appearance", Icon: Palette, view: "appearance" },
 ];
 
-function Dashboard({ user, onLogout, onViewCourses }) {
+function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
   const [activeView, setActiveView] = useState("dashboard");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -237,6 +240,16 @@ function Dashboard({ user, onLogout, onViewCourses }) {
     return <AdminDashboard user={user} onBack={() => setActiveView("dashboard")} />;
   }
 
+  if (activeView === "appearance") {
+    return (
+      <AppearanceSettings
+        user={user}
+        onBack={() => setActiveView("dashboard")}
+        onUserUpdated={onUserUpdated}
+      />
+    );
+  }
+
   // Calculate stats from real data
   const completedChallenges = state.userProgress.dailyChallengesCompleted || 0;
   const inProgressCourses = state.courses.filter((c) => c.status === "in-progress" || (c.progress > 0 && c.progress < 100)).length;
@@ -295,8 +308,23 @@ function Dashboard({ user, onLogout, onViewCourses }) {
               <button
                 key={label}
                 type="button"
-                className={view === "dashboard" ? (!selectedCategory ? "active" : "") : (selectedCategory === category ? "active" : "")}
-                onClick={() => view === "dashboard" ? (setActiveView("dashboard"), setSelectedCategory(null)) : (setActiveView("dashboard"), setSelectedCategory(category))}
+                className={view === "dashboard"
+                  ? (activeView === "dashboard" && !selectedCategory ? "active" : "")
+                  : view === "appearance"
+                    ? (activeView === "appearance" ? "active" : "")
+                    : (selectedCategory === category ? "active" : "")}
+                onClick={() => {
+                  if (view === "appearance") {
+                    setActiveView("appearance");
+                    setSelectedCategory(null);
+                  } else if (view === "dashboard") {
+                    setActiveView("dashboard");
+                    setSelectedCategory(null);
+                  } else {
+                    setActiveView("dashboard");
+                    setSelectedCategory(category);
+                  }
+                }}
               >
                 <Icon size={17} aria-hidden="true" />
                 <span>{label}</span>

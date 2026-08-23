@@ -2922,3 +2922,431 @@ html[data-theme="light"] .course-card-button svg,
 html[data-theme="light"] .admin-nav button svg:first-child {
   color: #168a32 !important;
 }
+
+
+/* Optional account appearance presets. Classic Terminal intentionally has no
+   rules here, so the existing main design remains the untouched default. */
+html[data-appearance="clean"] .appearance-page,
+html[data-appearance="clean"] .app,
+html[data-appearance="clean"] .dashboard-page,
+html[data-appearance="clean"] .courses-page,
+html[data-appearance="clean"] .learn-page,
+html[data-appearance="clean"] .challenge-page,
+html[data-appearance="clean"] .kai-page,
+html[data-appearance="clean"] .roadmap-page,
+html[data-appearance="clean"] .admin-page {
+  letter-spacing: 0 !important;
+}
+
+html[data-appearance="clean"] .dashboard-card,
+html[data-appearance="clean"] .stat-card,
+html[data-appearance="clean"] .course-card,
+html[data-appearance="clean"] .category-card,
+html[data-appearance="clean"] .module-card,
+html[data-appearance="clean"] .path-card,
+html[data-appearance="clean"] .kai-bubble,
+html[data-appearance="clean"] .message-bubble,
+html[data-appearance="clean"] .admin-panel,
+html[data-appearance="clean"] .admin-stat-card,
+html[data-appearance="clean"] .admin-video-row {
+  border-radius: 16px !important;
+  box-shadow: 0 7px 18px rgba(24, 117, 42, 0.08) !important;
+}
+
+html[data-appearance="clean"] .navbar,
+html[data-appearance="clean"] .dashboard-navbar,
+html[data-appearance="clean"] .courses-navbar,
+html[data-appearance="clean"] .learn-navbar,
+html[data-appearance="clean"] .kai-header,
+html[data-appearance="clean"] .admin-topbar {
+  box-shadow: 0 2px 12px rgba(24, 117, 42, 0.06) !important;
+}
+
+html[data-appearance="clean"] .primary-button,
+html[data-appearance="clean"] .get-started,
+html[data-appearance="clean"] .start-learning,
+html[data-appearance="clean"] .course-card-button,
+html[data-appearance="clean"] .send-btn,
+html[data-appearance="clean"] .next-lesson,
+html[data-appearance="clean"] .admin-primary-button {
+  border-radius: 10px !important;
+  box-shadow: 0 5px 14px rgba(24, 117, 42, 0.16) !important;
+}
+
+html[data-appearance="clean"] .kai-message-text,
+html[data-appearance="clean"] .message-bubble,
+html[data-appearance="clean"] .course-card p,
+html[data-appearance="clean"] .dashboard-card p,
+html[data-appearance="clean"] .admin-panel p {
+  line-height: 1.75 !important;
+}
+
+html[data-appearance="forest"] .app,
+html[data-appearance="forest"] .dashboard-page,
+html[data-appearance="forest"] .dashboard-main,
+html[data-appearance="forest"] .courses-page,
+html[data-appearance="forest"] .courses-container,
+html[data-appearance="forest"] .courses-layout,
+html[data-appearance="forest"] .learn-page,
+html[data-appearance="forest"] .conversation-container,
+html[data-appearance="forest"] .challenge-page,
+html[data-appearance="forest"] .kai-page,
+html[data-appearance="forest"] .kai-main,
+html[data-appearance="forest"] .roadmap-page,
+html[data-appearance="forest"] .admin-page,
+html[data-appearance="forest"] .admin-main {
+  color: #e7f7e9 !important;
+  background: #071a12 !important;
+}
+
+html[data-appearance="forest"] .navbar,
+html[data-appearance="forest"] .dashboard-navbar,
+html[data-appearance="forest"] .courses-navbar,
+html[data-appearance="forest"] .learn-navbar,
+html[data-appearance="forest"] .kai-header,
+html[data-appearance="forest"] .challenge-header,
+html[data-appearance="forest"] .roadmap-header,
+html[data-appearance="forest"] .admin-topbar,
+html[data-appearance="forest"] .admin-sidebar {
+  background: #0b2417 !important;
+  border-color: #3c7e50 !important;
+}
+
+html[data-appearance="forest"] .dashboard-card,
+html[data-appearance="forest"] .stat-card,
+html[data-appearance="forest"] .continue-card,
+html[data-appearance="forest"] .dashboard-course-sidebar,
+html[data-appearance="forest"] .course-card,
+html[data-appearance="forest"] .category-card,
+html[data-appearance="forest"] .category-sidebar,
+html[data-appearance="forest"] .category-overview-card,
+html[data-appearance="forest"] .path-card,
+html[data-appearance="forest"] .module-card,
+html[data-appearance="forest"] .progress-card,
+html[data-appearance="forest"] .challenge-card,
+html[data-appearance="forest"] .info-card,
+html[data-appearance="forest"] .kai-sidebar,
+html[data-appearance="forest"] .sidebar-card,
+html[data-appearance="forest"] .kai-input-area,
+html[data-appearance="forest"] .admin-panel,
+html[data-appearance="forest"] .admin-stat-card,
+html[data-appearance="forest"] .admin-course-panel,
+html[data-appearance="forest"] .admin-video-row,
+html[data-appearance="forest"] .admin-table-wrap {
+  color: #e7f7e9 !important;
+  background: #123323 !important;
+  border-color: #3c7e50 !important;
+}
+
+html[data-appearance="forest"] .kai-bubble,
+html[data-appearance="forest"] .message-bubble,
+html[data-appearance="forest"] .learner-bubble {
+  color: #e7f7e9 !important;
+  background: #19472d !important;
+  border-color: #4d9960 !important;
+}
+
+html[data-appearance="forest"] .kai-message-text,
+html[data-appearance="forest"] .kai-message-text p,
+html[data-appearance="forest"] .kai-message-text li,
+html[data-appearance="forest"] .message-bubble,
+html[data-appearance="forest"] .course-card p,
+html[data-appearance="forest"] .dashboard-card p,
+html[data-appearance="forest"] .admin-panel p {
+  color: #d9f1dc !important;
+}
+
+html[data-appearance="forest"] .hero h1,
+html[data-appearance="forest"] .dashboard-card h3,
+html[data-appearance="forest"] .course-card h3,
+html[data-appearance="forest"] .challenge-header-info h1,
+html[data-appearance="forest"] .roadmap-title h1,
+html[data-appearance="forest"] .admin-heading-row h1 {
+  color: #effff0 !important;
+}
+
+html[data-appearance="forest"] .hero h1 span,
+html[data-appearance="forest"] .logo-text .lab,
+html[data-appearance="forest"] .courses-logo .lab,
+html[data-appearance="forest"] .dashboard-logo .lab,
+html[data-appearance="forest"] .progress-percent,
+html[data-appearance="forest"] .admin-eyebrow,
+html[data-appearance="forest"] .section-kicker {
+  color: #8ee694 !important;
+}
+
+html[data-appearance="forest"] .primary-button,
+html[data-appearance="forest"] .get-started,
+html[data-appearance="forest"] .start-learning,
+html[data-appearance="forest"] .course-card-button,
+html[data-appearance="forest"] .send-btn,
+html[data-appearance="forest"] .next-lesson,
+html[data-appearance="forest"] .admin-primary-button {
+  color: #06240d !important;
+  background: linear-gradient(180deg, #a0f4a4, #55c967 55%, #2b9344) !important;
+  border-color: #b4ffb8 !important;
+  box-shadow: 0 0 14px rgba(142, 230, 148, 0.22) !important;
+}
+
+html[data-appearance="forest"] input,
+html[data-appearance="forest"] textarea,
+html[data-appearance="forest"] select,
+html[data-appearance="forest"] .kai-input,
+html[data-appearance="forest"] .admin-search,
+html[data-appearance="forest"] .admin-lesson-editor textarea {
+  color: #effff0 !important;
+  background: #0b2417 !important;
+  border-color: #4d9960 !important;
+}
+
+html[data-appearance="contrast"] .app,
+html[data-appearance="contrast"] .dashboard-page,
+html[data-appearance="contrast"] .dashboard-main,
+html[data-appearance="contrast"] .courses-page,
+html[data-appearance="contrast"] .courses-container,
+html[data-appearance="contrast"] .courses-layout,
+html[data-appearance="contrast"] .learn-page,
+html[data-appearance="contrast"] .conversation-container,
+html[data-appearance="contrast"] .challenge-page,
+html[data-appearance="contrast"] .kai-page,
+html[data-appearance="contrast"] .kai-main,
+html[data-appearance="contrast"] .roadmap-page,
+html[data-appearance="contrast"] .admin-page,
+html[data-appearance="contrast"] .admin-main {
+  color: #ffffff !important;
+  background: #000000 !important;
+}
+
+html[data-appearance="contrast"] .navbar,
+html[data-appearance="contrast"] .dashboard-navbar,
+html[data-appearance="contrast"] .courses-navbar,
+html[data-appearance="contrast"] .learn-navbar,
+html[data-appearance="contrast"] .kai-header,
+html[data-appearance="contrast"] .challenge-header,
+html[data-appearance="contrast"] .roadmap-header,
+html[data-appearance="contrast"] .admin-topbar,
+html[data-appearance="contrast"] .admin-sidebar {
+  background: #000000 !important;
+  border-color: #ffffff !important;
+}
+
+html[data-appearance="contrast"] .dashboard-card,
+html[data-appearance="contrast"] .stat-card,
+html[data-appearance="contrast"] .continue-card,
+html[data-appearance="contrast"] .dashboard-course-sidebar,
+html[data-appearance="contrast"] .course-card,
+html[data-appearance="contrast"] .category-card,
+html[data-appearance="contrast"] .category-sidebar,
+html[data-appearance="contrast"] .category-overview-card,
+html[data-appearance="contrast"] .path-card,
+html[data-appearance="contrast"] .module-card,
+html[data-appearance="contrast"] .progress-card,
+html[data-appearance="contrast"] .challenge-card,
+html[data-appearance="contrast"] .info-card,
+html[data-appearance="contrast"] .kai-sidebar,
+html[data-appearance="contrast"] .sidebar-card,
+html[data-appearance="contrast"] .kai-input-area,
+html[data-appearance="contrast"] .admin-panel,
+html[data-appearance="contrast"] .admin-stat-card,
+html[data-appearance="contrast"] .admin-course-panel,
+html[data-appearance="contrast"] .admin-video-row,
+html[data-appearance="contrast"] .admin-table-wrap {
+  color: #ffffff !important;
+  background: #0a0a0a !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-appearance="contrast"] .kai-bubble,
+html[data-appearance="contrast"] .message-bubble,
+html[data-appearance="contrast"] .learner-bubble {
+  color: #ffffff !important;
+  background: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+
+html[data-appearance="contrast"] .kai-message-text,
+html[data-appearance="contrast"] .kai-message-text p,
+html[data-appearance="contrast"] .kai-message-text li,
+html[data-appearance="contrast"] .message-bubble,
+html[data-appearance="contrast"] .course-card p,
+html[data-appearance="contrast"] .dashboard-card p,
+html[data-appearance="contrast"] .admin-panel p,
+html[data-appearance="contrast"] .dashboard-course-sidebar button,
+html[data-appearance="contrast"] .category-button,
+html[data-appearance="contrast"] .module-meta,
+html[data-appearance="contrast"] .path-card p {
+  color: #ffffff !important;
+}
+
+html[data-appearance="contrast"] .hero h1,
+html[data-appearance="contrast"] .dashboard-card h3,
+html[data-appearance="contrast"] .course-card h3,
+html[data-appearance="contrast"] .challenge-header-info h1,
+html[data-appearance="contrast"] .roadmap-title h1,
+html[data-appearance="contrast"] .admin-heading-row h1,
+html[data-appearance="contrast"] .kai-message-text strong,
+html[data-appearance="contrast"] .kai-message-text h2,
+html[data-appearance="contrast"] .kai-message-text h3 {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+html[data-appearance="contrast"] .hero h1 span,
+html[data-appearance="contrast"] .logo-text .lab,
+html[data-appearance="contrast"] .courses-logo .lab,
+html[data-appearance="contrast"] .dashboard-logo .lab,
+html[data-appearance="contrast"] .progress-percent,
+html[data-appearance="contrast"] .admin-eyebrow,
+html[data-appearance="contrast"] .section-kicker {
+  color: #39ff14 !important;
+}
+
+html[data-appearance="contrast"] .primary-button,
+html[data-appearance="contrast"] .get-started,
+html[data-appearance="contrast"] .start-learning,
+html[data-appearance="contrast"] .course-card-button,
+html[data-appearance="contrast"] .send-btn,
+html[data-appearance="contrast"] .next-lesson,
+html[data-appearance="contrast"] .admin-primary-button,
+html[data-appearance="contrast"] .theme-toggle {
+  color: #000000 !important;
+  background: #39ff14 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-appearance="contrast"] input,
+html[data-appearance="contrast"] textarea,
+html[data-appearance="contrast"] select,
+html[data-appearance="contrast"] .kai-input,
+html[data-appearance="contrast"] .admin-search,
+html[data-appearance="contrast"] .admin-lesson-editor textarea {
+  color: #ffffff !important;
+  background: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+
+
+/* Clean Study is intentionally a complete light preset, independent of the
+   separate light/dark control. */
+html[data-appearance="clean"] .app,
+html[data-appearance="clean"] .dashboard-page,
+html[data-appearance="clean"] .dashboard-main,
+html[data-appearance="clean"] .courses-page,
+html[data-appearance="clean"] .courses-container,
+html[data-appearance="clean"] .courses-layout,
+html[data-appearance="clean"] .learn-page,
+html[data-appearance="clean"] .conversation-container,
+html[data-appearance="clean"] .challenge-page,
+html[data-appearance="clean"] .kai-page,
+html[data-appearance="clean"] .kai-main,
+html[data-appearance="clean"] .roadmap-page,
+html[data-appearance="clean"] .admin-page,
+html[data-appearance="clean"] .admin-main {
+  color: #173520 !important;
+  background: #f3fbf4 !important;
+}
+
+html[data-appearance="clean"] .navbar,
+html[data-appearance="clean"] .dashboard-navbar,
+html[data-appearance="clean"] .courses-navbar,
+html[data-appearance="clean"] .learn-navbar,
+html[data-appearance="clean"] .kai-header,
+html[data-appearance="clean"] .challenge-header,
+html[data-appearance="clean"] .roadmap-header,
+html[data-appearance="clean"] .admin-topbar,
+html[data-appearance="clean"] .admin-sidebar {
+  color: #173520 !important;
+  background: #ffffff !important;
+  border-color: #b9dfc0 !important;
+  box-shadow: 0 2px 12px rgba(24, 117, 42, 0.06) !important;
+}
+
+html[data-appearance="clean"] .dashboard-card,
+html[data-appearance="clean"] .stat-card,
+html[data-appearance="clean"] .continue-card,
+html[data-appearance="clean"] .dashboard-course-sidebar,
+html[data-appearance="clean"] .course-card,
+html[data-appearance="clean"] .category-card,
+html[data-appearance="clean"] .category-sidebar,
+html[data-appearance="clean"] .category-overview-card,
+html[data-appearance="clean"] .path-card,
+html[data-appearance="clean"] .module-card,
+html[data-appearance="clean"] .progress-card,
+html[data-appearance="clean"] .challenge-card,
+html[data-appearance="clean"] .info-card,
+html[data-appearance="clean"] .kai-sidebar,
+html[data-appearance="clean"] .sidebar-card,
+html[data-appearance="clean"] .kai-input-area,
+html[data-appearance="clean"] .admin-panel,
+html[data-appearance="clean"] .admin-stat-card,
+html[data-appearance="clean"] .admin-course-panel,
+html[data-appearance="clean"] .admin-video-row,
+html[data-appearance="clean"] .admin-table-wrap {
+  color: #173520 !important;
+  background: #ffffff !important;
+  border-color: #b9dfc0 !important;
+  box-shadow: 0 7px 18px rgba(24, 117, 42, 0.08) !important;
+}
+
+html[data-appearance="clean"] .kai-bubble,
+html[data-appearance="clean"] .message-bubble,
+html[data-appearance="clean"] .learner-bubble,
+html[data-appearance="clean"] .kai-message-text,
+html[data-appearance="clean"] .kai-message-text p,
+html[data-appearance="clean"] .course-card p,
+html[data-appearance="clean"] .dashboard-card p,
+html[data-appearance="clean"] .admin-panel p {
+  color: #173520 !important;
+  background: #eefaf0 !important;
+}
+
+html[data-appearance="clean"] .learner-bubble,
+html[data-appearance="clean"] .user-message .message-bubble {
+  background: #dff3e2 !important;
+}
+
+html[data-appearance="clean"] .hero h1,
+html[data-appearance="clean"] .hero h1 span,
+html[data-appearance="clean"] .dashboard-welcome h1,
+html[data-appearance="clean"] .course-card h3,
+html[data-appearance="clean"] .challenge-header-info h1,
+html[data-appearance="clean"] .roadmap-title h1,
+html[data-appearance="clean"] .admin-heading-row h1 {
+  color: #173520 !important;
+}
+
+html[data-appearance="clean"] .hero h1 span,
+html[data-appearance="clean"] .logo-text .lab,
+html[data-appearance="clean"] .courses-logo .lab,
+html[data-appearance="clean"] .dashboard-logo .lab,
+html[data-appearance="clean"] .section-kicker,
+html[data-appearance="clean"] .progress-percent {
+  color: #168a32 !important;
+}
+
+html[data-appearance="clean"] input,
+html[data-appearance="clean"] textarea,
+html[data-appearance="clean"] select,
+html[data-appearance="clean"] .kai-input,
+html[data-appearance="clean"] .admin-search,
+html[data-appearance="clean"] .admin-lesson-editor textarea {
+  color: #173520 !important;
+  background: #ffffff !important;
+  border-color: #8dce9a !important;
+}
+
+html[data-appearance="clean"] .primary-button,
+html[data-appearance="clean"] .get-started,
+html[data-appearance="clean"] .start-learning,
+html[data-appearance="clean"] .course-card-button,
+html[data-appearance="clean"] .send-btn,
+html[data-appearance="clean"] .next-lesson,
+html[data-appearance="clean"] .admin-primary-button,
+html[data-appearance="clean"] .theme-toggle {
+  color: #07320f !important;
+  background: linear-gradient(180deg, #55ff32, #28cc0e 55%, #168309) !important;
+  border-color: #72ff58 !important;
+  box-shadow: 0 5px 14px rgba(24, 117, 42, 0.16) !important;
+}

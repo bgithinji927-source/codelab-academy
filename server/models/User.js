@@ -32,6 +32,12 @@ const userSchema = new mongoose.Schema(
       default: true,
     },
 
+    appearancePreset: {
+      type: String,
+      enum: ["default", "clean", "forest", "contrast"],
+      default: "default",
+    },
+
     xp: {
       type: Number,
       default: 0,

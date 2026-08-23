@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
@@ -23,6 +24,7 @@ function serializeUser(user) {
     role: isAdmin ? "admin" : "user",
     isAdmin,
     isActive: user.isActive !== false,
+    appearancePreset: user.appearancePreset || "default",
     xp: user.xp,
     level: user.level,
     completedLessons: user.completedLessons,
@@ -84,6 +86,31 @@ router.post("/register", async (req, res) => {
       success: false,
       message: "Something went wrong while registering",
     });
+  }
+});
+
+// ===============================
+// APPEARANCE PREFERENCES
+// ===============================
+router.patch("/preferences", ensureAuth, async (req, res) => {
+  try {
+    const allowedPresets = new Set(["default", "clean", "forest", "contrast"]);
+    const appearancePreset = String(req.body?.appearancePreset || "");
+    if (!allowedPresets.has(appearancePreset)) {
+      return res.status(400).json({ success: false, message: "Invalid appearance preset" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: { appearancePreset } },
+      { new: true, runValidators: true }
+    );
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    return res.json({ success: true, user: serializeUser(user) });
+  } catch (error) {
+    console.error("Appearance preference error:", error);
+    return res.status(500).json({ success: false, message: "Could not save appearance preference" });
   }
 });
 
