@@ -628,6 +628,7 @@ router.post("/", ensureAuth, async (req, res) => {
           courseComplete: true,
           lessonComplete: true,
           lessonSummary: currentSession?.summary || "Course completed",
+          courseProgress: progress,
         });
       }
 
@@ -659,6 +660,7 @@ router.post("/", ensureAuth, async (req, res) => {
         previousLessonSummary: currentSession?.summary || "",
         session: sessionPayload(nextSession),
         lessonComplete: true,
+        courseProgress: progress,
       });
     }
 
@@ -890,6 +892,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
           : null;
 
         if (updatedUser) {
+          const courseProgress = updatedUser.courseProgress.find((item) => String(item.courseId) === String(course.id)) || null;
           return res.json({
             success: true,
             reply: cleanReply,
@@ -900,6 +903,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
             readyForNextLesson: Boolean(stateUpdatedUser || updatedUser),
             lessonSummary,
             videoRecommendation,
+            courseProgress,
             userProgress: {
               xp: updatedUser.xp,
               level: updatedUser.level,

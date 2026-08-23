@@ -27,6 +27,7 @@ function CourseLearn({ user, course, onBack }) {
   // ============================================
   
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
+  const [completedLessonsCount, setCompletedLessonsCount] = useState(0);
   const [allLessons, setAllLessons] = useState([]);
   const [previousLessonSummary, setPreviousLessonSummary] = useState("");
   const [lessonCompletionReady, setLessonCompletionReady] = useState(false);
@@ -118,6 +119,7 @@ function CourseLearn({ user, course, onBack }) {
       setLesson(null);
       setLessonCompletionReady(false);
       setCurrentLessonIndex(0);
+      setCompletedLessonsCount(0);
       setPreviousLessonSummary("");
 
       try {
@@ -190,6 +192,10 @@ function CourseLearn({ user, course, onBack }) {
           : [];
 
         setCurrentLessonIndex(safeIndex);
+        setCompletedLessonsCount(Math.max(0, Math.min(
+          courseLessons.length,
+          Number(stateData.courseProgress?.lessonsCompleted) || 0
+        )));
         setLesson(activeLesson);
         setPreviousLessonSummary(stateData.session?.summary || "");
         setSavedLessonSessions(savedSessions);
@@ -338,6 +344,13 @@ function CourseLearn({ user, course, onBack }) {
 
       // Kai’s completion decision is persisted by the server. It unlocks the
       // button, but it never changes the lesson automatically.
+      if (data.courseProgress?.lessonsCompleted !== undefined) {
+        setCompletedLessonsCount(Math.max(0, Math.min(
+          allLessons.length,
+          Number(data.courseProgress.lessonsCompleted) || 0
+        )));
+      }
+
       if (data.lessonComplete || data.readyForNextLesson) {
         setLessonCompletionReady(Boolean(data.readyForNextLesson || data.lessonComplete));
         if (data.lessonSummary) {
@@ -520,6 +533,12 @@ ${startMessage}
           summary: data.previousLessonSummary || previousLessonSummary,
         },
       ].sort((left, right) => Number(left.lessonIndex) - Number(right.lessonIndex)));
+      if (data.courseProgress?.lessonsCompleted !== undefined) {
+        setCompletedLessonsCount(Math.max(0, Math.min(
+          allLessons.length,
+          Number(data.courseProgress.lessonsCompleted) || 0
+        )));
+      }
       setCurrentLessonIndex(nextIndex);
       setLesson(nextLesson);
       setMessages(
@@ -944,8 +963,12 @@ ${startMessage}
   // CALCULATE PROGRESS PERCENTAGE
   // ============================================
 
+  const actualCompletedLessons = Math.max(
+    0,
+    Math.min(allLessons.length, Number(completedLessonsCount) || 0)
+  );
   const progressPercentage = allLessons.length > 0
-    ? Math.round(((currentLessonIndex + 1) / allLessons.length) * 100)
+    ? Math.round((actualCompletedLessons / allLessons.length) * 100)
     : 0;
 
   // ============================================
@@ -977,7 +1000,7 @@ ${startMessage}
 
         <div className="learn-progress">
           <span className="progress-label">
-            Lesson {currentLessonIndex + 1}
+            Lesson {currentLessonIndex + 1} · {actualCompletedLessons}/{allLessons.length} complete
           </span>
 
           <div className="progress-track">
