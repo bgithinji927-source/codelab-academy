@@ -19,6 +19,7 @@ import {
   Trash2,
   UserRound,
   Users,
+  Video as VideoIcon,
   X,
   Zap,
 } from "lucide-react";
@@ -31,6 +32,7 @@ const sections = [
   { id: "overview", label: "Overview", Icon: LayoutDashboard },
   { id: "users", label: "Users", Icon: Users },
   { id: "courses", label: "Courses & Lessons", Icon: BookOpen },
+  { id: "videos", label: "Video Library", Icon: VideoIcon },
   { id: "challenges", label: "Daily Challenges", Icon: ClipboardCheck },
   { id: "settings", label: "Settings", Icon: Settings },
 ];
@@ -72,6 +74,18 @@ const bundledAdminCourses = bundledCourseCatalog.map((course) => ({
   lessons: bundledLessonCatalog[course.id] || [],
 }));
 
+const firstAdminCourse = bundledAdminCourses[0] || { id: "", title: "", lessons: [] };
+const emptyVideo = {
+  title: "",
+  description: "",
+  topics: "",
+  courseId: firstAdminCourse.id,
+  courseTitle: firstAdminCourse.title,
+  lessonId: firstAdminCourse.lessons?.[0]?.id || "",
+  lessonTitle: firstAdminCourse.lessons?.[0]?.title || "",
+  videoUrl: "",
+};
+
 const waitForAdminDatabase = (milliseconds) => new Promise((resolve) => {
   window.setTimeout(resolve, milliseconds);
 });
@@ -93,6 +107,11 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
   const [users, setUsers] = useState([]);
   const [usersStatus, setUsersStatus] = useState("loading");
   const [courses, setCourses] = useState(bundledAdminCourses);
+  const [videos, setVideos] = useState([]);
+  const [videoForm, setVideoForm] = useState(emptyVideo);
+  const [videoInputMode, setVideoInputMode] = useState("upload");
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoFileInputKey, setVideoFileInputKey] = useState(0);
   const [challenges, setChallenges] = useState([]);
   const [settings, setSettings] = useState(null);
   const [challengeForm, setChallengeForm] = useState(emptyChallenge);
@@ -168,6 +187,20 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
           notify("error", fallbackError.message || "Could not load course catalog");
         }
       }
+    }
+
+    try {
+      const videosResponse = await fetchAdminWithTimeout("/api/admin/videos");
+      const videosData = await videosResponse.json().catch(() => ({}));
+      if (videosResponse.ok && videosData.success && Array.isArray(videosData.videos)) {
+        setVideos(videosData.videos);
+      } else if (videosResponse.status === 401 || videosResponse.status === 403) {
+        notify("error", "Administrator authorization is required to manage videos");
+      } else {
+        notify("error", videosData.message || "Video library is unavailable");
+      }
+    } catch (error) {
+      notify("error", error.message || "Video library is unavailable");
     }
 
     try {
@@ -396,6 +429,95 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
     }
   };
 
+  const createVideo = async (event) => {
+    event.preventDefault();
+    if (videoInputMode === "upload" && !videoFile) {
+      notify("error", "Choose a video file to upload");
+      return;
+    }
+    if (videoInputMode === "url" && !String(videoForm.videoUrl || "").trim()) {
+      notify("error", "Enter a video URL");
+      return;
+    }
+
+    setSavingKey("video-new");
+    try {
+      const formData = new FormData();
+      Object.entries(videoForm).forEach(([key, value]) => {
+        if (key !== "videoUrl" || videoInputMode === "url") formData.append(key, value || "");
+      });
+      if (videoInputMode === "upload") formData.append("videoFile", videoFile);
+
+      const response = await fetchAdminWithTimeout("/api/admin/videos", {
+        method: "POST",
+        body: formData,
+      }, 120000);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) throw new Error(data.message || "Could not create video");
+      setVideos((current) => [data.video, ...current]);
+      setVideoForm(emptyVideo);
+      setVideoFile(null);
+      setVideoFileInputKey((current) => current + 1);
+      notify("success", "Video added to the Kai library");
+    } catch (error) {
+      notify("error", error.message || "Could not create video");
+    } finally {
+      setSavingKey("");
+    }
+  };
+
+  const toggleVideo = async (video) => {
+    setSavingKey(`video-${video.id}`);
+    try {
+      const response = await fetchWithAuth(`/api/admin/videos/${video.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ active: !video.active }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || "Could not update video");
+      setVideos((current) => current.map((item) => item.id === video.id ? data.video : item));
+      notify("success", video.active ? "Video hidden from Kai" : "Video made available to Kai");
+    } catch (error) {
+      notify("error", error.message || "Could not update video");
+    } finally {
+      setSavingKey("");
+    }
+  };
+
+  const deleteVideo = async (video) => {
+    if (!window.confirm(`Delete ${video.title}?`)) return;
+    setSavingKey(`video-${video.id}`);
+    try {
+      const response = await fetchWithAuth(`/api/admin/videos/${video.id}`, { method: "DELETE" });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || "Could not delete video");
+      setVideos((current) => current.filter((item) => item.id !== video.id));
+      notify("success", "Video deleted");
+    } catch (error) {
+      notify("error", error.message || "Could not delete video");
+    } finally {
+      setSavingKey("");
+    }
+  };
+
+  const handleVideoCourseChange = (courseId) => {
+    const selectedCourse = courses.find((item) => item.id === courseId) || {};
+    const firstLesson = selectedCourse.lessons?.[0] || {};
+    setVideoForm((current) => ({
+      ...current,
+      courseId,
+      courseTitle: selectedCourse.title || "",
+      lessonId: firstLesson.id || "",
+      lessonTitle: firstLesson.title || "",
+    }));
+  };
+
+  const handleVideoLessonChange = (lessonId) => {
+    const selectedCourse = courses.find((item) => item.id === videoForm.courseId) || {};
+    const selectedLesson = (selectedCourse.lessons || []).find((item) => item.id === lessonId) || {};
+    setVideoForm((current) => ({ ...current, lessonId, lessonTitle: selectedLesson.title || "" }));
+  };
+
   const saveSettings = async (event) => {
     event.preventDefault();
     setSavingKey("settings");
@@ -414,6 +536,8 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
       setSavingKey("");
     }
   };
+
+  const selectedVideoCourse = courses.find((item) => item.id === videoForm.courseId) || {};
 
   const pageTitle = section === "new-challenge"
     ? "Create Daily Challenge"
@@ -458,6 +582,8 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
           {section === "users" && <section className="admin-section"><div className="admin-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">ACCOUNT DIRECTORY</span><h2>Users and learner progress</h2></div><input className="admin-search" value={userSearch} onChange={(event) => setUserSearch(event.target.value)} placeholder="Search name, email, or role" /></div><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Learner</th><th>Role</th><th>Status</th><th>XP</th><th>Level</th><th>Progress</th><th>Actions</th></tr></thead><tbody>{filteredUsers.map((item) => <tr key={item.id}><td><div className="admin-user-cell"><span className="admin-avatar">{String(item.name || "U").slice(0, 1).toUpperCase()}</span><div><strong>{item.name}</strong><small>{item.email}</small></div></div></td><td><select value={item.role || "user"} onChange={(event) => setUsers((current) => current.map((userItem) => userItem.id === item.id ? { ...userItem, role: event.target.value } : userItem))}><option value="user">Learner</option><option value="admin">Admin</option></select></td><td><button type="button" className={`admin-status-toggle ${item.isActive ? "on" : "off"}`} onClick={() => updateUser(item, { isActive: !item.isActive })}>{item.isActive ? "Active" : "Disabled"}</button></td><td><input className="admin-number-input" type="number" min="0" value={item.xp || 0} onChange={(event) => setUsers((current) => current.map((userItem) => userItem.id === item.id ? { ...userItem, xp: event.target.value } : userItem))} /></td><td>{item.level || 1}</td><td><span className="admin-progress-copy">{item.coursesStarted || 0} courses<br />{item.completedLessons || 0} lessons</span></td><td><div className="admin-row-actions"><button type="button" className="admin-icon-action" title="Save user" onClick={() => updateUser(item, { role: item.role, xp: Number(item.xp) || 0 })} disabled={savingKey === `user-${item.id}`}><Save size={15} /></button><button type="button" className="admin-text-action" onClick={() => updateUser(item, { resetProgress: true }, "reset")} disabled={savingKey === `user-${item.id}`}>Reset progress</button></div></td></tr>)}</tbody></table>{filteredUsers.length === 0 && <div className="admin-empty">{usersStatus === "auth-required" ? "This session is not authorized for admin data. Sign out and sign back in with the administrator account." : usersStatus === "unavailable" ? "MongoDB user records are unavailable. Check the MONGODB_URI deployment variable and database connection." : usersStatus === "loading" ? "Loading user records..." : "No users match this search."}</div>}</div></div></section>}
 
           {section === "courses" && <section className="admin-section"><div className="admin-toolbar admin-toolbar-standalone"><div><span className="admin-eyebrow">CONTENT MANAGEMENT</span><h2>All courses and Kai lessons</h2><p>{filteredCourses.length} of {courses.length} courses shown · {filteredCourses.reduce((total, course) => total + (course.lessons?.length || 0), 0)} lessons in view. Every course below includes the ordered lessons Kai teaches, their timing, visibility, examples, challenges, and quizzes.</p></div><div className="admin-toolbar-actions"><input className="admin-search" value={courseSearch} onChange={(event) => setCourseSearch(event.target.value)} placeholder="Search courses or lessons" /><div className="admin-row-actions"><button type="button" className="admin-secondary-button" onClick={() => setExpandedCourses(Object.fromEntries(filteredCourses.map((course) => [course.id, true])))}>Expand shown</button><button type="button" className="admin-secondary-button" onClick={() => setExpandedCourses({})}>Collapse all</button></div></div></div><div className="admin-course-list">{filteredCourses.map((course) => { const draft = courseDrafts[course.id] || course; const expanded = expandedCourses[course.id]; return <article className="admin-panel admin-course-panel" key={course.id}><div className="admin-course-summary"><button type="button" className="admin-expand-button" onClick={() => setExpandedCourses((current) => ({ ...current, [course.id]: !expanded }))}>{expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</button><div className="admin-course-icon"><BookOpen size={18} /></div><div className="admin-course-summary-copy"><strong>{draft.title}</strong><span>{draft.category} · {course.lessons?.length || 0} lessons · {draft.active !== false ? "Live" : "Hidden"}</span></div><button type="button" className="admin-secondary-button" onClick={() => setExpandedCourses((current) => ({ ...current, [course.id]: true }))}><Pencil size={15} /> Edit course</button></div>{expanded && <div className="admin-course-editor"><div className="admin-form-grid"><label>Course title<input value={draft.title || ""} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, title: event.target.value } }))} /></label><label>Category<input value={draft.category || ""} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, category: event.target.value } }))} /></label><label>Level<select value={draft.level || "Beginner"} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, level: event.target.value } }))}><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></label><label className="admin-checkbox-label"><input type="checkbox" checked={draft.active !== false} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, active: event.target.checked } }))} /> Visible to learners</label></div><label className="admin-wide-field">Description<textarea rows="2" value={draft.description || ""} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, description: event.target.value } }))} /></label><div className="admin-editor-actions"><button type="button" className="admin-primary-button" onClick={() => saveCourse(course)} disabled={savingKey === `course-${course.id}`}><Save size={15} />{savingKey === `course-${course.id}` ? "Saving..." : "Save course"}</button></div><div className="admin-lesson-heading"><div><span className="admin-eyebrow">LESSON CONTENT</span><h3>{course.lessons?.length || 0} lessons in this course</h3></div></div><div className="admin-lesson-list">{(course.lessons || []).map((lesson, lessonIndex) => { const key = `${course.id}:${lesson.id}`; const lessonDraft = lessonDrafts[key] || getLessonDraft(lesson); return <div className="admin-lesson-row" key={lesson.id}><div><strong>{lesson.title}</strong><span>Lesson {lessonIndex + 1} · {lesson.estimatedTime || "Lesson"} · {lesson.active !== false ? "Live" : "Hidden"} · Kai: {(lesson.sections || []).map((section) => ({ explanation: "concepts", example: "example", deepDive: "deep dive", challenge: "practice", quiz: "quiz", summary: "summary" }[section.type] || section.type)).join(" · ") || "guided teaching"}</span></div><button type="button" className="admin-text-action" onClick={() => setEditingLesson(editingLesson === key ? null : key)}>{editingLesson === key ? "Close" : "Edit lesson"}</button>{editingLesson === key && <div className="admin-lesson-editor"><div className="admin-form-grid"><label>Lesson title<input value={lessonDraft.title || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, title: event.target.value } }))} /></label><label>Estimated time<input value={lessonDraft.estimatedTime || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, estimatedTime: event.target.value } }))} /></label></div><label className="admin-wide-field">Description<textarea rows="2" value={lessonDraft.description || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, description: event.target.value } }))} /></label><label className="admin-wide-field">Objectives<textarea rows="3" value={lessonDraft.objectivesText || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, objectivesText: event.target.value } }))} placeholder="One objective per line" /></label><div className="admin-content-editor-grid"><label>Example code<textarea rows="6" value={lessonDraft.exampleCode || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, exampleCode: event.target.value } }))} /></label><label>Challenge instructions<textarea rows="6" value={lessonDraft.challengeInstructions || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, challengeInstructions: event.target.value } }))} /></label><label>Starter code<textarea rows="5" value={lessonDraft.starterCode || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, starterCode: event.target.value } }))} /></label><label>Quiz question<textarea rows="3" value={lessonDraft.quizQuestion || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, quizQuestion: event.target.value } }))} /></label><label>Quiz options<textarea rows="4" value={lessonDraft.quizOptionsText || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, quizOptionsText: event.target.value } }))} placeholder="One option per line" /></label><label>Quiz answer<input value={lessonDraft.quizAnswer || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, quizAnswer: event.target.value } }))} /></label></div><label className="admin-checkbox-label"><input type="checkbox" checked={lessonDraft.active !== false} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, active: event.target.checked } }))} /> Visible to learners</label><button type="button" className="admin-primary-button" onClick={() => saveLesson(course.id, lesson)} disabled={savingKey === `lesson-${key}`}><Save size={15} /> Save lesson</button></div>}</div>})}</div></div>}</article>; })}</div></section>}
+
+          {section === "videos" && <section className="admin-section"><div className="admin-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">KAI VIDEO LIBRARY</span><h2>Add a teaching video</h2><p>Upload a video file directly or add a hosted video URL. Detailed descriptions and topics help Kai find the right visual when it genuinely supports the explanation.</p></div><VideoIcon size={23} /></div><form className="admin-form admin-video-form" onSubmit={createVideo}><div className="admin-video-mode-switch"><button type="button" className={videoInputMode === "upload" ? "active" : ""} onClick={() => setVideoInputMode("upload")}><VideoIcon size={15} /> Upload video file</button><button type="button" className={videoInputMode === "url" ? "active" : ""} onClick={() => setVideoInputMode("url")}><Globe2 size={15} /> Use video URL</button></div><div className="admin-form-grid"><label>Video title<input required value={videoForm.title} onChange={(event) => setVideoForm((current) => ({ ...current, title: event.target.value }))} placeholder="CSS Flexbox Explained" /></label><label>Topics / tags<input value={videoForm.topics} onChange={(event) => setVideoForm((current) => ({ ...current, topics: event.target.value }))} placeholder="CSS, Flexbox, Alignment" /></label><label>Course<select required value={videoForm.courseId} onChange={(event) => handleVideoCourseChange(event.target.value)}>{courses.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}</select></label><label>Lesson<select required value={videoForm.lessonId} onChange={(event) => handleVideoLessonChange(event.target.value)}>{(selectedVideoCourse.lessons || []).map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}</select></label></div><label className="admin-wide-field">Detailed description<textarea required rows="4" value={videoForm.description} onChange={(event) => setVideoForm((current) => ({ ...current, description: event.target.value }))} placeholder="Explain the concepts demonstrated in this video so Kai can search it accurately." /></label>{videoInputMode === "upload" ? <label className="admin-wide-field">Video file<input key={videoFileInputKey} required type="file" accept="video/*" onChange={(event) => setVideoFile(event.target.files?.[0] || null)} /><small className="admin-field-help">Accepted video files up to 500 MB. The file is stored in MongoDB GridFS.</small>{videoFile && <span className="admin-selected-file">Selected: {videoFile.name}</span>}</label> : <label className="admin-wide-field">Video URL<input required type="url" value={videoForm.videoUrl} onChange={(event) => setVideoForm((current) => ({ ...current, videoUrl: event.target.value }))} placeholder="https://www.youtube.com/watch?v=..." /><small className="admin-field-help">YouTube and Vimeo links open in an embedded player; direct video URLs use the native player.</small></label>}<button type="submit" className="admin-primary-button" disabled={savingKey === "video-new"}><Save size={15} />{savingKey === "video-new" ? "Adding video..." : "Add video to Kai library"}</button></form></div><div className="admin-panel admin-video-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">SEARCHABLE LIBRARY</span><h2>{videos.length} video{videos.length === 1 ? "" : "s"}</h2></div></div><div className="admin-video-list">{videos.map((video) => <div className="admin-video-row" key={video.id}><div className="admin-video-icon"><VideoIcon size={18} /></div><div className="admin-video-copy"><strong>{video.title}</strong><span>{video.courseTitle || video.courseId} · {video.lessonTitle || video.lessonId}</span><p>{video.description}</p><small>{video.sourceType === "upload" ? `Uploaded file · ${video.originalFilename || "video"}` : "External URL"} · {(video.topics || []).join(" · ") || "No topics"}</small></div><div className="admin-video-actions"><button type="button" className={`admin-status-toggle ${video.active ? "on" : "off"}`} onClick={() => toggleVideo(video)} disabled={savingKey === `video-${video.id}`}>{video.active ? "Available" : "Hidden"}</button><button type="button" className="admin-icon-action danger" title="Delete video" onClick={() => deleteVideo(video)} disabled={savingKey === `video-${video.id}`}><Trash2 size={15} /></button></div></div>)}</div>{videos.length === 0 && <div className="admin-empty">No videos yet. Add an uploaded file or a URL above.</div>}</div></section>}
 
           {section === "challenges" && <section className="admin-section"><div className="admin-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">CHALLENGE BANK</span><h2>Daily challenge controls</h2><p>Create, activate, archive, and delete the exercises served to learners.</p></div><div className="admin-row-actions"><button type="button" className="admin-secondary-button" onClick={seedChallenges} disabled={savingKey === "challenge-seed"}><Database size={15} /> Seed defaults</button><button type="button" className="admin-primary-button" onClick={() => setSection("new-challenge")}><Plus size={16} /> New challenge</button></div></div><div className="admin-challenge-list">{challenges.map((challenge) => <div className="admin-challenge-row" key={challenge.id}><div className="admin-challenge-copy"><strong>{challenge.title}</strong><span>{challenge.type} · +{challenge.xp} XP · {challenge.active ? "Active" : "Archived"}</span><p>{challenge.prompt}</p></div><div className="admin-row-actions"><button type="button" className={`admin-status-toggle ${challenge.active ? "on" : "off"}`} onClick={() => toggleChallenge(challenge)} disabled={savingKey === `challenge-${challenge.id}`}>{challenge.active ? "Active" : "Archived"}</button><button type="button" className="admin-icon-action danger" onClick={() => deleteChallenge(challenge)} disabled={savingKey === `challenge-${challenge.id}`}><Trash2 size={15} /></button></div></div>)}</div>{challenges.length === 0 && <div className="admin-empty">No challenges yet. Create one or seed the default challenge bank.</div>}</div></section>}
 

@@ -10,6 +10,7 @@ const kaiRoutes = require("./routes/kai");
 const challengeRoutes = require("./routes/challenges");
 const catalogRoutes = require("./routes/catalog");
 const adminRoutes = require("./routes/admin");
+const videoRoutes = require("./routes/videos");
 
 const app = express();
 
@@ -45,6 +46,9 @@ app.use("/api/catalog", catalogRoutes);
 
 // PROTECTED ADMIN CONTROL PANEL
 app.use("/api/admin", adminRoutes);
+
+// Uploaded learner videos are streamed only to authenticated users.
+app.use("/api/videos", videoRoutes);
 
 // ============================================
 // DEBUG AUTH ROUTES

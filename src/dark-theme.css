@@ -1759,4 +1759,179 @@ body,
   }
 }
 
+/* Kai visual supplements and modal player */
+.kai-video-recommendation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(57, 255, 20, 0.45);
+  background: linear-gradient(145deg, #0b2412, #030a06);
+  box-shadow: 0 0 16px rgba(57, 255, 20, 0.1), inset 0 1px 0 rgba(57, 255, 20, 0.1);
+}
+
+.kai-video-recommendation-copy,
+.kai-video-recommendation-copy strong,
+.kai-video-recommendation-copy span {
+  display: block;
+}
+
+.kai-video-recommendation-copy strong {
+  margin: 4px 0 5px;
+  color: #efffed;
+  font-size: 0.95rem;
+}
+
+.kai-video-recommendation-copy > span:last-child {
+  color: #9dc5a4;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.kai-video-kicker {
+  color: #39ff14 !important;
+  font-size: 0.65rem !important;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.kai-watch-video {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  border: 1px solid #72ff58;
+  color: #020702;
+  background: linear-gradient(180deg, #55ff32, #28cc0e 55%, #168309);
+  box-shadow: 0 0 13px rgba(57, 255, 20, 0.28);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.kai-watch-video:hover {
+  background: linear-gradient(180deg, #7aff60, #39ff14 55%, #1ea60b);
+  box-shadow: 0 0 21px rgba(57, 255, 20, 0.5);
+}
+
+.kai-play-icon {
+  font-size: 0.78rem;
+}
+
+.kai-video-modal-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(0, 0, 0, 0.84);
+  backdrop-filter: blur(8px);
+}
+
+.kai-video-modal {
+  width: min(960px, 100%);
+  max-height: calc(100vh - 44px);
+  overflow: auto;
+  padding: 18px;
+  border: 1px solid rgba(57, 255, 20, 0.62);
+  background: linear-gradient(145deg, #09180f, #020805);
+  box-shadow: 0 0 36px rgba(57, 255, 20, 0.18), inset 0 1px 0 rgba(57, 255, 20, 0.12);
+}
+
+.kai-video-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 15px;
+}
+
+.kai-video-modal-header h2 {
+  margin: 5px 0 0;
+  color: #efffed;
+  font-size: clamp(1.05rem, 2.4vw, 1.45rem);
+}
+
+.kai-video-modal-close {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(57, 255, 20, 0.55);
+  color: #39ff14;
+  background: #020805;
+  cursor: pointer;
+}
+
+.kai-video-modal-close:hover {
+  color: #020702;
+  background: #39ff14;
+}
+
+.kai-video-player-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(57, 255, 20, 0.4);
+  background: #000301;
+}
+
+.kai-video-player-frame iframe,
+.kai-video-player-frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000301;
+  object-fit: contain;
+}
+
+.kai-video-modal-description {
+  margin: 15px 0 10px;
+  color: #b7d6bd;
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+.kai-video-modal-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.kai-video-modal-topics span {
+  padding: 4px 8px;
+  border: 1px solid rgba(57, 255, 20, 0.3);
+  color: #8aff72;
+  background: rgba(57, 255, 20, 0.08);
+  font-size: 0.68rem;
+}
+
+@media (max-width: 680px) {
+  .kai-video-recommendation {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .kai-watch-video {
+    justify-content: center;
+  }
+
+  .kai-video-modal-backdrop {
+    padding: 10px;
+  }
+
+  .kai-video-modal {
+    max-height: calc(100vh - 20px);
+    padding: 12px;
+  }
+}
+
 /* End persisted Kai lesson history */

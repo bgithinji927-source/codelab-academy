@@ -1,17 +1,50 @@
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
+const multer = require("multer");
 const Challenge = require("../models/Challenge");
 const User = require("../models/User");
 const CourseOverride = require("../models/CourseOverride");
 const LessonOverride = require("../models/LessonOverride");
 const PlatformSettings = require("../models/PlatformSettings");
+const Video = require("../models/Video");
 const ensureAuth = require("../middleware/ensureAuth");
 const ensureAdmin = require("../middleware/ensureAdmin");
 const { ensureChallengeBank, getPlatformSettings } = require("../lib/challenges");
 const { getCatalogCourses, getCatalogLessons } = require("../lib/catalog");
+const { uploadVideoFile, deleteVideoFile } = require("../lib/videoStorage");
+const { serializeVideo, parseTopics } = require("../lib/videoCatalog");
 
 const router = express.Router();
 router.use(ensureAuth, ensureAdmin);
+
+const videoUploadDirectory = "/tmp/codelab-academy-video-uploads";
+fs.mkdirSync(videoUploadDirectory, { recursive: true });
+
+const videoUpload = multer({
+  storage: multer.diskStorage({
+    destination: videoUploadDirectory,
+    filename: (req, file, callback) => {
+      const safeName = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, "-");
+      callback(null, `${Date.now()}-${safeName}`);
+    },
+  }),
+  limits: { fileSize: 500 * 1024 * 1024 },
+  fileFilter: (req, file, callback) => {
+    if (String(file.mimetype || "").startsWith("video/")) return callback(null, true);
+    return callback(new Error("Only video files can be uploaded"));
+  },
+});
+
+function parseVideoUpload(req, res, next) {
+  videoUpload.single("videoFile")(req, res, (error) => {
+    if (error) {
+      return res.status(400).json({ success: false, message: error.message || "Video upload failed" });
+    }
+    return next();
+  });
+}
 
 function safeUser(user) {
   return {
@@ -211,6 +244,132 @@ router.patch("/courses/:courseId/lessons/:lessonId", async (req, res) => {
   } catch (error) {
     console.error("Admin update lesson error:", error);
     return res.status(500).json({ success: false, message: "Could not update lesson" });
+  }
+});
+
+router.get("/videos", async (req, res) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ success: false, databaseUnavailable: true, message: "MongoDB is not connected; video records are unavailable." });
+    }
+    const videos = await Video.find({}).sort({ createdAt: -1 }).lean();
+    return res.json({ success: true, count: videos.length, videos: videos.map(serializeVideo) });
+  } catch (error) {
+    console.error("Admin videos error:", error);
+    return res.status(500).json({ success: false, message: "Could not load videos" });
+  }
+});
+
+router.post("/videos", parseVideoUpload, async (req, res) => {
+  let storageFileId = null;
+  let temporaryFilePath = null;
+  try {
+    temporaryFilePath = req.file?.path || null;
+    const {
+      title,
+      description,
+      topics,
+      courseId,
+      courseTitle,
+      lessonId,
+      lessonTitle,
+      videoUrl,
+    } = req.body || {};
+
+    if (!String(title || "").trim() || !String(description || "").trim() || !String(courseId || "").trim() || !String(lessonId || "").trim()) {
+      return res.status(400).json({ success: false, message: "Title, description, course, and lesson are required" });
+    }
+    if (req.file && videoUrl) {
+      return res.status(400).json({ success: false, message: "Choose either an uploaded file or a video URL, not both" });
+    }
+    if (!req.file && !String(videoUrl || "").trim()) {
+      return res.status(400).json({ success: false, message: "Upload a video file or provide a video URL" });
+    }
+
+    let normalizedUrl = "";
+    if (!req.file) {
+      try {
+        const parsedUrl = new URL(String(videoUrl).trim());
+        if (!["http:", "https:"].includes(parsedUrl.protocol)) throw new Error("Unsupported protocol");
+        normalizedUrl = parsedUrl.toString();
+      } catch {
+        return res.status(400).json({ success: false, message: "Video URL must be a valid http or https URL" });
+      }
+    }
+
+    if (req.file) {
+      storageFileId = await uploadVideoFile(
+        req.file.path,
+        req.file.originalname,
+        req.file.mimetype,
+        { uploadedBy: String(req.admin._id), courseId: String(courseId), lessonId: String(lessonId) }
+      );
+    }
+
+    const video = await Video.create({
+      title: String(title).trim(),
+      description: String(description).trim(),
+      topics: parseTopics(topics),
+      courseId: String(courseId).trim(),
+      courseTitle: String(courseTitle || "").trim(),
+      lessonId: String(lessonId).trim(),
+      lessonTitle: String(lessonTitle || "").trim(),
+      sourceType: req.file ? "upload" : "url",
+      videoUrl: normalizedUrl,
+      storageFileId,
+      originalFilename: req.file?.originalname || "",
+      mimeType: req.file?.mimetype || "",
+      fileSize: req.file?.size || 0,
+      active: true,
+      createdBy: String(req.admin._id),
+      updatedBy: String(req.admin._id),
+    });
+
+    return res.status(201).json({ success: true, video: serializeVideo(video) });
+  } catch (error) {
+    if (storageFileId) {
+      try { await deleteVideoFile(storageFileId); } catch (cleanupError) { console.error("Video cleanup error:", cleanupError); }
+    }
+    console.error("Admin create video error:", error);
+    return res.status(500).json({ success: false, message: error.message || "Could not create video" });
+  } finally {
+    if (temporaryFilePath) {
+      try { await fs.promises.unlink(temporaryFilePath); } catch (cleanupError) { console.error("Temporary video cleanup error:", cleanupError); }
+    }
+  }
+});
+
+router.patch("/videos/:videoId", async (req, res) => {
+  try {
+    const updates = pickFields(req.body || {}, ["title", "description", "topics", "courseId", "courseTitle", "lessonId", "lessonTitle", "active"]);
+    if (updates.title !== undefined && !String(updates.title).trim()) {
+      return res.status(400).json({ success: false, message: "Video title cannot be empty" });
+    }
+    if (updates.description !== undefined && !String(updates.description).trim()) {
+      return res.status(400).json({ success: false, message: "Video description cannot be empty" });
+    }
+    if (updates.topics !== undefined) updates.topics = parseTopics(updates.topics);
+    updates.updatedBy = String(req.admin._id);
+    const video = await Video.findByIdAndUpdate(req.params.videoId, { $set: updates }, { new: true, runValidators: true });
+    if (!video) return res.status(404).json({ success: false, message: "Video not found" });
+    return res.json({ success: true, video: serializeVideo(video) });
+  } catch (error) {
+    console.error("Admin update video error:", error);
+    return res.status(500).json({ success: false, message: "Could not update video" });
+  }
+});
+
+router.delete("/videos/:videoId", async (req, res) => {
+  try {
+    const video = await Video.findByIdAndDelete(req.params.videoId);
+    if (!video) return res.status(404).json({ success: false, message: "Video not found" });
+    if (video.storageFileId) {
+      try { await deleteVideoFile(video.storageFileId); } catch (cleanupError) { console.error("Video file cleanup error:", cleanupError); }
+    }
+    return res.json({ success: true, id: String(video._id) });
+  } catch (error) {
+    console.error("Admin delete video error:", error);
+    return res.status(500).json({ success: false, message: "Could not delete video" });
   }
 });
 

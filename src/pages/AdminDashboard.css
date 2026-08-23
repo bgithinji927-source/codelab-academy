@@ -1018,3 +1018,123 @@
 .admin-notice-action:hover {
   background: rgba(255, 207, 112, 0.22);
 }
+
+.admin-video-mode-switch {
+  display: inline-flex;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding: 4px;
+  border: 1px solid rgba(57, 255, 20, 0.25);
+  background: #020805;
+}
+
+.admin-video-mode-switch button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border: 1px solid transparent;
+  color: #8fb69a;
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-video-mode-switch button.active,
+.admin-video-mode-switch button:hover {
+  border-color: rgba(57, 255, 20, 0.55);
+  color: #020702;
+  background: #39ff14;
+}
+
+.admin-field-help,
+.admin-selected-file {
+  display: block;
+  margin-top: 7px;
+  color: #71977a;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.admin-selected-file {
+  color: #b8ffad;
+}
+
+.admin-video-panel {
+  margin-top: 18px;
+}
+
+.admin-video-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.admin-video-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 13px;
+  padding: 15px;
+  border: 1px solid rgba(57, 255, 20, 0.2);
+  background: rgba(2, 8, 5, 0.72);
+}
+
+.admin-video-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(57, 255, 20, 0.45);
+  color: #39ff14;
+  background: #06140a;
+}
+
+.admin-video-copy,
+.admin-video-copy strong,
+.admin-video-copy span,
+.admin-video-copy p,
+.admin-video-copy small {
+  display: block;
+}
+
+.admin-video-copy strong {
+  color: #efffed;
+  font-size: 13px;
+}
+
+.admin-video-copy span {
+  margin-top: 5px;
+  color: #39ff14;
+  font-size: 11px;
+}
+
+.admin-video-copy p {
+  margin: 8px 0 6px;
+  color: #9dc5a4;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.admin-video-copy small {
+  color: #71977a;
+  font-size: 10px;
+}
+
+.admin-video-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+@media (max-width: 680px) {
+  .admin-video-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .admin-video-actions {
+    grid-column: 2;
+  }
+}

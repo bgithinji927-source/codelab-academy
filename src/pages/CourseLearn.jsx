@@ -9,6 +9,7 @@ import {
   Send,
   Sparkles,
   CheckCircle2,
+  X,
 } from "lucide-react";
 
 import fetchWithAuth from "../utils/fetchWithAuth";
@@ -33,6 +34,7 @@ function CourseLearn({ user, course, onBack }) {
   const [courseStateError, setCourseStateError] = useState("");
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [savedLessonSessions, setSavedLessonSessions] = useState([]);
+  const [activeVideo, setActiveVideo] = useState(null);
 
   const typingTimerRef = useRef(null);
   const lessonStartKeyRef = useRef("");
@@ -40,6 +42,22 @@ function CourseLearn({ user, course, onBack }) {
   const scrollFrameRef = useRef(null);
 
   const courseTitle = course?.title || "Programming";
+
+  useEffect(() => {
+    if (!activeVideo) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setActiveVideo(null);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeVideo]);
 
   // Keep the latest Kai text visible while the response is being typed.
   // requestAnimationFrame coalesces the 15ms typing updates into one scroll
@@ -159,7 +177,7 @@ function CourseLearn({ user, course, onBack }) {
         const normalizeHistory = (history) => Array.isArray(history)
           ? history
               .filter((message) => message && (message.role === "user" || message.role === "assistant") && typeof message.content === "string" && message.content.trim())
-              .map((message) => ({ role: message.role, content: message.content }))
+              .map((message) => ({ role: message.role, content: message.content, video: message.video || null }))
           : [];
         const savedHistory = normalizeHistory(stateData.session?.conversationHistory);
         const savedSessions = Array.isArray(stateData.sessions)
@@ -332,6 +350,7 @@ function CourseLearn({ user, course, onBack }) {
         {
           role: "assistant",
           content: kaiReply,
+          video: data.videoRecommendation || null,
         },
       ]);
 
@@ -507,7 +526,7 @@ ${startMessage}
         Array.isArray(data.session?.conversationHistory)
           ? data.session.conversationHistory
               .filter((message) => message && (message.role === "user" || message.role === "assistant") && typeof message.content === "string")
-              .map((message) => ({ role: message.role, content: message.content }))
+              .map((message) => ({ role: message.role, content: message.content, video: message.video || null }))
           : []
       );
       setLessonCompletionReady(Boolean(data.session?.completed));
@@ -807,7 +826,8 @@ ${startMessage}
 
   const renderKaiMessage = (
     content,
-    messageIndex
+    messageIndex,
+    video = null
   ) => {
     const assistantMessages =
       messages.filter(
@@ -821,7 +841,7 @@ ${startMessage}
       ];
 
     const isLatest =
-      latestAssistant?.content === content;
+      String(messageIndex).startsWith("active-") && latestAssistant?.content === content;
 
     const text =
       isLatest &&
@@ -857,6 +877,20 @@ ${startMessage}
               {renderMarkdown(text)}
             </div>
           </div>
+
+          {video?.playbackUrl && (
+            <div className="kai-video-recommendation">
+              <div className="kai-video-recommendation-copy">
+                <span className="kai-video-kicker">VISUAL SUPPLEMENT</span>
+                <strong>{video.title}</strong>
+                <span>{video.description}</span>
+              </div>
+              <button type="button" className="kai-watch-video" onClick={() => setActiveVideo(video)}>
+                <span className="kai-play-icon">▶</span>
+                Watch Video
+              </button>
+            </div>
+          )}
 
         </div>
       </div>
@@ -1017,7 +1051,7 @@ ${startMessage}
                 </div>
                 {(session.conversationHistory || []).map((message, index) => {
                   if (message.role === "assistant") {
-                    return renderKaiMessage(message.content, `saved-${session.lessonIndex}-${index}`);
+                    return renderKaiMessage(message.content, `saved-${session.lessonIndex}-${index}`, message.video);
                   }
                   if (message.role === "user") {
                     return renderLearnerMessage(message.content, `saved-${session.lessonIndex}-${index}`);
@@ -1036,7 +1070,8 @@ ${startMessage}
               ) {
                   return renderKaiMessage(
                   message.content,
-                  `active-${index}`
+                  `active-${index}`,
+                  message.video
                 );
               }
 
@@ -1159,6 +1194,44 @@ ${startMessage}
         </div>
 
       </main>
+
+      {activeVideo && (
+        <div
+          className="kai-video-modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setActiveVideo(null);
+          }}
+        >
+          <section className="kai-video-modal" role="dialog" aria-modal="true" aria-labelledby="kai-video-modal-title">
+            <div className="kai-video-modal-header">
+              <div>
+                <span className="kai-video-kicker">KAI VISUAL SUPPLEMENT</span>
+                <h2 id="kai-video-modal-title">{activeVideo.title}</h2>
+              </div>
+              <button type="button" className="kai-video-modal-close" onClick={() => setActiveVideo(null)} aria-label="Close video">
+                <X size={19} />
+              </button>
+            </div>
+
+            <div className="kai-video-player-frame">
+              {activeVideo.playerType === "embed" ? (
+                <iframe
+                  src={activeVideo.playbackUrl}
+                  title={activeVideo.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : (
+                <video src={activeVideo.playbackUrl} controls autoPlay playsInline preload="metadata" />
+              )}
+            </div>
+
+            <p className="kai-video-modal-description">{activeVideo.description}</p>
+            <div className="kai-video-modal-topics">{(activeVideo.topics || []).map((topic) => <span key={topic}>{topic}</span>)}</div>
+          </section>
+        </div>
+      )}
 
     </div>
   );

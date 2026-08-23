@@ -1,6 +1,8 @@
 const express = require("express");
 const User = require("../models/User");
+const Video = require("../models/Video");
 const ensureAuth = require("../middleware/ensureAuth");
+const { serializeVideo } = require("../lib/videoCatalog");
 const { getCatalogLessons } = require("../lib/catalog");
 
 const router = express.Router();
@@ -26,6 +28,41 @@ function sessionPayload(session) {
     summary: session.summary || "",
     lastAccessedAt: session.lastAccessedAt,
   };
+}
+
+async function findRelevantVideo({ course, lesson, learnerMessage }) {
+  try {
+    const query = String(learnerMessage || "").toLowerCase();
+    const tokens = [...new Set(query.match(/[a-z0-9+#.-]{3,}/g) || [])]
+      .filter((token) => !["the", "and", "with", "this", "that", "how", "what", "can", "does", "help", "want", "show"].includes(token));
+    if (!tokens.length) return null;
+
+    const videos = await Video.find({ active: true }).lean();
+    const ranked = videos
+      .map((video) => {
+        const title = String(video.title || "").toLowerCase();
+        const description = String(video.description || "").toLowerCase();
+        const topics = (video.topics || []).join(" ").toLowerCase();
+        const courseText = `${video.courseId || ""} ${video.courseTitle || ""}`.toLowerCase();
+        const lessonText = `${video.lessonId || ""} ${video.lessonTitle || ""}`.toLowerCase();
+        const score = tokens.reduce((total, token) => total
+          + (title.includes(token) ? 7 : 0)
+          + (topics.includes(token) ? 5 : 0)
+          + (lessonText.includes(token) ? 4 : 0)
+          + (courseText.includes(token) ? 3 : 0)
+          + (description.includes(token) ? 2 : 0), 0);
+        const sameCourse = course && (String(video.courseId) === String(course.id) || courseText.includes(String(course.title || "").toLowerCase()));
+        const sameLesson = lesson && (String(video.lessonId) === String(lesson.id) || lessonText.includes(String(lesson.title || "").toLowerCase()));
+        return { video, score: score + (sameCourse ? 6 : 0) + (sameLesson ? 8 : 0) };
+      })
+      .filter((item) => item.score > 0)
+      .sort((left, right) => right.score - left.score);
+
+    return ranked[0] ? serializeVideo(ranked[0].video) : null;
+  } catch (error) {
+    console.error("Kai video search error:", error);
+    return null;
+  }
 }
 
 async function markCurrentLessonComplete(userId, courseId, lessonId) {
@@ -100,7 +137,8 @@ async function saveConversation(
   courseId,
   lessonId,
   role,
-  content
+  content,
+  video = null
 ) {
   try {
     const user = await User.findById(userId);
@@ -116,6 +154,7 @@ async function saveConversation(
       session.conversationHistory.push({
         role,
         content,
+        ...(video ? { video } : {}),
         timestamp: new Date(),
       });
 
@@ -707,7 +746,21 @@ router.post("/", ensureAuth, async (req, res) => {
     // KAI SYSTEM PROMPT (ENHANCED FOR COMPLETION)
     // ========================================
 
-    const systemPrompt = `\nYou are Kai, the AI instructor for CodeLab Academy.\n\nYou are NOT a generic chatbot.\n\nYou are a friendly, patient and practical programming instructor.\n\nYour main goal is to make sure the learner actually understands what they are learning.\n\n${lessonContext}\n\nYOUR PERSONALITY:\n\n- Friendly\n- Patient\n- Encouraging\n- Clear\n- Practical\n- Conversational\n- Developer-focused\n\nTEACHING RULES:\n\n1. Teach concepts instead of only giving answers.\n2. Explain WHY something works, not only WHAT to type.\n3. Start with the basics.\n4. Use simple language when introducing difficult concepts.\n5. Use practical coding examples.\n6. Explain important code carefully.\n7. Ask the learner questions during the lesson.\n8. Give the learner opportunities to practice.\n9. Do not immediately reveal challenge answers.\n10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.\n11. Gradually increase difficulty.\n12. Do not overwhelm beginners with unnecessary advanced information.\n13. If the learner is confused, explain the concept again using a simpler example.\n14. Connect new concepts to things the learner already understands.\n15. Explain what is happening behind the scenes when useful.\n16. Teach one important concept at a time.\n17. Do not dump the entire lesson into one response.\n18. Use the lesson information provided to guide what you teach.\n19. Continue naturally from the conversation history.\n\nLESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- After 6-8 meaningful exchanges where the learner demonstrates understanding, they are ready to complete\n- When you believe the learner has mastered the key concepts, END your response with this EXACT format:\n  [LESSON_COMPLETE: Brief 1-2 sentence summary of what they learned]\n- Do NOT include [LESSON_COMPLETE:] unless you are genuinely confident they understand\n- When a lesson is complete, offer encouragement to continue to the next lesson\n\nCODE:\n\nWhen showing code:\n- Use Markdown fenced code blocks\n- Keep examples practical\n- Explain important lines\n- Explain why the code works\n- Mention common beginner mistakes when useful\n\nRESPONSE LENGTH:\n\nKeep responses conversational and reasonably sized.\nDo not create huge walls of text.\nUse headings, bullets and code blocks when they improve readability.\n\nAlways behave as Kai.\n\nThe learner is currently using the CodeLab Academy interactive learning interface.\n`;
+    const systemPrompt = `\nYou are Kai, the AI instructor for CodeLab Academy.\n\nYou are NOT a generic chatbot.\n\nYou are a friendly, patient and practical programming instructor.\n\nYour main goal is to make sure the learner actually understands what they are learning.\n\n${lessonContext}\n\nYOUR PERSONALITY:\n\n- Friendly\n- Patient\n- Encouraging\n- Clear\n- Practical\n- Conversational\n- Developer-focused\n\nTEACHING RULES:\n\n1. Teach concepts instead of only giving answers.\n2. Explain WHY something works, not only WHAT to type.\n3. Start with the basics.\n4. Use simple language when introducing difficult concepts.\n5. Use practical coding examples.\n6. Explain important code carefully.\n7. Ask the learner questions during the lesson.\n8. Give the learner opportunities to practice.\n9. Do not immediately reveal challenge answers.\n10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.\n11. Gradually increase difficulty.\n12. Do not overwhelm beginners with unnecessary advanced information.\n13. If the learner is confused, explain the concept again using a simpler example.\n14. Connect new concepts to things the learner already understands.\n15. Explain what is happening behind the scenes when useful.\n16. Teach one important concept at a time.\n17. Do not dump the entire lesson into one response.\n18. Use the lesson information provided to guide what you teach.\n19. Continue naturally from the conversation history.
+
+VIDEO RECOMMENDATIONS:
+
+- Always explain the concept in text before recommending anything.
+- Decide whether a visual demonstration would genuinely help this learner.
+- Do not recommend a video for every question. If the explanation and example are enough, explain only.
+- If a visual would help, recommend one only after your explanation and only when it matches the learner's course, lesson, or concept.
+- When a visual would help, end your response with this control marker:
+  [VIDEO_RECOMMEND]
+- You may optionally name a known matching title with [VIDEO_RECOMMEND: Exact video title], but never invent a title.
+- If no relevant library video exists, do not emit the marker.
+- Do not mention or display the control marker itself to the learner.
+
+LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- After 6-8 meaningful exchanges where the learner demonstrates understanding, they are ready to complete\n- When you believe the learner has mastered the key concepts, END your response with this EXACT format:\n  [LESSON_COMPLETE: Brief 1-2 sentence summary of what they learned]\n- Do NOT include [LESSON_COMPLETE:] unless you are genuinely confident they understand\n- When a lesson is complete, offer encouragement to continue to the next lesson\n\nCODE:\n\nWhen showing code:\n- Use Markdown fenced code blocks\n- Keep examples practical\n- Explain important lines\n- Explain why the code works\n- Mention common beginner mistakes when useful\n\nRESPONSE LENGTH:\n\nKeep responses conversational and reasonably sized.\nDo not create huge walls of text.\nUse headings, bullets and code blocks when they improve readability.\n\nAlways behave as Kai.\n\nThe learner is currently using the CodeLab Academy interactive learning interface.\n`;
 
     // ========================================
     // CLEAN CONVERSATION HISTORY
@@ -795,9 +848,21 @@ router.post("/", ensureAuth, async (req, res) => {
     const isLessonComplete = reply.includes("[LESSON_COMPLETE:");
     const summaryMatch = reply.match(/\[LESSON_COMPLETE:\s*(.*?)\]/);
     const lessonSummary = summaryMatch ? summaryMatch[1].trim() : "";
+    const videoRequestMatch = reply.match(/\[VIDEO_RECOMMEND(?:\s*:\s*(.*?))?\]/i);
+    const requestedVideoTitle = videoRequestMatch?.[1]?.trim() || "";
+    const videoRecommendation = videoRequestMatch
+      ? await findRelevantVideo({
+          course,
+          lesson,
+          learnerMessage: `${learnerMessage || ""} ${requestedVideoTitle}`,
+        })
+      : null;
 
-    // Clean reply for display
-    const cleanReply = reply.replace(/\[LESSON_COMPLETE:.*?\]/g, "").trim();
+    // Clean control markers from the learner-visible reply.
+    const cleanReply = reply
+      .replace(/\[LESSON_COMPLETE:.*?\]/g, "")
+      .replace(/\[VIDEO_RECOMMEND(?:\s*:\s*.*?)?\]/gi, "")
+      .trim();
 
     // ========================================
     // SAVE CONVERSATION TO DATABASE
@@ -808,7 +873,7 @@ router.post("/", ensureAuth, async (req, res) => {
         await saveConversation(userId, course.id, lesson.id, "user", learnerMessage);
       }
 
-      await saveConversation(userId, course?.id, lesson?.id, "assistant", cleanReply);
+      await saveConversation(userId, course.id, lesson.id, "assistant", cleanReply, videoRecommendation);
 
       // Mark lesson complete if Kai indicates it
       if (isLessonComplete) {
@@ -834,6 +899,7 @@ router.post("/", ensureAuth, async (req, res) => {
             lessonComplete: true,
             readyForNextLesson: Boolean(stateUpdatedUser || updatedUser),
             lessonSummary,
+            videoRecommendation,
             userProgress: {
               xp: updatedUser.xp,
               level: updatedUser.level,
@@ -857,6 +923,7 @@ router.post("/", ensureAuth, async (req, res) => {
       lessonComplete: isLessonComplete,
       readyForNextLesson: false,
       lessonSummary,
+      videoRecommendation,
     });
   } catch (error) {
     console.error("Kai teaching error:", error);

@@ -105,6 +105,10 @@ const userSchema = new mongoose.Schema(
           {
             role: String,
             content: String,
+            video: {
+              type: mongoose.Schema.Types.Mixed,
+              default: null,
+            },
             timestamp: Date,
           },
         ],
