@@ -19,6 +19,7 @@ import {
 
 import courses from "../data/course";
 import CourseLearn from "./CourseLearn";
+import ThemeToggle from "../components/ThemeToggle";
 import "./Courses.css";
 
 const categories = [
@@ -147,6 +148,7 @@ function Courses({ initialCategory = null, onBack }) {
         </div>
 
         <div className="courses-navbar-spacer" />
+        <ThemeToggle />
       </header>
 
       <section className="courses-hero">

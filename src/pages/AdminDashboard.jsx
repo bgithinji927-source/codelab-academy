@@ -26,6 +26,7 @@ import {
 import fetchWithAuth from "../utils/fetchWithAuth";
 import bundledCourseCatalog from "../data/course";
 import bundledLessonCatalog from "../data/lessons";
+import ThemeToggle from "../components/ThemeToggle";
 import "./AdminDashboard.css";
 
 const sections = [
@@ -560,6 +561,7 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
         <button type="button" className="admin-back" onClick={onBack}><ChevronRight size={17} className="admin-back-icon" /> Back to learner dashboard</button>
         <div className="admin-topbar-title"><ShieldCheck size={20} /><span>ADMIN CONTROL CENTER</span></div>
         <div className="admin-operator"><span className="admin-operator-dot" />{user?.name || user?.email || "Administrator"}</div>
+        <ThemeToggle />
       </header>
 
       <div className="admin-layout">

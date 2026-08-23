@@ -1947,3 +1947,384 @@ body,
 }
 
 /* End persisted Kai lesson history */
+
+
+/* Persistent light/dark mode toggle */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid rgba(57, 255, 20, 0.58) !important;
+  color: #39ff14 !important;
+  background: #020805 !important;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.theme-toggle:hover {
+  color: #020702 !important;
+  background: #39ff14 !important;
+  box-shadow: 0 0 14px rgba(57, 255, 20, 0.36);
+}
+
+/* Light mode: white surfaces, deep readable text, and the same green identity. */
+html[data-theme="light"] {
+  color-scheme: light;
+  --dark-bg: #f3fbf4;
+  --dark-surface: #ffffff;
+  --dark-surface-raised: #f0fbf1;
+  --dark-surface-soft: #e2f5e5;
+  --dark-border: #b9dfc0;
+  --dark-text: #173520;
+  --dark-muted: #557260;
+  --emerald: #1e9f3c;
+  --emerald-deep: #13712a;
+  --emerald-shine: #158a31;
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] #root {
+  background: #f3fbf4 !important;
+  color: #173520 !important;
+}
+
+html[data-theme="light"] body {
+  color: #173520 !important;
+}
+
+html[data-theme="light"] input,
+html[data-theme="light"] textarea,
+html[data-theme="light"] select {
+  color: #173520 !important;
+  background: #ffffff !important;
+  border-color: #b9dfc0 !important;
+}
+
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder {
+  color: #789383 !important;
+}
+
+html[data-theme="light"] .app,
+html[data-theme="light"] .hero,
+html[data-theme="light"] .hero-visual,
+html[data-theme="light"] .categories,
+html[data-theme="light"] .dashboard-page,
+html[data-theme="light"] .dashboard-main,
+html[data-theme="light"] .courses-page,
+html[data-theme="light"] .courses-container,
+html[data-theme="light"] .courses-layout,
+html[data-theme="light"] .category-overview,
+html[data-theme="light"] .subcourse-page,
+html[data-theme="light"] .learn-page,
+html[data-theme="light"] .conversation-container,
+html[data-theme="light"] .kai-page,
+html[data-theme="light"] .kai-main,
+html[data-theme="light"] .challenge-page,
+html[data-theme="light"] .roadmap-page {
+  color: #173520 !important;
+  background: #f3fbf4 !important;
+}
+
+html[data-theme="light"] .navbar,
+html[data-theme="light"] .dashboard-navbar,
+html[data-theme="light"] .courses-navbar,
+html[data-theme="light"] .learn-navbar,
+html[data-theme="light"] .kai-header,
+html[data-theme="light"] .challenge-header,
+html[data-theme="light"] .roadmap-header,
+html[data-theme="light"] .admin-topbar,
+html[data-theme="light"] .admin-sidebar {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-color: #b9dfc0 !important;
+}
+
+html[data-theme="light"] .nav-links a,
+html[data-theme="light"] .logo-text .code,
+html[data-theme="light"] .hero h1,
+html[data-theme="light"] .feature strong,
+html[data-theme="light"] .section-heading h2,
+html[data-theme="light"] .category-card h3,
+html[data-theme="light"] .dashboard-user-name,
+html[data-theme="light"] .dashboard-card h3,
+html[data-theme="light"] .dashboard-card strong,
+html[data-theme="light"] .dashboard-section-title,
+html[data-theme="light"] .dashboard-course-sidebar-heading strong,
+html[data-theme="light"] .learn-course-title,
+html[data-theme="light"] .conversation-intro h1,
+html[data-theme="light"] .kai-header-title h1,
+html[data-theme="light"] .kai-message h3,
+html[data-theme="light"] .kai-sidebar h3,
+html[data-theme="light"] .category-overview-heading h2,
+html[data-theme="light"] .subcourse-heading h2,
+html[data-theme="light"] .course-card h3,
+html[data-theme="light"] .course-card strong,
+html[data-theme="light"] .overview-card-copy h3,
+html[data-theme="light"] .admin-heading-row h1,
+html[data-theme="light"] .admin-toolbar h2,
+html[data-theme="light"] .admin-panel-heading h2,
+html[data-theme="light"] .admin-course-editor h3,
+html[data-theme="light"] .admin-video-copy strong,
+html[data-theme="light"] .admin-table strong,
+html[data-theme="light"] .admin-table td,
+html[data-theme="light"] .admin-lesson-row strong {
+  color: #173520 !important;
+}
+
+html[data-theme="light"] .logo-text .lab,
+html[data-theme="light"] .hero h1 span,
+html[data-theme="light"] .admin-eyebrow,
+html[data-theme="light"] .progress-percent,
+html[data-theme="light"] .learn-course-title svg,
+html[data-theme="light"] .category-sidebar-heading strong {
+  color: #168a32 !important;
+}
+
+html[data-theme="light"] .logo-text small,
+html[data-theme="light"] .hero-description,
+html[data-theme="light"] .feature p,
+html[data-theme="light"] .section-heading p,
+html[data-theme="light"] .category-card p,
+html[data-theme="light"] .dashboard-card p,
+html[data-theme="light"] .dashboard-card span,
+html[data-theme="light"] .dashboard-user-name small,
+html[data-theme="light"] .category-overview-heading p,
+html[data-theme="light"] .subcourse-heading p,
+html[data-theme="light"] .course-card p,
+html[data-theme="light"] .overview-card-copy p,
+html[data-theme="light"] .conversation-intro > .intro-main > p,
+html[data-theme="light"] .intro-card span,
+html[data-theme="light"] .kai-header-title p,
+html[data-theme="light"] .input-hint,
+html[data-theme="light"] .sidebar-card p,
+html[data-theme="light"] .admin-heading-row p,
+html[data-theme="light"] .admin-toolbar p,
+html[data-theme="light"] .admin-panel-heading p,
+html[data-theme="light"] .admin-video-copy p,
+html[data-theme="light"] .admin-video-copy small,
+html[data-theme="light"] .admin-field-help {
+  color: #557260 !important;
+}
+
+html[data-theme="light"] .sign-in,
+html[data-theme="light"] .secondary-button,
+html[data-theme="light"] .category-card,
+html[data-theme="light"] .dashboard-card,
+html[data-theme="light"] .dashboard-course-sidebar,
+html[data-theme="light"] .dashboard-course-sidebar button,
+html[data-theme="light"] .continue-card,
+html[data-theme="light"] .stat-card,
+html[data-theme="light"] .category-overview-card,
+html[data-theme="light"] .course-card,
+html[data-theme="light"] .intro-card,
+html[data-theme="light"] .kai-sidebar,
+html[data-theme="light"] .sidebar-card,
+html[data-theme="light"] .kai-input-area,
+html[data-theme="light"] .sample-questions,
+html[data-theme="light"] .chat-bubble,
+html[data-theme="light"] .kai-bubble,
+html[data-theme="light"] .learner-bubble,
+html[data-theme="light"] .admin-panel,
+html[data-theme="light"] .admin-stat-card,
+html[data-theme="light"] .admin-course-panel,
+html[data-theme="light"] .admin-course-editor,
+html[data-theme="light"] .admin-lesson-editor,
+html[data-theme="light"] .admin-settings-panel,
+html[data-theme="light"] .admin-video-row,
+html[data-theme="light"] .admin-table-wrap,
+html[data-theme="light"] .admin-challenge-row,
+html[data-theme="light"] .admin-route-gate-card {
+  color: #173520 !important;
+  background: #ffffff !important;
+  border-color: #b9dfc0 !important;
+  box-shadow: 0 10px 28px rgba(28, 103, 48, 0.08) !important;
+}
+
+html[data-theme="light"] .category-card:hover,
+html[data-theme="light"] .category-overview-card:hover,
+html[data-theme="light"] .course-card:hover,
+html[data-theme="light"] .dashboard-course-sidebar button:hover {
+  background: #eefaf0 !important;
+  border-color: #5fbd73 !important;
+}
+
+html[data-theme="light"] .dashboard-welcome {
+  color: #173520 !important;
+  background: linear-gradient(135deg, #dff6e2, #bde8c5) !important;
+  border-color: #8dce9a !important;
+}
+
+html[data-theme="light"] .eyebrow,
+html[data-theme="light"] .feature-icon,
+html[data-theme="light"] .category-icon,
+html[data-theme="light"] .category-button-icon.green,
+html[data-theme="light"] .overview-icon.green,
+html[data-theme="light"] .courses-hero-icon {
+  color: #168a32 !important;
+  background: #e2f5e5 !important;
+  border-color: #9bd2a5 !important;
+}
+
+html[data-theme="light"] .chat-bubble,
+html[data-theme="light"] .kai-bubble,
+html[data-theme="light"] .message-bubble,
+html[data-theme="light"] .kai-message-text,
+html[data-theme="light"] .kai-message-text p,
+html[data-theme="light"] .kai-message-text h2,
+html[data-theme="light"] .kai-message-text h3,
+html[data-theme="light"] .kai-message-text h4 {
+  color: #173520 !important;
+}
+
+html[data-theme="light"] .learner-bubble {
+  background: #e2f5e5 !important;
+  border-color: #9bd2a5 !important;
+}
+
+html[data-theme="light"] .admin-nav button,
+html[data-theme="light"] .admin-operator,
+html[data-theme="light"] .admin-sidebar-footer small,
+html[data-theme="light"] .admin-course-summary-copy span,
+html[data-theme="light"] .admin-lesson-row span,
+html[data-theme="light"] .admin-sidebar-label,
+html[data-theme="light"] .admin-table small,
+html[data-theme="light"] .admin-muted-copy {
+  color: #557260 !important;
+}
+
+html[data-theme="light"] .admin-nav button:hover,
+html[data-theme="light"] .admin-nav button.active {
+  color: #173520 !important;
+  background: #e2f5e5 !important;
+  border-color: #8dce9a !important;
+}
+
+html[data-theme="light"] .admin-video-mode-switch {
+  border-color: #b9dfc0 !important;
+  background: #f3fbf4 !important;
+}
+
+html[data-theme="light"] .admin-video-mode-switch button {
+  color: #557260 !important;
+}
+
+html[data-theme="light"] .admin-video-mode-switch button.active,
+html[data-theme="light"] .admin-video-mode-switch button:hover {
+  color: #07320f !important;
+  background: #39ff14 !important;
+}
+
+html[data-theme="light"] .admin-primary-button,
+html[data-theme="light"] .get-started,
+html[data-theme="light"] .primary-button,
+html[data-theme="light"] .next-lesson,
+html[data-theme="light"] .kai-watch-video,
+html[data-theme="light"] .theme-toggle {
+  color: #07320f !important;
+}
+
+html[data-theme="light"] .admin-secondary-button,
+html[data-theme="light"] .admin-refresh,
+html[data-theme="light"] .admin-text-action,
+html[data-theme="light"] .admin-back,
+html[data-theme="light"] .courses-back-button,
+html[data-theme="light"] .learn-back {
+  color: #168a32 !important;
+}
+
+html[data-theme="light"] .admin-secondary-button,
+html[data-theme="light"] .admin-refresh,
+html[data-theme="light"] .admin-icon-action,
+html[data-theme="light"] .admin-expand-button,
+html[data-theme="light"] .admin-back,
+html[data-theme="light"] .courses-back-button,
+html[data-theme="light"] .learn-back,
+html[data-theme="light"] .sign-in,
+html[data-theme="light"] .secondary-button {
+  background: #ffffff !important;
+  border-color: #8dce9a !important;
+}
+
+html[data-theme="light"] .progress-track {
+  background: #d9efdc !important;
+  border-color: #9bd2a5 !important;
+}
+
+html[data-theme="light"] .progress-fill {
+  background: linear-gradient(90deg, #168a32, #39ff14) !important;
+}
+
+html[data-theme="light"] .kai-video-recommendation {
+  background: linear-gradient(145deg, #effaf0, #ffffff) !important;
+  border-color: #7bc589 !important;
+  box-shadow: 0 0 16px rgba(33, 142, 55, 0.1), inset 0 1px 0 rgba(57, 255, 20, 0.18) !important;
+}
+
+html[data-theme="light"] .kai-video-recommendation-copy strong,
+html[data-theme="light"] .kai-video-modal-header h2 {
+  color: #173520 !important;
+}
+
+html[data-theme="light"] .kai-video-recommendation-copy > span:last-child,
+html[data-theme="light"] .kai-video-modal-description {
+  color: #557260 !important;
+}
+
+html[data-theme="light"] .kai-video-modal-backdrop {
+  background: rgba(15, 49, 24, 0.42) !important;
+}
+
+html[data-theme="light"] .kai-video-modal {
+  color: #173520 !important;
+  background: #ffffff !important;
+  border-color: #61ba70 !important;
+  box-shadow: 0 0 36px rgba(24, 117, 42, 0.2), inset 0 1px 0 rgba(57, 255, 20, 0.2) !important;
+}
+
+html[data-theme="light"] .kai-video-modal-close {
+  color: #168a32 !important;
+  background: #ffffff !important;
+  border-color: #8dce9a !important;
+}
+
+html[data-theme="light"] .kai-video-modal-close:hover {
+  color: #07320f !important;
+  background: #39ff14 !important;
+}
+
+html[data-theme="light"] .kai-video-player-status {
+  color: #b8e3bf !important;
+  background: #07110d !important;
+}
+
+html[data-theme="light"] .kai-video-modal-topics span {
+  color: #168a32 !important;
+  background: #effaf0 !important;
+  border-color: #9bd2a5 !important;
+}
+
+html[data-theme="light"] .theme-toggle {
+  border-color: #5fbd73 !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 7px rgba(24, 117, 42, 0.08);
+}
+
+html[data-theme="light"] .theme-toggle:hover {
+  color: #07320f !important;
+  background: #39ff14 !important;
+}
+
+@media (max-width: 760px) {
+  .theme-toggle {
+    min-height: 32px;
+    padding: 6px 8px;
+  }
+}

@@ -5,6 +5,7 @@ import Signup from "./Signup";
 import Dashboard from "./Dashboard";
 import Courses from "./pages/Courses";
 import AdminDashboard from "./pages/AdminDashboard";
+import ThemeToggle from "./components/ThemeToggle";
 
 const categories = [
   {
@@ -327,6 +328,8 @@ function App() {
         </nav>
 
         <div className="nav-actions">
+
+          <ThemeToggle />
 
           <button
             type="button"

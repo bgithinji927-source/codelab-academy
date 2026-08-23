@@ -34,6 +34,7 @@ import LearningRoadmap from "./pages/LearningRoadmap";
 import AdminDashboard from "./pages/AdminDashboard";
 import createStore from "./data/store";
 import courses from "./data/course";
+import ThemeToggle from "./components/ThemeToggle";
 
 function DashboardCategoryView({ category, onOpenCourse, courseCatalog }) {
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
@@ -266,6 +267,8 @@ function Dashboard({ user, onLogout, onViewCourses }) {
               Admin Control
             </button>
           )}
+
+          <ThemeToggle />
 
           <button
             type="button"

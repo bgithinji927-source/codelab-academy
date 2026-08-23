@@ -14,6 +14,7 @@ import {
 
 import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
+import ThemeToggle from "../components/ThemeToggle";
 import "./CourseLearn.css";
 
 function CourseLearn({ user, course, onBack }) {
@@ -1038,6 +1039,7 @@ ${startMessage}
         </div>
 
         <div className="learn-top-actions">
+          <ThemeToggle />
           <div className="lesson-status">
             <CheckCircle2 size={16} />
             <span>
