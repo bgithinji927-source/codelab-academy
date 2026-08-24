@@ -461,6 +461,123 @@ const generatedMissingCourseLessons = Object.fromEntries(
   )
 );
 
+function makeDatabaseCourseLessons(courseId, courseTitle, topics) {
+  return topics.map((topic, index) => makeLesson({
+    id: `${courseId}-${String(index + 1).padStart(2, "0")}-${slugifyTopic(topic)}`,
+    title: `${courseTitle}: ${topic}`,
+    focus: `${courseTitle} ${topic}`,
+    code: `const databasePractice = {\n  course: "${courseTitle}",\n  topic: "${topic}",\n  step: ${index + 1},\n  tested: true\n};\n\nconsole.log(databasePractice);`,
+    challenge: `Design a small, safe database exercise for ${topic.toLowerCase()}. Define the data shape, test the expected behavior, and explain one failure or recovery case.`,
+    starterCode: `const databaseExercise = {\n  course: "${courseTitle}",\n  topic: "${topic}",\n  schema: {},\n  query: "",\n  expectedResult: ""\n};\n\n// Add a tested database idea here\nconsole.log(databaseExercise);`,
+    quizQuestion: `Which approach best supports ${topic.toLowerCase()}?`,
+    quizOptions: [
+      `Apply ${topic.toLowerCase()} with clear data rules, testing, and recovery planning`,
+      "Skip validation and backups",
+      "Give every service unrestricted database access",
+      "Hide failures from operators and users",
+    ],
+    quizAnswer: `Apply ${topic.toLowerCase()} with clear data rules, testing, and recovery planning`,
+  }));
+}
+
+const databaseCourseLessonPlans = {
+  "database-fundamentals": makeDatabaseCourseLessons(
+    "database-fundamentals",
+    "Database Fundamentals",
+    ["Data, tables, and records", "Schemas and relationships", "Queries and changes", "Backups and data integrity"]
+  ),
+  sql: makeDatabaseCourseLessons(
+    "sql",
+    "SQL Fundamentals",
+    ["SELECT and filtering", "INSERT, UPDATE, and DELETE", "Joins and relationships", "Transactions and constraints"]
+  ),
+  mongodb: makeDatabaseCourseLessons(
+    "mongodb",
+    "MongoDB",
+    ["Documents and collections", "Queries and indexes", "Schema design patterns", "Validation and safe operations"]
+  ),
+  mysql: makeDatabaseCourseLessons(
+    "mysql",
+    "MySQL",
+    ["MySQL schemas and tables", "Queries and joins", "Transactions and constraints", "Users, backups, and maintenance"]
+  ),
+  "database-tools-gui": makeDatabaseCourseLessons(
+    "database-tools-gui",
+    "Database Tools & GUI",
+    ["Connections and environments", "Browsing and editing safely", "Query consoles and explain plans", "Export, import, and collaboration"]
+  ),
+  postgresql: makeDatabaseCourseLessons(
+    "postgresql",
+    "PostgreSQL",
+    ["PostgreSQL schemas and types", "Queries and powerful joins", "Transactions and concurrency", "Extensions and production operations"]
+  ),
+  "database-design": makeDatabaseCourseLessons(
+    "database-design",
+    "Database Design",
+    ["Requirements and entities", "Relationships and normalization", "Constraints and migrations", "Designing for change"]
+  ),
+  "advanced-sql": makeDatabaseCourseLessons(
+    "advanced-sql",
+    "Advanced SQL",
+    ["Common table expressions", "Window functions", "Subqueries and set operations", "Readable, tested query design"]
+  ),
+  "database-indexing-performance": makeDatabaseCourseLessons(
+    "database-indexing-performance",
+    "Database Indexing & Performance",
+    ["How indexes work", "Query plans and EXPLAIN", "Composite and covering indexes", "Measuring and tuning safely"]
+  ),
+  "redis-caching": makeDatabaseCourseLessons(
+    "redis-caching",
+    "Redis & Caching",
+    ["Keys, values, and data structures", "Cache-aside patterns", "TTL, invalidation, and freshness", "Redis reliability and safe limits"]
+  ),
+  "nosql-databases": makeDatabaseCourseLessons(
+    "nosql-databases",
+    "NoSQL Databases",
+    ["NoSQL data models", "Document and key-value patterns", "Consistency and trade-offs", "Choosing a NoSQL database"]
+  ),
+  "database-integration": makeDatabaseCourseLessons(
+    "database-integration",
+    "Database Integration",
+    ["Application connections and pooling", "Repositories and service boundaries", "Validation and transactions", "Retries, errors, and observability"]
+  ),
+  "database-security": makeDatabaseCourseLessons(
+    "database-security",
+    "Database Security",
+    ["Database identities and permissions", "Secrets and encryption", "Injection prevention and validation", "Auditing and secure backups"]
+  ),
+  "database-administration": makeDatabaseCourseLessons(
+    "database-administration",
+    "Database Administration",
+    ["Users, roles, and configuration", "Migrations and maintenance", "Backups and restores", "Health checks and incident response"]
+  ),
+  "database-scaling": makeDatabaseCourseLessons(
+    "database-scaling",
+    "Database Scaling",
+    ["Capacity and bottlenecks", "Read replicas and write paths", "Partitioning and sharding", "Scaling tests and trade-offs"]
+  ),
+  "distributed-databases": makeDatabaseCourseLessons(
+    "distributed-databases",
+    "Distributed Databases",
+    ["Replication and consistency", "Partitions and failure", "Quorums and coordination", "Distributed data trade-offs"]
+  ),
+  "cloud-databases": makeDatabaseCourseLessons(
+    "cloud-databases",
+    "Cloud Databases",
+    ["Managed database choices", "Cloud networking and access", "Scaling and cost controls", "Cloud backups and recovery"]
+  ),
+  "production-database-engineering": makeDatabaseCourseLessons(
+    "production-database-engineering",
+    "Production Database Engineering",
+    ["Production readiness", "Observability and service objectives", "Safe schema changes", "Recovery and continuous improvement"]
+  ),
+  "database-backend-engineering": makeDatabaseCourseLessons(
+    "database-backend-engineering",
+    "Database + Backend Engineering",
+    ["Data access layers and APIs", "Transactions across services", "Queues and asynchronous work", "Backend testing and reliability"]
+  ),
+};
+
 function makeAiCourseLessons(courseId, courseTitle, topics) {
   return topics.map((topic, index) => makeLesson({
     id: `${courseId}-${String(index + 1).padStart(2, "0")}-${slugifyTopic(topic)}`,
@@ -1136,6 +1253,7 @@ print(language)`,
   ...cloudCourseLessonPlans,
   ...cyberCourseLessonPlans,
   ...aiCourseLessonPlans,
+  ...databaseCourseLessonPlans,
 };
 
 // ============================================

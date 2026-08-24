@@ -58,8 +58,8 @@ const categories = [
   {
     icon: "▣",
     title: "Databases",
-    description: "MongoDB, SQL, Firebase & more",
-    courses: "7 Courses",
+    description: "SQL, NoSQL, performance & production data",
+    courses: "19 Courses",
   },
   {
     icon: "⌘",
