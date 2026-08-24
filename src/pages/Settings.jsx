@@ -1,5 +1,6 @@
 import { ArrowLeft, ChevronRight, LayoutDashboard, Palette, Settings as SettingsIcon, SunMoon, UserRound } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import fetchWithAuth from "../utils/fetchWithAuth";
 import ThemeToggle from "../components/ThemeToggle";
 import AppearanceSettings from "./AppearanceSettings";
 import DesignSettings from "./DesignSettings";
@@ -21,10 +22,48 @@ function SettingsBackButton({ children, onClick }) {
   );
 }
 
-function ProfileSection({ user, onBack }) {
+function ProfileSection({ user, onBack, onUserUpdated }) {
   const displayName = user?.name || user?.email || "Student";
+  const [name, setName] = useState(user?.name || "");
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const initials = displayName.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase() || "S";
   const roleLabel = user?.isAdmin || user?.role === "admin" ? "Administrator" : "Learner";
+
+  useEffect(() => {
+    setName(user?.name || "");
+  }, [user?.name]);
+
+  const saveProfile = async (event) => {
+    event.preventDefault();
+    const nextName = name.trim();
+    setMessage("");
+    setError("");
+    if (nextName.length < 2 || nextName.length > 80) {
+      setError("Your profile name must be between 2 and 80 characters.");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const response = await fetchWithAuth("/api/auth/profile", {
+        method: "PATCH",
+        body: JSON.stringify({ name: nextName }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not save your profile.");
+      }
+      if (data.user && onUserUpdated) onUserUpdated(data.user);
+      setName(data.user?.name || nextName);
+      setMessage("Profile saved to your account.");
+    } catch (saveError) {
+      setError(saveError.message || "Could not save your profile.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <section className="settings-section-panel" aria-labelledby="settings-profile-title">
@@ -46,12 +85,32 @@ function ProfileSection({ user, onBack }) {
         </div>
         <span className="settings-role-badge">{roleLabel}</span>
       </div>
+      <form className="settings-profile-form" onSubmit={saveProfile}>
+        <label htmlFor="settings-profile-name">Profile name</label>
+        <div className="settings-profile-form-row">
+          <input
+            id="settings-profile-name"
+            type="text"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            minLength={2}
+            maxLength={80}
+            autoComplete="name"
+            disabled={isSaving}
+          />
+          <button type="submit" disabled={isSaving || name.trim() === (user?.name || "").trim()}>
+            {isSaving ? "Saving..." : "Save profile"}
+          </button>
+        </div>
+        {message && <p className="settings-form-success" role="status">{message}</p>}
+        {error && <p className="settings-form-error" role="alert">{error}</p>}
+      </form>
       <div className="settings-profile-details">
-        <div><span>Name</span><strong>{displayName}</strong></div>
         <div><span>Email</span><strong>{user?.email || "Not available"}</strong></div>
+        <div><span>Role</span><strong>{roleLabel}</strong></div>
         <div><span>Learning status</span><strong>Active learner</strong></div>
       </div>
-      <p className="settings-note">Profile identity is managed by your CodeLab account. Your course progress, XP, and Kai learning records stay connected to this account.</p>
+      <p className="settings-note">Your email, password, role, course progress, XP, and Kai learning records stay protected and connected to this account.</p>
     </section>
   );
 }
@@ -62,7 +121,7 @@ function SettingsPage({ user, onBack, onUserUpdated }) {
   if (activeSection === "profile") {
     return (
       <section className="settings-page settings-page-subpage" aria-label="Profile settings">
-        <ProfileSection user={user} onBack={() => setActiveSection("overview")} />
+        <ProfileSection user={user} onBack={() => setActiveSection("overview")} onUserUpdated={onUserUpdated} />
       </section>
     );
   }

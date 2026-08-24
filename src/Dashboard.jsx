@@ -407,11 +407,19 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
             <Bookmark size={17} aria-hidden="true" />
             <span>Bookmarks</span>
           </button>
-          <div className="dashboard-sidebar-profile">
-            <span className="dashboard-profile-avatar">K</span>
-            <span className="dashboard-profile-copy"><strong>Kai Learner</strong><small>View profile</small></span>
+          <button
+            type="button"
+            className="dashboard-sidebar-profile"
+            onClick={() => {
+              setActiveView("settings");
+              setSelectedCategory(null);
+            }}
+            title="Open your profile settings"
+          >
+            <span className="dashboard-profile-avatar">{String(user?.name || user?.email || "Student").trim().charAt(0).toUpperCase() || "S"}</span>
+            <span className="dashboard-profile-copy"><strong>{user?.name || user?.email || "Student"}</strong><small>Open profile settings</small></span>
             <ChevronDown size={16} aria-hidden="true" />
-          </div>
+          </button>
         </aside>
 
         {selectedCategory ? (

@@ -950,13 +950,24 @@ body,
 }
 
 .dashboard-sidebar-profile {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
   margin-top: auto;
   padding: 16px 9px 4px;
+  border: 0;
   border-top: 1px solid rgba(57, 255, 20, 0.24);
+  background: transparent;
   color: #c9e3cf;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dashboard-sidebar-profile:hover,
+.dashboard-sidebar-profile:focus-visible {
+  background: rgba(57, 255, 20, 0.06);
 }
 
 .dashboard-profile-avatar {

@@ -91,6 +91,33 @@ router.post("/register", async (req, res) => {
 });
 
 // ===============================
+// PROFILE
+// ===============================
+router.patch("/profile", ensureAuth, async (req, res) => {
+  try {
+    const name = String(req.body?.name || "").trim();
+    if (!name) {
+      return res.status(400).json({ success: false, message: "Profile name is required" });
+    }
+    if (name.length < 2 || name.length > 80) {
+      return res.status(400).json({ success: false, message: "Profile name must be between 2 and 80 characters" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: { name } },
+      { new: true, runValidators: true }
+    );
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    return res.json({ success: true, user: serializeUser(user) });
+  } catch (error) {
+    console.error("Profile update error:", error);
+    return res.status(500).json({ success: false, message: "Could not save your profile" });
+  }
+});
+
+// ===============================
 // APPEARANCE AND DESIGN PREFERENCES
 // ===============================
 router.patch("/preferences", ensureAuth, async (req, res) => {
