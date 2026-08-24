@@ -1138,3 +1138,43 @@
     grid-column: 2;
   }
 }
+
+.admin-field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 7px;
+}
+
+.admin-field-label-row label {
+  margin: 0;
+}
+
+.admin-generate-description {
+  flex: 0 0 auto;
+  gap: 6px;
+  padding: 7px 10px;
+  font-size: 10px;
+}
+
+.admin-generate-description .admin-spin {
+  animation: admin-spin 0.9s linear infinite;
+}
+
+.admin-video-edit-button {
+  gap: 6px;
+  padding: 8px 10px;
+}
+
+@media (max-width: 680px) {
+  .admin-field-label-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-generate-description {
+    width: 100%;
+    justify-content: center;
+  }
+}

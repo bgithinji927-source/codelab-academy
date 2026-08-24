@@ -19,6 +19,10 @@ const { serializeVideo, parseTopics } = require("../lib/videoCatalog");
 const router = express.Router();
 router.use(ensureAuth, ensureAdmin);
 
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+const fetch = globalThis.fetch || ((...args) => import("node-fetch").then((module) => module.default(...args)));
+
 const videoUploadDirectory = "/tmp/codelab-academy-video-uploads";
 fs.mkdirSync(videoUploadDirectory, { recursive: true });
 
@@ -339,8 +343,71 @@ router.post("/videos", parseVideoUpload, async (req, res) => {
   }
 });
 
-router.patch("/videos/:videoId", async (req, res) => {
+router.post("/videos/generate-description", async (req, res) => {
   try {
+    if (!process.env.GROQ_API_KEY) {
+      return res.status(503).json({ success: false, message: "Kai description generation is not configured" });
+    }
+
+    const title = String(req.body?.title || "").trim();
+    const courseTitle = String(req.body?.courseTitle || "").trim();
+    const lessonTitle = String(req.body?.lessonTitle || "").trim();
+    const topics = String(req.body?.topics || "").trim();
+    if (!title && !courseTitle && !lessonTitle && !topics) {
+      return res.status(400).json({ success: false, message: "Add a title, course, lesson, or topic first" });
+    }
+
+    const response = await fetch(GROQ_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: [
+          {
+            role: "system",
+            content: "You are Kai, a concise technical instructor. Write exactly one short sentence, no more than 24 words, describing an educational coding video. Do not use quotation marks, headings, or bullet points.",
+          },
+          {
+            role: "user",
+            content: `Write a short description for this tutorial. Title: ${title || "Untitled tutorial"}. Course: ${courseTitle || "General development"}. Lesson: ${lessonTitle || "General lesson"}. Topics: ${topics || "technical concepts"}.`,
+          },
+        ],
+        temperature: 0.35,
+        max_tokens: 80,
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      console.error("Kai description API error:", response.status, data);
+      return res.status(502).json({ success: false, message: "Kai could not generate the description right now" });
+    }
+
+    const description = String(data?.choices?.[0]?.message?.content || "")
+      .replace(/^\s*["'`]+|["'`]+\s*$/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!description) {
+      return res.status(502).json({ success: false, message: "Kai returned an empty description" });
+    }
+
+    return res.json({ success: true, description: description.slice(0, 240) });
+  } catch (error) {
+    console.error("Kai description generation error:", error);
+    return res.status(502).json({ success: false, message: "Kai could not generate the description right now" });
+  }
+});
+
+router.patch("/videos/:videoId", parseVideoUpload, async (req, res) => {
+  let replacementFileId = null;
+  let temporaryFilePath = null;
+  try {
+    temporaryFilePath = req.file?.path || null;
+    const video = await Video.findById(req.params.videoId);
+    if (!video) return res.status(404).json({ success: false, message: "Video not found" });
+
     const updates = pickFields(req.body || {}, ["title", "description", "topics", "courseId", "courseTitle", "lessonId", "lessonTitle", "active"]);
     if (updates.title !== undefined && !String(updates.title).trim()) {
       return res.status(400).json({ success: false, message: "Video title cannot be empty" });
@@ -348,14 +415,75 @@ router.patch("/videos/:videoId", async (req, res) => {
     if (updates.description !== undefined && !String(updates.description).trim()) {
       return res.status(400).json({ success: false, message: "Video description cannot be empty" });
     }
+    if (updates.courseId !== undefined && !String(updates.courseId).trim()) {
+      return res.status(400).json({ success: false, message: "Video course cannot be empty" });
+    }
+    if (updates.lessonId !== undefined && !String(updates.lessonId).trim()) {
+      return res.status(400).json({ success: false, message: "Video lesson cannot be empty" });
+    }
     if (updates.topics !== undefined) updates.topics = parseTopics(updates.topics);
+    if (updates.active !== undefined) updates.active = updates.active === true || String(updates.active).toLowerCase() === "true";
+
+    const incomingUrl = String(req.body?.videoUrl || "").trim();
+    if (req.file && incomingUrl) {
+      return res.status(400).json({ success: false, message: "Choose either an uploaded file or a video URL, not both" });
+    }
+
+    if (req.file) {
+      replacementFileId = await uploadVideoFile(
+        req.file.path,
+        req.file.originalname,
+        req.file.mimetype,
+        { uploadedBy: String(req.admin._id), courseId: String(req.body?.courseId || video.courseId), lessonId: String(req.body?.lessonId || video.lessonId) }
+      );
+      updates.sourceType = "upload";
+      updates.videoUrl = "";
+      updates.storageFileId = replacementFileId;
+      updates.originalFilename = req.file.originalname || "";
+      updates.mimeType = req.file.mimetype || "video/mp4";
+      updates.fileSize = req.file.size || 0;
+    } else if (incomingUrl) {
+      try {
+        const parsedUrl = new URL(incomingUrl);
+        if (!["http:", "https:"].includes(parsedUrl.protocol)) throw new Error("Unsupported protocol");
+        updates.sourceType = "url";
+        updates.videoUrl = parsedUrl.toString();
+        updates.storageFileId = null;
+        updates.originalFilename = "";
+        updates.mimeType = "";
+        updates.fileSize = 0;
+      } catch {
+        return res.status(400).json({ success: false, message: "Video URL must be a valid http or https URL" });
+      }
+    }
+
     updates.updatedBy = String(req.admin._id);
-    const video = await Video.findByIdAndUpdate(req.params.videoId, { $set: updates }, { new: true, runValidators: true });
-    if (!video) return res.status(404).json({ success: false, message: "Video not found" });
-    return res.json({ success: true, video: serializeVideo(video) });
+    const updatedVideo = await Video.findByIdAndUpdate(req.params.videoId, { $set: updates }, { new: true, runValidators: true });
+    if (!updatedVideo) {
+      if (replacementFileId) {
+        try { await deleteVideoFile(replacementFileId); } catch (cleanupError) { console.error("Replacement video cleanup error:", cleanupError); }
+      }
+      return res.status(404).json({ success: false, message: "Video not found" });
+    }
+
+    if (replacementFileId && video.storageFileId) {
+      try { await deleteVideoFile(video.storageFileId); } catch (cleanupError) { console.error("Previous video cleanup error:", cleanupError); }
+    }
+    if (incomingUrl && video.storageFileId) {
+      try { await deleteVideoFile(video.storageFileId); } catch (cleanupError) { console.error("Previous video cleanup error:", cleanupError); }
+    }
+
+    return res.json({ success: true, video: serializeVideo(updatedVideo) });
   } catch (error) {
+    if (replacementFileId) {
+      try { await deleteVideoFile(replacementFileId); } catch (cleanupError) { console.error("Replacement video cleanup error:", cleanupError); }
+    }
     console.error("Admin update video error:", error);
-    return res.status(500).json({ success: false, message: "Could not update video" });
+    return res.status(500).json({ success: false, message: error.message || "Could not update video" });
+  } finally {
+    if (temporaryFilePath) {
+      try { await fs.promises.unlink(temporaryFilePath); } catch (cleanupError) { console.error("Temporary video cleanup error:", cleanupError); }
+    }
   }
 });
 

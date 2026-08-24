@@ -113,6 +113,8 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
   const [videoInputMode, setVideoInputMode] = useState("upload");
   const [videoFile, setVideoFile] = useState(null);
   const [videoFileInputKey, setVideoFileInputKey] = useState(0);
+  const [editingVideoId, setEditingVideoId] = useState(null);
+  const [descriptionGenerating, setDescriptionGenerating] = useState(false);
   const [challenges, setChallenges] = useState([]);
   const [settings, setSettings] = useState(null);
   const [challengeForm, setChallengeForm] = useState(emptyChallenge);
@@ -430,9 +432,72 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
     }
   };
 
-  const createVideo = async (event) => {
+  const resetVideoEditor = () => {
+    setEditingVideoId(null);
+    setVideoForm(emptyVideo);
+    setVideoInputMode("upload");
+    setVideoFile(null);
+    setVideoFileInputKey((current) => current + 1);
+    setDescriptionGenerating(false);
+  };
+
+  const startEditVideo = (video) => {
+    setEditingVideoId(video.id);
+    setVideoForm({
+      title: video.title || "",
+      description: video.description || "",
+      topics: Array.isArray(video.topics) ? video.topics.join(", ") : "",
+      courseId: video.courseId || firstAdminCourse.id,
+      courseTitle: video.courseTitle || "",
+      lessonId: video.lessonId || "",
+      lessonTitle: video.lessonTitle || "",
+      videoUrl: video.sourceType === "url" ? video.sourceUrl || "" : "",
+      active: video.active !== false,
+    });
+    setVideoInputMode(video.sourceType === "url" ? "url" : "upload");
+    setVideoFile(null);
+    setVideoFileInputKey((current) => current + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const generateVideoDescription = async () => {
+    const hasContext = [videoForm.title, videoForm.courseTitle, videoForm.lessonTitle, videoForm.topics]
+      .some((value) => String(value || "").trim());
+    if (!hasContext) {
+      notify("error", "Add a title, course, lesson, or topic first");
+      return;
+    }
+
+    setDescriptionGenerating(true);
+    try {
+      const response = await fetchAdminWithTimeout("/api/admin/videos/generate-description", {
+        method: "POST",
+        body: JSON.stringify({
+          title: videoForm.title,
+          courseTitle: videoForm.courseTitle,
+          lessonTitle: videoForm.lessonTitle,
+          topics: videoForm.topics,
+        }),
+      }, 30000);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) throw new Error(data.message || "Kai could not generate the description");
+      setVideoForm((current) => ({ ...current, description: data.description || "" }));
+      notify("success", "Kai drafted a short description");
+    } catch (error) {
+      notify("error", error.message || "Kai could not generate the description");
+    } finally {
+      setDescriptionGenerating(false);
+    }
+  };
+
+  const saveVideo = async (event) => {
     event.preventDefault();
-    if (videoInputMode === "upload" && !videoFile) {
+    const isEditing = Boolean(editingVideoId);
+    if (!videoForm.title.trim() || !videoForm.description.trim() || !videoForm.courseId || !videoForm.lessonId) {
+      notify("error", "Title, description, course, and lesson are required");
+      return;
+    }
+    if (videoInputMode === "upload" && !isEditing && !videoFile) {
       notify("error", "Choose a video file to upload");
       return;
     }
@@ -441,27 +506,33 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
       return;
     }
 
-    setSavingKey("video-new");
+    const saveKey = isEditing ? `video-${editingVideoId}` : "video-new";
+    setSavingKey(saveKey);
     try {
       const formData = new FormData();
       Object.entries(videoForm).forEach(([key, value]) => {
-        if (key !== "videoUrl" || videoInputMode === "url") formData.append(key, value || "");
+        if (key !== "videoUrl" || videoInputMode === "url") formData.append(key, value ?? "");
       });
-      if (videoInputMode === "upload") formData.append("videoFile", videoFile);
+      if (videoInputMode === "upload" && videoFile) formData.append("videoFile", videoFile);
 
-      const response = await fetchAdminWithTimeout("/api/admin/videos", {
-        method: "POST",
-        body: formData,
-      }, 120000);
+      const response = await fetchAdminWithTimeout(
+        isEditing ? `/api/admin/videos/${editingVideoId}` : "/api/admin/videos",
+        { method: isEditing ? "PATCH" : "POST", body: formData },
+        120000
+      );
       const data = await response.json().catch(() => ({}));
-      if (!response.ok || !data.success) throw new Error(data.message || "Could not create video");
-      setVideos((current) => [data.video, ...current]);
-      setVideoForm(emptyVideo);
-      setVideoFile(null);
-      setVideoFileInputKey((current) => current + 1);
-      notify("success", "Video added to the Kai library");
+      if (!response.ok || !data.success) throw new Error(data.message || `Could not ${isEditing ? "update" : "create"} video`);
+
+      if (isEditing) {
+        setVideos((current) => current.map((item) => item.id === editingVideoId ? data.video : item));
+        notify("success", "Video tutorial updated");
+      } else {
+        setVideos((current) => [data.video, ...current]);
+        notify("success", "Video added to the learner tutorials");
+      }
+      resetVideoEditor();
     } catch (error) {
-      notify("error", error.message || "Could not create video");
+      notify("error", error.message || `Could not ${isEditing ? "update" : "create"} video`);
     } finally {
       setSavingKey("");
     }
@@ -585,7 +656,7 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
 
           {section === "courses" && <section className="admin-section"><div className="admin-toolbar admin-toolbar-standalone"><div><span className="admin-eyebrow">CONTENT MANAGEMENT</span><h2>All courses and Kai lessons</h2><p>{filteredCourses.length} of {courses.length} courses shown · {filteredCourses.reduce((total, course) => total + (course.lessons?.length || 0), 0)} lessons in view. Every course below includes the ordered lessons Kai teaches, their timing, visibility, examples, challenges, and quizzes.</p></div><div className="admin-toolbar-actions"><input className="admin-search" value={courseSearch} onChange={(event) => setCourseSearch(event.target.value)} placeholder="Search courses or lessons" /><div className="admin-row-actions"><button type="button" className="admin-secondary-button" onClick={() => setExpandedCourses(Object.fromEntries(filteredCourses.map((course) => [course.id, true])))}>Expand shown</button><button type="button" className="admin-secondary-button" onClick={() => setExpandedCourses({})}>Collapse all</button></div></div></div><div className="admin-course-list">{filteredCourses.map((course) => { const draft = courseDrafts[course.id] || course; const expanded = expandedCourses[course.id]; return <article className="admin-panel admin-course-panel" key={course.id}><div className="admin-course-summary"><button type="button" className="admin-expand-button" onClick={() => setExpandedCourses((current) => ({ ...current, [course.id]: !expanded }))}>{expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</button><div className="admin-course-icon"><BookOpen size={18} /></div><div className="admin-course-summary-copy"><strong>{draft.title}</strong><span>{draft.category} · {course.lessons?.length || 0} lessons · {draft.active !== false ? "Live" : "Hidden"}</span></div><button type="button" className="admin-secondary-button" onClick={() => setExpandedCourses((current) => ({ ...current, [course.id]: true }))}><Pencil size={15} /> Edit course</button></div>{expanded && <div className="admin-course-editor"><div className="admin-form-grid"><label>Course title<input value={draft.title || ""} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, title: event.target.value } }))} /></label><label>Category<input value={draft.category || ""} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, category: event.target.value } }))} /></label><label>Level<select value={draft.level || "Beginner"} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, level: event.target.value } }))}><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></label><label className="admin-checkbox-label"><input type="checkbox" checked={draft.active !== false} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, active: event.target.checked } }))} /> Visible to learners</label></div><label className="admin-wide-field">Description<textarea rows="2" value={draft.description || ""} onChange={(event) => setCourseDrafts((current) => ({ ...current, [course.id]: { ...draft, description: event.target.value } }))} /></label><div className="admin-editor-actions"><button type="button" className="admin-primary-button" onClick={() => saveCourse(course)} disabled={savingKey === `course-${course.id}`}><Save size={15} />{savingKey === `course-${course.id}` ? "Saving..." : "Save course"}</button></div><div className="admin-lesson-heading"><div><span className="admin-eyebrow">LESSON CONTENT</span><h3>{course.lessons?.length || 0} lessons in this course</h3></div></div><div className="admin-lesson-list">{(course.lessons || []).map((lesson, lessonIndex) => { const key = `${course.id}:${lesson.id}`; const lessonDraft = lessonDrafts[key] || getLessonDraft(lesson); return <div className="admin-lesson-row" key={lesson.id}><div><strong>{lesson.title}</strong><span>Lesson {lessonIndex + 1} · {lesson.estimatedTime || "Lesson"} · {lesson.active !== false ? "Live" : "Hidden"} · Kai: {(lesson.sections || []).map((section) => ({ explanation: "concepts", example: "example", deepDive: "deep dive", challenge: "practice", quiz: "quiz", summary: "summary" }[section.type] || section.type)).join(" · ") || "guided teaching"}</span></div><button type="button" className="admin-text-action" onClick={() => setEditingLesson(editingLesson === key ? null : key)}>{editingLesson === key ? "Close" : "Edit lesson"}</button>{editingLesson === key && <div className="admin-lesson-editor"><div className="admin-form-grid"><label>Lesson title<input value={lessonDraft.title || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, title: event.target.value } }))} /></label><label>Estimated time<input value={lessonDraft.estimatedTime || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, estimatedTime: event.target.value } }))} /></label></div><label className="admin-wide-field">Description<textarea rows="2" value={lessonDraft.description || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, description: event.target.value } }))} /></label><label className="admin-wide-field">Objectives<textarea rows="3" value={lessonDraft.objectivesText || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, objectivesText: event.target.value } }))} placeholder="One objective per line" /></label><div className="admin-content-editor-grid"><label>Example code<textarea rows="6" value={lessonDraft.exampleCode || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, exampleCode: event.target.value } }))} /></label><label>Challenge instructions<textarea rows="6" value={lessonDraft.challengeInstructions || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, challengeInstructions: event.target.value } }))} /></label><label>Starter code<textarea rows="5" value={lessonDraft.starterCode || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, starterCode: event.target.value } }))} /></label><label>Quiz question<textarea rows="3" value={lessonDraft.quizQuestion || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, quizQuestion: event.target.value } }))} /></label><label>Quiz options<textarea rows="4" value={lessonDraft.quizOptionsText || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, quizOptionsText: event.target.value } }))} placeholder="One option per line" /></label><label>Quiz answer<input value={lessonDraft.quizAnswer || ""} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, quizAnswer: event.target.value } }))} /></label></div><label className="admin-checkbox-label"><input type="checkbox" checked={lessonDraft.active !== false} onChange={(event) => setLessonDrafts((current) => ({ ...current, [key]: { ...lessonDraft, active: event.target.checked } }))} /> Visible to learners</label><button type="button" className="admin-primary-button" onClick={() => saveLesson(course.id, lesson)} disabled={savingKey === `lesson-${key}`}><Save size={15} /> Save lesson</button></div>}</div>})}</div></div>}</article>; })}</div></section>}
 
-          {section === "videos" && <section className="admin-section"><div className="admin-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">LEARNER SIDEBAR VIDEOS</span><h2>Add a video tutorial</h2><p>Upload a video file directly or add a hosted video URL. Active tutorials appear in the learner sidebar under Video Tutorials and can also be recommended by Kai when relevant.</p></div><VideoIcon size={23} /></div><form className="admin-form admin-video-form" onSubmit={createVideo}><div className="admin-video-mode-switch"><button type="button" className={videoInputMode === "upload" ? "active" : ""} onClick={() => setVideoInputMode("upload")}><VideoIcon size={15} /> Upload video file</button><button type="button" className={videoInputMode === "url" ? "active" : ""} onClick={() => setVideoInputMode("url")}><Globe2 size={15} /> Use video URL</button></div><div className="admin-form-grid"><label>Video title<input required value={videoForm.title} onChange={(event) => setVideoForm((current) => ({ ...current, title: event.target.value }))} placeholder="CSS Flexbox Explained" /></label><label>Topics / tags<input value={videoForm.topics} onChange={(event) => setVideoForm((current) => ({ ...current, topics: event.target.value }))} placeholder="CSS, Flexbox, Alignment" /></label><label>Course<select required value={videoForm.courseId} onChange={(event) => handleVideoCourseChange(event.target.value)}>{courses.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}</select></label><label>Lesson<select required value={videoForm.lessonId} onChange={(event) => handleVideoLessonChange(event.target.value)}>{(selectedVideoCourse.lessons || []).map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}</select></label></div><label className="admin-wide-field">Detailed description<textarea required rows="4" value={videoForm.description} onChange={(event) => setVideoForm((current) => ({ ...current, description: event.target.value }))} placeholder="Explain the concepts demonstrated in this video so Kai can search it accurately." /></label>{videoInputMode === "upload" ? <label className="admin-wide-field">Video file<input key={videoFileInputKey} required type="file" accept="video/*" onChange={(event) => setVideoFile(event.target.files?.[0] || null)} /><small className="admin-field-help">Accepted video files up to 500 MB. The file is stored in MongoDB GridFS.</small>{videoFile && <span className="admin-selected-file">Selected: {videoFile.name}</span>}</label> : <label className="admin-wide-field">Video URL<input required type="url" value={videoForm.videoUrl} onChange={(event) => setVideoForm((current) => ({ ...current, videoUrl: event.target.value }))} placeholder="https://www.youtube.com/watch?v=..." /><small className="admin-field-help">YouTube and Vimeo links open in an embedded player; direct video URLs use the native player.</small></label>}<button type="submit" className="admin-primary-button" disabled={savingKey === "video-new"}><Save size={15} />{savingKey === "video-new" ? "Adding tutorial..." : "Add to learner tutorials"}</button></form></div><div className="admin-panel admin-video-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">LEARNER VIDEO TUTORIALS</span><h2>{videos.length} tutorial{videos.length === 1 ? "" : "s"}</h2></div></div><div className="admin-video-list">{videos.map((video) => <div className="admin-video-row" key={video.id}><div className="admin-video-icon"><VideoIcon size={18} /></div><div className="admin-video-copy"><strong>{video.title}</strong><span>{video.courseTitle || video.courseId} · {video.lessonTitle || video.lessonId}</span><p>{video.description}</p><small>{video.sourceType === "upload" ? `Uploaded file · ${video.originalFilename || "video"}` : "External URL"} · {(video.topics || []).join(" · ") || "No topics"}</small></div><div className="admin-video-actions"><button type="button" className={`admin-status-toggle ${video.active ? "on" : "off"}`} onClick={() => toggleVideo(video)} disabled={savingKey === `video-${video.id}`}>{video.active ? "Available" : "Hidden"}</button><button type="button" className="admin-icon-action danger" title="Delete video" onClick={() => deleteVideo(video)} disabled={savingKey === `video-${video.id}`}><Trash2 size={15} /></button></div></div>)}</div>{videos.length === 0 && <div className="admin-empty">No videos yet. Add an uploaded file or a URL above.</div>}</div></section>}
+          {section === "videos" && <section className="admin-section"><div className="admin-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">LEARNER SIDEBAR VIDEOS</span><h2>{editingVideoId ? "Edit video tutorial" : "Add a video tutorial"}</h2><p>{editingVideoId ? "Update this tutorial's details, source, lesson, or availability. Changes appear in the learner sidebar after saving." : "Upload a video file directly or add a hosted video URL. Active tutorials appear in the learner sidebar under Video Tutorials and can also be recommended by Kai when relevant."}</p></div><VideoIcon size={23} /></div><form className="admin-form admin-video-form" onSubmit={saveVideo}><div className="admin-video-mode-switch"><button type="button" className={videoInputMode === "upload" ? "active" : ""} onClick={() => setVideoInputMode("upload")}><VideoIcon size={15} /> Upload video file</button><button type="button" className={videoInputMode === "url" ? "active" : ""} onClick={() => setVideoInputMode("url")}><Globe2 size={15} /> Use video URL</button></div><div className="admin-form-grid"><label>Video title<input required value={videoForm.title} onChange={(event) => setVideoForm((current) => ({ ...current, title: event.target.value }))} placeholder="CSS Flexbox Explained" /></label><label>Topics / tags<input value={videoForm.topics} onChange={(event) => setVideoForm((current) => ({ ...current, topics: event.target.value }))} placeholder="CSS, Flexbox, Alignment" /></label><label>Course<select required value={videoForm.courseId} onChange={(event) => handleVideoCourseChange(event.target.value)}>{courses.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}</select></label><label>Lesson<select required value={videoForm.lessonId} onChange={(event) => handleVideoLessonChange(event.target.value)}>{(selectedVideoCourse.lessons || []).map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}</select></label></div><div className="admin-wide-field"><div className="admin-field-label-row"><label htmlFor="admin-video-description">Detailed description</label><button type="button" className="admin-secondary-button admin-generate-description" onClick={generateVideoDescription} disabled={descriptionGenerating}>{descriptionGenerating ? <RefreshCw className="admin-spin" size={14} /> : <Zap size={14} />}{descriptionGenerating ? "Kai is writing..." : "Generate by Kai"}</button></div><textarea id="admin-video-description" required rows="4" value={videoForm.description} onChange={(event) => setVideoForm((current) => ({ ...current, description: event.target.value }))} placeholder="Explain the concepts demonstrated in this video so Kai can search it accurately." /></div>{videoInputMode === "upload" ? <label className="admin-wide-field">Video file<input key={videoFileInputKey} type="file" accept="video/*" onChange={(event) => setVideoFile(event.target.files?.[0] || null)} /><small className="admin-field-help">Accepted video files up to 500 MB. The file is stored in MongoDB GridFS. When editing, choose a file only if you want to replace the current video.</small>{videoFile && <span className="admin-selected-file">Selected: {videoFile.name}</span>}</label> : <label className="admin-wide-field">Video URL<input required type="url" value={videoForm.videoUrl} onChange={(event) => setVideoForm((current) => ({ ...current, videoUrl: event.target.value }))} placeholder="https://www.youtube.com/watch?v=..." /><small className="admin-field-help">YouTube and Vimeo links open in an embedded player; direct video URLs use the native player.</small></label>}<label className="admin-checkbox-label"><input type="checkbox" checked={videoForm.active !== false} onChange={(event) => setVideoForm((current) => ({ ...current, active: event.target.checked }))} /> Visible to learners</label><div className="admin-editor-actions"><button type="submit" className="admin-primary-button" disabled={savingKey === "video-new" || savingKey === `video-${editingVideoId}`}><Save size={15} />{savingKey === "video-new" ? "Adding tutorial..." : savingKey === `video-${editingVideoId}` ? "Saving tutorial..." : editingVideoId ? "Save tutorial changes" : "Add to learner tutorials"}</button>{editingVideoId && <button type="button" className="admin-secondary-button" onClick={resetVideoEditor} disabled={savingKey === `video-${editingVideoId}`}>Cancel edit</button>}</div></form></div><div className="admin-panel admin-video-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">LEARNER VIDEO TUTORIALS</span><h2>{videos.length} tutorial{videos.length === 1 ? "" : "s"}</h2></div></div><div className="admin-video-list">{videos.map((video) => <div className="admin-video-row" key={video.id}><div className="admin-video-icon"><VideoIcon size={18} /></div><div className="admin-video-copy"><strong>{video.title}</strong><span>{video.courseTitle || video.courseId} · {video.lessonTitle || video.lessonId}</span><p>{video.description}</p><small>{video.sourceType === "upload" ? `Uploaded file · ${video.originalFilename || "video"}` : "External URL"} · {(video.topics || []).join(" · ") || "No topics"}</small></div><div className="admin-video-actions"><button type="button" className="admin-secondary-button admin-video-edit-button" onClick={() => startEditVideo(video)} disabled={savingKey === `video-${video.id}`}><Pencil size={15} /> Edit</button><button type="button" className={`admin-status-toggle ${video.active ? "on" : "off"}`} onClick={() => toggleVideo(video)} disabled={savingKey === `video-${video.id}`}>{video.active ? "Available" : "Hidden"}</button><button type="button" className="admin-icon-action danger" title="Delete video" onClick={() => deleteVideo(video)} disabled={savingKey === `video-${video.id}`}><Trash2 size={15} /></button></div></div>)}</div>{videos.length === 0 && <div className="admin-empty">No videos yet. Add an uploaded file or a URL above.</div>}</div></section>}
 
           {section === "challenges" && <section className="admin-section"><div className="admin-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">CHALLENGE BANK</span><h2>Daily challenge controls</h2><p>Create, activate, archive, and delete the exercises served to learners.</p></div><div className="admin-row-actions"><button type="button" className="admin-secondary-button" onClick={seedChallenges} disabled={savingKey === "challenge-seed"}><Database size={15} /> Seed defaults</button><button type="button" className="admin-primary-button" onClick={() => setSection("new-challenge")}><Plus size={16} /> New challenge</button></div></div><div className="admin-challenge-list">{challenges.map((challenge) => <div className="admin-challenge-row" key={challenge.id}><div className="admin-challenge-copy"><strong>{challenge.title}</strong><span>{challenge.type} · +{challenge.xp} XP · {challenge.active ? "Active" : "Archived"}</span><p>{challenge.prompt}</p></div><div className="admin-row-actions"><button type="button" className={`admin-status-toggle ${challenge.active ? "on" : "off"}`} onClick={() => toggleChallenge(challenge)} disabled={savingKey === `challenge-${challenge.id}`}>{challenge.active ? "Active" : "Archived"}</button><button type="button" className="admin-icon-action danger" onClick={() => deleteChallenge(challenge)} disabled={savingKey === `challenge-${challenge.id}`}><Trash2 size={15} /></button></div></div>)}</div>{challenges.length === 0 && <div className="admin-empty">No challenges yet. Create one or seed the default challenge bank.</div>}</div></section>}
 
