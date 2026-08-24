@@ -461,6 +461,128 @@ const generatedMissingCourseLessons = Object.fromEntries(
   )
 );
 
+function makeAiCourseLessons(courseId, courseTitle, topics) {
+  return topics.map((topic, index) => makeLesson({
+    id: `${courseId}-${String(index + 1).padStart(2, "0")}-${slugifyTopic(topic)}`,
+    title: `${courseTitle}: ${topic}`,
+    focus: `${courseTitle} ${topic}`,
+    code: `const aiPractice = {\n  course: "${courseTitle}",\n  topic: "${topic}",\n  step: ${index + 1},\n  evaluationRequired: true\n};\n\nconsole.log(aiPractice);`,
+    challenge: `Create a small, responsible AI practice exercise for ${topic.toLowerCase()}. Define the input and expected output, test one edge case, and explain how you would verify the result.`,
+    starterCode: `const aiExercise = {\n  course: "${courseTitle}",\n  topic: "${topic}",\n  input: "",\n  expectedOutput: "",\n  notes: ""\n};\n\n// Add a test and record what you learned\nconsole.log(aiExercise);`,
+    quizQuestion: `Which approach best supports ${topic.toLowerCase()}?`,
+    quizOptions: [
+      `Use ${topic.toLowerCase()} with clear goals, testing, and human review`,
+      "Skip evaluation and trust every output",
+      "Send sensitive data to every tool by default",
+      "Hide failures from the people using the system",
+    ],
+    quizAnswer: `Use ${topic.toLowerCase()} with clear goals, testing, and human review`,
+  }));
+}
+
+const aiCourseLessonPlans = {
+  "ai-fundamentals": makeAiCourseLessons(
+    "ai-fundamentals",
+    "AI Fundamentals",
+    ["AI and machine learning concepts", "Data, models, and representations", "Training and inference", "Evaluation and limitations"]
+  ),
+  "prompt-engineering": makeAiCourseLessons(
+    "prompt-engineering",
+    "Prompt Engineering",
+    ["Clear tasks and instructions", "Context and examples", "Constraints and output formats", "Iteration and prompt testing"]
+  ),
+  "ai-productivity-tools": makeAiCourseLessons(
+    "ai-productivity-tools",
+    "AI Productivity Tools",
+    ["Summarizing and transforming work", "Drafting and editing", "Planning and brainstorming", "Verification, privacy, and workflow habits"]
+  ),
+  "ai-research-knowledge-tools": makeAiCourseLessons(
+    "ai-research-knowledge-tools",
+    "AI Research & Knowledge Tools",
+    ["Finding useful sources", "Evaluating source quality", "Notes, citations, and provenance", "Synthesizing a knowledge brief"]
+  ),
+  "ai-api-development": makeAiCourseLessons(
+    "ai-api-development",
+    "Building with AI APIs",
+    ["Model requests and responses", "Credentials and configuration", "Structured output and errors", "Latency, cost, and evaluation"]
+  ),
+  "ai-chatbots": makeAiCourseLessons(
+    "ai-chatbots",
+    "Building AI Chatbots",
+    ["Conversation state", "Intent and context handling", "Retrieval and useful memory", "Guardrails and conversation evaluation"]
+  ),
+  "ai-applications": makeAiCourseLessons(
+    "ai-applications",
+    "AI-Powered Applications",
+    ["Choosing an AI use case", "User experience and human review", "Application data flows", "Testing and releasing an AI feature"]
+  ),
+  "rag-ai-knowledge-bases": makeAiCourseLessons(
+    "rag-ai-knowledge-bases",
+    "RAG & AI Knowledge Bases",
+    ["Documents, chunks, and embeddings", "Retrieval and ranking", "Grounded answers and citations", "Freshness and RAG evaluation"]
+  ),
+  "ai-coding-tools": makeAiCourseLessons(
+    "ai-coding-tools",
+    "AI Coding Tools",
+    ["Giving an AI assistant codebase context", "Generation and safe editing", "Tests and debugging with AI", "Review, security, and maintainability"]
+  ),
+  "ai-automation": makeAiCourseLessons(
+    "ai-automation",
+    "AI Automation",
+    ["Triggers and workflow steps", "Connecting tools and data", "Human approvals and boundaries", "Retries, logs, and automation evaluation"]
+  ),
+  "ai-agents": makeAiCourseLessons(
+    "ai-agents",
+    "AI Agents",
+    ["Agent loops and tool use", "Planning and task decomposition", "State, permissions, and limits", "Agent evaluation and recovery"]
+  ),
+  "local-ai-ollama": makeAiCourseLessons(
+    "local-ai-ollama",
+    "Local AI with Ollama",
+    ["Local models and Ollama setup", "Model selection and resources", "Calling a local model API", "Privacy, quality, and local evaluation"]
+  ),
+  "multimodal-ai": makeAiCourseLessons(
+    "multimodal-ai",
+    "Multimodal AI",
+    ["Text, image, audio, and video inputs", "Vision and audio understanding", "Multimodal prompts and transformations", "Evaluating multimodal outputs"]
+  ),
+  "ai-image-video-generation": makeAiCourseLessons(
+    "ai-image-video-generation",
+    "AI Image & Video Generation",
+    ["Prompts and visual references", "Composition and controllable outputs", "Editing and iterative workflows", "Rights, safety, and quality evaluation"]
+  ),
+  "production-ai-engineering": makeAiCourseLessons(
+    "production-ai-engineering",
+    "Production AI Engineering",
+    ["Production AI architecture", "Evaluation datasets and quality gates", "Reliability and observability", "Cost controls and safe rollouts"]
+  ),
+  "ai-security": makeAiCourseLessons(
+    "ai-security",
+    "AI Security",
+    ["Prompt injection and unsafe inputs", "Data leakage and access boundaries", "Model and tool abuse", "Red teaming and security monitoring"]
+  ),
+  "ai-backend-engineering": makeAiCourseLessons(
+    "ai-backend-engineering",
+    "AI + Backend Engineering",
+    ["Authentication for AI features", "API orchestration and service boundaries", "Queues, jobs, and streaming", "Persistence, logs, and backend observability"]
+  ),
+  "ai-cloud": makeAiCourseLessons(
+    "ai-cloud",
+    "AI + Cloud",
+    ["Cloud inference and compute choices", "Cloud storage and AI data flows", "Scaling and cost management", "Secure cloud AI architecture"]
+  ),
+  "ai-agents-mcp-tools": makeAiCourseLessons(
+    "ai-agents-mcp-tools",
+    "AI Agents with MCP & Tools",
+    ["Tool contracts and schemas", "Context servers and permissions", "Consent and safe tool execution", "Testing tool-using agents"]
+  ),
+  "ai-saas-products": makeAiCourseLessons(
+    "ai-saas-products",
+    "Building AI SaaS Products",
+    ["Users, problems, and AI product scope", "Multi-user product architecture", "Feedback, evaluation, and iteration", "Operations, reliability, and launch"]
+  ),
+};
+
 function makeCloudCourseLessons(courseId, courseTitle, topics) {
   return topics.map((topic, index) => makeLesson({
     id: `${courseId}-${String(index + 1).padStart(2, "0")}-${slugifyTopic(topic)}`,
@@ -1013,6 +1135,7 @@ print(language)`,
   ...generatedMissingCourseLessons,
   ...cloudCourseLessonPlans,
   ...cyberCourseLessonPlans,
+  ...aiCourseLessonPlans,
 };
 
 // ============================================

@@ -41,7 +41,7 @@ const categories = [
     icon: "🤖",
     title: "AI Tools",
     description: "Learn the tools that power AI",
-    courses: "6 Courses",
+    courses: "20 Courses",
   },
   {
     icon: "🛠",
