@@ -25,6 +25,18 @@ const GROQ_API_URL =
 const GROQ_MODEL =
   process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 
+function extractAssistantText(data) {
+  const choice = data?.choices?.[0] || {};
+  const message = choice.message || {};
+  const content = message.content ?? choice.text ?? "";
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => typeof part === "string" ? part : part?.text || part?.content || "")
+      .join(" ");
+  }
+  return String(content || "");
+}
+
 function sessionPayload(session) {
   if (!session) return null;
   return {
@@ -880,18 +892,26 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     // CALL GROQ
     // ========================================
 
+    const groqRequestBody = {
+      model: GROQ_MODEL,
+      messages: groqMessages,
+      temperature: 0.7,
+      // Groq now prefers max_completion_tokens. A larger budget is important
+      // for reasoning models because it includes their hidden reasoning tokens.
+      max_completion_tokens: 4096,
+    };
+    if (/gpt-oss/i.test(GROQ_MODEL)) {
+      groqRequestBody.reasoning_effort = "low";
+      groqRequestBody.include_reasoning = false;
+    }
+
     const response = await fetch(GROQ_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: groqMessages,
-        temperature: 0.7,
-        max_tokens: 1200,
-      }),
+      body: JSON.stringify(groqRequestBody),
     });
 
     // ========================================
@@ -909,12 +929,18 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       });
     }
 
-    const reply = data?.choices?.[0]?.message?.content;
+    const reply = extractAssistantText(data)
+      .replace(/<think>[\s\S]*?<\/think>/gi, "")
+      .trim();
 
     if (!reply) {
-      console.error("Groq returned no message:", data);
+      console.error("Groq returned no visible message:", {
+        model: GROQ_MODEL,
+        finishReason: data?.choices?.[0]?.finish_reason || null,
+        hasChoices: Array.isArray(data?.choices) && data.choices.length > 0,
+      });
 
-      return res.status(500).json({ success: false, message: "Groq returned an empty response." });
+      return res.status(502).json({ success: false, message: "Kai did not return a visible teaching reply. Please try again." });
     }
 
     // ========================================

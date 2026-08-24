@@ -413,8 +413,10 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
         error
       );
 
-      const errorMessage =
-        "Hi! I'm Kai, your AI instructor. 👋 Something went wrong while connecting to my teaching engine. Please try again.";
+      const backendMessage = String(error?.message || "").trim();
+      const errorMessage = backendMessage && !/^failed to fetch$/i.test(backendMessage)
+        ? `Hi! I'm Kai, your AI instructor. ${backendMessage}`
+        : "Hi! I'm Kai, your AI instructor. Something went wrong while connecting to my teaching engine. Please try again.";
 
       setMessages((previous) => [
         ...previous,
