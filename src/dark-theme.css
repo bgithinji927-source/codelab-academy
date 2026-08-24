@@ -5811,3 +5811,66 @@ html[data-design="canvas"] .courses-layout {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* ================================
+   INDEPENDENT SIDEBAR SCROLLING
+   Keep the library list accessible while the dashboard workspace stays put.
+================================ */
+
+.dashboard-course-sidebar {
+  overflow: hidden !important;
+}
+
+.dashboard-course-sidebar .dashboard-sidebar-nav {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--theme-accent, #39ff14) transparent;
+  scrollbar-width: thin;
+}
+
+.dashboard-course-sidebar .dashboard-sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dashboard-course-sidebar .dashboard-sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard-course-sidebar .dashboard-sidebar-nav::-webkit-scrollbar-thumb {
+  border: 1px solid var(--theme-border, #244536);
+  border-radius: 0;
+  background: var(--theme-accent, #39ff14);
+}
+
+.dashboard-course-sidebar .dashboard-sidebar-bookmark,
+.dashboard-course-sidebar .dashboard-sidebar-profile {
+  flex-shrink: 0 !important;
+}
+
+/* Canvas and mobile intentionally keep a horizontal category toolbar. */
+html[data-design="canvas"] .dashboard-course-sidebar {
+  overflow: visible !important;
+}
+
+html[data-design="canvas"] .dashboard-course-sidebar .dashboard-sidebar-nav {
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+@media (max-width: 900px) {
+  .dashboard-course-sidebar {
+    overflow: visible !important;
+  }
+
+  .dashboard-course-sidebar .dashboard-sidebar-nav {
+    flex: 0 1 auto !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+}
