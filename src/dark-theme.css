@@ -5874,3 +5874,83 @@ html[data-design="canvas"] .dashboard-course-sidebar .dashboard-sidebar-nav {
     overflow-y: hidden !important;
   }
 }
+
+
+/* ================================
+   SHARED PAGE SCROLL
+   The library and workspace should move together with the document.
+================================ */
+
+html:not([data-design="canvas"]) .dashboard-main {
+  display: grid !important;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 8px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+html:not([data-design="canvas"]) .dashboard-course-sidebar {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: start !important;
+  overflow: visible !important;
+}
+
+html:not([data-design="canvas"]) .dashboard-course-sidebar .dashboard-sidebar-nav {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  overscroll-behavior: auto !important;
+}
+
+html:not([data-design="canvas"]) .dashboard-course-sidebar .dashboard-sidebar-profile {
+  margin-top: 24px !important;
+}
+
+html:not([data-design="canvas"]) .dashboard-content-container,
+html:not([data-design="canvas"]) .dashboard-category-view {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+@media (max-width: 900px) {
+  html:not([data-design="canvas"]) .dashboard-main {
+    display: block !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  html:not([data-design="canvas"]) .dashboard-course-sidebar {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 0 12px !important;
+    overflow: visible !important;
+  }
+
+  html:not([data-design="canvas"]) .dashboard-course-sidebar .dashboard-sidebar-nav {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  html:not([data-design="canvas"]) .dashboard-course-sidebar .dashboard-sidebar-profile {
+    margin-top: 0 !important;
+  }
+
+  html:not([data-design="canvas"]) .dashboard-content-container,
+  html:not([data-design="canvas"]) .dashboard-category-view {
+    width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+}
