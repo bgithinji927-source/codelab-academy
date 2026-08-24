@@ -27,6 +27,7 @@ import {
   Gamepad2,
   Boxes,
   Palette,
+  LayoutDashboard,
 } from "lucide-react";
 
 import LearnWithKai from "./pages/LearnWithKai";
@@ -38,6 +39,7 @@ import createStore from "./data/store";
 import courses from "./data/course";
 import ThemeToggle from "./components/ThemeToggle";
 import AppearanceSettings from "./pages/AppearanceSettings";
+import DesignSettings from "./pages/DesignSettings";
 
 function DashboardCategoryView({ category, onOpenCourse, courseCatalog }) {
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
@@ -82,6 +84,7 @@ const sidebarItems = [
   { label: "Game Development", Icon: Gamepad2, category: "Game Development" },
   { label: "System Design", Icon: Boxes, category: "System Design" },
   { label: "Appearance", Icon: Palette, view: "appearance" },
+  { label: "Design", Icon: LayoutDashboard, view: "design" },
 ];
 
 function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
@@ -252,6 +255,16 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
     );
   }
 
+  if (activeView === "design") {
+    return (
+      <DesignSettings
+        user={user}
+        onBack={() => setActiveView("dashboard")}
+        onUserUpdated={onUserUpdated}
+      />
+    );
+  }
+
   // Calculate stats from real data
   const completedChallenges = state.userProgress.dailyChallengesCompleted || 0;
   const inProgressCourses = state.courses.filter((c) => c.status === "in-progress" || (c.progress > 0 && c.progress < 100)).length;
@@ -310,14 +323,20 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
               <button
                 key={label}
                 type="button"
+                title={label}
                 className={view === "dashboard"
                   ? (activeView === "dashboard" && !selectedCategory ? "active" : "")
                   : view === "appearance"
                     ? (activeView === "appearance" ? "active" : "")
-                    : (selectedCategory === category ? "active" : "")}
+                    : view === "design"
+                      ? (activeView === "design" ? "active" : "")
+                      : (selectedCategory === category ? "active" : "")}
                 onClick={() => {
                   if (view === "appearance") {
                     setActiveView("appearance");
+                    setSelectedCategory(null);
+                  } else if (view === "design") {
+                    setActiveView("design");
                     setSelectedCategory(null);
                   } else if (view === "dashboard") {
                     setActiveView("dashboard");

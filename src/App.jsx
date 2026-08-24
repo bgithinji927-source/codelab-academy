@@ -15,6 +15,7 @@ import {
   RoadmapsPage,
 } from "./pages/PublicPages";
 import { applyAppearance, appearanceStorageKey, normalizeAppearance } from "./utils/appearance";
+import { applyDesign, designStorageKey, normalizeDesign } from "./utils/design";
 
 const PUBLIC_PATHS = new Set(["/ai-tutor", "/roadmaps", "/challenges", "/pricing", "/about", "/demo"]);
 
@@ -187,6 +188,13 @@ function App() {
       || localStorage.getItem("codelabAppearance:guest")
       || user?.appearancePreset;
     applyAppearance(normalizeAppearance(savedAppearance));
+  }, [user]);
+
+  useEffect(() => {
+    const savedDesign = localStorage.getItem(designStorageKey(user?.id))
+      || localStorage.getItem("codelabDesign:guest")
+      || user?.designPreset;
+    applyDesign(normalizeDesign(savedDesign));
   }, [user]);
 
   const handleUserUpdated = (updatedUser) => {

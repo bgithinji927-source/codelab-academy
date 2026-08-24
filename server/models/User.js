@@ -38,6 +38,12 @@ const userSchema = new mongoose.Schema(
       default: "default",
     },
 
+    designPreset: {
+      type: String,
+      enum: ["classic", "focus", "rail", "canvas"],
+      default: "classic",
+    },
+
     xp: {
       type: Number,
       default: 0,

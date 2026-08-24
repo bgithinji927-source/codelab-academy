@@ -25,6 +25,7 @@ function serializeUser(user) {
     isAdmin,
     isActive: user.isActive !== false,
     appearancePreset: user.appearancePreset || "default",
+    designPreset: user.designPreset || "classic",
     xp: user.xp,
     level: user.level,
     completedLessons: user.completedLessons,
@@ -90,27 +91,56 @@ router.post("/register", async (req, res) => {
 });
 
 // ===============================
-// APPEARANCE PREFERENCES
+// APPEARANCE AND DESIGN PREFERENCES
 // ===============================
 router.patch("/preferences", ensureAuth, async (req, res) => {
   try {
-    const allowedPresets = new Set(["default", "clean", "forest", "contrast"]);
-    const appearancePreset = String(req.body?.appearancePreset || "");
-    if (!allowedPresets.has(appearancePreset)) {
-      return res.status(400).json({ success: false, message: "Invalid appearance preset" });
+    const allowedAppearancePresets = new Set([
+      "default",
+      "midnight",
+      "light",
+      "cyber-purple",
+      "matrix",
+      "ocean",
+      "sunset",
+      "clean",
+      "forest",
+      "contrast",
+    ]);
+    const allowedDesignPresets = new Set(["classic", "focus", "rail", "canvas"]);
+    const update = {};
+
+    if (req.body?.appearancePreset !== undefined) {
+      const appearancePreset = String(req.body.appearancePreset || "");
+      if (!allowedAppearancePresets.has(appearancePreset)) {
+        return res.status(400).json({ success: false, message: "Invalid appearance preset" });
+      }
+      update.appearancePreset = appearancePreset;
+    }
+
+    if (req.body?.designPreset !== undefined) {
+      const designPreset = String(req.body.designPreset || "");
+      if (!allowedDesignPresets.has(designPreset)) {
+        return res.status(400).json({ success: false, message: "Invalid design preset" });
+      }
+      update.designPreset = designPreset;
+    }
+
+    if (Object.keys(update).length === 0) {
+      return res.status(400).json({ success: false, message: "No valid preference supplied" });
     }
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { $set: { appearancePreset } },
+      { $set: update },
       { new: true, runValidators: true }
     );
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
     return res.json({ success: true, user: serializeUser(user) });
   } catch (error) {
-    console.error("Appearance preference error:", error);
-    return res.status(500).json({ success: false, message: "Could not save appearance preference" });
+    console.error("Preference update error:", error);
+    return res.status(500).json({ success: false, message: "Could not save preference" });
   }
 });
 

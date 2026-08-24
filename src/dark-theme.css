@@ -5549,3 +5549,265 @@ html[data-appearance][data-theme] .kai-inline-code {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+
+/* ================================
+   WORKSPACE DESIGN PRESETS
+   `classic` intentionally has no override: it is the current default layout.
+================================ */
+
+/* Focus Workspace: compact navigation, centered study surface, calmer spacing. */
+html[data-design="focus"] .dashboard-main {
+  padding-left: 104px !important;
+}
+
+html[data-design="focus"] .dashboard-course-sidebar {
+  width: 76px !important;
+  padding: 18px 8px !important;
+  border-radius: 16px !important;
+  background: var(--theme-surface) !important;
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--theme-background) 60%, transparent) !important;
+}
+
+html[data-design="focus"] .dashboard-sidebar-brand {
+  justify-content: center !important;
+  padding: 2px 0 16px !important;
+}
+
+html[data-design="focus"] .dashboard-sidebar-brand strong,
+html[data-design="focus"] .dashboard-sidebar-label,
+html[data-design="focus"] .dashboard-sidebar-nav button span,
+html[data-design="focus"] .dashboard-sidebar-nav button svg:last-child,
+html[data-design="focus"] .dashboard-sidebar-bookmark span,
+html[data-design="focus"] .dashboard-profile-copy,
+html[data-design="focus"] .dashboard-sidebar-profile > svg {
+  display: none !important;
+}
+
+html[data-design="focus"] .dashboard-sidebar-nav {
+  gap: 8px !important;
+}
+
+html[data-design="focus"] .dashboard-sidebar-nav button,
+html[data-design="focus"] .dashboard-sidebar-bookmark {
+  justify-content: center !important;
+  padding: 11px 8px !important;
+}
+
+html[data-design="focus"] .dashboard-sidebar-profile {
+  justify-content: center !important;
+  padding: 12px 0 0 !important;
+}
+
+html[data-design="focus"] .dashboard-content-container,
+html[data-design="focus"] .dashboard-category-view {
+  width: min(100%, 1120px) !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+html[data-design="focus"] .dashboard-content-container {
+  border-radius: 16px !important;
+  padding: 20px !important;
+}
+
+html[data-design="focus"] .dashboard-card,
+html[data-design="focus"] .dashboard-course-card,
+html[data-design="focus"] .stat-card,
+html[data-design="focus"] .continue-learning {
+  border-radius: 14px !important;
+}
+
+html[data-design="focus"] .kai-main,
+html[data-design="focus"] .learn-page,
+html[data-design="focus"] .challenge-main,
+html[data-design="focus"] .roadmap-main,
+html[data-design="focus"] .courses-layout {
+  max-width: 1160px !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+/* Developer Rail: ultra-compact utility navigation and an edge-to-edge workspace. */
+html[data-design="rail"] .dashboard-page,
+html[data-design="rail"] .dashboard-page button,
+html[data-design="rail"] .dashboard-page input,
+html[data-design="rail"] .dashboard-page select {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace !important;
+}
+
+html[data-design="rail"] .dashboard-main {
+  padding-left: 82px !important;
+}
+
+html[data-design="rail"] .dashboard-course-sidebar {
+  top: 80px !important;
+  left: 0 !important;
+  width: 66px !important;
+  min-height: calc(100vh - 80px) !important;
+  padding: 18px 6px !important;
+  border-width: 0 1px 0 0 !important;
+  border-radius: 0 !important;
+  background: var(--theme-background) !important;
+  box-shadow: none !important;
+}
+
+html[data-design="rail"] .dashboard-sidebar-brand {
+  justify-content: center !important;
+  padding: 2px 0 18px !important;
+}
+
+html[data-design="rail"] .dashboard-sidebar-brand strong,
+html[data-design="rail"] .dashboard-sidebar-label,
+html[data-design="rail"] .dashboard-sidebar-nav button span,
+html[data-design="rail"] .dashboard-sidebar-nav button svg:last-child,
+html[data-design="rail"] .dashboard-sidebar-bookmark span,
+html[data-design="rail"] .dashboard-profile-copy,
+html[data-design="rail"] .dashboard-sidebar-profile > svg {
+  display: none !important;
+}
+
+html[data-design="rail"] .dashboard-sidebar-nav {
+  gap: 4px !important;
+}
+
+html[data-design="rail"] .dashboard-sidebar-nav button,
+html[data-design="rail"] .dashboard-sidebar-bookmark {
+  justify-content: center !important;
+  min-height: 40px !important;
+  padding: 9px 4px !important;
+  border-radius: 0 !important;
+}
+
+html[data-design="rail"] .dashboard-sidebar-nav button:hover {
+  transform: none !important;
+}
+
+html[data-design="rail"] .dashboard-sidebar-profile {
+  justify-content: center !important;
+  padding: 12px 0 0 !important;
+}
+
+html[data-design="rail"] .dashboard-content-container {
+  min-height: calc(100vh - 110px) !important;
+  margin-top: 0 !important;
+  border-width: 0 0 0 1px !important;
+  border-radius: 0 !important;
+}
+
+html[data-design="rail"] .dashboard-stats,
+html[data-design="rail"] .dashboard-grid {
+  border-radius: 0 !important;
+}
+
+html[data-design="rail"] .design-page,
+html[data-design="rail"] .appearance-page {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace !important;
+}
+
+/* Open Canvas: library navigation becomes a horizontal workspace toolbar. */
+html[data-design="canvas"] .dashboard-main {
+  display: block !important;
+  padding-left: 0 !important;
+}
+
+html[data-design="canvas"] .dashboard-course-sidebar {
+  position: static !important;
+  top: auto !important;
+  bottom: auto !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 14px 16px 0 !important;
+  padding: 12px 14px !important;
+  border-radius: 3px !important;
+  background: var(--theme-surface) !important;
+  box-shadow: none !important;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-brand {
+  display: inline-flex !important;
+  width: auto !important;
+  margin-right: 16px !important;
+  padding: 0 0 10px !important;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-label {
+  display: inline-block !important;
+  margin: 0 0 10px !important;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-nav {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  height: auto !important;
+  gap: 7px !important;
+  overflow-x: auto !important;
+  padding-bottom: 2px !important;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-nav button {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 142px !important;
+  border-radius: 2px !important;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-divider {
+  display: none !important;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-bookmark {
+  display: inline-flex !important;
+  width: auto !important;
+  margin-top: 10px !important;
+  padding: 7px 10px !important;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-profile {
+  display: none !important;
+}
+
+html[data-design="canvas"] .dashboard-content-container,
+html[data-design="canvas"] .dashboard-category-view {
+  width: auto !important;
+  margin: 14px 16px 22px !important;
+}
+
+html[data-design="canvas"] .dashboard-content-container {
+  border-radius: 3px !important;
+}
+
+html[data-design="canvas"] .dashboard-grid,
+html[data-design="canvas"] .dashboard-category-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+html[data-design="canvas"] .kai-page .kai-main,
+html[data-design="canvas"] .learn-page,
+html[data-design="canvas"] .challenge-main,
+html[data-design="canvas"] .roadmap-main,
+html[data-design="canvas"] .courses-layout {
+  width: min(100%, 1440px) !important;
+  max-width: 1440px !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+@media (max-width: 900px) {
+  html[data-design="focus"] .dashboard-main,
+  html[data-design="rail"] .dashboard-main {
+    padding-left: 8px !important;
+  }
+
+  html[data-design="focus"] .dashboard-course-sidebar,
+  html[data-design="rail"] .dashboard-course-sidebar {
+    min-height: 0 !important;
+  }
+
+  html[data-design="canvas"] .dashboard-grid,
+  html[data-design="canvas"] .dashboard-category-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
