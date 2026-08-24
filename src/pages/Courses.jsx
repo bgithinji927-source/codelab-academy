@@ -102,7 +102,7 @@ const categories = [
   },
 ];
 
-function Courses({ initialCategory = null, onBack, user }) {
+function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [courseCatalog, setCourseCatalog] = useState(courses);
@@ -350,6 +350,10 @@ function Courses({ initialCategory = null, onBack, user }) {
                           title={locked ? access?.unlockReason : label}
                           onClick={() => {
                             if (locked) return;
+                            if (!user?.id) {
+                              onRequireAuth?.();
+                              return;
+                            }
                             setSelectedCourse(course);
                           }}
                         >

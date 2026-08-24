@@ -346,11 +346,12 @@ function App() {
   // ================================
 
   if (showCourses) {
-    return (
+    return renderPublicWithAuth(
       <Courses
         initialCategory={showCourses.category || null}
         onBack={closeCourses}
         user={user}
+        onRequireAuth={() => setShowLogin(true)}
         onSelectCourse={(course) => {
           console.log("Selected course:", course);
         }}
