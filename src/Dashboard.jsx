@@ -26,6 +26,7 @@ import {
   Smartphone,
   Gamepad2,
   Boxes,
+  Video as VideoIcon,
   Palette,
   LayoutDashboard,
   LockKeyhole,
@@ -42,6 +43,7 @@ import courses from "./data/course";
 import ThemeToggle from "./components/ThemeToggle";
 import AppearanceSettings from "./pages/AppearanceSettings";
 import DesignSettings from "./pages/DesignSettings";
+import VideoTutorials from "./pages/VideoTutorials";
 import fetchWithAuth from "./utils/fetchWithAuth";
 import { buildFallbackCourseAccess, findCourseAccess } from "./utils/courseAccess";
 
@@ -107,6 +109,7 @@ const sidebarItems = [
   { label: "System Design", Icon: Boxes, category: "System Design" },
   { label: "Appearance", Icon: Palette, view: "appearance" },
   { label: "Design", Icon: LayoutDashboard, view: "design" },
+  { label: "Video Tutorials", Icon: VideoIcon, view: "videos" },
 ];
 
 function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
@@ -323,6 +326,10 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
     );
   }
 
+  if (activeView === "videos") {
+    return <VideoTutorials user={user} onBack={() => setActiveView("dashboard")} />;
+  }
+
   // Calculate stats from real data
   const completedChallenges = state.userProgress.dailyChallengesCompleted || 0;
   const inProgressCourses = state.courses.filter((c) => c.status === "in-progress" || (c.progress > 0 && c.progress < 100)).length;
@@ -388,13 +395,18 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
                     ? (activeView === "appearance" ? "active" : "")
                     : view === "design"
                       ? (activeView === "design" ? "active" : "")
-                      : (selectedCategory === category ? "active" : "")}
+                      : view === "videos"
+                        ? (activeView === "videos" ? "active" : "")
+                        : (selectedCategory === category ? "active" : "")}
                 onClick={() => {
                   if (view === "appearance") {
                     setActiveView("appearance");
                     setSelectedCategory(null);
                   } else if (view === "design") {
                     setActiveView("design");
+                    setSelectedCategory(null);
+                  } else if (view === "videos") {
+                    setActiveView("videos");
                     setSelectedCategory(null);
                   } else if (view === "dashboard") {
                     setActiveView("dashboard");

@@ -3,8 +3,28 @@ const jwt = require("jsonwebtoken");
 const Video = require("../models/Video");
 const ensureAuth = require("../middleware/ensureAuth");
 const { getVideoFile, streamVideo } = require("../lib/videoStorage");
+const { serializeVideo } = require("../lib/videoCatalog");
 
 const router = express.Router();
+
+router.get("/", ensureAuth, async (req, res) => {
+  try {
+    const videos = await Video.find({ active: true })
+      .sort({ createdAt: -1 })
+      .lean();
+    return res.json({
+      success: true,
+      count: videos.length,
+      videos: videos.map(serializeVideo),
+    });
+  } catch (error) {
+    console.error("Learner video library error:", error);
+    return res.status(503).json({
+      success: false,
+      message: "Video tutorials are temporarily unavailable",
+    });
+  }
+});
 
 function ensureVideoStreamAuth(req, res, next) {
   if (req.headers.authorization || req.cookies?.token) {
