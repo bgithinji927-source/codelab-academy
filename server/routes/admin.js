@@ -23,6 +23,18 @@ const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 const fetch = globalThis.fetch || ((...args) => import("node-fetch").then((module) => module.default(...args)));
 
+function extractAssistantText(data) {
+  const choice = data?.choices?.[0] || {};
+  const message = choice.message || {};
+  const content = message.content ?? choice.text ?? "";
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => typeof part === "string" ? part : part?.text || part?.content || "")
+      .join(" ");
+  }
+  return String(content || "");
+}
+
 const videoUploadDirectory = "/tmp/codelab-academy-video-uploads";
 fs.mkdirSync(videoUploadDirectory, { recursive: true });
 
@@ -357,27 +369,32 @@ router.post("/videos/generate-description", async (req, res) => {
       return res.status(400).json({ success: false, message: "Add a title, course, lesson, or topic first" });
     }
 
+    const requestBody = {
+      model: GROQ_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "You are Kai, a concise technical instructor. Write exactly one short sentence, no more than 24 words, describing an educational coding video. Do not use quotation marks, headings, or bullet points.",
+        },
+        {
+          role: "user",
+          content: `Write a short description for this tutorial. Title: ${title || "Untitled tutorial"}. Course: ${courseTitle || "General development"}. Lesson: ${lessonTitle || "General lesson"}. Topics: ${topics || "technical concepts"}.`,
+        },
+      ],
+      temperature: 0.35,
+      // Reasoning models can spend the entire small budget thinking and leave
+      // no visible answer. Give Kai enough room for a final short sentence.
+      max_tokens: 256,
+    };
+    if (/gpt-oss/i.test(GROQ_MODEL)) requestBody.reasoning_effort = "low";
+
     const response = await fetch(GROQ_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: [
-          {
-            role: "system",
-            content: "You are Kai, a concise technical instructor. Write exactly one short sentence, no more than 24 words, describing an educational coding video. Do not use quotation marks, headings, or bullet points.",
-          },
-          {
-            role: "user",
-            content: `Write a short description for this tutorial. Title: ${title || "Untitled tutorial"}. Course: ${courseTitle || "General development"}. Lesson: ${lessonTitle || "General lesson"}. Topics: ${topics || "technical concepts"}.`,
-          },
-        ],
-        temperature: 0.35,
-        max_tokens: 80,
-      }),
+      body: JSON.stringify(requestBody),
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
@@ -385,12 +402,17 @@ router.post("/videos/generate-description", async (req, res) => {
       return res.status(502).json({ success: false, message: "Kai could not generate the description right now" });
     }
 
-    const description = String(data?.choices?.[0]?.message?.content || "")
+    const description = extractAssistantText(data)
       .replace(/^\s*["'`]+|["'`]+\s*$/g, "")
       .replace(/\s+/g, " ")
       .trim();
     if (!description) {
-      return res.status(502).json({ success: false, message: "Kai returned an empty description" });
+      console.error("Kai returned no visible description text:", {
+        model: GROQ_MODEL,
+        finishReason: data?.choices?.[0]?.finish_reason || null,
+        hasChoices: Array.isArray(data?.choices) && data.choices.length > 0,
+      });
+      return res.status(502).json({ success: false, message: "Kai did not return a visible description. Please try again." });
     }
 
     return res.json({ success: true, description: description.slice(0, 240) });
