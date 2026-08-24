@@ -45,7 +45,7 @@ function DesignPreview({ preset }) {
   );
 }
 
-function DesignSettings({ user, onBack, onUserUpdated }) {
+function DesignSettings({ user, onBack, onUserUpdated, embedded = false }) {
   const [selectedDesign, setSelectedDesign] = useState(() => normalizeDesign(
     localStorage.getItem(designStorageKey(user?.id))
       || localStorage.getItem("codelabDesign:guest")
@@ -87,14 +87,14 @@ function DesignSettings({ user, onBack, onUserUpdated }) {
   };
 
   return (
-    <section className="design-page" aria-labelledby="design-title">
-      <div className="design-page-header">
+    <section className={`design-page${embedded ? " design-page-embedded" : ""}`} aria-labelledby="design-title">
+      {!embedded && <div className="design-page-header">
         <button type="button" className="design-back" onClick={onBack}>
           <ArrowLeft size={17} aria-hidden="true" />
           Back to dashboard
         </button>
         <ThemeToggle />
-      </div>
+      </div>}
 
       <div className="design-heading">
         <span className="design-kicker"><LayoutDashboard size={16} aria-hidden="true" /> WORKSPACE DESIGN</span>

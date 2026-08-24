@@ -11,7 +11,7 @@ import {
 import ThemeToggle from "../components/ThemeToggle";
 import "./AppearanceSettings.css";
 
-function AppearanceSettings({ user, onBack, onUserUpdated }) {
+function AppearanceSettings({ user, onBack, onUserUpdated, embedded = false }) {
   const [selectedAppearance, setSelectedAppearance] = useState(() => normalizeAppearance(
     localStorage.getItem(appearanceStorageKey(user?.id))
       || localStorage.getItem("codelabAppearance:guest")
@@ -52,14 +52,14 @@ function AppearanceSettings({ user, onBack, onUserUpdated }) {
   };
 
   return (
-    <section className="appearance-page" aria-labelledby="appearance-title">
-      <div className="appearance-page-header">
+    <section className={`appearance-page${embedded ? " appearance-page-embedded" : ""}`} aria-labelledby="appearance-title">
+      {!embedded && <div className="appearance-page-header">
         <button type="button" className="appearance-back" onClick={onBack}>
           <ArrowLeft size={17} aria-hidden="true" />
           Back to dashboard
         </button>
         <ThemeToggle />
-      </div>
+      </div>}
 
       <div className="appearance-heading">
         <span className="appearance-kicker"><Palette size={16} aria-hidden="true" /> ACCOUNT APPEARANCE</span>

@@ -27,8 +27,7 @@ import {
   Gamepad2,
   Boxes,
   Video as VideoIcon,
-  Palette,
-  LayoutDashboard,
+  Settings as SettingsIcon,
   LockKeyhole,
   CircleCheck,
 } from "lucide-react";
@@ -40,9 +39,7 @@ import LearningRoadmap from "./pages/LearningRoadmap";
 import AdminDashboard from "./pages/AdminDashboard";
 import createStore from "./data/store";
 import courses from "./data/course";
-import ThemeToggle from "./components/ThemeToggle";
-import AppearanceSettings from "./pages/AppearanceSettings";
-import DesignSettings from "./pages/DesignSettings";
+import SettingsPage from "./pages/Settings";
 import VideoTutorials from "./pages/VideoTutorials";
 import fetchWithAuth from "./utils/fetchWithAuth";
 import { buildFallbackCourseAccess, findCourseAccess } from "./utils/courseAccess";
@@ -107,8 +104,7 @@ const sidebarItems = [
   { label: "Mobile Development", Icon: Smartphone, category: "Mobile Development" },
   { label: "Game Development", Icon: Gamepad2, category: "Game Development" },
   { label: "System Design", Icon: Boxes, category: "System Design" },
-  { label: "Appearance", Icon: Palette, view: "appearance" },
-  { label: "Design", Icon: LayoutDashboard, view: "design" },
+  { label: "Settings", Icon: SettingsIcon, view: "settings" },
   { label: "Video Tutorials", Icon: VideoIcon, view: "videos" },
 ];
 
@@ -306,19 +302,9 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
     return <AdminDashboard user={user} onBack={() => setActiveView("dashboard")} />;
   }
 
-  if (activeView === "appearance") {
+  if (activeView === "settings") {
     return (
-      <AppearanceSettings
-        user={user}
-        onBack={() => setActiveView("dashboard")}
-        onUserUpdated={onUserUpdated}
-      />
-    );
-  }
-
-  if (activeView === "design") {
-    return (
-      <DesignSettings
+      <SettingsPage
         user={user}
         onBack={() => setActiveView("dashboard")}
         onUserUpdated={onUserUpdated}
@@ -361,8 +347,6 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
             </button>
           )}
 
-          <ThemeToggle />
-
           <button
             type="button"
             onClick={onLogout}
@@ -391,19 +375,14 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
                 title={label}
                 className={view === "dashboard"
                   ? (activeView === "dashboard" && !selectedCategory ? "active" : "")
-                  : view === "appearance"
-                    ? (activeView === "appearance" ? "active" : "")
-                    : view === "design"
-                      ? (activeView === "design" ? "active" : "")
-                      : view === "videos"
-                        ? (activeView === "videos" ? "active" : "")
-                        : (selectedCategory === category ? "active" : "")}
+                      : view === "settings"
+                    ? (activeView === "settings" ? "active" : "")
+                    : view === "videos"
+                      ? (activeView === "videos" ? "active" : "")
+                      : (selectedCategory === category ? "active" : "")}
                 onClick={() => {
-                  if (view === "appearance") {
-                    setActiveView("appearance");
-                    setSelectedCategory(null);
-                  } else if (view === "design") {
-                    setActiveView("design");
+                  if (view === "settings") {
+                    setActiveView("settings");
                     setSelectedCategory(null);
                   } else if (view === "videos") {
                     setActiveView("videos");
