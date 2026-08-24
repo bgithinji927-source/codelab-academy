@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
 
     appearancePreset: {
       type: String,
-      enum: ["default", "clean", "forest", "contrast"],
+      enum: ["default", "midnight", "light", "cyber-purple", "matrix", "ocean", "sunset", "clean", "forest", "contrast"],
       default: "default",
     },
 

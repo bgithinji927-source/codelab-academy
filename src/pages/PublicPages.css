@@ -671,3 +671,61 @@ html[data-appearance="contrast"] .public-demo-compose input { color: #ffffff; ba
   .public-footer-links { justify-content: flex-start; }
   .public-footer-note { justify-self: start; }
 }
+
+
+/* Public pages consume the same centralized appearance tokens as the authenticated app. */
+html[data-appearance] .public-page-shell {
+  --public-bg: var(--theme-background);
+  --public-surface: var(--theme-surface);
+  --public-surface-soft: var(--theme-surface-elevated);
+  --public-border: var(--theme-border);
+  --public-border-strong: var(--theme-accent);
+  --public-text: var(--theme-text-primary);
+  --public-muted: var(--theme-text-secondary);
+  --public-green: var(--theme-accent);
+  --public-green-soft: var(--theme-accent-hover);
+  --public-shadow: 0 20px 70px rgba(0, 0, 0, 0.2);
+}
+
+html[data-appearance] .public-navbar,
+html[data-appearance] .public-demo-sidebar,
+html[data-appearance] .public-demo-chat {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-appearance] .public-page-shell .public-primary-button,
+html[data-appearance] .public-page-shell .public-demo-compose button {
+  background: var(--theme-button-background) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-button-text) !important;
+}
+
+html[data-appearance] .public-page-shell .public-secondary-button,
+html[data-appearance] .public-page-shell .public-text-button,
+html[data-appearance] .public-page-shell .public-sign-in,
+html[data-appearance] .public-page-shell .public-get-started {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-accent) !important;
+}
+
+html[data-appearance] .public-page-shell .public-demo-bubble,
+html[data-appearance] .public-page-shell .public-challenge-card,
+html[data-appearance] .public-page-shell .public-feature-card,
+html[data-appearance] .public-page-shell .public-roadmap-card,
+html[data-appearance] .public-page-shell .public-price-card {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance] .public-page-shell .public-demo-compose input {
+  background: var(--theme-input-background) !important;
+  border-color: var(--theme-input-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance] .public-page-shell .public-demo-compose input::placeholder {
+  color: var(--theme-text-muted) !important;
+}

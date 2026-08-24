@@ -183,9 +183,9 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const savedAppearance = user?.appearancePreset
-      || localStorage.getItem(appearanceStorageKey(user?.id))
-      || localStorage.getItem("codelabAppearance:guest");
+    const savedAppearance = localStorage.getItem(appearanceStorageKey(user?.id))
+      || localStorage.getItem("codelabAppearance:guest")
+      || user?.appearancePreset;
     applyAppearance(normalizeAppearance(savedAppearance));
   }, [user]);
 

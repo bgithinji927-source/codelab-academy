@@ -4575,3 +4575,758 @@ html[data-appearance="contrast"] .challenge-page .info-card li::before,
 html[data-appearance="contrast"] .challenge-page .challenge-timer {
   color: #39ff14 !important;
 }
+
+
+/* Centralized appearance token bridge.
+   Layout and component structure remain unchanged; only visual tokens are remapped. */
+:root {
+  --theme-background: #030a06;
+  --theme-surface: #0d1b15;
+  --theme-surface-elevated: #12271d;
+  --theme-border: #244536;
+  --theme-text-primary: #e8f5ed;
+  --theme-text-secondary: #b8d2c1;
+  --theme-text-muted: #8ea998;
+  --theme-accent: #39ff14;
+  --theme-accent-hover: #7aff4b;
+  --theme-accent-text: #06120a;
+  --theme-success: #39ff14;
+  --theme-warning: #fbbf24;
+  --theme-error: #ff7b7b;
+  --theme-info: #5ed7ff;
+  --theme-input-background: #08150f;
+  --theme-input-border: #3c7e50;
+  --theme-button-background: #39ff14;
+  --theme-button-text: #06120a;
+  --theme-code-background: #010503;
+  --theme-code-text: #d7f7df;
+  --dark-bg: var(--theme-background);
+  --dark-surface: var(--theme-surface);
+  --dark-surface-raised: var(--theme-surface-elevated);
+  --dark-surface-soft: var(--theme-surface-elevated);
+  --dark-border: var(--theme-border);
+  --dark-text: var(--theme-text-primary);
+  --dark-muted: var(--theme-text-muted);
+  --emerald: var(--theme-success);
+  --emerald-deep: var(--theme-accent-hover);
+  --emerald-shine: var(--theme-accent);
+  --terminal-black: var(--theme-background);
+  --terminal-green: var(--theme-accent);
+}
+
+/* Preserve the existing Light mode when the unchanged Classic Terminal preset is selected. */
+html[data-appearance="default"][data-theme="light"] {
+  --theme-background: #f3fbf4 !important;
+  --theme-surface: #ffffff !important;
+  --theme-surface-elevated: #ffffff !important;
+  --theme-border: #b8d8bf !important;
+  --theme-text-primary: #173520 !important;
+  --theme-text-secondary: #3f6149 !important;
+  --theme-text-muted: #557260 !important;
+  --theme-accent: #168a32 !important;
+  --theme-accent-hover: #0f7029 !important;
+  --theme-accent-text: #06120a !important;
+  --theme-success: #168a32 !important;
+  --theme-warning: #a05a00 !important;
+  --theme-error: #b42318 !important;
+  --theme-info: #0b6ea8 !important;
+  --theme-input-background: #ffffff !important;
+  --theme-input-border: #9bd2a5 !important;
+  --theme-button-background: #168a32 !important;
+  --theme-button-text: #06120a !important;
+  --theme-code-background: #07110d !important;
+  --theme-code-text: #e7f7e9 !important;
+}
+
+html,
+html body,
+html #root {
+  background: var(--theme-background) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html .app,
+html .hero,
+html .hero-visual,
+html .dashboard-page,
+html .dashboard-main,
+html .dashboard-content-container,
+html .courses-page,
+html .courses-container,
+html .courses-layout,
+html .learn-page,
+html .conversation-container,
+html .kai-page,
+html .kai-main,
+html .challenge-page,
+html .roadmap-page,
+html .roadmap-main,
+html .admin-page,
+html .admin-main,
+html .appearance-page {
+  background: var(--theme-background) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html .navbar,
+html .dashboard-navbar,
+html .dashboard-course-sidebar,
+html .courses-navbar,
+html .category-sidebar,
+html .learn-navbar,
+html .kai-header,
+html .challenge-header,
+html .roadmap-header,
+html .admin-topbar,
+html .admin-sidebar,
+html .appearance-page-header {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html .dashboard-card,
+html .dashboard-welcome,
+html .category-card,
+html .category-overview-card,
+html .course-card,
+html .course-item,
+html .intro-card,
+html .sidebar-card,
+html .path-card,
+html .module-card,
+html .progress-card,
+html .challenge-card,
+html .info-card,
+html .leaderboard-card,
+html .admin-panel,
+html .admin-stat-card,
+html .admin-course-panel,
+html .admin-table-wrap,
+html .login-modal,
+html .signup-modal,
+html .appearance-card {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html .dashboard-card:hover,
+html .category-card:hover,
+html .course-card:hover,
+html .path-card:hover,
+html .module-card:hover,
+html .appearance-card:hover,
+html .appearance-card.selected {
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html .dashboard-welcome,
+html .courses-hero {
+  background: var(--theme-surface-elevated) !important;
+}
+
+html .dashboard-card h3,
+html .dashboard-card strong,
+html .dashboard-section-title,
+html .dashboard-section-heading h2,
+html .dashboard-welcome h1,
+html .dashboard-welcome p,
+html .category-card h3,
+html .course-card h3,
+html .course-card strong,
+html .course-category-title h2,
+html .course-category-heading h1,
+html .course-category-heading h2,
+html .overview-card-copy h3,
+html .subcourse-heading h2,
+html .path-card h3,
+html .module-info h3,
+html .progress-header h3,
+html .challenge-header-info h1,
+html .challenge-details h3,
+html .info-card h4,
+html .entry-info strong,
+html .roadmap-title h1,
+html .roadmap-info h2,
+html .appearance-heading h1,
+html .appearance-card-copy strong,
+html .login-modal h2,
+html .signup-modal h2,
+html .admin-panel h1,
+html .admin-panel h2,
+html .admin-panel h3 {
+  color: var(--theme-text-primary) !important;
+}
+
+html .dashboard-card p,
+html .dashboard-card span,
+html .dashboard-user-name small,
+html .hero-description,
+html .feature p,
+html .section-heading p,
+html .category-card p,
+html .course-card p,
+html .overview-card-copy p,
+html .challenge-description,
+html .challenge-answer-hint,
+html .info-card li,
+html .entry-info p,
+html .path-card p,
+html .path-meta,
+html .module-info p,
+html .progress-message,
+html .appearance-heading p,
+html .appearance-card-copy span,
+html .code-editor-description,
+html .admin-panel p,
+html .admin-muted-copy,
+html .login-modal > p,
+html .signup-modal > p {
+  color: var(--theme-text-secondary) !important;
+}
+
+html .nav-links a,
+html .dashboard-sidebar-nav button,
+html .dashboard-sidebar-bookmark,
+html .category-button,
+html .courses-back-button,
+html .back-to-categories,
+html .learn-back,
+html .kai-back-btn,
+html .challenge-back-btn,
+html .appearance-back,
+html .appearance-kicker,
+html .eyebrow,
+html .section-kicker,
+html .courses-eyebrow,
+html .dashboard-eyebrow,
+html .course-level,
+html .dashboard-course-level,
+html .challenge-kicker,
+html .code-editor-kicker,
+html .appearance-selected-indicator,
+html .admin-eyebrow,
+html .logo-text .lab,
+html .dashboard-logo .lab,
+html .courses-logo .lab {
+  color: var(--theme-accent) !important;
+}
+
+html .dashboard-sidebar-nav button.active,
+html .dashboard-sidebar-nav button:hover,
+html .category-button.active,
+html .category-button:hover,
+html .dashboard-course-sidebar button.active,
+html .dashboard-course-sidebar button:hover,
+html .tab.active,
+html .tab:hover {
+  color: var(--theme-accent) !important;
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html input,
+html textarea,
+html select,
+html .kai-input,
+html .learner-input-area,
+html .input-wrapper,
+html .admin-search,
+html .login-modal input,
+html .signup-modal input {
+  background: var(--theme-input-background) !important;
+  border-color: var(--theme-input-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html input::placeholder,
+html textarea::placeholder,
+html .kai-input::placeholder,
+html .challenge-answer::placeholder,
+html .login-modal input::placeholder,
+html .signup-modal input::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+html input:focus,
+html textarea:focus,
+html select:focus,
+html .kai-input:focus,
+html .challenge-answer:focus {
+  border-color: var(--theme-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-accent) 22%, transparent) !important;
+}
+
+html .primary-button,
+html .get-started,
+html .start-learning,
+html .course-card-button,
+html .course-card button,
+html .dashboard-card button,
+html .send-btn,
+html .submit-btn,
+html .next-lesson,
+html .module-action-btn,
+html .admin-primary-button,
+html .appearance-save-button {
+  background: var(--theme-button-background) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-button-text) !important;
+  box-shadow: none !important;
+}
+
+html .primary-button:hover,
+html .get-started:hover,
+html .start-learning:hover,
+html .course-card-button:hover,
+html .course-card button:hover,
+html .dashboard-card button:hover,
+html .send-btn:hover,
+html .submit-btn:hover,
+html .next-lesson:hover,
+html .module-action-btn:hover,
+html .admin-primary-button:hover,
+html .appearance-save-button:hover {
+  background: var(--theme-accent-hover) !important;
+  color: var(--theme-accent-text) !important;
+}
+
+html .secondary-button,
+html .sign-in,
+html .admin-secondary-button,
+html .learn-back,
+html .kai-back-btn,
+html .challenge-back-btn,
+html .appearance-back,
+html .theme-toggle {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-accent) !important;
+}
+
+html .secondary-button:hover,
+html .sign-in:hover,
+html .admin-secondary-button:hover,
+html .learn-back:hover,
+html .kai-back-btn:hover,
+html .challenge-back-btn:hover,
+html .appearance-back:hover,
+html .theme-toggle:hover {
+  background: var(--theme-surface-elevated) !important;
+  color: var(--theme-accent-hover) !important;
+}
+
+html .code-block,
+html .kai-code-block,
+html .code-editor,
+html .code-editor-placeholder,
+html .code-editor-input,
+html .terminal-panel,
+html .terminal-output,
+html pre {
+  background: var(--theme-code-background) !important;
+  color: var(--theme-code-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html .code-block code,
+html .kai-code-block code,
+html .code-editor-input,
+html .terminal-panel,
+html .terminal-output {
+  color: var(--theme-code-text) !important;
+}
+
+html .success-message,
+html .challenge-feedback-panel.success,
+html .admin-notice.success,
+html .appearance-success {
+  color: var(--theme-success) !important;
+  border-color: var(--theme-success) !important;
+}
+
+html .error-message,
+html .challenge-feedback-panel.error,
+html .admin-notice.error,
+html .appearance-error {
+  color: var(--theme-error) !important;
+  border-color: var(--theme-error) !important;
+}
+
+html .warning-message,
+html .admin-notice.warning {
+  color: var(--theme-warning) !important;
+  border-color: var(--theme-warning) !important;
+}
+
+html .info-message,
+html .admin-notice.info {
+  color: var(--theme-info) !important;
+  border-color: var(--theme-info) !important;
+}
+
+html .appearance-preview,
+html .appearance-card-copy,
+html .appearance-swatch-row,
+html .appearance-selected-indicator {
+  color: var(--theme-text-primary);
+}
+
+
+/* Appearance specificity shield: appearance selections must win over legacy
+   data-theme light/dark rules while preserving the existing layout. */
+html[data-appearance] .app,
+html[data-appearance] .hero,
+html[data-appearance] .hero-visual,
+html[data-appearance] .dashboard-page,
+html[data-appearance] .dashboard-main,
+html[data-appearance] .dashboard-content-container,
+html[data-appearance] .courses-page,
+html[data-appearance] .courses-container,
+html[data-appearance] .courses-layout,
+html[data-appearance] .learn-page,
+html[data-appearance] .conversation-container,
+html[data-appearance] .kai-page,
+html[data-appearance] .kai-main,
+html[data-appearance] .challenge-page,
+html[data-appearance] .roadmap-page,
+html[data-appearance] .roadmap-main,
+html[data-appearance] .admin-page,
+html[data-appearance] .admin-main,
+html[data-appearance] .appearance-page {
+  background: var(--theme-background) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance] .navbar,
+html[data-appearance] .dashboard-navbar,
+html[data-appearance] .dashboard-course-sidebar,
+html[data-appearance] .courses-navbar,
+html[data-appearance] .category-sidebar,
+html[data-appearance] .learn-navbar,
+html[data-appearance] .kai-header,
+html[data-appearance] .challenge-header,
+html[data-appearance] .roadmap-header,
+html[data-appearance] .admin-topbar,
+html[data-appearance] .admin-sidebar,
+html[data-appearance] .appearance-page-header,
+html[data-appearance] .dashboard-sidebar {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance] .dashboard-card,
+html[data-appearance] .dashboard-welcome,
+html[data-appearance] .category-card,
+html[data-appearance] .category-overview-card,
+html[data-appearance] .course-card,
+html[data-appearance] .course-item,
+html[data-appearance] .intro-card,
+html[data-appearance] .sidebar-card,
+html[data-appearance] .path-card,
+html[data-appearance] .module-card,
+html[data-appearance] .progress-card,
+html[data-appearance] .challenge-card,
+html[data-appearance] .info-card,
+html[data-appearance] .leaderboard-card,
+html[data-appearance] .admin-panel,
+html[data-appearance] .admin-stat-card,
+html[data-appearance] .admin-course-panel,
+html[data-appearance] .admin-table-wrap,
+html[data-appearance] .login-modal,
+html[data-appearance] .signup-modal,
+html[data-appearance] .appearance-card {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance] .dashboard-welcome,
+html[data-appearance] .courses-hero,
+html[data-appearance] .path-card:hover,
+html[data-appearance] .path-card.active,
+html[data-appearance] .module-card:hover,
+html[data-appearance] .dashboard-card:hover,
+html[data-appearance] .category-card:hover,
+html[data-appearance] .course-card:hover,
+html[data-appearance] .appearance-card:hover,
+html[data-appearance] .appearance-card.selected {
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html[data-appearance] h1,
+html[data-appearance] h2,
+html[data-appearance] h3,
+html[data-appearance] h4,
+html[data-appearance] h5,
+html[data-appearance] h6,
+html[data-appearance] .dashboard-card strong,
+html[data-appearance] .course-card strong,
+html[data-appearance] .entry-info strong {
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance] p,
+html[data-appearance] li,
+html[data-appearance] label,
+html[data-appearance] .dashboard-card span,
+html[data-appearance] .dashboard-card p,
+html[data-appearance] .course-card p,
+html[data-appearance] .entry-info p,
+html[data-appearance] .path-meta,
+html[data-appearance] .admin-muted-copy {
+  color: var(--theme-text-secondary) !important;
+}
+
+html[data-appearance] input,
+html[data-appearance] textarea,
+html[data-appearance] select,
+html[data-appearance] .kai-input,
+html[data-appearance] .learner-input-area,
+html[data-appearance] .input-wrapper,
+html[data-appearance] .admin-search,
+html[data-appearance] .login-modal input,
+html[data-appearance] .signup-modal input {
+  background: var(--theme-input-background) !important;
+  border-color: var(--theme-input-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance] input::placeholder,
+html[data-appearance] textarea::placeholder,
+html[data-appearance] select::placeholder,
+html[data-appearance] .kai-input::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+html[data-appearance] .primary-button,
+html[data-appearance] .get-started,
+html[data-appearance] .start-learning,
+html[data-appearance] .course-card-button,
+html[data-appearance] .course-card button,
+html[data-appearance] .dashboard-card button,
+html[data-appearance] .send-btn,
+html[data-appearance] .submit-btn,
+html[data-appearance] .next-lesson,
+html[data-appearance] .module-action-btn,
+html[data-appearance] .admin-primary-button,
+html[data-appearance] .appearance-save-button {
+  background: var(--theme-button-background) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-button-text) !important;
+}
+
+html[data-appearance] .code-block,
+html[data-appearance] .kai-code-block,
+html[data-appearance] .code-editor,
+html[data-appearance] .code-editor-placeholder,
+html[data-appearance] .terminal-panel,
+html[data-appearance] .terminal-output,
+html[data-appearance] pre {
+  background: var(--theme-code-background) !important;
+  color: var(--theme-code-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+
+/* Final high-specificity appearance rules. These intentionally follow legacy
+   light/dark overrides so the selected appearance cannot be partially replaced. */
+html[data-appearance][data-theme] .app,
+html[data-appearance][data-theme] .hero,
+html[data-appearance][data-theme] .dashboard-page,
+html[data-appearance][data-theme] .dashboard-main,
+html[data-appearance][data-theme] .dashboard-content-container,
+html[data-appearance][data-theme] .courses-page,
+html[data-appearance][data-theme] .courses-container,
+html[data-appearance][data-theme] .learn-page,
+html[data-appearance][data-theme] .conversation-container,
+html[data-appearance][data-theme] .kai-page,
+html[data-appearance][data-theme] .kai-main,
+html[data-appearance][data-theme] .challenge-page,
+html[data-appearance][data-theme] .roadmap-page,
+html[data-appearance][data-theme] .roadmap-main,
+html[data-appearance][data-theme] .admin-page,
+html[data-appearance][data-theme] .appearance-page {
+  background: var(--theme-background) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .dashboard-welcome,
+html[data-appearance][data-theme] .dashboard-card,
+html[data-appearance][data-theme] .category-card,
+html[data-appearance][data-theme] .category-overview-card,
+html[data-appearance][data-theme] .course-card,
+html[data-appearance][data-theme] .course-item,
+html[data-appearance][data-theme] .intro-card,
+html[data-appearance][data-theme] .path-card,
+html[data-appearance][data-theme] .module-card,
+html[data-appearance][data-theme] .progress-card,
+html[data-appearance][data-theme] .challenge-card,
+html[data-appearance][data-theme] .info-card,
+html[data-appearance][data-theme] .admin-panel,
+html[data-appearance][data-theme] .admin-stat-card,
+html[data-appearance][data-theme] .admin-course-panel,
+html[data-appearance][data-theme] .admin-table-wrap,
+html[data-appearance][data-theme] .login-modal,
+html[data-appearance][data-theme] .signup-modal,
+html[data-appearance][data-theme] .appearance-card {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .dashboard-welcome {
+  background: var(--theme-surface-elevated) !important;
+}
+
+html[data-appearance][data-theme] h1,
+html[data-appearance][data-theme] h2,
+html[data-appearance][data-theme] h3,
+html[data-appearance][data-theme] h4,
+html[data-appearance][data-theme] h5,
+html[data-appearance][data-theme] h6,
+html[data-appearance][data-theme] .dashboard-welcome h1,
+html[data-appearance][data-theme] .dashboard-welcome p,
+html[data-appearance][data-theme] .dashboard-card h3,
+html[data-appearance][data-theme] .dashboard-card strong,
+html[data-appearance][data-theme] .course-card h3,
+html[data-appearance][data-theme] .course-card strong {
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] p,
+html[data-appearance][data-theme] li,
+html[data-appearance][data-theme] label,
+html[data-appearance][data-theme] .dashboard-card p,
+html[data-appearance][data-theme] .dashboard-card span,
+html[data-appearance][data-theme] .course-card p,
+html[data-appearance][data-theme] .entry-info p,
+html[data-appearance][data-theme] .admin-muted-copy {
+  color: var(--theme-text-secondary) !important;
+}
+
+html[data-appearance][data-theme] input,
+html[data-appearance][data-theme] textarea,
+html[data-appearance][data-theme] select,
+html[data-appearance][data-theme] .kai-input,
+html[data-appearance][data-theme] .learner-input-area,
+html[data-appearance][data-theme] .admin-search,
+html[data-appearance][data-theme] .login-modal input,
+html[data-appearance][data-theme] .signup-modal input {
+  background: var(--theme-input-background) !important;
+  border-color: var(--theme-input-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] input::placeholder,
+html[data-appearance][data-theme] textarea::placeholder,
+html[data-appearance][data-theme] .kai-input::placeholder,
+html[data-appearance][data-theme] .login-modal input::placeholder,
+html[data-appearance][data-theme] .signup-modal input::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+html[data-appearance][data-theme] .primary-button,
+html[data-appearance][data-theme] .get-started,
+html[data-appearance][data-theme] .start-learning,
+html[data-appearance][data-theme] .course-card button,
+html[data-appearance][data-theme] .dashboard-card button,
+html[data-appearance][data-theme] .send-btn,
+html[data-appearance][data-theme] .submit-btn,
+html[data-appearance][data-theme] .next-lesson,
+html[data-appearance][data-theme] .module-action-btn,
+html[data-appearance][data-theme] .admin-primary-button,
+html[data-appearance][data-theme] .appearance-save-button {
+  background: var(--theme-button-background) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-button-text) !important;
+}
+
+html[data-appearance][data-theme] .secondary-button,
+html[data-appearance][data-theme] .sign-in,
+html[data-appearance][data-theme] .admin-secondary-button,
+html[data-appearance][data-theme] .learn-back,
+html[data-appearance][data-theme] .kai-back-btn,
+html[data-appearance][data-theme] .challenge-back-btn,
+html[data-appearance][data-theme] .appearance-back,
+html[data-appearance][data-theme] .theme-toggle {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-accent) !important;
+}
+
+html[data-appearance][data-theme] .code-block,
+html[data-appearance][data-theme] .kai-code-block,
+html[data-appearance][data-theme] .code-editor,
+html[data-appearance][data-theme] .code-editor-placeholder,
+html[data-appearance][data-theme] .terminal-panel,
+html[data-appearance][data-theme] .terminal-output,
+html[data-appearance][data-theme] pre {
+  background: var(--theme-code-background) !important;
+  color: var(--theme-code-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+
+/* Course library navigation and category-card token coverage. */
+html[data-appearance][data-theme] .courses-hero {
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .courses-back-button,
+html[data-appearance][data-theme] .back-to-categories {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-accent) !important;
+}
+
+html[data-appearance][data-theme] .category-button,
+html[data-appearance][data-theme] .category-overview-card {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .category-button:hover,
+html[data-appearance][data-theme] .category-button.active,
+html[data-appearance][data-theme] .category-overview-card:hover {
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html[data-appearance][data-theme] .category-button-copy strong,
+html[data-appearance][data-theme] .overview-card-copy strong,
+html[data-appearance][data-theme] .category-sidebar-heading strong,
+html[data-appearance][data-theme] .course-category-title h2 {
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .category-button-copy small,
+html[data-appearance][data-theme] .overview-card-copy span,
+html[data-appearance][data-theme] .overview-card-copy small,
+html[data-appearance][data-theme] .category-sidebar-heading span,
+html[data-appearance][data-theme] .course-category-title p,
+html[data-appearance][data-theme] .subcourse-count {
+  color: var(--theme-text-secondary) !important;
+}
+
+html[data-appearance][data-theme] .category-arrow,
+html[data-appearance][data-theme] .category-button-icon,
+html[data-appearance][data-theme] .overview-icon,
+html[data-appearance][data-theme] .category-overview-card > svg,
+html[data-appearance][data-theme] .course-category-icon {
+  color: var(--theme-accent) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-appearance][data-theme] .start-course-button {
+  background: var(--theme-button-background) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-button-text) !important;
+}

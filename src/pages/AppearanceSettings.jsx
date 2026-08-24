@@ -13,7 +13,10 @@ import "./AppearanceSettings.css";
 
 function AppearanceSettings({ user, onBack, onUserUpdated }) {
   const [selectedAppearance, setSelectedAppearance] = useState(() => normalizeAppearance(
-    user?.appearancePreset || localStorage.getItem(appearanceStorageKey(user?.id)) || DEFAULT_APPEARANCE
+    localStorage.getItem(appearanceStorageKey(user?.id))
+      || localStorage.getItem("codelabAppearance:guest")
+      || user?.appearancePreset
+      || DEFAULT_APPEARANCE
   ));
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -79,9 +82,29 @@ function AppearanceSettings({ user, onBack, onUserUpdated }) {
               disabled={isSaving}
               aria-pressed={isSelected}
             >
-              <span className="appearance-preview" data-preview={preset.id}>
+              <span
+                className="appearance-preview"
+                data-preview={preset.id}
+                style={{
+                  "--preview-bg": preset.tokens.background,
+                  "--preview-surface": preset.tokens.surface,
+                  "--preview-elevated": preset.tokens.surfaceElevated,
+                  "--preview-border": preset.tokens.border,
+                  "--preview-text": preset.tokens.textPrimary,
+                  "--preview-muted": preset.tokens.textMuted,
+                  "--preview-accent": preset.tokens.accent,
+                  "--preview-input": preset.tokens.inputBackground,
+                  "--preview-input-border": preset.tokens.inputBorder,
+                  "--preview-code": preset.tokens.codeBackground,
+                  "--preview-code-text": preset.tokens.codeText,
+                  "--preview-success": preset.tokens.success,
+                }}
+              >
                 <span className="appearance-preview-bar" />
                 <span className="appearance-preview-content"><i /><i /><i /></span>
+                <span className="appearance-preview-input" />
+                <span className="appearance-preview-code">&lt;/&gt;</span>
+                <span className="appearance-preview-state">OK</span>
                 <span className="appearance-preview-button" />
               </span>
               <span className="appearance-card-copy">

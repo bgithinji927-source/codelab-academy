@@ -343,3 +343,71 @@ html[data-appearance="contrast"] #root {
     flex-direction: column;
   }
 }
+
+
+/* Token-driven previews: the samples use the same palette values applied to the app. */
+.appearance-preview {
+  background: var(--preview-bg) !important;
+  border-color: var(--preview-border) !important;
+}
+
+.appearance-preview-bar {
+  background: var(--preview-surface) !important;
+  border-bottom-color: var(--preview-border) !important;
+}
+
+.appearance-preview-content i {
+  background: var(--preview-border) !important;
+}
+
+.appearance-preview-content i:nth-child(2) {
+  background: var(--preview-muted) !important;
+}
+
+.appearance-preview-content i:nth-child(3) {
+  background: var(--preview-accent) !important;
+}
+
+.appearance-preview-input {
+  position: absolute;
+  left: 13px;
+  bottom: 19px;
+  display: block;
+  width: 48px;
+  height: 12px;
+  border: 1px solid var(--preview-input-border);
+  background: var(--preview-input);
+}
+
+.appearance-preview-code {
+  position: absolute;
+  left: 72px;
+  bottom: 20px;
+  display: block;
+  color: var(--preview-code-text);
+  font: 9px/1 "Monaco", "Courier New", monospace;
+  letter-spacing: 0.2px;
+}
+
+.appearance-preview-state {
+  position: absolute;
+  left: 102px;
+  bottom: 19px;
+  display: block;
+  padding: 2px 4px;
+  color: var(--preview-code);
+  background: var(--preview-success);
+  font-size: 7px;
+  font-weight: 900;
+}
+
+.appearance-preview-button {
+  right: 13px;
+  bottom: 18px;
+  background: var(--preview-accent) !important;
+  box-shadow: none !important;
+}
+
+.appearance-preview[data-preview="contrast"] .appearance-preview-state {
+  color: #000000;
+}
