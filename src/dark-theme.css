@@ -5330,3 +5330,222 @@ html[data-appearance][data-theme] .start-course-button {
   border-color: var(--theme-accent) !important;
   color: var(--theme-button-text) !important;
 }
+
+
+/* Learn with Kai layout and appearance repair. Keep the existing two-column
+   structure, but prevent global theme rules from squeezing the conversation. */
+html[data-appearance][data-theme] .kai-main {
+  width: min(100%, 1400px) !important;
+  max-width: 1400px !important;
+  min-width: 0 !important;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px) !important;
+  background: var(--theme-background) !important;
+}
+
+html[data-appearance][data-theme] .kai-container,
+html[data-appearance][data-theme] .kai-messages,
+html[data-appearance][data-theme] .kai-input-area,
+html[data-appearance][data-theme] .kai-sidebar,
+html[data-appearance][data-theme] .message,
+html[data-appearance][data-theme] .message > div:last-child {
+  min-width: 0 !important;
+}
+
+html[data-appearance][data-theme] .kai-container {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .kai-header,
+html[data-appearance][data-theme] .kai-header-title,
+html[data-appearance][data-theme] .kai-header-title h1,
+html[data-appearance][data-theme] .kai-header-title p,
+html[data-appearance][data-theme] .kai-icon {
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .kai-header-title p {
+  color: var(--theme-text-secondary) !important;
+}
+
+html[data-appearance][data-theme] .kai-icon,
+html[data-appearance][data-theme] .kai-back-btn,
+html[data-appearance][data-theme] .sample-questions h3,
+html[data-appearance][data-theme] .sample-btn,
+html[data-appearance][data-theme] .sidebar-card li::before {
+  color: var(--theme-accent) !important;
+}
+
+html[data-appearance][data-theme] .kai-messages {
+  width: 100% !important;
+  background: var(--theme-surface) !important;
+}
+
+/* The homepage uses `.kai-message` for a floating marketing card. LearnWithKai
+   reuses that class for normal chat rows, so explicitly return those rows to
+   the conversation flow before applying bubble colors and sizing. */
+html[data-appearance][data-theme] .kai-page .kai-message {
+  position: static !important;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  z-index: auto !important;
+  width: 100% !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-appearance][data-theme] .message {
+  display: flex !important;
+  width: 100% !important;
+  align-items: flex-start !important;
+}
+
+html[data-appearance][data-theme] .message > div:last-child {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+html[data-appearance][data-theme] .message-bubble,
+html[data-appearance][data-theme] .kai-message .message-bubble,
+html[data-appearance][data-theme] .user-message .message-bubble {
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
+html[data-appearance][data-theme] .kai-message .message-bubble {
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .user-message > div:last-child {
+  flex: 0 1 760px !important;
+  width: min(100%, 760px) !important;
+  max-width: 760px !important;
+}
+
+html[data-appearance][data-theme] .user-message .message-bubble {
+  background: var(--theme-accent) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-accent-text) !important;
+}
+
+html[data-appearance][data-theme] .kai-message .message-bubble,
+html[data-appearance][data-theme] .kai-message .message-bubble p,
+html[data-appearance][data-theme] .kai-message .message-bubble strong,
+html[data-appearance][data-theme] .user-message .message-bubble,
+html[data-appearance][data-theme] .user-message .message-bubble p {
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .user-message .message-bubble,
+html[data-appearance][data-theme] .user-message .message-bubble p {
+  color: var(--theme-accent-text) !important;
+}
+
+html[data-appearance][data-theme] .sample-questions {
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-appearance][data-theme] .sample-btn {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .sample-btn:hover {
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-accent) !important;
+}
+
+html[data-appearance][data-theme] .kai-input-area {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-appearance][data-theme] .kai-input-area .input-wrapper {
+  background: var(--theme-input-background) !important;
+  border-color: var(--theme-input-border) !important;
+}
+
+html[data-appearance][data-theme] .kai-input-area .kai-input {
+  background: transparent !important;
+  color: var(--theme-text-primary) !important;
+  border-color: transparent !important;
+}
+
+html[data-appearance][data-theme] .kai-input-area .send-btn {
+  background: var(--theme-button-background) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-button-text) !important;
+}
+
+html[data-appearance][data-theme] .kai-input-area .input-hint {
+  color: var(--theme-text-muted) !important;
+}
+
+html[data-appearance][data-theme] .kai-sidebar .sidebar-card {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .kai-sidebar .sidebar-card h3 {
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance][data-theme] .kai-sidebar .sidebar-card li,
+html[data-appearance][data-theme] .kai-sidebar .sidebar-card p {
+  color: var(--theme-text-secondary) !important;
+}
+
+html[data-appearance][data-theme] .kai-avatar {
+  background: var(--theme-accent) !important;
+  color: var(--theme-accent-text) !important;
+}
+
+html[data-appearance][data-theme] .kai-code-wrapper {
+  background: var(--theme-code-background) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-appearance][data-theme] .kai-code-header {
+  background: var(--theme-surface-elevated) !important;
+  border-bottom-color: var(--theme-border) !important;
+}
+
+html[data-appearance][data-theme] .kai-code-title,
+html[data-appearance][data-theme] .kai-code-block,
+html[data-appearance][data-theme] .kai-code-block code {
+  color: var(--theme-code-text) !important;
+}
+
+html[data-appearance][data-theme] .kai-code-block {
+  background: var(--theme-code-background) !important;
+}
+
+html[data-appearance][data-theme] .kai-inline-code {
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-accent) !important;
+}
+
+@media (max-width: 1100px) {
+  html[data-appearance][data-theme] .kai-main {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}

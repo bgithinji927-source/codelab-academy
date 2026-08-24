@@ -393,3 +393,47 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Conversation width repair: keep message text readable and let the teaching
+   surface use the full column without changing the page structure. */
+.kai-messages,
+.kai-sidebar,
+.message {
+  min-width: 0;
+}
+
+.message {
+  width: 100%;
+}
+
+.message > div:last-child {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.kai-message .message-bubble {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.user-message > div:last-child {
+  flex: 0 1 760px;
+  width: min(100%, 760px);
+  max-width: 760px;
+}
+
+.user-message .message-bubble {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+@media (max-width: 760px) {
+  .user-message > div:last-child {
+    width: 100%;
+    max-width: 100%;
+  }
+}
