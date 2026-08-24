@@ -544,20 +544,30 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
           </div>
 
           {inProgressCourses > 0 ? (
-            <div className="courses-list">
+            <div className="courses-list" aria-label="Courses in progress">
               {state.courses.filter((c) => c.status === "in-progress" || (c.progress > 0 && c.progress < 100)).map((course) => (
-                <div key={course.id} className="course-item">
-                  <div className="course-header">
-                    <h3>{course.title}</h3>
+                <article key={course.id} className="course-item">
+                  <div className="course-card-topline">
+                    <span className="course-card-category">{course.category}</span>
                     <span className="course-progress-text">{course.progress}%</span>
                   </div>
-                  <div className="course-progress-bar">
+                  <div className="course-header">
+                    <h3>{course.title}</h3>
+                  </div>
+                  <div
+                    className="course-progress-bar"
+                    role="progressbar"
+                    aria-label={`${course.title} progress`}
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow={course.progress}
+                  >
                     <div className="course-progress-fill" style={{ width: `${course.progress}%` }}></div>
                   </div>
                   <p className="course-meta">
-                    {course.completed}/{course.lessons} lessons • {course.category}
+                    {course.completed}/{course.lessons} lessons completed
                   </p>
-                </div>
+                </article>
               ))}
             </div>
           ) : (
