@@ -3,7 +3,12 @@ const User = require("../models/User");
 const Video = require("../models/Video");
 const ensureAuth = require("../middleware/ensureAuth");
 const { serializeVideo } = require("../lib/videoCatalog");
-const { getCatalogLessons } = require("../lib/catalog");
+const { getCatalogCourses, getCatalogLessons } = require("../lib/catalog");
+const {
+  buildLearnerCourseAccess,
+  findCourseAccess,
+  isComplete,
+} = require("../lib/progression");
 
 const router = express.Router();
 
@@ -73,6 +78,25 @@ async function markCurrentLessonComplete(userId, courseId, lessonId) {
       "currentLesson.id": lessonId,
     },
     { $set: { "currentLesson.completed": true } },
+    { new: true }
+  );
+}
+
+async function markCourseReadyForNext(userId, courseId, readinessSummary) {
+  return User.findOneAndUpdate(
+    {
+      _id: userId,
+      "courseProgress.courseId": courseId,
+    },
+    {
+      $set: {
+        "courseProgress.$.readyForNextCourse": true,
+        "courseProgress.$.readinessStatus": "ready",
+        "courseProgress.$.readinessSummary": readinessSummary || "Kai confirmed that you are ready for the next course.",
+        "courseProgress.$.readyAt": new Date(),
+        "courseProgress.$.unlockedBy": "kai",
+      },
+    },
     { new: true }
   );
 }
@@ -294,12 +318,30 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    const catalogCourses = await getCatalogCourses();
+    const learnerAccess = buildLearnerCourseAccess(user, catalogCourses);
+    const requestedCourseAccess = findCourseAccess(learnerAccess, courseId);
+
+    if (!requestedCourseAccess) {
+      return res.status(404).json({ success: false, message: "This course is not available in the learner catalog" });
+    }
+
+    if (requestedCourseAccess.locked) {
+      return res.status(403).json({
+        success: false,
+        message: requestedCourseAccess.unlockReason,
+        courseLocked: true,
+        courseAccess: requestedCourseAccess,
+      });
+    }
+
     const catalogLessons = await getCatalogLessons(courseId);
     const catalogTotal = catalogLessons.length;
     const actualTotalLessons = catalogTotal || Number(totalLessons) || 0;
     const firstCatalogLesson = catalogLessons[0] || null;
 
     let cp = user.courseProgress.find((p) => String(p.courseId) === String(courseId));
+    const isNewCourseEnrollment = !cp;
     if (!cp) {
       cp = {
         courseId,
@@ -308,12 +350,19 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
         totalLessons: actualTotalLessons,
         lastLessonIndex: 0,
         completedLessonIds: [],
+        startedAt: new Date(),
         lastAccessedAt: new Date(),
+        unlockedAt: requestedCourseAccess.isEntry ? new Date() : requestedCourseAccess.unlockedAt || new Date(),
+        unlockedBy: requestedCourseAccess.isEntry ? "system-entry" : "kai",
       };
       user.courseProgress.push(cp);
+      user.coursesStarted = (Number(user.coursesStarted) || 0) + 1;
     } else {
       cp.courseTitle = courseTitle || cp.courseTitle || "";
       if (actualTotalLessons > 0) cp.totalLessons = actualTotalLessons;
+      if (!cp.startedAt) cp.startedAt = cp.lastAccessedAt || new Date();
+      if (!cp.unlockedAt) cp.unlockedAt = requestedCourseAccess.isEntry ? new Date() : requestedCourseAccess.unlockedAt || new Date();
+      if (!cp.unlockedBy) cp.unlockedBy = requestedCourseAccess.isEntry ? "system-entry" : "kai";
       cp.lastAccessedAt = new Date();
     }
 
@@ -369,7 +418,9 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
       currentLesson: user.currentLesson,
       session: sessionPayload(session),
       sessions,
-      user: { id: user._id, xp: user.xp, level: user.level },
+      courseAccess: buildLearnerCourseAccess(user, catalogCourses),
+      user: { id: user._id, xp: user.xp, level: user.level, coursesStarted: user.coursesStarted },
+      courseStarted: isNewCourseEnrollment,
     });
   } catch (err) {
     console.error("Error starting course:", err);
@@ -455,6 +506,9 @@ router.get("/progress/:userId", ensureAuth, async (req, res) => {
       });
     }
 
+    const catalogCourses = await getCatalogCourses();
+    const courseAccess = buildLearnerCourseAccess(user, catalogCourses);
+
     return res.json({
       success: true,
       user: {
@@ -470,7 +524,9 @@ router.get("/progress/:userId", ensureAuth, async (req, res) => {
         currentCourse: user.currentCourse,
         currentLesson: user.currentLesson,
         courseProgress: user.courseProgress,
+        courseAccess,
       },
+      courseAccess,
     });
   } catch (error) {
     console.error("Error getting progress:", error);
@@ -650,6 +706,8 @@ router.post("/", ensureAuth, async (req, res) => {
         nextLessonId,
         requestedNextIndex
       );
+      const catalogCourses = await getCatalogCourses();
+      const courseAccess = buildLearnerCourseAccess(learner, catalogCourses);
 
       return res.json({
         success: true,
@@ -661,6 +719,8 @@ router.post("/", ensureAuth, async (req, res) => {
         session: sessionPayload(nextSession),
         lessonComplete: true,
         courseProgress: progress,
+        courseAccess,
+
       });
     }
 
@@ -683,6 +743,11 @@ router.post("/", ensureAuth, async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    const courseLessons = course.id === "general" ? [] : await getCatalogLessons(course.id);
+    const isFinalCourseLesson = course.id !== "general"
+      && courseLessons.length > 0
+      && Number(currentLessonIndex) >= courseLessons.length - 1;
+
     // Sequenced course requests must match the server-owned active lesson.
     // The general Ask Kai page remains a free-form chat and has no course state.
     if (course.id !== "general") {
@@ -692,8 +757,8 @@ router.post("/", ensureAuth, async (req, res) => {
         || activeIndex !== Number(currentLessonIndex)) {
         return res.status(409).json({ success: false, message: "This lesson is not the learner's active lesson" });
       }
-      if (learner.currentLesson?.completed) {
-        return res.status(409).json({ success: false, message: "Kai has completed this lesson. Use Continue to Next Lesson." });
+      if (learner.currentLesson?.completed && !(isFinalCourseLesson && !learner.courseProgress.find((item) => String(item.courseId) === String(course.id))?.readyForNextCourse)) {
+        return res.status(409).json({ success: false, message: "Kai has completed this lesson. Use the available progression action." });
       }
     }
 
@@ -749,6 +814,15 @@ router.post("/", ensureAuth, async (req, res) => {
     // ========================================
 
     const systemPrompt = `\nYou are Kai, the AI instructor for CodeLab Academy.\n\nYou are NOT a generic chatbot.\n\nYou are a friendly, patient and practical programming instructor.\n\nYour main goal is to make sure the learner actually understands what they are learning.\n\n${lessonContext}\n\nYOUR PERSONALITY:\n\n- Friendly\n- Patient\n- Encouraging\n- Clear\n- Practical\n- Conversational\n- Developer-focused\n\nTEACHING RULES:\n\n1. Teach concepts instead of only giving answers.\n2. Explain WHY something works, not only WHAT to type.\n3. Start with the basics.\n4. Use simple language when introducing difficult concepts.\n5. Use practical coding examples.\n6. Explain important code carefully.\n7. Ask the learner questions during the lesson.\n8. Give the learner opportunities to practice.\n9. Do not immediately reveal challenge answers.\n10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.\n11. Gradually increase difficulty.\n12. Do not overwhelm beginners with unnecessary advanced information.\n13. If the learner is confused, explain the concept again using a simpler example.\n14. Connect new concepts to things the learner already understands.\n15. Explain what is happening behind the scenes when useful.\n16. Teach one important concept at a time.\n17. Do not dump the entire lesson into one response.\n18. Use the lesson information provided to guide what you teach.\n19. Continue naturally from the conversation history.
+
+COURSE PROGRESSION AND READINESS:
+- The learner follows the course order chosen by CodeLab Academy.
+- Complete the current lesson only when the learner has demonstrated understanding.
+- When this is the final lesson of a course, review the learner's explanations and practice answers before deciding readiness.
+- If the final course lesson is complete and the learner is capable of moving on, end your response with:
+  [COURSE_READY: Brief 1-2 sentence readiness summary]
+- Do not use [COURSE_READY:] for a non-final lesson or when the learner needs more practice.
+- A course is not unlocked merely because the learner opened it; only your explicit COURSE_READY decision unlocks the next course.
 
 VIDEO RECOMMENDATIONS:
 
@@ -850,6 +924,10 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     const isLessonComplete = reply.includes("[LESSON_COMPLETE:");
     const summaryMatch = reply.match(/\[LESSON_COMPLETE:\s*(.*?)\]/);
     const lessonSummary = summaryMatch ? summaryMatch[1].trim() : "";
+    const courseReadyMatch = reply.match(/\[COURSE_READY:\s*(.*?)\]/i);
+    const courseReadinessSummary = courseReadyMatch ? courseReadyMatch[1].trim() : "";
+    const isCourseReady = Boolean(courseReadyMatch && isFinalCourseLesson && isLessonComplete);
+    const shouldCompleteLesson = Boolean(isLessonComplete && (!isFinalCourseLesson || isCourseReady));
     const videoRequestMatch = reply.match(/\[VIDEO_RECOMMEND(?:\s*:\s*(.*?))?\]/i);
     const requestedVideoTitle = videoRequestMatch?.[1]?.trim() || "";
     const videoRecommendation = videoRequestMatch
@@ -863,6 +941,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     // Clean control markers from the learner-visible reply.
     const cleanReply = reply
       .replace(/\[LESSON_COMPLETE:.*?\]/g, "")
+      .replace(/\[COURSE_READY:.*?\]/gi, "")
       .replace(/\[VIDEO_RECOMMEND(?:\s*:\s*.*?)?\]/gi, "")
       .trim();
 
@@ -878,8 +957,8 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       await saveConversation(userId, course.id, lesson.id, "assistant", cleanReply, videoRecommendation);
 
       // Mark lesson complete if Kai indicates it
-      if (isLessonComplete) {
-        const updatedUser = await markLessonComplete(
+      if (shouldCompleteLesson) {
+        let updatedUser = await markLessonComplete(
           userId,
           course.id,
           lesson.id,
@@ -890,9 +969,15 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
         const stateUpdatedUser = updatedUser
           ? await markCurrentLessonComplete(userId, course.id, lesson.id)
           : null;
+        const readinessUpdatedUser = isCourseReady
+          ? await markCourseReadyForNext(userId, course.id, courseReadinessSummary)
+          : null;
+        if (readinessUpdatedUser) updatedUser = readinessUpdatedUser;
 
         if (updatedUser) {
           const courseProgress = updatedUser.courseProgress.find((item) => String(item.courseId) === String(course.id)) || null;
+          const catalogCourses = await getCatalogCourses();
+          const courseAccess = buildLearnerCourseAccess(updatedUser, catalogCourses);
           return res.json({
             success: true,
             reply: cleanReply,
@@ -901,10 +986,14 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
             lesson: lessonTitle,
             lessonComplete: true,
             readyForNextLesson: Boolean(stateUpdatedUser || updatedUser),
+            courseReady: Boolean(isCourseReady || courseProgress?.readyForNextCourse),
+            readinessSummary: courseProgress?.readinessSummary || courseReadinessSummary,
             lessonSummary,
             videoRecommendation,
             courseProgress,
+            courseAccess,
             userProgress: {
+              coursesStarted: updatedUser.coursesStarted,
               xp: updatedUser.xp,
               level: updatedUser.level,
               completedLessons: updatedUser.completedLessons,
@@ -924,8 +1013,10 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       instructor: "Kai",
       course: courseTitle,
       lesson: lessonTitle,
-      lessonComplete: isLessonComplete,
+      lessonComplete: shouldCompleteLesson,
       readyForNextLesson: false,
+      courseReady: false,
+      readinessSummary: "",
       lessonSummary,
       videoRecommendation,
     });

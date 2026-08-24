@@ -350,6 +350,7 @@ function App() {
       <Courses
         initialCategory={showCourses.category || null}
         onBack={closeCourses}
+        user={user}
         onSelectCourse={(course) => {
           console.log("Selected course:", course);
         }}

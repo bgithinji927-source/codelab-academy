@@ -17,7 +17,7 @@ import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import ThemeToggle from "../components/ThemeToggle";
 import "./CourseLearn.css";
 
-function CourseLearn({ user, course, onBack }) {
+function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
   const [messages, setMessages] = useState([]);
   const [answer, setAnswer] = useState("");
   const [isKaiTyping, setIsKaiTyping] = useState(false);
@@ -33,6 +33,8 @@ function CourseLearn({ user, course, onBack }) {
   const [allLessons, setAllLessons] = useState([]);
   const [previousLessonSummary, setPreviousLessonSummary] = useState("");
   const [lessonCompletionReady, setLessonCompletionReady] = useState(false);
+  const [courseReadyForNext, setCourseReadyForNext] = useState(false);
+  const [readinessSummary, setReadinessSummary] = useState("");
   const [courseStateLoaded, setCourseStateLoaded] = useState(false);
   const [courseStateError, setCourseStateError] = useState("");
   const [isAdvancing, setIsAdvancing] = useState(false);
@@ -118,10 +120,13 @@ function CourseLearn({ user, course, onBack }) {
 
     let text = String(value);
 
-    // Prevent the UI from displaying accidental
-    // "undefined" or "null" from the API.
+    // Prevent the UI from displaying accidental values or internal control
+    // markers if an API response has not already cleaned them.
     text = text.replace(/\s*undefined\s*$/i, "");
     text = text.replace(/\s*null\s*$/i, "");
+    text = text.replace(/\[LESSON_COMPLETE:.*?\]/gi, "");
+    text = text.replace(/\[COURSE_READY:.*?\]/gi, "");
+    text = text.replace(/\[VIDEO_RECOMMEND(?:\s*:\s*.*?)?\]/gi, "");
 
     return text.trim();
   };
@@ -141,6 +146,8 @@ function CourseLearn({ user, course, onBack }) {
       setSavedLessonSessions([]);
       setLesson(null);
       setLessonCompletionReady(false);
+      setCourseReadyForNext(false);
+      setReadinessSummary("");
       setCurrentLessonIndex(0);
       setCompletedLessonsCount(0);
       setPreviousLessonSummary("");
@@ -224,6 +231,9 @@ function CourseLearn({ user, course, onBack }) {
         setSavedLessonSessions(savedSessions);
         setMessages(savedHistory);
         setLessonCompletionReady(Boolean(serverLesson.completed || stateData.session?.completed));
+        setCourseReadyForNext(Boolean(stateData.courseProgress?.readyForNextCourse || stateData.courseAccess?.activeCourse?.progress?.readyForNextCourse));
+        setReadinessSummary(stateData.courseProgress?.readinessSummary || stateData.courseAccess?.activeCourse?.progress?.readinessSummary || "");
+        if (stateData.courseAccess) onProgressChanged?.(stateData);
         setCourseStateLoaded(true);
       } catch (error) {
         console.error("Could not load lesson data or saved Kai state:", error);
@@ -380,6 +390,12 @@ function CourseLearn({ user, course, onBack }) {
           setPreviousLessonSummary(data.lessonSummary);
         }
       }
+
+      if (data.courseReady) {
+        setCourseReadyForNext(true);
+        setReadinessSummary(data.readinessSummary || "Kai confirmed that you are ready for the next course.");
+      }
+      if (data.courseAccess) onProgressChanged?.(data);
 
       setMessages((previous) => [
         ...previous,
@@ -572,6 +588,9 @@ ${startMessage}
           : []
       );
       setLessonCompletionReady(Boolean(data.session?.completed));
+      setCourseReadyForNext(false);
+      setReadinessSummary("");
+      if (data.courseAccess) onProgressChanged?.(data);
     } catch (error) {
       console.error("Could not advance lesson:", error);
       setCourseStateError(error.message || "Kai could not unlock the next lesson.");
@@ -993,6 +1012,7 @@ ${startMessage}
   const progressPercentage = allLessons.length > 0
     ? Math.round((actualCompletedLessons / allLessons.length) * 100)
     : 0;
+  const isFinalLesson = allLessons.length > 0 && currentLessonIndex >= allLessons.length - 1;
 
   // ============================================
   // MAIN UI
@@ -1043,11 +1063,13 @@ ${startMessage}
           <div className="lesson-status">
             <CheckCircle2 size={16} />
             <span>
-              {currentLessonIndex >= allLessons.length - 1 && lessonCompletionReady
-                ? "Course complete"
-                : lessonCompletionReady
-                  ? "Ready for next lesson!"
-                  : "Lesson in progress"}
+              {isFinalLesson && courseReadyForNext
+                ? "Kai approved next course"
+                : isFinalLesson && lessonCompletionReady
+                  ? "Kai is reviewing readiness"
+                  : lessonCompletionReady
+                    ? "Ready for next lesson!"
+                    : "Lesson in progress"}
             </span>
           </div>
           <button
@@ -1055,7 +1077,7 @@ ${startMessage}
             className="next-lesson"
             onClick={handleNextLesson}
             disabled={
-              currentLessonIndex >= allLessons.length - 1 ||
+              isFinalLesson ||
               !lessonCompletionReady ||
               isKaiTyping ||
               isAdvancing
@@ -1064,6 +1086,17 @@ ${startMessage}
             Continue to Next Lesson
             <ArrowRight size={17} />
           </button>
+          {isFinalLesson && courseReadyForNext && nextCourse && (
+            <button
+              type="button"
+              className="next-course-button"
+              onClick={() => onNextCourse?.(nextCourse)}
+              disabled={isKaiTyping || isAdvancing || !onNextCourse}
+            >
+              Start Next Course
+              <ArrowRight size={17} />
+            </button>
+          )}
         </div>
 
       </header>
@@ -1084,6 +1117,18 @@ ${startMessage}
           {courseStateError && (
             <div className="course-state-error" role="alert">
               {courseStateError}
+            </div>
+          )}
+
+          {isFinalLesson && (
+            <div className={`kai-readiness-panel ${courseReadyForNext ? "is-ready" : "is-reviewing"}`}>
+              <div className="kai-readiness-icon"><CheckCircle2 size={18} /></div>
+              <div>
+                <strong>{courseReadyForNext ? "Kai confirmed you are ready for the next course." : "Kai is your teacher for this course."}</strong>
+                <p>{courseReadyForNext
+                  ? (readinessSummary || "Your understanding and final lesson progress have been recorded.")
+                  : "Finish the final lesson and demonstrate your understanding. Kai will review your work before opening the next course."}</p>
+              </div>
             </div>
           )}
 
@@ -1216,7 +1261,7 @@ ${startMessage}
                 ? "Kai is thinking..."
                 : "Answer Kai or ask a question..."
             }
-            disabled={isKaiTyping || lessonCompletionReady || isAdvancing}
+            disabled={isKaiTyping || (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) || isAdvancing}
             autoComplete="off"
           />
 
@@ -1225,7 +1270,7 @@ ${startMessage}
             onClick={handleSend}
             disabled={
               isKaiTyping ||
-              lessonCompletionReady ||
+              (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) ||
               isAdvancing ||
               !answer.trim()
             }

@@ -104,7 +104,25 @@ const userSchema = new mongoose.Schema(
         totalLessons: Number,
         lastLessonIndex: Number,
         completedLessonIds: [String],
+        startedAt: Date,
         lastAccessedAt: Date,
+        completedAt: Date,
+        readinessStatus: {
+          type: String,
+          enum: ["not-reviewed", "ready", "needs-practice", "completed"],
+          default: "not-reviewed",
+        },
+        readyForNextCourse: {
+          type: Boolean,
+          default: false,
+        },
+        readinessSummary: String,
+        readyAt: Date,
+        unlockedAt: Date,
+        unlockedBy: {
+          type: String,
+          default: "kai",
+        },
       },
     ],
 

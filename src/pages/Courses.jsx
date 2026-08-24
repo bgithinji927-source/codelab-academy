@@ -14,6 +14,8 @@ import {
   Layers3,
   Boxes,
   ShieldCheck,
+  LockKeyhole,
+  CircleCheck,
   Smartphone,
   Gamepad2,
 } from "lucide-react";
@@ -21,6 +23,8 @@ import {
 import courses from "../data/course";
 import CourseLearn from "./CourseLearn";
 import ThemeToggle from "../components/ThemeToggle";
+import fetchWithAuth from "../utils/fetchWithAuth";
+import { buildFallbackCourseAccess, findCourseAccess } from "../utils/courseAccess";
 import "./Courses.css";
 
 const categories = [
@@ -98,10 +102,11 @@ const categories = [
   },
 ];
 
-function Courses({ initialCategory = null, onBack }) {
+function Courses({ initialCategory = null, onBack, user }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [courseCatalog, setCourseCatalog] = useState(courses);
+  const [courseAccess, setCourseAccess] = useState(() => user?.id ? buildFallbackCourseAccess(courses) : null);
 
   useEffect(() => {
     let mounted = true;
@@ -114,10 +119,46 @@ function Courses({ initialCategory = null, onBack }) {
     return () => { mounted = false; };
   }, []);
 
+  useEffect(() => {
+    let mounted = true;
+    if (!user?.id) {
+      setCourseAccess(null);
+      return () => { mounted = false; };
+    }
+
+    fetchWithAuth(`/api/kai/progress/${user.id}`)
+      .then((response) => response.json().then((data) => ({ response, data })))
+      .then(({ response, data }) => {
+        if (!mounted) return;
+        if (response.ok && data.success && data.user) {
+          setCourseAccess(data.user.courseAccess || data.courseAccess || buildFallbackCourseAccess(courseCatalog));
+        } else {
+          setCourseAccess(buildFallbackCourseAccess(courseCatalog));
+        }
+      })
+      .catch(() => {
+        if (mounted) setCourseAccess(buildFallbackCourseAccess(courseCatalog));
+      });
+
+    return () => { mounted = false; };
+  }, [user?.id]);
+
   if (selectedCourse) {
+    const selectedAccess = findCourseAccess(courseAccess, selectedCourse.id);
+    const nextAccess = selectedAccess
+      ? courseAccess?.courses?.find((item) => item.index === selectedAccess.index + 1)
+      : null;
+    const nextCourse = courseCatalog.find((item) => String(item.id) === String(nextAccess?.courseId)) || null;
+
     return (
       <CourseLearn
+        user={user}
         course={selectedCourse}
+        nextCourse={nextCourse}
+        onNextCourse={(course) => setSelectedCourse(course)}
+        onProgressChanged={(data) => {
+          if (data?.courseAccess) setCourseAccess(data.courseAccess);
+        }}
         onBack={() => setSelectedCourse(null)}
       />
     );
@@ -130,6 +171,8 @@ function Courses({ initialCategory = null, onBack }) {
     ? courseCatalog.filter((course) => course.category === selectedCategory && course.active !== false)
     : [];
   const ActiveIcon = activeCategory?.icon || Layers3;
+  const accessById = new Map((courseAccess?.courses || []).map((item) => [String(item.courseId), item]));
+  const unlockedCount = visibleCourses.filter((course) => !accessById.get(String(course.id))?.locked).length;
 
   const selectCategory = (categoryName) => {
     setSelectedCategory(categoryName);
@@ -171,7 +214,7 @@ function Courses({ initialCategory = null, onBack }) {
           </h1>
           <p>
             {selectedCategory
-              ? `${visibleCourses.length} structured courses to help you build practical skills in ${selectedCategory.toLowerCase()}.`
+              ? `${courseAccess ? `${unlockedCount} of ${visibleCourses.length}` : visibleCourses.length} structured courses currently open in ${selectedCategory.toLowerCase()}. Kai confirms when the next course is ready.`
               : "Choose a category from the sidebar to explore focused courses, guided lessons, and practical projects."}
           </p>
         </div>
@@ -272,7 +315,7 @@ function Courses({ initialCategory = null, onBack }) {
                     </div>
                     <div>
                       <h2>{selectedCategory}</h2>
-                      <p>{visibleCourses.length} courses available</p>
+                        <p>{courseAccess ? `${unlockedCount} of ${visibleCourses.length} courses open` : `${visibleCourses.length} courses available`}</p>
                     </div>
                   </div>
                 </div>
@@ -280,28 +323,43 @@ function Courses({ initialCategory = null, onBack }) {
               </div>
 
               <div className="course-grid">
-                {visibleCourses.map((course) => (
-                  <article className="course-card" key={course.id}>
-                    <div className="course-card-icon">
-                      <ActiveIcon size={28} />
-                    </div>
-                    <div className="course-card-content">
-                      <span className="course-level">
-                        {course.level || "Beginner"}
-                      </span>
-                      <h3>{course.title}</h3>
-                      <p>{course.description}</p>
-                      <button
-                        type="button"
-                        className="start-course-button"
-                        onClick={() => setSelectedCourse(course)}
-                      >
-                        Start Learning
-                        <ArrowRight size={17} />
-                      </button>
-                    </div>
-                  </article>
-                ))}
+                {visibleCourses.map((course) => {
+                  const access = accessById.get(String(course.id));
+                  const locked = Boolean(user?.id && access?.locked);
+                  const completed = access?.status === "completed";
+                  const label = locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
+
+                  return (
+                    <article className={`course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""}`} key={course.id}>
+                      <div className="course-card-icon">
+                        {locked ? <LockKeyhole size={28} /> : completed ? <CircleCheck size={28} /> : <ActiveIcon size={28} />}
+                      </div>
+                      <div className="course-card-content">
+                        <span className="course-level">
+                          {course.level || "Beginner"}
+                        </span>
+                        <h3>{course.title}</h3>
+                        <p>{locked ? (access?.unlockReason || "Kai will open this course when you are ready.") : course.description}</p>
+                        {access?.progress && access.progress.totalLessons > 0 && (
+                          <span className="course-access-progress">{access.progress.lessonsCompleted}/{access.progress.totalLessons} lessons complete</span>
+                        )}
+                        <button
+                          type="button"
+                          className="start-course-button"
+                          disabled={locked}
+                          title={locked ? access?.unlockReason : label}
+                          onClick={() => {
+                            if (locked) return;
+                            setSelectedCourse(course);
+                          }}
+                        >
+                          {label}
+                          {locked ? <LockKeyhole size={17} /> : <ArrowRight size={17} />}
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             </section>
           )}

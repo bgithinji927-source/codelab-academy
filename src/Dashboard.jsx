@@ -28,6 +28,8 @@ import {
   Boxes,
   Palette,
   LayoutDashboard,
+  LockKeyhole,
+  CircleCheck,
 } from "lucide-react";
 
 import LearnWithKai from "./pages/LearnWithKai";
@@ -40,9 +42,14 @@ import courses from "./data/course";
 import ThemeToggle from "./components/ThemeToggle";
 import AppearanceSettings from "./pages/AppearanceSettings";
 import DesignSettings from "./pages/DesignSettings";
+import fetchWithAuth from "./utils/fetchWithAuth";
+import { buildFallbackCourseAccess, findCourseAccess } from "./utils/courseAccess";
 
-function DashboardCategoryView({ category, onOpenCourse, courseCatalog }) {
+function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAccess }) {
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
+  const accessById = new globalThis.Map((courseAccess?.courses || []).map((item) => [String(item.courseId), item]));
+  const visibleAccess = visibleCourses.map((course) => accessById.get(String(course.id))).filter(Boolean);
+  const unlockedCount = visibleAccess.filter((item) => !item.locked).length;
 
   return (
     <section className="dashboard-category-view">
@@ -50,20 +57,35 @@ function DashboardCategoryView({ category, onOpenCourse, courseCatalog }) {
         <div>
           <span className="dashboard-category-kicker">COURSE LIBRARY</span>
           <h1>{category}</h1>
-          <p>{visibleCourses.length} courses available in this learning category.</p>
+          <p>{courseAccess ? `${unlockedCount} of ${visibleCourses.length} courses currently open. Kai unlocks the next course after confirming your readiness.` : `${visibleCourses.length} courses available in this learning category.`}</p>
         </div>
-        <span className="dashboard-category-count">{visibleCourses.length} COURSES</span>
+        <span className="dashboard-category-count">{courseAccess ? `${unlockedCount}/${visibleCourses.length} OPEN` : `${visibleCourses.length} COURSES`}</span>
       </div>
       <div className="dashboard-category-grid">
-        {visibleCourses.map((course) => (
-          <article className="dashboard-course-card" key={course.id}>
-            <div className="dashboard-course-card-icon"><Code2 size={20} aria-hidden="true" /></div>
-            <span className="dashboard-course-level">{course.level}</span>
-            <h2>{course.title}</h2>
-            <p>{course.description}</p>
-            <button type="button" onClick={() => onOpenCourse(course)}>Start Learning <ArrowRight size={16} /></button>
-          </article>
-        ))}
+        {visibleCourses.map((course) => {
+          const access = accessById.get(String(course.id));
+          const locked = Boolean(access?.locked);
+          const completed = access?.status === "completed";
+          const label = locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
+
+          return (
+            <article className={`dashboard-course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""}`} key={course.id}>
+              <div className="dashboard-course-card-icon">{locked ? <LockKeyhole size={20} aria-hidden="true" /> : completed ? <CircleCheck size={20} aria-hidden="true" /> : <Code2 size={20} aria-hidden="true" />}</div>
+              <span className="dashboard-course-level">{course.level}</span>
+              <h2>{course.title}</h2>
+              <p>{locked ? (access?.unlockReason || "Kai will open this course when you are ready.") : course.description}</p>
+              {access?.progress && access.progress.totalLessons > 0 && (
+                <div className="dashboard-course-access-progress" aria-label={`${access.progress.lessonsCompleted} of ${access.progress.totalLessons} lessons complete`}>
+                  <span>{access.progress.lessonsCompleted}/{access.progress.totalLessons} lessons</span>
+                  <span>{Math.round((access.progress.lessonsCompleted / access.progress.totalLessons) * 100)}%</span>
+                </div>
+              )}
+              <button type="button" disabled={locked} title={locked ? access?.unlockReason : label} onClick={() => onOpenCourse(course)}>
+                {label} {locked ? <LockKeyhole size={16} /> : <ArrowRight size={16} />}
+              </button>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
@@ -92,6 +114,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [courseCatalog, setCourseCatalog] = useState(courses);
+  const [courseAccess, setCourseAccess] = useState(() => buildFallbackCourseAccess(courses));
 
   // Initialize store and load current state into local component state
   const baseStore = createStore();
@@ -129,42 +152,42 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
 
       // If no authenticated user, show zeroed baseline
       if (!user?.id) {
+        setCourseAccess(buildFallbackCourseAccess(courseCatalog));
         setState(baseline);
         return;
       }
 
       try {
-        const res = await fetch(`/api/kai/progress/${user.id}`);
+        const res = await fetchWithAuth(`/api/kai/progress/${user.id}`);
         const data = await res.json();
 
         if (!mounted) return;
 
         if (res.ok && data.success && data.user) {
           const userProgressData = data.user;
+          setCourseAccess(userProgressData.courseAccess || data.courseAccess || buildFallbackCourseAccess(courseCatalog));
 
-          // Build merged courses: start from baseline (all zeros), then apply per-course records
-          const mergedCourses = baseline.courses.map((c) => {
+          // Build merged courses from the canonical catalog and apply server progress/access records.
+          const catalogCourses = courseCatalog.length ? courseCatalog : baseline.courses;
+          const accessById = new globalThis.Map((userProgressData.courseAccess?.courses || []).map((item) => [String(item.courseId), item]));
+          const mergedCourses = catalogCourses.map((c) => {
             const cp = (userProgressData.courseProgress || []).find(
               (p) => String(p.courseId) === String(c.id) || Number(p.courseId) === c.id
             );
+            const access = accessById.get(String(c.id));
+            const total = cp?.totalLessons || c.lessons || 0;
+            const lessonsCompleted = cp?.lessonsCompleted || 0;
+            const progressPercent = total ? Math.round((lessonsCompleted / total) * 100) : (typeof cp?.progress === "number" ? cp.progress : 0);
+            const status = access?.status || (progressPercent === 0 ? "not-started" : (progressPercent === 100 ? "completed" : "in-progress"));
 
-            if (cp) {
-              const total = cp.totalLessons || c.lessons || 0;
-              const lessonsCompleted = cp.lessonsCompleted || 0;
-              const progressPercent = total ? Math.round((lessonsCompleted / total) * 100) : (typeof cp.progress === "number" ? cp.progress : 0);
-
-              const status = progressPercent === 0 ? "not-started" : (progressPercent === 100 ? "completed" : "in-progress");
-
-              return {
-                ...c,
-                progress: progressPercent,
-                completed: lessonsCompleted,
-                status,
-              };
-            }
-
-            // No user data for this course: keep zero baseline
-            return { ...c };
+            return {
+              ...c,
+              lessons: total,
+              progress: progressPercent,
+              completed: lessonsCompleted,
+              status,
+              locked: Boolean(access?.locked),
+            };
           });
 
           // Build userProgress entirely from server values, falling back to zero
@@ -195,11 +218,13 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
           return;
         }
 
-        // If server returned no data, keep zero baseline
+        // If server returned no data, keep zero baseline and keep only the entry course open.
+        setCourseAccess(buildFallbackCourseAccess(courseCatalog));
         setState(baseline);
       } catch (err) {
         console.error("Failed to load user progress:", err);
-        // On error, keep zero baseline
+        // On error, keep zero baseline and keep only the entry course open.
+        setCourseAccess(buildFallbackCourseAccess(courseCatalog));
         setState(baseline);
       }
     }
@@ -209,7 +234,15 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
     return () => {
       mounted = false;
     };
-  }, [user]);
+  }, [user, courseCatalog]);
+
+  const openCourseWithKai = (course) => {
+    const access = findCourseAccess(courseAccess, course?.id);
+    if (access?.locked) return;
+    setSelectedCourse(course);
+    setActiveView("courseLearn");
+    setSelectedCategory(null);
+  };
 
   // Open the selected course in the real Kai teaching screen
   if (activeView === "courseLearn" && selectedCourse) {
@@ -217,6 +250,31 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
       <CourseLearn
         user={user}
         course={selectedCourse}
+        nextCourse={(() => {
+          const selectedAccess = findCourseAccess(courseAccess, selectedCourse.id);
+          const nextAccess = selectedAccess
+            ? courseAccess?.courses?.find((item) => item.index === selectedAccess.index + 1)
+            : null;
+          return courseCatalog.find((item) => String(item.id) === String(nextAccess?.courseId)) || null;
+        })()}
+        onNextCourse={openCourseWithKai}
+        onProgressChanged={(data) => {
+          if (data?.courseAccess) setCourseAccess(data.courseAccess);
+          const progressPatch = data?.userProgress || data?.user;
+          if (progressPatch) {
+            setState((previous) => ({
+              ...previous,
+              userProgress: {
+                ...previous.userProgress,
+                totalXP: progressPatch.totalXP ?? progressPatch.xp ?? previous.userProgress.totalXP,
+                level: progressPatch.level ?? previous.userProgress.level,
+                coursesStarted: progressPatch.coursesStarted ?? previous.userProgress.coursesStarted,
+                badges: progressPatch.badges ?? previous.userProgress.badges,
+                completedLessons: progressPatch.completedLessons ?? previous.userProgress.completedLessons,
+              },
+            }));
+          }
+        }}
         onBack={() => {
           setSelectedCourse(null);
           setActiveView("dashboard");
@@ -369,10 +427,8 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
           <DashboardCategoryView
             category={selectedCategory}
             courseCatalog={courseCatalog}
-            onOpenCourse={(course) => {
-              setSelectedCourse(course);
-              setActiveView("courseLearn");
-            }}
+            onOpenCourse={openCourseWithKai}
+            courseAccess={courseAccess}
           />
         ) : (
           <>
@@ -503,20 +559,28 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
               </div>
 
               <h3>
-                Your learning journey starts here
+                {courseAccess?.activeCourse?.courseTitle
+                  ? `Continue with ${courseAccess.activeCourse.courseTitle}`
+                  : `Start with ${courseAccess?.entryCourse?.courseTitle || "Python Programming"}`}
               </h3>
 
               <p>
-                Choose a course and start building your skills.
+                {courseAccess?.activeCourse?.courseTitle
+                  ? "Kai is tracking your lessons and will open the next course when you are ready."
+                  : "Kai starts every learner here, records your lesson progress, and unlocks the next course after a readiness check."}
               </p>
 
-              {/* EXPLORE COURSES */}
               <button
                 type="button"
                 className="start-learning"
-                onClick={onViewCourses}
+                onClick={() => {
+                  const targetId = courseAccess?.activeCourse?.courseId || courseAccess?.entryCourse?.courseId;
+                  const targetCourse = courseCatalog.find((course) => String(course.id) === String(targetId));
+                  if (targetCourse) openCourseWithKai(targetCourse);
+                  else onViewCourses();
+                }}
               >
-                Explore Courses
+                {courseAccess?.activeCourse?.courseId ? "Continue with Kai" : "Start with Kai"}
                 <ArrowRight size={17} />
               </button>
 

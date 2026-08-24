@@ -5954,3 +5954,68 @@ html:not([data-design="canvas"]) .dashboard-category-view {
     margin-left: 0 !important;
   }
 }
+
+
+/* ================================
+   KAI-LED COURSE ACCESS STATES
+================================ */
+
+.dashboard-course-card.is-locked,
+.course-card.is-locked {
+  border-color: color-mix(in srgb, var(--theme-border, #244536) 70%, transparent) !important;
+  background: color-mix(in srgb, var(--theme-surface, #0b1712) 82%, var(--theme-background, #020805)) !important;
+  opacity: 0.78;
+}
+
+.dashboard-course-card.is-locked h2,
+.dashboard-course-card.is-locked p,
+.course-card.is-locked h3,
+.course-card.is-locked p {
+  color: var(--theme-text-secondary) !important;
+}
+
+.dashboard-course-card.is-locked .dashboard-course-card-icon,
+.course-card.is-locked .course-card-icon {
+  border-color: var(--theme-border) !important;
+  background: var(--theme-input) !important;
+  color: var(--theme-text-secondary) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-course-card.is-completed,
+.course-card.is-completed {
+  border-color: color-mix(in srgb, var(--theme-success, #39ff14) 52%, var(--theme-border, #244536)) !important;
+}
+
+.dashboard-course-card > button:disabled,
+.course-card > .course-card-content > button:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.72 !important;
+  color: var(--theme-text-secondary) !important;
+}
+
+.dashboard-course-access-progress,
+.course-access-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 8px 0 12px;
+  color: var(--theme-text-secondary) !important;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dashboard-course-access-progress span:last-child {
+  color: var(--theme-accent) !important;
+}
+
+.dashboard-course-card:not(.is-locked) > button,
+.course-card:not(.is-locked) .start-course-button {
+  color: var(--theme-accent) !important;
+}
+
+.dashboard-course-card:not(.is-locked) > button:hover,
+.course-card:not(.is-locked) .start-course-button:hover {
+  color: var(--theme-accent-hover, var(--theme-accent)) !important;
+}

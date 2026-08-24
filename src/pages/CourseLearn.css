@@ -1158,3 +1158,83 @@
     max-width: 94%;
   }
 }
+
+
+/* Kai teacher readiness and course progression */
+.kai-readiness-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--theme-border, #244536);
+  border-left: 3px solid var(--theme-accent, #39ff14);
+  border-radius: 8px;
+  background: var(--theme-surface, #0b1712);
+  color: var(--theme-text-primary, #e7ffe9);
+}
+
+.kai-readiness-panel.is-ready {
+  border-color: color-mix(in srgb, var(--theme-success, #39ff14) 70%, var(--theme-border, #244536));
+  background: color-mix(in srgb, var(--theme-success, #39ff14) 8%, var(--theme-surface, #0b1712));
+}
+
+.kai-readiness-icon {
+  display: grid;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid var(--theme-border, #244536);
+  border-radius: 50%;
+  background: var(--theme-input, #07130d);
+  color: var(--theme-accent, #39ff14);
+}
+
+.kai-readiness-panel strong {
+  display: block;
+  margin: 1px 0 4px;
+  color: var(--theme-text-primary, #e7ffe9);
+  font-size: 14px;
+}
+
+.kai-readiness-panel p {
+  margin: 0;
+  color: var(--theme-text-secondary, #a9c7ae);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.next-course-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 9px 13px;
+  border: 1px solid var(--theme-accent, #39ff14);
+  border-radius: 7px;
+  background: var(--theme-accent, #39ff14);
+  color: var(--theme-accent-contrast, #020805);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.next-course-button:hover {
+  background: var(--theme-accent-hover, #7dff63);
+}
+
+.next-course-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 900px) {
+  .kai-readiness-panel {
+    padding: 12px;
+  }
+
+  .next-course-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
