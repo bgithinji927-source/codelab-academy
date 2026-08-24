@@ -27,6 +27,7 @@ function DailyChallenge({ user, onBack }) {
     dailyChallengesCompleted: 0,
   });
   const [answer, setAnswer] = useState("");
+  const [codeDraft, setCodeDraft] = useState("");
   const [selectedTab, setSelectedTab] = useState("challenge");
   const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -71,6 +72,7 @@ function DailyChallenge({ user, onBack }) {
       setLoading(true);
       setOpeningChallenge(false);
       setChallenge(null);
+      setCodeDraft("");
       setViewToken("");
       setViewLocked(false);
       setFeedback(null);
@@ -153,6 +155,7 @@ function DailyChallenge({ user, onBack }) {
         }
 
         setChallenge(viewData.challenge);
+        setCodeDraft(viewData.challenge.starter || "");
         setAssigned(viewData.assigned);
         setViewToken(viewData.viewToken || "");
         setViewLocked(false);
@@ -372,16 +375,23 @@ function DailyChallenge({ user, onBack }) {
                       ]).map((item, index) => <li key={index}>{item}</li>)}
                     </ul>
 
-                    <input
+                    <label className="challenge-answer-label" htmlFor="challenge-answer">Your answer</label>
+                    <textarea
+                      id="challenge-answer"
                       className="challenge-answer"
+                      rows={5}
                       value={answer}
                       onChange={(event) => setAnswer(event.target.value)}
                       onKeyDown={(event) => {
-                        if (event.key === "Enter") handleSubmit();
+                        if (event.key === "Enter" && !event.shiftKey) {
+                          event.preventDefault();
+                          handleSubmit();
+                        }
                       }}
-                      placeholder={isClosed ? "This challenge is closed" : "Enter your answer..."}
+                      placeholder={isClosed ? "This challenge is closed" : "Enter your answer... (Shift + Enter for a new line)"}
                       disabled={isClosed || isCompleted || submitting}
                     />
+                    <p className="challenge-answer-hint">Your answer is checked against this challenge’s requirements. Use Shift + Enter when you need a new line.</p>
 
                     <div className="challenge-actions">
                       <button className="submit-btn" onClick={handleSubmit} disabled={!canSubmit} type="button">
@@ -404,11 +414,52 @@ function DailyChallenge({ user, onBack }) {
                     </div>
                   </div>
                 ) : (
-                  <div className="code-editor-placeholder">
-                    <Code size={40} />
-                    <h3>Code Editor</h3>
-                    <p>Use this starter context while solving the challenge.</p>
-                    <pre className="code-block"><code>{challenge.starter || "// Write your solution here"}</code></pre>
+                  <div className="code-editor-panel">
+                    <div className="code-editor-heading">
+                      <div>
+                        <span className="code-editor-kicker"><Code size={16} /> WORKSPACE</span>
+                        <h3>Code Editor</h3>
+                      </div>
+                      <span className="code-editor-status">Draft only</span>
+                    </div>
+                    <p className="code-editor-description">Use the starter context below, edit your solution, then move it into the answer area to submit.</p>
+                    <div className="code-editor-window">
+                      <div className="code-editor-window-bar">
+                        <span className="code-window-dot red" />
+                        <span className="code-window-dot amber" />
+                        <span className="code-window-dot green" />
+                        <span className="code-editor-filename">challenge.js</span>
+                      </div>
+                      <textarea
+                        className="code-editor-input"
+                        value={codeDraft}
+                        onChange={(event) => setCodeDraft(event.target.value)}
+                        spellCheck="false"
+                        aria-label="Challenge code editor"
+                        disabled={isClosed || isCompleted || submitting}
+                      />
+                    </div>
+                    <div className="code-editor-actions">
+                      <button
+                        type="button"
+                        className="code-editor-use-button"
+                        onClick={() => {
+                          setAnswer(codeDraft);
+                          setSelectedTab("challenge");
+                        }}
+                        disabled={isClosed || isCompleted || submitting || !codeDraft.trim()}
+                      >
+                        Use code as answer
+                      </button>
+                      <button
+                        type="button"
+                        className="code-editor-reset-button"
+                        onClick={() => setCodeDraft(challenge.starter || "")}
+                        disabled={isClosed || isCompleted || submitting}
+                      >
+                        Reset starter
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

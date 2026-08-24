@@ -4264,3 +4264,314 @@ html[data-appearance="contrast"] .dashboard-course-sidebar button:hover {
   background: #000000 !important;
   border-color: #39ff14 !important;
 }
+
+
+/* Final Daily Challenge answer and editor workspace contrast fixes. */
+html .challenge-page .challenge-answer-label,
+html .challenge-page .code-editor-heading h3,
+html .challenge-page .code-editor-description {
+  color: var(--dark-text) !important;
+}
+
+html .challenge-page .challenge-answer-hint,
+html .challenge-page .code-editor-status {
+  color: var(--dark-muted) !important;
+}
+
+html .challenge-page .challenge-answer {
+  width: 100% !important;
+  min-height: 132px !important;
+  background: var(--dark-surface-soft) !important;
+  border: 1px solid var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+html .challenge-page .challenge-answer::placeholder {
+  color: #9bb5a5 !important;
+}
+
+html .challenge-page .code-editor-panel {
+  color: var(--dark-text) !important;
+  background: transparent !important;
+}
+
+html .challenge-page .code-editor-kicker {
+  color: var(--emerald-shine) !important;
+}
+
+html .challenge-page .code-editor-status {
+  border-color: var(--dark-border) !important;
+  background: var(--dark-surface-soft) !important;
+}
+
+html .challenge-page .code-editor-window {
+  border-color: var(--dark-border) !important;
+  background: #07110d !important;
+}
+
+html .challenge-page .code-editor-window-bar {
+  border-bottom-color: var(--dark-border) !important;
+  background: var(--dark-surface) !important;
+}
+
+html .challenge-page .code-editor-filename {
+  color: var(--dark-muted) !important;
+}
+
+html .challenge-page .code-editor-input {
+  min-height: 340px !important;
+  background: #07110d !important;
+  color: #d7f7df !important;
+  border: 0 !important;
+}
+
+html .challenge-page .code-editor-reset-button {
+  border-color: var(--dark-border) !important;
+  background: transparent !important;
+  color: var(--dark-muted) !important;
+}
+
+html[data-theme="light"] .challenge-page .challenge-answer-label,
+html[data-theme="light"] .challenge-page .code-editor-heading h3,
+html[data-theme="light"] .challenge-page .code-editor-description {
+  color: #173520 !important;
+}
+
+html[data-theme="light"] .challenge-page .challenge-answer-hint,
+html[data-theme="light"] .challenge-page .code-editor-status,
+html[data-theme="light"] .challenge-page .code-editor-reset-button {
+  color: #557260 !important;
+}
+
+html[data-theme="light"] .challenge-page .challenge-answer {
+  background: #ffffff !important;
+  border-color: #9bd2a5 !important;
+  color: #173520 !important;
+}
+
+html[data-theme="light"] .challenge-page .challenge-answer::placeholder {
+  color: #6a8171 !important;
+}
+
+html[data-theme="light"] .challenge-page .code-editor-status {
+  background: #eefaf0 !important;
+  border-color: #9bd2a5 !important;
+}
+
+html[data-theme="light"] .challenge-page .code-editor-window {
+  border-color: #315f40 !important;
+}
+
+html[data-theme="light"] .challenge-page .code-editor-window-bar {
+  background: #173520 !important;
+  border-bottom-color: #315f40 !important;
+}
+
+html[data-theme="light"] .challenge-page .code-editor-filename {
+  color: #c7ead0 !important;
+}
+
+html[data-theme="light"] .challenge-page .code-editor-input {
+  background: #07110d !important;
+  color: #e7f7e9 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .challenge-answer-label,
+html[data-appearance="forest"] .challenge-page .code-editor-heading h3,
+html[data-appearance="forest"] .challenge-page .code-editor-description {
+  color: #effff0 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .challenge-answer-hint,
+html[data-appearance="forest"] .challenge-page .code-editor-status,
+html[data-appearance="forest"] .challenge-page .code-editor-reset-button {
+  color: #a7c4ad !important;
+}
+
+html[data-appearance="forest"] .challenge-page .challenge-answer {
+  background: #0b2417 !important;
+  border-color: #4d9960 !important;
+  color: #effff0 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .challenge-answer::placeholder {
+  color: #a7c4ad !important;
+}
+
+html[data-appearance="forest"] .challenge-page .code-editor-kicker {
+  color: #8ee694 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .code-editor-status {
+  background: #19472d !important;
+  border-color: #4d9960 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .code-editor-window {
+  border-color: #4d9960 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .code-editor-window-bar {
+  background: #0b2417 !important;
+  border-bottom-color: #3c7e50 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .code-editor-filename {
+  color: #c9f5cf !important;
+}
+
+html[data-appearance="forest"] .challenge-page .code-editor-input {
+  background: #071a12 !important;
+  color: #effff0 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .code-editor-reset-button {
+  border-color: #4d9960 !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .challenge-answer-label,
+html[data-appearance="contrast"] .challenge-page .code-editor-heading h3,
+html[data-appearance="contrast"] .challenge-page .code-editor-description,
+html[data-appearance="contrast"] .challenge-page .challenge-answer-hint,
+html[data-appearance="contrast"] .challenge-page .code-editor-status,
+html[data-appearance="contrast"] .challenge-page .code-editor-reset-button {
+  color: #ffffff !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .challenge-answer,
+html[data-appearance="contrast"] .challenge-page .code-editor-window,
+html[data-appearance="contrast"] .challenge-page .code-editor-input {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .challenge-answer::placeholder {
+  color: #d6d6d6 !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .code-editor-kicker {
+  color: #39ff14 !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .code-editor-status,
+html[data-appearance="contrast"] .challenge-page .code-editor-window-bar {
+  background: #000000 !important;
+  border-color: #ffffff !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .code-editor-filename {
+  color: #ffffff !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .code-editor-input {
+  border: 0 !important;
+  caret-color: #39ff14 !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .code-editor-reset-button {
+  border-color: #ffffff !important;
+  background: #000000 !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .code-editor-use-button {
+  background: #39ff14 !important;
+  border-color: #ffffff !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+
+/* Daily Challenge full-page parity for Forest Focus and High Contrast. */
+html[data-appearance="forest"] .challenge-page .challenge-tabs {
+  background: #0b2417 !important;
+  border-color: #3c7e50 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .tab {
+  color: #a7c4ad !important;
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+html[data-appearance="forest"] .challenge-page .tab.active,
+html[data-appearance="forest"] .challenge-page .tab:hover {
+  color: #effff0 !important;
+  background: #19472d !important;
+  border-bottom-color: #8ee694 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .challenge-attempts,
+html[data-appearance="forest"] .challenge-page .challenge-description,
+html[data-appearance="forest"] .challenge-page .challenge-details h3,
+html[data-appearance="forest"] .challenge-page .info-card h4,
+html[data-appearance="forest"] .challenge-page .info-card li,
+html[data-appearance="forest"] .challenge-page .entry-info strong {
+  color: #e7f7e9 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .info-card,
+html[data-appearance="forest"] .challenge-page .requirements-list,
+html[data-appearance="forest"] .challenge-page .challenge-timer,
+html[data-appearance="forest"] .challenge-page .leaderboard-entry {
+  background: #123323 !important;
+  border-color: #3c7e50 !important;
+  color: #e7f7e9 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .requirements-list li,
+html[data-appearance="forest"] .challenge-page .info-card li {
+  color: #e7f7e9 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .requirements-list li::before,
+html[data-appearance="forest"] .challenge-page .info-card li::before,
+html[data-appearance="forest"] .challenge-page .challenge-timer {
+  color: #8ee694 !important;
+}
+
+html[data-appearance="forest"] .challenge-page .challenge-timer {
+  background: #19472d !important;
+}
+
+html[data-appearance="forest"] .challenge-page .challenge-answer-hint,
+html[data-appearance="forest"] .challenge-page .code-editor-description,
+html[data-appearance="forest"] .challenge-page .code-editor-status {
+  color: #a7c4ad !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .challenge-tabs,
+html[data-appearance="contrast"] .challenge-page .tab,
+html[data-appearance="contrast"] .challenge-page .info-card,
+html[data-appearance="contrast"] .challenge-page .requirements-list,
+html[data-appearance="contrast"] .challenge-page .challenge-timer,
+html[data-appearance="contrast"] .challenge-page .leaderboard-entry {
+  background: #000000 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .tab.active,
+html[data-appearance="contrast"] .challenge-page .tab:hover {
+  color: #39ff14 !important;
+  background: #000000 !important;
+  border-bottom-color: #39ff14 !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .challenge-attempts,
+html[data-appearance="contrast"] .challenge-page .challenge-description,
+html[data-appearance="contrast"] .challenge-page .challenge-details h3,
+html[data-appearance="contrast"] .challenge-page .info-card h4,
+html[data-appearance="contrast"] .challenge-page .info-card li,
+html[data-appearance="contrast"] .challenge-page .requirements-list li,
+html[data-appearance="contrast"] .challenge-page .challenge-answer-hint,
+html[data-appearance="contrast"] .challenge-page .code-editor-description,
+html[data-appearance="contrast"] .challenge-page .code-editor-status {
+  color: #ffffff !important;
+}
+
+html[data-appearance="contrast"] .challenge-page .requirements-list li::before,
+html[data-appearance="contrast"] .challenge-page .info-card li::before,
+html[data-appearance="contrast"] .challenge-page .challenge-timer {
+  color: #39ff14 !important;
+}

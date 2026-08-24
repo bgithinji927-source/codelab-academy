@@ -429,3 +429,230 @@
     flex-wrap: wrap;
   }
 }
+
+
+/* ANSWER WORKSPACE AND CODE EDITOR */
+
+.challenge-answer-label {
+  display: block;
+  margin: 0 0 8px;
+  color: #101426;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.challenge-answer {
+  display: block;
+  width: 100%;
+  min-height: 132px;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 14px 16px;
+  border: 1px solid #d8d5e2;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #101426;
+  font: 14px/1.55 "Inter", "Segoe UI", sans-serif;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.challenge-answer:focus {
+  border-color: #39ff14;
+  box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.15);
+}
+
+.challenge-answer:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.challenge-answer::placeholder {
+  color: #77818f;
+}
+
+.challenge-answer-hint {
+  margin: 8px 0 20px;
+  color: #687083;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.code-editor-panel {
+  padding: 24px;
+}
+
+.code-editor-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.code-editor-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  color: #7040e8;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.code-editor-heading h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #101426;
+  font-size: 20px;
+}
+
+.code-editor-status {
+  padding: 6px 10px;
+  border: 1px solid #d8d5e2;
+  border-radius: 999px;
+  color: #687083;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.code-editor-description {
+  margin: 0 0 18px;
+  color: #687083;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.code-editor-window {
+  overflow: hidden;
+  border: 1px solid #303b48;
+  border-radius: 12px;
+  background: #07110d;
+  box-shadow: 0 10px 28px rgba(7, 17, 13, 0.16);
+}
+
+.code-editor-window-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 14px;
+  border-bottom: 1px solid #253c31;
+  background: #0d1b15;
+}
+
+.code-window-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.code-window-dot.red { background: #ff6b6b; }
+.code-window-dot.amber { background: #ffc857; }
+.code-window-dot.green { background: #39ff14; }
+
+.code-editor-filename {
+  margin-left: 6px;
+  color: #a8c7b1;
+  font: 12px/1.2 "Monaco", "Courier New", monospace;
+}
+
+.code-editor-input {
+  display: block;
+  width: 100%;
+  min-height: 340px;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 18px;
+  border: 0;
+  outline: 0;
+  background: #07110d;
+  color: #d7f7df;
+  caret-color: #39ff14;
+  font: 13px/1.65 "Monaco", "Courier New", monospace;
+  tab-size: 2;
+}
+
+.code-editor-input:focus {
+  box-shadow: inset 0 0 0 2px rgba(57, 255, 20, 0.55);
+}
+
+.code-editor-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.code-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.code-editor-use-button,
+.code-editor-reset-button {
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.code-editor-use-button {
+  border: 1px solid #39ff14;
+  background: linear-gradient(180deg, #8dff67, #39d91d);
+  color: #06240d;
+}
+
+.code-editor-reset-button {
+  border: 1px solid #65756b;
+  background: transparent;
+  color: #687083;
+}
+
+.code-editor-use-button:hover:not(:disabled),
+.code-editor-reset-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(57, 255, 20, 0.16);
+}
+
+.code-editor-use-button:disabled,
+.code-editor-reset-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+@media (max-width: 760px) {
+  .challenge-answer {
+    min-height: 150px;
+  }
+
+  .code-editor-panel {
+    padding: 18px;
+  }
+
+  .code-editor-heading {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .code-editor-input {
+    min-height: 280px;
+  }
+
+  .code-editor-actions {
+    flex-direction: column;
+  }
+
+  .code-editor-use-button,
+  .code-editor-reset-button {
+    width: 100%;
+  }
+}
