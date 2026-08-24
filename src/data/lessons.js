@@ -480,6 +480,128 @@ function makeCloudCourseLessons(courseId, courseTitle, topics) {
   }));
 }
 
+function makeCyberCourseLessons(courseId, courseTitle, topics) {
+  return topics.map((topic, index) => makeLesson({
+    id: `${courseId}-${String(index + 1).padStart(2, "0")}-${slugifyTopic(topic)}`,
+    title: `${courseTitle}: ${topic}`,
+    focus: `${courseTitle} ${topic}`,
+    code: `const securityLesson = {\n  course: "${courseTitle}",\n  topic: "${topic}",\n  step: ${index + 1},\n  authorizedLab: true\n};\n\nconsole.log(securityLesson);`,
+    challenge: `In an authorized training environment, create a small defensive exercise for ${topic.toLowerCase()}. Explain the control, test the expected behavior, and record one safe remediation step.`,
+    starterCode: `const securityExercise = {\n  course: "${courseTitle}",\n  topic: "${topic}",\n  control: "",\n  evidence: ""\n};\n\n// Work only in an authorized lab\nconsole.log(securityExercise);`,
+    quizQuestion: `Which approach best supports ${topic.toLowerCase()}?`,
+    quizOptions: [
+      `Practice ${topic.toLowerCase()} in an authorized, tested, and documented way`,
+      "Skip authorization and testing",
+      "Give every user unrestricted access",
+      "Hide security evidence from defenders",
+    ],
+    quizAnswer: `Practice ${topic.toLowerCase()} in an authorized, tested, and documented way`,
+  }));
+}
+
+const cyberCourseLessonPlans = {
+  "cybersecurity-fundamentals": makeCyberCourseLessons(
+    "cybersecurity-fundamentals",
+    "Cybersecurity Fundamentals",
+    ["Security goals and the CIA triad", "Threats, vulnerabilities, and risk", "Defense in depth", "Secure habits and culture"]
+  ),
+  "networking-for-cybersecurity": makeCyberCourseLessons(
+    "networking-for-cybersecurity",
+    "Networking for Cybersecurity",
+    ["TCP/IP and network layers", "DNS, HTTP, and TLS traffic", "Firewalls and segmentation", "Packet analysis fundamentals"]
+  ),
+  "linux-security": makeCyberCourseLessons(
+    "linux-security",
+    "Linux Security",
+    ["Users, groups, and permissions", "Processes and services", "Updates and system hardening", "Logs and Linux auditing"]
+  ),
+  "windows-security": makeCyberCourseLessons(
+    "windows-security",
+    "Windows Security",
+    ["Windows accounts and policies", "Defender and host firewalls", "Event Viewer and security logs", "Windows endpoint hardening"]
+  ),
+  "cryptography": makeCyberCourseLessons(
+    "cryptography",
+    "Cryptography",
+    ["Hashing and data integrity", "Symmetric encryption", "Asymmetric keys and exchange", "Digital signatures, PKI, and TLS"]
+  ),
+  "identity-access-management": makeCyberCourseLessons(
+    "identity-access-management",
+    "Identity & Access Management",
+    ["Authentication and factors", "Authorization and RBAC", "Least privilege", "Identity lifecycle and audit"]
+  ),
+  "web-application-security": makeCyberCourseLessons(
+    "web-application-security",
+    "Web Application Security",
+    ["Input validation and output encoding", "Sessions, cookies, and CSRF", "Secure headers and dependencies", "Threat modeling and testing"]
+  ),
+  "api-security": makeCyberCourseLessons(
+    "api-security",
+    "API Security",
+    ["API authentication and tokens", "Object-level authorization", "Validation and rate limits", "API logging and versioning"]
+  ),
+  "owasp-top-10": makeCyberCourseLessons(
+    "owasp-top-10",
+    "OWASP Top 10",
+    ["Understanding common application risks", "Broken access control", "Injection and unsafe input", "Misconfiguration and vulnerable components"]
+  ),
+  "ethical-hacking-basics": makeCyberCourseLessons(
+    "ethical-hacking-basics",
+    "Ethical Hacking",
+    ["Authorization and rules of engagement", "Attack-surface mapping in a lab", "Controlled validation", "Evidence and responsible reporting"]
+  ),
+  "reconnaissance-osint": makeCyberCourseLessons(
+    "reconnaissance-osint",
+    "Reconnaissance & OSINT",
+    ["Ethics, scope, and collection plans", "Passive information discovery", "Source verification and confidence", "Defensive reporting and exposure reduction"]
+  ),
+  "vulnerability-assessment": makeCyberCourseLessons(
+    "vulnerability-assessment",
+    "Vulnerability Assessment",
+    ["Asset inventory and baselines", "Safe scanning concepts", "Validating findings", "Prioritizing remediation"]
+  ),
+  "penetration-testing": makeCyberCourseLessons(
+    "penetration-testing",
+    "Penetration Testing",
+    ["Rules of engagement", "Test planning and safety", "Controlled security validation", "Findings, cleanup, and reporting"]
+  ),
+  "network-security": makeCyberCourseLessons(
+    "network-security",
+    "Network Security",
+    ["Secure network architecture", "Firewall policy design", "IDS, IPS, and network visibility", "VPNs and zero-trust access"]
+  ),
+  "cyber-cloud-security": makeCyberCourseLessons(
+    "cyber-cloud-security",
+    "Cloud Security",
+    ["Shared responsibility", "Cloud IAM and secrets", "Network and data controls", "Cloud posture and monitoring"]
+  ),
+  "security-monitoring-siem": makeCyberCourseLessons(
+    "security-monitoring-siem",
+    "Security Monitoring & SIEM",
+    ["Security log sources", "Normalization and correlation", "Detection rules and alerts", "Triage dashboards and workflows"]
+  ),
+  "incident-response": makeCyberCourseLessons(
+    "incident-response",
+    "Incident Response",
+    ["Preparation and response plans", "Detection and containment", "Eradication and recovery", "Lessons learned and improvement"]
+  ),
+  "digital-forensics": makeCyberCourseLessons(
+    "digital-forensics",
+    "Digital Forensics",
+    ["Evidence handling and integrity", "Disk and file artifacts", "Memory and event timelines", "Defensible forensic reporting"]
+  ),
+  "malware-fundamentals": makeCyberCourseLessons(
+    "malware-fundamentals",
+    "Malware Fundamentals",
+    ["Malware types and delivery", "Behavior and indicators", "Safe analysis boundaries", "Detection and defensive controls"]
+  ),
+  "ctf-security-labs": makeCyberCourseLessons(
+    "ctf-security-labs",
+    "CTF & Security Labs",
+    ["Lab rules and safe methodology", "Web security lab workflow", "Crypto and analysis lab thinking", "Writeups, flags, and remediation"]
+  ),
+};
+
 const cloudCourseLessonPlans = {
   "cloud-foundations-providers": makeCloudCourseLessons(
     "cloud-foundations-providers",
@@ -890,6 +1012,7 @@ print(language)`,
   ...expandedCourseLessonPlans,
   ...generatedMissingCourseLessons,
   ...cloudCourseLessonPlans,
+  ...cyberCourseLessonPlans,
 };
 
 // ============================================

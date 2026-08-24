@@ -71,7 +71,7 @@ const categories = [
     icon: "◈",
     title: "Cyber Security",
     description: "Threats, networks, identity & defense",
-    courses: "4 Courses",
+    courses: "20 Courses",
   },
   {
     icon: "▯",
