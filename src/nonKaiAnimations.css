@@ -269,3 +269,232 @@
     transform: none;
   }
 }
+
+/* Reference-inspired 3D page and card depth. The Kai teaching page is intentionally not targeted. */
+@keyframes app-page-flip-in {
+  from {
+    opacity: 0;
+    transform: perspective(1400px) rotateY(-7deg) translate3d(-12px, 0, -18px);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1400px) rotateY(0) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes app-card-sheen {
+  from {
+    transform: translateX(-145%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(145%) skewX(-18deg);
+  }
+}
+
+.dashboard-content-container,
+.category-overview,
+.subcourse-page,
+.courses-container,
+.tutorials-main,
+.settings-page,
+.admin-main,
+.challenge-container,
+.roadmap-content,
+.public-content-section {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  animation: app-page-flip-in 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dashboard-stats .stat-card,
+.dashboard-grid .dashboard-card,
+.continue-learning .course-item,
+.category-overview-card,
+.course-grid .course-card,
+.tutorials-main .tutorial-card,
+.settings-option-card,
+.public-price-card,
+.challenge-card,
+.roadmap-module,
+.admin-video-card {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1100px;
+  backface-visibility: hidden;
+  will-change: transform;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, box-shadow 300ms ease, background-color 220ms ease;
+}
+
+.dashboard-stats .stat-card::after,
+.dashboard-grid .dashboard-card::after,
+.continue-learning .course-item::after,
+.category-overview-card::after,
+.course-grid .course-card::after,
+.tutorials-main .tutorial-card::after,
+.settings-option-card::after,
+.public-price-card::after,
+.challenge-card::after,
+.roadmap-module::after,
+.admin-video-card::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -30%;
+  bottom: -30%;
+  left: 0;
+  width: 28%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(105deg, transparent, rgba(92, 255, 173, 0.16), transparent);
+  transform: translateX(-145%) skewX(-18deg);
+}
+
+.dashboard-stats .stat-card:hover,
+.dashboard-stats .stat-card:focus-within,
+.dashboard-grid .dashboard-card:hover,
+.dashboard-grid .dashboard-card:focus-within,
+.continue-learning .course-item:hover,
+.continue-learning .course-item:focus-within,
+.category-overview-card:hover,
+.category-overview-card:focus-visible,
+.course-grid .course-card:hover,
+.course-grid .course-card:focus-within,
+.tutorials-main .tutorial-card:hover,
+.tutorials-main .tutorial-card:focus-within,
+.settings-option-card:hover,
+.settings-option-card:focus-visible,
+.public-price-card:hover,
+.public-price-card:focus-within,
+.challenge-card:hover,
+.challenge-card:focus-within,
+.roadmap-module:hover,
+.roadmap-module:focus-within,
+.admin-video-card:hover,
+.admin-video-card:focus-within {
+  transform: perspective(1100px) rotateX(2deg) rotateY(-4deg) translate3d(0, -7px, 12px) scale(1.012);
+  border-color: color-mix(in srgb, var(--theme-accent, #3dff49) 70%, transparent);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28), 0 0 24px color-mix(in srgb, var(--theme-accent, #3dff49) 16%, transparent);
+}
+
+.dashboard-stats .stat-card:hover::after,
+.dashboard-stats .stat-card:focus-within::after,
+.dashboard-grid .dashboard-card:hover::after,
+.dashboard-grid .dashboard-card:focus-within::after,
+.continue-learning .course-item:hover::after,
+.continue-learning .course-item:focus-within::after,
+.category-overview-card:hover::after,
+.category-overview-card:focus-visible::after,
+.course-grid .course-card:hover::after,
+.course-grid .course-card:focus-within::after,
+.tutorials-main .tutorial-card:hover::after,
+.tutorials-main .tutorial-card:focus-within::after,
+.settings-option-card:hover::after,
+.settings-option-card:focus-visible::after,
+.public-price-card:hover::after,
+.public-price-card:focus-within::after,
+.challenge-card:hover::after,
+.challenge-card:focus-within::after,
+.roadmap-module:hover::after,
+.roadmap-module:focus-within::after,
+.admin-video-card:hover::after,
+.admin-video-card:focus-within::after {
+  opacity: 1;
+  animation: app-card-sheen 850ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-content-container,
+  .category-overview,
+  .subcourse-page,
+  .courses-container,
+  .tutorials-main,
+  .settings-page,
+  .admin-main,
+  .challenge-container,
+  .roadmap-content,
+  .public-content-section,
+  .dashboard-stats .stat-card,
+  .dashboard-grid .dashboard-card,
+  .continue-learning .course-item,
+  .category-overview-card,
+  .course-grid .course-card,
+  .tutorials-main .tutorial-card,
+  .settings-option-card,
+  .public-price-card,
+  .challenge-card,
+  .roadmap-module,
+  .admin-video-card {
+    animation: none !important;
+    transition: none !important;
+    will-change: auto;
+  }
+
+  .dashboard-stats .stat-card:hover,
+  .dashboard-stats .stat-card:focus-within,
+  .dashboard-grid .dashboard-card:hover,
+  .dashboard-grid .dashboard-card:focus-within,
+  .continue-learning .course-item:hover,
+  .continue-learning .course-item:focus-within,
+  .category-overview-card:hover,
+  .category-overview-card:focus-visible,
+  .course-grid .course-card:hover,
+  .course-grid .course-card:focus-within,
+  .tutorials-main .tutorial-card:hover,
+  .tutorials-main .tutorial-card:focus-within,
+  .settings-option-card:hover,
+  .settings-option-card:focus-visible,
+  .public-price-card:hover,
+  .public-price-card:focus-within,
+  .challenge-card:hover,
+  .challenge-card:focus-within,
+  .roadmap-module:hover,
+  .roadmap-module:focus-within,
+  .admin-video-card:hover,
+  .admin-video-card:focus-within {
+    transform: none;
+    box-shadow: inherit;
+  }
+}
+
+@media (max-width: 700px) and (prefers-reduced-motion: no-preference) {
+  .dashboard-stats .stat-card:hover,
+  .dashboard-stats .stat-card:focus-within,
+  .dashboard-grid .dashboard-card:hover,
+  .dashboard-grid .dashboard-card:focus-within,
+  .continue-learning .course-item:hover,
+  .continue-learning .course-item:focus-within,
+  .category-overview-card:hover,
+  .category-overview-card:focus-visible,
+  .course-grid .course-card:hover,
+  .course-grid .course-card:focus-within,
+  .tutorials-main .tutorial-card:hover,
+  .tutorials-main .tutorial-card:focus-within,
+  .settings-option-card:hover,
+  .settings-option-card:focus-visible,
+  .public-price-card:hover,
+  .public-price-card:focus-within,
+  .challenge-card:hover,
+  .challenge-card:focus-within,
+  .roadmap-module:hover,
+  .roadmap-module:focus-within,
+  .admin-video-card:hover,
+  .admin-video-card:focus-within {
+    transform: translate3d(0, -4px, 0) scale(1.005);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+  }
+
+  .dashboard-stats .stat-card::after,
+  .dashboard-grid .dashboard-card::after,
+  .continue-learning .course-item::after,
+  .category-overview-card::after,
+  .course-grid .course-card::after,
+  .tutorials-main .tutorial-card::after,
+  .settings-option-card::after,
+  .public-price-card::after,
+  .challenge-card::after,
+  .roadmap-module::after,
+  .admin-video-card::after {
+    display: none;
+  }
+}
