@@ -69,3 +69,257 @@ html[data-appearance="white-purple"] #root :where(
 ) :where(button, label, input, textarea, select) {
   font-family: var(--white-purple-code-font) !important;
 }
+
+/* White & Purple surface coverage for page shells not represented by the legacy theme selectors. */
+html[data-appearance="white-purple"] body,
+html[data-appearance="white-purple"] #root {
+  background: var(--theme-background) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  .app,
+  .dashboard-page,
+  .dashboard-main,
+  .dashboard-content-container,
+  .dashboard-category-view,
+  .courses-page,
+  .courses-container,
+  .courses-layout,
+  .learn-page,
+  .conversation-container,
+  .challenge-page,
+  .challenge-main,
+  .roadmap-page,
+  .roadmap-main,
+  .admin-page,
+  .admin-main,
+  .settings-page,
+  .appearance-page,
+  .design-page,
+  .tutorials-page,
+  .login-overlay,
+  .admin-route-gate
+) {
+  background: var(--theme-background) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  .navbar,
+  .dashboard-navbar,
+  .dashboard-course-sidebar,
+  .courses-navbar,
+  .category-sidebar,
+  .learn-navbar,
+  .kai-header,
+  .challenge-header,
+  .roadmap-header,
+  .admin-topbar,
+  .admin-sidebar,
+  .settings-header,
+  .appearance-page-header,
+  .design-page-header,
+  .tutorials-header
+) {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  .dashboard-content-container,
+  .dashboard-course-card,
+  .dashboard-card,
+  .dashboard-welcome,
+  .dashboard-course-sidebar,
+  .stat-card,
+  .continue-learning,
+  .course-item,
+  .empty-course,
+  .courses-hero,
+  .category-card,
+  .category-overview-card,
+  .course-category,
+  .course-card,
+  .intro-card,
+  .path-selector,
+  .path-card,
+  .module-card,
+  .progress-card,
+  .challenge-card,
+  .info-card,
+  .leaderboard-card,
+  .admin-panel,
+  .admin-stat-card,
+  .admin-course-panel,
+  .admin-table-wrap,
+  .settings-card,
+  .settings-option-card,
+  .appearance-card,
+  .design-card,
+  .tutorial-card,
+  .login-modal,
+  .signup-modal
+) {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  .dashboard-welcome,
+  .courses-hero,
+  .category-card:hover,
+  .category-overview-card:hover,
+  .course-card:hover,
+  .dashboard-card:hover,
+  .appearance-card:hover,
+  .appearance-card.selected,
+  .design-card:hover,
+  .design-card.selected
+) {
+  background: var(--theme-surface-elevated) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  strong,
+  .dashboard-category-count,
+  .dashboard-course-level,
+  .course-card-category,
+  .course-progress-text
+) {
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  p,
+  li,
+  label,
+  small,
+  .dashboard-card span,
+  .dashboard-card p,
+  .dashboard-course-card p,
+  .course-card p,
+  .course-meta,
+  .admin-muted-copy,
+  .settings-card p,
+  .settings-option-card p,
+  .tutorial-card p
+) {
+  color: var(--theme-text-secondary) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  input,
+  textarea,
+  select,
+  .kai-input,
+  .learner-input-area,
+  .input-wrapper,
+  .admin-search,
+  .login-modal input,
+  .signup-modal input
+) {
+  background: var(--theme-input-background) !important;
+  border-color: var(--theme-input-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  .primary-button,
+  .get-started,
+  .start-learning,
+  .course-card-button,
+  .course-card button,
+  .dashboard-card button,
+  .dashboard-course-card button,
+  .send-btn,
+  .submit-btn,
+  .next-lesson,
+  .module-action-btn,
+  .admin-primary-button,
+  .appearance-save-button,
+  .design-save-button
+) {
+  background: var(--theme-button-background) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-button-text) !important;
+}
+
+/* Final page-section coverage: keep uncarded regions on the same White & Purple canvas. */
+html[data-appearance="white-purple"] #root :where(
+  main,
+  .categories,
+  .dashboard-stats,
+  .dashboard-grid,
+  .dashboard-category-grid,
+  .settings-layout,
+  .appearance-grid,
+  .design-grid,
+  .tutorials-main,
+  .tutorials-grid,
+  .challenge-content,
+  .roadmap-content,
+  .courses-main
+) {
+  background: var(--theme-background) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  .categories,
+  .dashboard-stats,
+  .dashboard-grid,
+  .dashboard-category-grid,
+  .settings-layout,
+  .appearance-grid,
+  .design-grid,
+  .tutorials-main,
+  .tutorials-grid,
+  .challenge-content,
+  .roadmap-content,
+  .courses-main
+) {
+  border-color: var(--theme-border) !important;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  .navbar,
+  .dashboard-navbar,
+  .courses-navbar,
+  .learn-navbar,
+  .challenge-header,
+  .roadmap-header,
+  .admin-topbar,
+  .appearance-page-header,
+  .design-page-header,
+  .tutorials-header
+) :where(a, button, span, strong, small) {
+  color: inherit;
+}
+
+html[data-appearance="white-purple"] #root :where(
+  .nav-links button,
+  .view-all-courses,
+  .dashboard-user button,
+  .dashboard-section-heading button,
+  .courses-back-button,
+  .learn-back,
+  .challenge-back-btn,
+  .roadmap-back-btn,
+  .appearance-back,
+  .design-back,
+  .category-button,
+  .category-arrow,
+  .section-heading a
+) {
+  color: var(--theme-accent) !important;
+}
