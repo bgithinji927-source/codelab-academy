@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import courses from "../data/course";
+import CourseLogo from "../components/CourseLogo";
 import CourseLearn from "./CourseLearn";
 import ThemeToggle from "../components/ThemeToggle";
 import fetchWithAuth from "../utils/fetchWithAuth";
@@ -332,7 +333,12 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
                   return (
                     <article className={`course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""}`} key={course.id}>
                       <div className="course-card-icon">
-                        {locked ? <LockKeyhole size={28} /> : completed ? <CircleCheck size={28} /> : <ActiveIcon size={28} />}
+                        <CourseLogo course={course} />
+                        {(locked || completed) && (
+                          <span className="course-card-status-icon" aria-hidden="true">
+                            {locked ? <LockKeyhole size={16} /> : <CircleCheck size={16} />}
+                          </span>
+                        )}
                       </div>
                       <div className="course-card-content">
                         <span className="course-level">

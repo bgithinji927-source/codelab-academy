@@ -1,0 +1,105 @@
+.course-logo {
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  pointer-events: none;
+}
+
+.course-logo img {
+  display: block;
+  width: 72%;
+  height: 72%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(61, 255, 73, 0.26));
+}
+
+.course-logo-fallback {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  color: var(--course-logo-color, var(--theme-accent, #3dff49));
+  font-size: clamp(8px, 1.2vw, 12px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-align: center;
+  text-shadow: 0 0 9px color-mix(in srgb, var(--course-logo-color, #3dff49) 45%, transparent);
+}
+
+.course-card-icon,
+.dashboard-course-card-icon {
+  position: relative;
+}
+
+.course-card-status-icon,
+.dashboard-course-card-status-icon {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  z-index: 3;
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--theme-surface, #ffffff);
+  border-radius: 50%;
+  background: var(--theme-surface, #ffffff);
+  color: var(--theme-accent, #3dff49);
+}
+
+.course-card-status-icon svg,
+.dashboard-course-card-status-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+@media (max-width: 600px) {
+  .course-logo img {
+    width: 68%;
+    height: 68%;
+  }
+
+  .course-card-status-icon,
+  .dashboard-course-card-status-icon {
+    right: -4px;
+    bottom: -4px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .course-card-status-icon svg,
+  .dashboard-course-card-status-icon svg {
+    width: 13px;
+    height: 13px;
+  }
+}
+
+.continue-learning .course-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.continue-learning .continue-course-logo {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border: 1px solid rgba(61, 255, 73, 0.22);
+  border-radius: 9px;
+  background: rgba(61, 255, 73, 0.06);
+}
+
+.continue-learning .continue-course-logo img {
+  width: 68%;
+  height: 68%;
+}
+
+.continue-learning .course-header h3 {
+  min-width: 0;
+}

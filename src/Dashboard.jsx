@@ -43,6 +43,7 @@ import SettingsPage from "./pages/Settings";
 import VideoTutorials from "./pages/VideoTutorials";
 import fetchWithAuth from "./utils/fetchWithAuth";
 import { buildFallbackCourseAccess, findCourseAccess } from "./utils/courseAccess";
+import CourseLogo from "./components/CourseLogo";
 
 function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAccess }) {
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
@@ -69,7 +70,14 @@ function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAc
 
           return (
             <article className={`dashboard-course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""}`} key={course.id}>
-              <div className="dashboard-course-card-icon">{locked ? <LockKeyhole size={20} aria-hidden="true" /> : completed ? <CircleCheck size={20} aria-hidden="true" /> : <Code2 size={20} aria-hidden="true" />}</div>
+              <div className="dashboard-course-card-icon">
+                <CourseLogo course={course} />
+                {(locked || completed) && (
+                  <span className="dashboard-course-card-status-icon" aria-hidden="true">
+                    {locked ? <LockKeyhole size={15} /> : <CircleCheck size={15} />}
+                  </span>
+                )}
+              </div>
               <span className="dashboard-course-level">{course.level}</span>
               <h2>{course.title}</h2>
               <p>{locked ? (access?.unlockReason || "Kai will open this course when you are ready.") : course.description}</p>
@@ -539,6 +547,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
                     <span className="course-progress-text">{course.progress}%</span>
                   </div>
                   <div className="course-header">
+                    <CourseLogo course={course} className="continue-course-logo" />
                     <h3>{course.title}</h3>
                   </div>
                   <div
