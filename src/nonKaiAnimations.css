@@ -1,0 +1,271 @@
+/*
+ * CodeLab Academy motion layer for non-Kai screens.
+ * CourseLearn and LearnWithKai selectors are intentionally excluded.
+ */
+
+@keyframes app-motion-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes app-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes app-progress-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes app-soft-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(61, 255, 73, 0);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(61, 255, 73, 0.12);
+  }
+}
+
+@keyframes app-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Page-level entrances. These roots belong to non-Kai screens only. */
+.dashboard-content-container > *,
+.category-overview,
+.subcourse-page,
+.courses-container > *,
+.tutorials-main > *,
+.settings-page > *,
+.settings-layout > *,
+.admin-main > *,
+.challenge-container > *,
+.roadmap-content > *,
+.public-content-section {
+  animation: app-motion-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dashboard-content-container > *:nth-child(2),
+.courses-container > *:nth-child(2),
+.tutorials-main > *:nth-child(2),
+.settings-layout > *:nth-child(2),
+.admin-main > *:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.dashboard-content-container > *:nth-child(3),
+.courses-container > *:nth-child(3),
+.tutorials-main > *:nth-child(3),
+.admin-main > *:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+/* Sidebar motion stays compact so navigation remains quick to use. */
+.dashboard-course-sidebar button {
+  transition: transform 180ms ease, background-color 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.dashboard-course-sidebar button:hover,
+.dashboard-course-sidebar button:focus-visible {
+  transform: translateX(4px);
+}
+
+.dashboard-sidebar-profile:hover,
+.dashboard-sidebar-profile:focus-visible {
+  transform: translateY(-2px) translateX(0);
+}
+
+/* Dashboard, public library, tutorials, settings, admin, and marketing cards. */
+.dashboard-stats .stat-card,
+.dashboard-grid .dashboard-card,
+.continue-learning .course-item,
+.category-overview-card,
+.course-grid .course-card,
+.tutorials-main .tutorial-card,
+.settings-option-card,
+.public-price-card,
+.public-content-section,
+.challenge-card,
+.roadmap-module,
+.admin-video-card {
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+}
+
+.dashboard-stats .stat-card,
+.dashboard-grid .dashboard-card,
+.continue-learning .course-item,
+.category-overview-card,
+.course-grid .course-card,
+.tutorials-main .tutorial-card,
+.settings-option-card,
+.public-price-card,
+.challenge-card,
+.roadmap-module,
+.admin-video-card {
+  animation: app-card-enter 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dashboard-stats .stat-card:hover,
+.dashboard-grid .dashboard-card:hover,
+.continue-learning .course-item:hover,
+.category-overview-card:hover,
+.course-grid .course-card:hover,
+.tutorials-main .tutorial-card:hover,
+.settings-option-card:hover,
+.public-price-card:hover,
+.challenge-card:hover,
+.roadmap-module:hover,
+.admin-video-card:hover {
+  transform: translateY(-4px);
+}
+
+.dashboard-stats .stat-card:nth-child(2),
+.dashboard-grid .dashboard-card:nth-child(2),
+.continue-learning .course-item:nth-child(2),
+.course-grid .course-card:nth-child(2),
+.tutorials-main .tutorial-card:nth-child(2),
+.settings-option-card:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.dashboard-stats .stat-card:nth-child(3),
+.dashboard-grid .dashboard-card:nth-child(3),
+.continue-learning .course-item:nth-child(3),
+.course-grid .course-card:nth-child(3),
+.tutorials-main .tutorial-card:nth-child(3),
+.settings-option-card:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.dashboard-stats .stat-card:nth-child(4),
+.dashboard-grid .dashboard-card:nth-child(4),
+.continue-learning .course-item:nth-child(4),
+.course-grid .course-card:nth-child(4),
+.settings-option-card:nth-child(4) {
+  animation-delay: 210ms;
+}
+
+/* Only dashboard and non-Kai progress indicators are animated here. */
+.continue-learning .course-progress-fill,
+.roadmap-content .module-progress-fill,
+.roadmap-content .path-progress {
+  transform-origin: left center;
+  animation: app-progress-grow 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dashboard-kai,
+.dashboard-welcome .dashboard-kai {
+  animation: app-soft-glow 3.8s ease-in-out infinite;
+}
+
+.login-modal,
+.tutorial-video-modal,
+.tutorial-video-modal-panel {
+  animation: app-modal-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.settings-nav button,
+.settings-profile-form button,
+.tutorials-main button,
+.courses-container button,
+.public-content-section button {
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+.settings-nav button:hover,
+.settings-nav button:focus-visible,
+.tutorials-main button:hover,
+.tutorials-main button:focus-visible,
+.courses-container button:hover,
+.courses-container button:focus-visible,
+.public-content-section button:hover,
+.public-content-section button:focus-visible {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-content-container > *,
+  .category-overview,
+  .subcourse-page,
+  .courses-container > *,
+  .tutorials-main > *,
+  .settings-page > *,
+  .settings-layout > *,
+  .admin-main > *,
+  .challenge-container > *,
+  .roadmap-content > *,
+  .public-content-section,
+  .dashboard-stats .stat-card,
+  .dashboard-grid .dashboard-card,
+  .continue-learning .course-item,
+  .category-overview-card,
+  .course-grid .course-card,
+  .tutorials-main .tutorial-card,
+  .settings-option-card,
+  .public-price-card,
+  .challenge-card,
+  .roadmap-module,
+  .admin-video-card,
+  .dashboard-kai,
+  .dashboard-welcome .dashboard-kai,
+  .continue-learning .course-progress-fill,
+  .roadmap-content .module-progress-fill,
+  .roadmap-content .path-progress,
+  .login-modal,
+  .tutorial-video-modal,
+  .tutorial-video-modal-panel {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .dashboard-course-sidebar button:hover,
+  .dashboard-course-sidebar button:focus-visible,
+  .dashboard-sidebar-profile:hover,
+  .dashboard-sidebar-profile:focus-visible,
+  .dashboard-stats .stat-card:hover,
+  .dashboard-grid .dashboard-card:hover,
+  .continue-learning .course-item:hover,
+  .category-overview-card:hover,
+  .course-grid .course-card:hover,
+  .tutorials-main .tutorial-card:hover,
+  .settings-option-card:hover,
+  .public-price-card:hover,
+  .challenge-card:hover,
+  .roadmap-module:hover,
+  .admin-video-card:hover,
+  .settings-nav button:hover,
+  .settings-nav button:focus-visible,
+  .tutorials-main button:hover,
+  .tutorials-main button:focus-visible,
+  .courses-container button:hover,
+  .courses-container button:focus-visible,
+  .public-content-section button:hover,
+  .public-content-section button:focus-visible {
+    transform: none;
+  }
+}
