@@ -6664,3 +6664,148 @@ html:not([data-design="canvas"]) .dashboard-category-view {
 .learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .progress-label {
   color: #c0b4d4;
 }
+
+
+/* Floating Kai content layers: the avatar is the canvas, and each learning element sits above it. */
+.learn-page[data-kai-background] .kai-teaching-card {
+  width: min(100%, 1180px);
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .chat-content {
+  position: relative;
+  z-index: 2;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-bubble,
+.learn-page[data-kai-background] .kai-teaching-card .learner-bubble {
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text p,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h2,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h3,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h4,
+.learn-page[data-kai-background] .kai-teaching-card .kai-list-item {
+  width: fit-content;
+  max-width: min(100%, 850px);
+  margin: 0;
+  padding: 13px 17px;
+  border: 1px solid rgba(171, 135, 255, 0.26);
+  border-radius: 14px;
+  background: rgba(7, 5, 18, 0.58);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #f4efff;
+  backdrop-filter: blur(8px);
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h2,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h3,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h4 {
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text p:last-child {
+  margin-bottom: 0;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text .kai-message-spacer {
+  display: none;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-list-item {
+  display: flex;
+  align-items: flex-start;
+  width: min(100%, 850px);
+  gap: 9px;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-code-wrapper {
+  width: min(100%, 850px);
+  margin: 0;
+  border-color: rgba(171, 135, 255, 0.38);
+  background: rgba(4, 3, 11, 0.78);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34), 0 0 24px rgba(124, 58, 237, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-readiness-panel,
+.learn-page[data-kai-background] .kai-teaching-card .course-state-error,
+.learn-page[data-kai-background] .kai-teaching-card .kai-video-recommendation {
+  width: min(100%, 850px);
+  margin-right: auto;
+  margin-left: auto;
+  background: rgba(7, 5, 18, 0.62) !important;
+  border-color: rgba(171, 135, 255, 0.3) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-message-text {
+  width: min(100%, 620px);
+  padding: 13px 17px;
+  border: 1px solid rgba(171, 135, 255, 0.36);
+  border-radius: 14px;
+  background: rgba(112, 64, 232, 0.55);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-message-text p {
+  margin: 0 0 8px;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-message-text p:last-child {
+  margin-bottom: 0;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-input-area {
+  position: sticky;
+  z-index: 4;
+  margin-top: 22px;
+  background: rgba(7, 5, 18, 0.7) !important;
+  border-color: rgba(171, 135, 255, 0.4) !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.35), 0 0 20px rgba(124, 58, 237, 0.1);
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .input-hint {
+  color: #c6b9db;
+}
+
+@media (max-width: 720px) {
+  .learn-page[data-kai-background] .kai-teaching-card .kai-message-text p,
+  .learn-page[data-kai-background] .kai-teaching-card .kai-message-text h2,
+  .learn-page[data-kai-background] .kai-teaching-card .kai-message-text h3,
+  .learn-page[data-kai-background] .kai-teaching-card .kai-message-text h4,
+  .learn-page[data-kai-background] .kai-teaching-card .kai-list-item,
+  .learn-page[data-kai-background] .kai-teaching-card .kai-code-wrapper {
+    max-width: 100%;
+  }
+
+  .learn-page[data-kai-background] .kai-teaching-card .learner-message-text {
+    width: 100%;
+  }
+}
