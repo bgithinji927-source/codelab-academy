@@ -6275,3 +6275,130 @@ html:not([data-design="canvas"]) .dashboard-category-view {
     min-width: min(292px, 82vw) !important;
   }
 }
+
+
+/* Kai teaching glass stage: the avatar stays behind the readable learning surface. */
+.learn-page {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--theme-accent, #7c3aed) 12%, transparent), transparent 38%),
+    var(--theme-background, #ffffff) !important;
+}
+
+.learn-navbar {
+  background: color-mix(in srgb, var(--theme-surface, #ffffff) 78%, transparent) !important;
+  backdrop-filter: blur(16px);
+}
+
+.conversation-container {
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100vh - 66px);
+  background: transparent !important;
+}
+
+.kai-avatar-wallpaper {
+  position: absolute;
+  z-index: -1;
+  top: clamp(70px, 12vh, 150px);
+  left: 50%;
+  display: grid;
+  width: min(70vw, 620px);
+  height: min(70vw, 620px);
+  place-items: center;
+  color: var(--theme-accent, #7c3aed);
+  opacity: 0.12;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.kai-avatar-wallpaper svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 18px 40px color-mix(in srgb, var(--theme-accent, #7c3aed) 25%, transparent));
+}
+
+.kai-avatar-wallpaper-glow {
+  position: absolute;
+  width: 64%;
+  height: 64%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--theme-accent, #7c3aed) 20%, transparent);
+  filter: blur(42px);
+}
+
+.kai-teaching-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: clamp(18px, 3vw, 34px);
+  border: 1px solid color-mix(in srgb, var(--theme-border, #e8def7) 82%, transparent) !important;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--theme-surface, #ffffff) 70%, transparent) !important;
+  box-shadow:
+    0 24px 70px color-mix(in srgb, var(--theme-accent, #7c3aed) 10%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(18px) saturate(1.08);
+}
+
+.kai-teaching-card .conversation-messages {
+  position: relative;
+  z-index: 1;
+}
+
+.kai-teaching-card .kai-bubble {
+  background: color-mix(in srgb, var(--theme-surface, #ffffff) 76%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-border, #e8def7) 82%, transparent) !important;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--theme-accent, #7c3aed) 8%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.kai-teaching-card .learner-bubble {
+  background: color-mix(in srgb, var(--theme-accent, #7c3aed) 90%, transparent) !important;
+  border-color: var(--theme-accent, #7c3aed) !important;
+}
+
+.kai-teaching-card .learner-input-area {
+  background: color-mix(in srgb, var(--theme-surface, #ffffff) 82%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-border, #e8def7) 88%, transparent) !important;
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--theme-accent, #7c3aed) 9%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.kai-teaching-card .kai-readiness-panel,
+.kai-teaching-card .course-state-error,
+.kai-teaching-card .kai-video-recommendation {
+  background: color-mix(in srgb, var(--theme-surface, #ffffff) 78%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-border, #e8def7) 82%, transparent) !important;
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 720px) {
+  .kai-avatar-wallpaper {
+    top: 110px;
+    width: min(96vw, 480px);
+    height: min(96vw, 480px);
+    opacity: 0.08;
+  }
+
+  .kai-teaching-card {
+    width: 100%;
+    padding: 14px 10px 18px;
+    border-radius: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kai-avatar-wallpaper {
+    opacity: 0.05;
+  }
+
+  .kai-teaching-card,
+  .kai-teaching-card .kai-bubble,
+  .kai-teaching-card .learner-input-area {
+    backdrop-filter: none;
+  }
+}

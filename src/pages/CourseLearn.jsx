@@ -1109,6 +1109,12 @@ ${startMessage}
 
       <main className="conversation-container">
 
+        <div className="kai-avatar-wallpaper" aria-hidden="true">
+          <Bot size={300} strokeWidth={0.8} />
+          <span className="kai-avatar-wallpaper-glow" />
+        </div>
+
+        <div className="kai-teaching-card">
 
         {/* ======================================
             CHAT
@@ -1285,6 +1291,8 @@ ${startMessage}
 
         <div className="input-hint">
           Press <kbd>Enter</kbd> to send
+        </div>
+
         </div>
 
       </main>
