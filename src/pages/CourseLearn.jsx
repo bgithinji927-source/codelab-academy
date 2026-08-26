@@ -1056,8 +1056,10 @@ ${startMessage}
   // MAIN UI
   // ============================================
 
+  const hasCustomKaiBackground = kaiBackgroundImageUrl.startsWith("/api/kai/background/image");
+
   return (
-    <div className="learn-page" data-kai-background={kaiBackground}>
+    <div className={`learn-page${hasCustomKaiBackground ? " has-custom-kai-background" : ""}`} data-kai-background={kaiBackground}>
       <div className="kai-wallpaper-image" aria-hidden="true">
         <img src={kaiBackgroundImageUrl} alt="" />
       </div>
@@ -1147,11 +1149,6 @@ ${startMessage}
       ======================================== */}
 
       <main className="conversation-container">
-
-        <div className="kai-avatar-wallpaper" aria-hidden="true">
-          <Bot size={300} strokeWidth={0.8} />
-          <span className="kai-avatar-wallpaper-glow" />
-        </div>
 
         <div className="kai-teaching-card">
 
