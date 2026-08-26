@@ -347,3 +347,14 @@ html[data-appearance="white-purple"] #root .learn-page[data-kai-background]:not(
 html[data-appearance="white-purple"] #root .learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .lesson-status {
   color: #f8f5ff !important;
 }
+
+
+/* Let the generated Kai wallpaper show through the actual main conversation wrapper. */
+html[data-appearance="white-purple"] #root .learn-page[data-kai-background] > .conversation-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-appearance="white-purple"] #root .learn-page[data-kai-background] > .conversation-container > .kai-teaching-card {
+  background: rgba(4, 3, 13, 0.08) !important;
+}
