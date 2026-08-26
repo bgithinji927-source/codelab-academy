@@ -595,8 +595,7 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
     setVideoForm((current) => ({ ...current, lessonId, lessonTitle: selectedLesson.title || "" }));
   };
 
-  const uploadKaiBackground = async (event) => {
-    event.preventDefault();
+  const uploadKaiBackground = async () => {
     if (!kaiBackgroundFile) {
       notify("error", "Choose a JPG, PNG, or WebP image first");
       return;
@@ -709,7 +708,7 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
                 ) : (
                   <div className="admin-kai-background-image-empty">No custom image uploaded yet. The built-in Neon Orbit avatar is still available as the fallback.</div>
                 )}
-                <form className="admin-kai-background-upload" onSubmit={uploadKaiBackground}>
+                <div className="admin-kai-background-upload">
                   <label className="admin-wide-field">Choose image file
                     <input
                       key={kaiBackgroundFileInputKey}
@@ -720,10 +719,10 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
                     <small className="admin-field-help">JPG, PNG, or WebP only; maximum 15 MB. The image is stored in the server database and served to Kai’s teaching page.</small>
                   </label>
                   {kaiBackgroundFile && <span className="admin-selected-file">Selected: {kaiBackgroundFile.name}</span>}
-                  <button type="submit" className="admin-primary-button" disabled={isUploadingKaiBackground || !kaiBackgroundFile}>
+                  <button type="button" className="admin-primary-button" onClick={uploadKaiBackground} disabled={isUploadingKaiBackground || !kaiBackgroundFile}>
                     <Save size={15} />{isUploadingKaiBackground ? "Uploading image..." : "Save image background"}
                   </button>
-                </form>
+                </div>
               </div>
               <div className="admin-kai-background-control">
                 <div className="admin-kai-background-heading">
