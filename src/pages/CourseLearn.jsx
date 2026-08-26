@@ -43,7 +43,7 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
   const [activeVideo, setActiveVideo] = useState(null);
   const [resolvedVideoUrl, setResolvedVideoUrl] = useState("");
   const [videoPlaybackError, setVideoPlaybackError] = useState("");
-  const [kaiBackground] = useState(() => normalizeKaiBackground(
+  const [kaiBackground, setKaiBackground] = useState(() => normalizeKaiBackground(
     localStorage.getItem(kaiBackgroundStorageKey(user?.id))
       || localStorage.getItem("codelabKaiBackground:guest")
       || user?.kaiBackground
@@ -54,6 +54,30 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
   const lessonStartKeyRef = useRef("");
   const conversationEndRef = useRef(null);
   const scrollFrameRef = useRef(null);
+
+  useEffect(() => {
+    const savedLearnerBackground = localStorage.getItem(kaiBackgroundStorageKey(user?.id))
+      || localStorage.getItem("codelabKaiBackground:guest")
+      || user?.kaiBackground;
+    if (savedLearnerBackground) {
+      setKaiBackground(normalizeKaiBackground(savedLearnerBackground));
+      return undefined;
+    }
+
+    let cancelled = false;
+    fetch("/api/kai/background")
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!cancelled && data?.success) setKaiBackground(normalizeKaiBackground(data.kaiBackground));
+      })
+      .catch(() => {
+        // The local default remains available if the platform settings endpoint is unavailable.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, user?.kaiBackground]);
 
   const courseTitle = course?.title || "Programming";
 

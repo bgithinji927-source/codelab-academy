@@ -70,7 +70,7 @@ const DEFAULT_CHALLENGES = [
 ];
 
 async function getPlatformSettings() {
-  return PlatformSettings.findOneAndUpdate(
+  const settings = await PlatformSettings.findOneAndUpdate(
     { _id: "platform" },
     {
       $setOnInsert: {
@@ -78,10 +78,16 @@ async function getPlatformSettings() {
         challengeWindowHours: 24,
         defaultChallengeXP: 10,
         dailyChallengesEnabled: true,
+        kaiBackground: "neon-orbit",
       },
     },
     { upsert: true, new: true, setDefaultsOnInsert: true }
   ).lean();
+
+  return {
+    ...settings,
+    kaiBackground: settings?.kaiBackground || "neon-orbit",
+  };
 }
 
 function getChallengeWindowMs(settings) {

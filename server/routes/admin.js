@@ -597,7 +597,7 @@ router.get("/settings", async (req, res) => {
 
 router.patch("/settings", async (req, res) => {
   try {
-    const updates = pickFields(req.body || {}, ["academyName", "challengeWindowHours", "defaultChallengeXP", "dailyChallengesEnabled"]);
+    const updates = pickFields(req.body || {}, ["academyName", "challengeWindowHours", "defaultChallengeXP", "dailyChallengesEnabled", "kaiBackground"]);
     if (updates.academyName !== undefined) {
       updates.academyName = String(updates.academyName).trim();
       if (!updates.academyName) return res.status(400).json({ success: false, message: "Academy name cannot be empty" });
@@ -607,6 +607,13 @@ router.patch("/settings", async (req, res) => {
     }
     if (updates.defaultChallengeXP !== undefined) {
       updates.defaultChallengeXP = Math.max(0, Math.min(10000, Number(updates.defaultChallengeXP) || 0));
+    }
+    if (updates.kaiBackground !== undefined) {
+      const allowedKaiBackgrounds = new Set(["violet-aurora", "circuit-night", "neon-orbit", "terminal-green", "soft-study"]);
+      updates.kaiBackground = String(updates.kaiBackground || "");
+      if (!allowedKaiBackgrounds.has(updates.kaiBackground)) {
+        return res.status(400).json({ success: false, message: "Invalid Kai background" });
+      }
     }
 
     const settings = await PlatformSettings.findOneAndUpdate(

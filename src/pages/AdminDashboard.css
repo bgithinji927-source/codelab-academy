@@ -1178,3 +1178,179 @@
     justify-content: center;
   }
 }
+
+/* =========================================
+   KAI TEACHING SPACE CONTROL
+========================================= */
+.admin-kai-background-control {
+  margin-top: 26px;
+  padding: 22px;
+  border: 1px solid rgba(57, 255, 20, 0.24);
+  background: rgba(2, 8, 5, 0.62);
+}
+
+.admin-kai-background-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.admin-kai-background-heading h3 {
+  margin: 5px 0;
+  color: #efffed;
+  font-size: 19px;
+}
+
+.admin-kai-background-heading p {
+  max-width: 650px;
+  margin: 0;
+  color: #8fb69a;
+  line-height: 1.55;
+}
+
+.admin-kai-background-heading > svg {
+  flex: 0 0 auto;
+  color: #39ff14;
+}
+
+.admin-kai-background-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-kai-background-option {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(57, 255, 20, 0.2);
+  background: rgba(1, 5, 3, 0.72);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.admin-kai-background-option:hover {
+  border-color: rgba(57, 255, 20, 0.68);
+  background: rgba(57, 255, 20, 0.08);
+  transform: translateY(-1px);
+}
+
+.admin-kai-background-option:focus-visible {
+  outline: 2px solid #a2ff8f;
+  outline-offset: 2px;
+}
+
+.admin-kai-background-option.selected {
+  border-color: #39ff14;
+  background: rgba(57, 255, 20, 0.14);
+  box-shadow: 0 0 0 1px rgba(57, 255, 20, 0.16), 0 10px 28px rgba(0, 0, 0, 0.2);
+}
+
+.admin-kai-background-preview {
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 58px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--kai-preview-accent, #39ff14) 62%, transparent);
+  background: linear-gradient(135deg, #05030d, var(--kai-preview-accent, #39ff14));
+  color: #fff;
+  box-shadow: inset 0 0 22px rgba(255, 255, 255, 0.08);
+}
+
+.admin-kai-background-preview-violet-aurora {
+  background: radial-gradient(circle at 72% 26%, #8b5cf6 0, #25134e 36%, #05030d 100%);
+}
+
+.admin-kai-background-preview-circuit-night {
+  background-color: #020611;
+  background-image: linear-gradient(90deg, rgba(79, 140, 255, 0.3) 1px, transparent 1px), linear-gradient(rgba(79, 140, 255, 0.25) 1px, transparent 1px), radial-gradient(circle at 70% 30%, #23478c, #020611 70%);
+  background-size: 13px 13px, 13px 13px, auto;
+}
+
+.admin-kai-background-preview-neon-orbit {
+  background-image: linear-gradient(rgba(1, 4, 16, 0.08), rgba(1, 4, 16, 0.08)), url("/kai-background-neon-orbit.png");
+  background-position: center 31%;
+  background-size: cover;
+}
+
+.admin-kai-background-preview-terminal-green {
+  background: radial-gradient(circle at 76% 28%, #39ff14 0, #0b2415 32%, #020804 100%);
+}
+
+.admin-kai-background-preview-soft-study {
+  background: radial-gradient(circle at 72% 25%, #fff 0, #ebe5ff 38%, #b49af0 100%);
+  color: #4c1d95;
+}
+
+.admin-kai-background-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-kai-background-copy strong {
+  overflow: hidden;
+  color: #efffed;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-kai-background-copy small {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #8fb69a;
+  font-size: 11px;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.admin-kai-background-status {
+  align-self: start;
+  padding: 4px 7px;
+  border: 1px solid rgba(57, 255, 20, 0.25);
+  color: #71977a;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.admin-kai-background-option.selected .admin-kai-background-status {
+  border-color: rgba(57, 255, 20, 0.62);
+  color: #b8ffad;
+}
+
+@media (max-width: 800px) {
+  .admin-kai-background-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-kai-background-control {
+    padding: 16px;
+  }
+
+  .admin-kai-background-option {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .admin-kai-background-preview {
+    width: 64px;
+    height: 52px;
+  }
+
+  .admin-kai-background-status {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

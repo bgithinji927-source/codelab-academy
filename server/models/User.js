@@ -46,8 +46,8 @@ const userSchema = new mongoose.Schema(
 
     kaiBackground: {
       type: String,
-      enum: ["violet-aurora", "circuit-night", "terminal-green", "soft-study"],
-      default: "violet-aurora",
+      enum: ["violet-aurora", "circuit-night", "neon-orbit", "terminal-green", "soft-study"],
+      default: undefined,
     },
 
     xp: {

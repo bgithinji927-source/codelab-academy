@@ -7,6 +7,11 @@ const platformSettingsSchema = new mongoose.Schema(
     challengeWindowHours: { type: Number, default: 24 },
     defaultChallengeXP: { type: Number, default: 10 },
     dailyChallengesEnabled: { type: Boolean, default: true },
+    kaiBackground: {
+      type: String,
+      enum: ["violet-aurora", "circuit-night", "neon-orbit", "terminal-green", "soft-study"],
+      default: "neon-orbit",
+    },
     updatedBy: String,
   },
   { timestamps: true }

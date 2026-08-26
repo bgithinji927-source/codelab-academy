@@ -9,6 +9,7 @@ const {
   findCourseAccess,
   isComplete,
 } = require("../lib/progression");
+const { getPlatformSettings } = require("../lib/challenges");
 
 const router = express.Router();
 
@@ -112,6 +113,22 @@ async function markCourseReadyForNext(userId, courseId, readinessSummary) {
     { new: true }
   );
 }
+
+// ============================================
+// PLATFORM KAI BACKGROUND
+// ============================================
+
+// This endpoint intentionally returns only the learner-safe platform default.
+// Individual learner preferences remain handled by /api/auth/preferences.
+router.get("/background", async (req, res) => {
+  try {
+    const settings = await getPlatformSettings();
+    return res.json({ success: true, kaiBackground: settings.kaiBackground || "neon-orbit" });
+  } catch (error) {
+    console.error("Kai background settings error:", error);
+    return res.status(200).json({ success: true, kaiBackground: "neon-orbit" });
+  }
+});
 
 // ============================================
 // HELPER: LOAD OR CREATE SESSION
