@@ -1029,6 +1029,9 @@ ${startMessage}
 
   return (
     <div className="learn-page" data-kai-background={kaiBackground}>
+      <div className="kai-wallpaper-image" aria-hidden="true">
+        <img src="/kai-background-neon-orbit.png" alt="" />
+      </div>
 
       {/* ========================================
           NAVBAR
