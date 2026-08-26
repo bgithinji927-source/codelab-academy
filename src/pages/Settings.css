@@ -699,3 +699,14 @@
     grid-template-columns: 62px minmax(0, 1fr) auto;
   }
 }
+
+
+.settings-kai-background-preview-neon-orbit::before {
+  background:
+    linear-gradient(rgba(2, 2, 10, 0.2), rgba(2, 2, 10, 0.32)),
+    url("/kai-background-neon-orbit.png") center center / cover no-repeat;
+}
+
+.settings-kai-background-preview-neon-orbit::after {
+  border-color: rgba(166, 148, 255, 0.48);
+}

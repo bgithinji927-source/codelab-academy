@@ -12,6 +12,12 @@ export const KAI_BACKGROUND_OPTIONS = [
     swatches: ["#020611", "#101b38", "#4f8cff"],
   },
   {
+    id: "neon-orbit",
+    name: "Neon Orbit",
+    description: "An original AI-avatar wallpaper with violet and electric-blue light.",
+    swatches: ["#02030a", "#12133a", "#7d70ff"],
+  },
+  {
     id: "terminal-green",
     name: "Terminal Green",
     description: "A focused developer backdrop with restrained green energy.",

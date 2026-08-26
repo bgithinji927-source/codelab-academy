@@ -6955,3 +6955,46 @@ html:not([data-design="canvas"]) .dashboard-category-view {
     backdrop-filter: none;
   }
 }
+
+
+/* Generated original wallpaper option for Kai. */
+.learn-page[data-kai-background="neon-orbit"]::before {
+  background:
+    linear-gradient(180deg, rgba(1, 2, 9, 0.18), rgba(1, 2, 9, 0.5)),
+    url("/kai-background-neon-orbit.png") center center / cover no-repeat,
+    #02030a;
+}
+
+.learn-page[data-kai-background="neon-orbit"]::after {
+  opacity: 0.24;
+  background-image:
+    linear-gradient(rgba(126, 111, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 111, 255, 0.12) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mix-blend-mode: screen;
+}
+
+.learn-page[data-kai-background="neon-orbit"] .kai-avatar-wallpaper {
+  opacity: 0.08;
+}
+
+.learn-page[data-kai-background="neon-orbit"] .kai-teaching-card {
+  background: rgba(4, 3, 13, 0.42) !important;
+  border-color: rgba(166, 148, 255, 0.42) !important;
+}
+
+.learn-page[data-kai-background="neon-orbit"] .kai-teaching-card .kai-code-wrapper {
+  background: rgba(2, 2, 8, 0.72);
+}
+
+@media (max-width: 720px) {
+  .learn-page[data-kai-background="neon-orbit"]::before {
+    background-position: 50% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-page[data-kai-background="neon-orbit"]::before {
+    background-attachment: scroll;
+  }
+}
