@@ -541,7 +541,13 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
           {inProgressCourses > 0 ? (
             <div className="courses-list" aria-label="Courses in progress">
               {state.courses.filter((c) => c.status === "in-progress" || (c.progress > 0 && c.progress < 100)).map((course) => (
-                <article key={course.id} className="course-item">
+                <button
+                  type="button"
+                  key={course.id}
+                  className="course-item"
+                  onClick={() => openCourseWithKai(course)}
+                  aria-label={`Continue ${course.title} at ${course.progress}% progress`}
+                >
                   <div className="course-card-topline">
                     <span className="course-card-category">{course.category}</span>
                     <span className="course-progress-text">{course.progress}%</span>
@@ -563,7 +569,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
                   <p className="course-meta">
                     {course.completed}/{course.lessons} lessons completed
                   </p>
-                </article>
+                </button>
               ))}
             </div>
           ) : (

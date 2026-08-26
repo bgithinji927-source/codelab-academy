@@ -6128,3 +6128,81 @@ html:not([data-design="canvas"]) .dashboard-category-view {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Continue Learning: touch-friendly horizontal resume rail. */
+.continue-learning .courses-list {
+  display: flex !important;
+  gap: 14px !important;
+  margin-top: 6px !important;
+  padding: 2px 2px 12px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--theme-accent, #39ff14) var(--theme-input, #173728);
+}
+
+.continue-learning .courses-list::-webkit-scrollbar {
+  height: 7px;
+}
+
+.continue-learning .courses-list::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: var(--theme-input, #173728);
+}
+
+.continue-learning .courses-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--theme-accent, #39ff14);
+}
+
+.continue-learning .course-item {
+  flex: 0 0 min(330px, 82vw) !important;
+  width: min(330px, 82vw) !important;
+  min-width: min(330px, 82vw) !important;
+  margin: 0 !important;
+  text-align: left;
+  cursor: pointer;
+  scroll-snap-align: start;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.continue-learning .course-item:focus-visible {
+  outline: 2px solid var(--theme-accent, #39ff14);
+  outline-offset: 3px;
+}
+
+.continue-learning .course-item:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.continue-learning .course-item .course-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.continue-learning .course-item .course-header h3 {
+  min-width: 0;
+}
+
+.continue-learning .course-item .continue-course-logo {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 700px) {
+  .continue-learning .courses-list {
+    gap: 12px !important;
+    margin-right: -6px;
+    padding-right: 8px !important;
+  }
+
+  .continue-learning .course-item {
+    flex-basis: min(292px, 82vw) !important;
+    width: min(292px, 82vw) !important;
+    min-width: min(292px, 82vw) !important;
+  }
+}
