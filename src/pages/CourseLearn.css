@@ -1232,9 +1232,67 @@
   .kai-readiness-panel {
     padding: 12px;
   }
-
   .next-course-button {
     width: 100%;
     justify-content: center;
   }
+}
+
+/* The administrator-uploaded image is the visible Kai canvas. */
+.learn-page[data-kai-background] {
+  position: relative;
+  isolation: isolate;
+  background: transparent !important;
+}
+
+.learn-page[data-kai-background] > *:not(.kai-wallpaper-image) {
+  position: relative;
+  z-index: 1;
+}
+
+.learn-page[data-kai-background] .kai-wallpaper-image {
+  z-index: 0;
+}
+
+.learn-page.has-custom-kai-background::before,
+.learn-page.has-custom-kai-background::after,
+.learn-page.has-custom-kai-background .kai-avatar-wallpaper {
+  display: none !important;
+}
+
+.learn-page.has-custom-kai-background .kai-wallpaper-image,
+.learn-page.has-custom-kai-background .kai-wallpaper-image img {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.learn-page.has-custom-kai-background .kai-wallpaper-image::after {
+  display: none !important;
+}
+
+.learn-page.has-custom-kai-background > .conversation-container,
+.learn-page.has-custom-kai-background .kai-teaching-card {
+  background: rgba(4, 3, 13, 0.08) !important;
+}
+
+.learn-page.has-custom-kai-background > .conversation-container {
+  box-shadow: none !important;
+}
+
+@media (max-width: 720px) {
+  .learn-page.has-custom-kai-background .kai-wallpaper-image img {
+    object-position: center center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-page.has-custom-kai-background .kai-wallpaper-image img {
+    filter: none !important;
+  }
+}
+
+/* Keep the small instructor avatar inside messages; only the obsolete full-page avatar is removed. */
+.kai-message-header .kai-avatar-small,
+.kai-teaching-card .kai-avatar-small {
+  display: inline-flex !important;
 }
