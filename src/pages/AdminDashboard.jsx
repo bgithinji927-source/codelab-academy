@@ -119,6 +119,9 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
   const [descriptionGenerating, setDescriptionGenerating] = useState(false);
   const [challenges, setChallenges] = useState([]);
   const [settings, setSettings] = useState(null);
+  const [kaiBackgroundFile, setKaiBackgroundFile] = useState(null);
+  const [kaiBackgroundFileInputKey, setKaiBackgroundFileInputKey] = useState(0);
+  const [isUploadingKaiBackground, setIsUploadingKaiBackground] = useState(false);
   const [challengeForm, setChallengeForm] = useState(emptyChallenge);
   const [userSearch, setUserSearch] = useState("");
   const [courseSearch, setCourseSearch] = useState("");
@@ -592,6 +595,34 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
     setVideoForm((current) => ({ ...current, lessonId, lessonTitle: selectedLesson.title || "" }));
   };
 
+  const uploadKaiBackground = async (event) => {
+    event.preventDefault();
+    if (!kaiBackgroundFile) {
+      notify("error", "Choose a JPG, PNG, or WebP image first");
+      return;
+    }
+
+    setIsUploadingKaiBackground(true);
+    try {
+      const formData = new FormData();
+      formData.append("backgroundImage", kaiBackgroundFile);
+      const response = await fetchAdminWithTimeout("/api/admin/settings/kai-background-image", {
+        method: "POST",
+        body: formData,
+      }, 120000);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) throw new Error(data.message || "Could not save the Kai background image");
+      setSettings(data.settings);
+      setKaiBackgroundFile(null);
+      setKaiBackgroundFileInputKey((current) => current + 1);
+      notify("success", "Kai background image saved for learners");
+    } catch (error) {
+      notify("error", error.message || "Could not save the Kai background image");
+    } finally {
+      setIsUploadingKaiBackground(false);
+    }
+  };
+
   const saveSettings = async (event) => {
     event.preventDefault();
     setSavingKey("settings");
@@ -664,7 +695,37 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
 
           {section === "new-challenge" && <section className="admin-section"><div className="admin-panel"><div className="admin-toolbar"><div><span className="admin-eyebrow">CHALLENGE BANK</span><h2>Create a daily challenge</h2><p>The canonical answer is stored server-side and is never sent to learners.</p></div><button type="button" className="admin-secondary-button" onClick={() => setSection("challenges")}><X size={15} /> Cancel</button></div><form className="admin-form" onSubmit={createChallenge}><div className="admin-form-grid"><label>Title<input required value={challengeForm.title} onChange={(event) => setChallengeForm((current) => ({ ...current, title: event.target.value }))} /></label><label>Type<select value={challengeForm.type} onChange={(event) => setChallengeForm((current) => ({ ...current, type: event.target.value }))}><option value="short_answer">Short answer</option><option value="mcq">Multiple choice</option><option value="regex">Command / pattern</option><option value="code">Code answer</option></select></label><label>Difficulty<select value={challengeForm.difficulty} onChange={(event) => setChallengeForm((current) => ({ ...current, difficulty: event.target.value }))}><option>easy</option><option>medium</option><option>hard</option></select></label><label>XP reward<input type="number" min="0" max="10000" value={challengeForm.xpReward} onChange={(event) => setChallengeForm((current) => ({ ...current, xpReward: event.target.value }))} /></label></div><label className="admin-wide-field">Prompt<textarea required rows="4" value={challengeForm.prompt} onChange={(event) => setChallengeForm((current) => ({ ...current, prompt: event.target.value }))} /></label><div className="admin-form-grid"><label>Canonical answer<input required value={challengeForm.canonicalAnswer} onChange={(event) => setChallengeForm((current) => ({ ...current, canonicalAnswer: event.target.value }))} /></label><label className="admin-checkbox-label"><input type="checkbox" checked={challengeForm.active} onChange={(event) => setChallengeForm((current) => ({ ...current, active: event.target.checked }))} /> Activate immediately</label></div><label className="admin-wide-field">Choices<textarea rows="4" value={challengeForm.choices} onChange={(event) => setChallengeForm((current) => ({ ...current, choices: event.target.value }))} placeholder="For MCQ only: one choice per line" /></label><label className="admin-wide-field">Requirements<textarea rows="3" value={challengeForm.requirements} onChange={(event) => setChallengeForm((current) => ({ ...current, requirements: event.target.value }))} placeholder="One requirement per line" /></label><label className="admin-wide-field">Starter code<textarea rows="5" value={challengeForm.starter} onChange={(event) => setChallengeForm((current) => ({ ...current, starter: event.target.value }))} /></label><button type="submit" className="admin-primary-button" disabled={savingKey === "challenge-new"}><Save size={15} />{savingKey === "challenge-new" ? "Creating..." : "Create challenge"}</button></form></div></section>}
 
-          {section === "settings" && settings && <section className="admin-section"><div className="admin-panel admin-settings-panel"><div className="admin-panel-heading"><div><span className="admin-eyebrow">PLATFORM SETTINGS</span><h2>Control the learner experience</h2><p>These values are stored centrally and applied by the server.</p></div><Settings size={23} /></div><form className="admin-form" onSubmit={saveSettings}><div className="admin-form-grid"><label>Academy name<input value={settings.academyName || ""} onChange={(event) => setSettings((current) => ({ ...current, academyName: event.target.value }))} /></label><label>Challenge window hours<input type="number" min="1" max="168" value={settings.challengeWindowHours || 24} onChange={(event) => setSettings((current) => ({ ...current, challengeWindowHours: event.target.value }))} /></label><label>Default challenge XP<input type="number" min="0" max="10000" value={settings.defaultChallengeXP ?? 10} onChange={(event) => setSettings((current) => ({ ...current, defaultChallengeXP: event.target.value }))} /></label><label className="admin-checkbox-label"><input type="checkbox" checked={settings.dailyChallengesEnabled !== false} onChange={(event) => setSettings((current) => ({ ...current, dailyChallengesEnabled: event.target.checked }))} /> Enable daily challenges</label></div><div className="admin-settings-callout"><Zap size={18} /><div><strong>Attempt policy</strong><p>The learner-facing daily challenge keeps the existing five-attempt protection. Correct answers award XP; five incorrect attempts close the challenge.</p></div></div><div className="admin-kai-background-control">
+          {section === "settings" && settings && <section className="admin-section"><div className="admin-panel admin-settings-panel"><div className="admin-panel-heading"><div><span className="admin-eyebrow">PLATFORM SETTINGS</span><h2>Control the learner experience</h2><p>These values are stored centrally and applied by the server.</p></div><Settings size={23} /></div><form className="admin-form" onSubmit={saveSettings}><div className="admin-form-grid"><label>Academy name<input value={settings.academyName || ""} onChange={(event) => setSettings((current) => ({ ...current, academyName: event.target.value }))} /></label><label>Challenge window hours<input type="number" min="1" max="168" value={settings.challengeWindowHours || 24} onChange={(event) => setSettings((current) => ({ ...current, challengeWindowHours: event.target.value }))} /></label><label>Default challenge XP<input type="number" min="0" max="10000" value={settings.defaultChallengeXP ?? 10} onChange={(event) => setSettings((current) => ({ ...current, defaultChallengeXP: event.target.value }))} /></label><label className="admin-checkbox-label"><input type="checkbox" checked={settings.dailyChallengesEnabled !== false} onChange={(event) => setSettings((current) => ({ ...current, dailyChallengesEnabled: event.target.checked }))} /> Enable daily challenges</label></div><div className="admin-settings-callout"><Zap size={18} /><div><strong>Attempt policy</strong><p>The learner-facing daily challenge keeps the existing five-attempt protection. Correct answers award XP; five incorrect attempts close the challenge.</p></div></div><div className="admin-kai-background-image-control">
+                <div className="admin-kai-background-heading">
+                  <div>
+                    <span className="admin-eyebrow">REAL IMAGE WALLPAPER</span>
+                    <h3>Upload Kai’s background image</h3>
+                    <p>This actual image is shown behind Kai’s teaching card for learners who do not have a personal wallpaper.</p>
+                  </div>
+                  <Bot size={22} />
+                </div>
+                {settings.kaiBackgroundImageUrl ? (
+                  <img className="admin-kai-background-image-preview" src={settings.kaiBackgroundImageUrl} alt={settings.kaiBackgroundImageFilename || "Current Kai background"} />
+                ) : (
+                  <div className="admin-kai-background-image-empty">No custom image uploaded yet. The built-in Neon Orbit avatar is still available as the fallback.</div>
+                )}
+                <form className="admin-kai-background-upload" onSubmit={uploadKaiBackground}>
+                  <label className="admin-wide-field">Choose image file
+                    <input
+                      key={kaiBackgroundFileInputKey}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={(event) => setKaiBackgroundFile(event.target.files?.[0] || null)}
+                    />
+                    <small className="admin-field-help">JPG, PNG, or WebP only; maximum 15 MB. The image is stored in the server database and served to Kai’s teaching page.</small>
+                  </label>
+                  {kaiBackgroundFile && <span className="admin-selected-file">Selected: {kaiBackgroundFile.name}</span>}
+                  <button type="submit" className="admin-primary-button" disabled={isUploadingKaiBackground || !kaiBackgroundFile}>
+                    <Save size={15} />{isUploadingKaiBackground ? "Uploading image..." : "Save image background"}
+                  </button>
+                </form>
+              </div>
+              <div className="admin-kai-background-control">
                 <div className="admin-kai-background-heading">
                   <div>
                     <span className="admin-eyebrow">KAI TEACHING SPACE</span>

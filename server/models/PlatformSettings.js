@@ -12,6 +12,10 @@ const platformSettingsSchema = new mongoose.Schema(
       enum: ["violet-aurora", "circuit-night", "neon-orbit", "terminal-green", "soft-study"],
       default: "neon-orbit",
     },
+    kaiBackgroundImageFileId: mongoose.Schema.Types.ObjectId,
+    kaiBackgroundImageFilename: String,
+    kaiBackgroundImageMimeType: String,
+    kaiBackgroundImageUpdatedAt: Date,
     updatedBy: String,
   },
   { timestamps: true }

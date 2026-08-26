@@ -2,6 +2,7 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 
 let bucket;
+let kaiBackgroundBucket;
 
 function getVideoBucket() {
   if (mongoose.connection.readyState !== 1 || !mongoose.connection.db) {
@@ -15,6 +16,20 @@ function getVideoBucket() {
   }
 
   return bucket;
+}
+
+function getKaiBackgroundBucket() {
+  if (mongoose.connection.readyState !== 1 || !mongoose.connection.db) {
+    throw new Error("MongoDB is not connected; Kai background storage is unavailable");
+  }
+
+  if (!kaiBackgroundBucket) {
+    kaiBackgroundBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+      bucketName: "codelabKaiBackgrounds",
+    });
+  }
+
+  return kaiBackgroundBucket;
 }
 
 function uploadVideo(buffer, filename, contentType, metadata = {}) {
@@ -64,6 +79,58 @@ async function deleteVideoFile(fileId) {
     ? fileId
     : new mongoose.mongo.ObjectId(String(fileId));
   await getVideoBucket().delete(objectId);
+}
+
+function uploadKaiBackground(buffer, filename, contentType, metadata = {}) {
+  return new Promise((resolve, reject) => {
+    try {
+      const uploadStream = getKaiBackgroundBucket().openUploadStream(filename, {
+        contentType,
+        metadata,
+      });
+
+      uploadStream.once("error", reject);
+      uploadStream.once("finish", () => resolve(uploadStream.id));
+      uploadStream.end(buffer);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function getKaiBackgroundFile(fileId) {
+  const objectId = fileId instanceof mongoose.mongo.ObjectId
+    ? fileId
+    : new mongoose.mongo.ObjectId(String(fileId));
+  return getKaiBackgroundBucket().find({ _id: objectId }).next();
+}
+
+async function deleteKaiBackgroundFile(fileId) {
+  const objectId = fileId instanceof mongoose.mongo.ObjectId
+    ? fileId
+    : new mongoose.mongo.ObjectId(String(fileId));
+  await getKaiBackgroundBucket().delete(objectId);
+}
+
+function streamKaiBackground(fileId, response, file) {
+  return new Promise((resolve, reject) => {
+    try {
+      const objectId = fileId instanceof mongoose.mongo.ObjectId
+        ? fileId
+        : new mongoose.mongo.ObjectId(String(fileId));
+      response.status(200).set({
+        "Content-Type": file.contentType || "image/jpeg",
+        "Content-Length": String(file.length || 0),
+        "Cache-Control": "public, max-age=300",
+      });
+      const downloadStream = getKaiBackgroundBucket().openDownloadStream(objectId);
+      downloadStream.once("error", reject);
+      downloadStream.once("end", resolve);
+      downloadStream.pipe(response);
+    } catch (error) {
+      reject(error);
+    }
+  });
 }
 
 function streamVideo(fileId, response, request, file) {
@@ -123,9 +190,14 @@ function streamVideo(fileId, response, request, file) {
 
 module.exports = {
   getVideoBucket,
+  getKaiBackgroundBucket,
   uploadVideo,
   uploadVideoFile,
   getVideoFile,
   deleteVideoFile,
+  uploadKaiBackground,
+  getKaiBackgroundFile,
+  deleteKaiBackgroundFile,
+  streamKaiBackground,
   streamVideo,
 };

@@ -49,6 +49,7 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
       || user?.kaiBackground
       || DEFAULT_KAI_BACKGROUND
   ));
+  const [kaiBackgroundImageUrl, setKaiBackgroundImageUrl] = useState("/kai-background-neon-orbit.png");
 
   const typingTimerRef = useRef(null);
   const lessonStartKeyRef = useRef("");
@@ -61,6 +62,7 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
       || user?.kaiBackground;
     if (savedLearnerBackground) {
       setKaiBackground(normalizeKaiBackground(savedLearnerBackground));
+      setKaiBackgroundImageUrl("/kai-background-neon-orbit.png");
       return undefined;
     }
 
@@ -68,7 +70,10 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
     fetch("/api/kai/background")
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
-        if (!cancelled && data?.success) setKaiBackground(normalizeKaiBackground(data.kaiBackground));
+        if (!cancelled && data?.success) {
+          setKaiBackground(normalizeKaiBackground(data.kaiBackground));
+          setKaiBackgroundImageUrl(data.imageUrl || "/kai-background-neon-orbit.png");
+        }
       })
       .catch(() => {
         // The local default remains available if the platform settings endpoint is unavailable.
@@ -1054,7 +1059,7 @@ ${startMessage}
   return (
     <div className="learn-page" data-kai-background={kaiBackground}>
       <div className="kai-wallpaper-image" aria-hidden="true">
-        <img src="/kai-background-neon-orbit.png" alt="" />
+        <img src={kaiBackgroundImageUrl} alt="" />
       </div>
 
       {/* ========================================

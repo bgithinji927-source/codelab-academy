@@ -13,7 +13,12 @@ const ensureAuth = require("../middleware/ensureAuth");
 const ensureAdmin = require("../middleware/ensureAdmin");
 const { ensureChallengeBank, getPlatformSettings } = require("../lib/challenges");
 const { getCatalogCourses, getCatalogLessons } = require("../lib/catalog");
-const { uploadVideoFile, deleteVideoFile } = require("../lib/videoStorage");
+const {
+  uploadVideoFile,
+  deleteVideoFile,
+  uploadKaiBackground,
+  deleteKaiBackgroundFile,
+} = require("../lib/videoStorage");
 const { serializeVideo, parseTopics } = require("../lib/videoCatalog");
 
 const router = express.Router();
@@ -50,6 +55,17 @@ const videoUpload = multer({
   fileFilter: (req, file, callback) => {
     if (String(file.mimetype || "").startsWith("video/")) return callback(null, true);
     return callback(new Error("Only video files can be uploaded"));
+  },
+});
+
+const kaiBackgroundUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 },
+  fileFilter: (req, file, callback) => {
+    if (["image/jpeg", "image/png", "image/webp"].includes(String(file.mimetype || "").toLowerCase())) {
+      return callback(null, true);
+    }
+    return callback(new Error("Only JPG, PNG, or WebP image files can be uploaded"));
   },
 });
 
@@ -103,6 +119,19 @@ function pickFields(source, allowed) {
     if (source[field] !== undefined) result[field] = source[field];
     return result;
   }, {});
+}
+
+function serializePlatformSettings(settings) {
+  const plain = typeof settings?.toObject === "function" ? settings.toObject() : { ...(settings || {}) };
+  const imageId = plain.kaiBackgroundImageFileId ? String(plain.kaiBackgroundImageFileId) : "";
+  const imageVersion = plain.kaiBackgroundImageUpdatedAt || plain.updatedAt || "";
+  return {
+    ...plain,
+    kaiBackgroundImageFileId: imageId || null,
+    kaiBackgroundImageUrl: imageId
+      ? `/api/kai/background/image?v=${encodeURIComponent(new Date(imageVersion).getTime() || imageId)}`
+      : "",
+  };
 }
 
 router.get("/summary", async (req, res) => {
@@ -588,11 +617,64 @@ router.post("/challenges/seed", async (req, res) => {
 router.get("/settings", async (req, res) => {
   try {
     const settings = await getPlatformSettings();
-    return res.json({ success: true, settings });
+    return res.json({ success: true, settings: serializePlatformSettings(settings) });
   } catch (error) {
     console.error("Admin settings error:", error);
     return res.status(500).json({ success: false, message: "Could not load settings" });
   }
+});
+
+router.post("/settings/kai-background-image", (req, res) => {
+  kaiBackgroundUpload.single("backgroundImage")(req, res, async (uploadError) => {
+    if (uploadError) {
+      return res.status(400).json({ success: false, message: uploadError.message || "Kai background upload failed" });
+    }
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "Choose a JPG, PNG, or WebP image first" });
+    }
+
+    let uploadedFileId = null;
+    try {
+      const safeFilename = path.basename(req.file.originalname || "kai-background").replace(/[^a-zA-Z0-9._-]/g, "-");
+      uploadedFileId = await uploadKaiBackground(
+        req.file.buffer,
+        `${Date.now()}-${safeFilename}`,
+        req.file.mimetype,
+        { uploadedBy: String(req.admin._id), purpose: "kai-background" }
+      );
+
+      const currentSettings = await getPlatformSettings();
+      const settings = await PlatformSettings.findOneAndUpdate(
+        { _id: "platform" },
+        {
+          $set: {
+            kaiBackgroundImageFileId: uploadedFileId,
+            kaiBackgroundImageFilename: req.file.originalname,
+            kaiBackgroundImageMimeType: req.file.mimetype,
+            kaiBackgroundImageUpdatedAt: new Date(),
+            updatedBy: String(req.admin._id),
+          },
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true, runValidators: true }
+      ).lean();
+
+      if (currentSettings?.kaiBackgroundImageFileId) {
+        try {
+          await deleteKaiBackgroundFile(currentSettings.kaiBackgroundImageFileId);
+        } catch (cleanupError) {
+          console.error("Old Kai background cleanup error:", cleanupError);
+        }
+      }
+
+      return res.json({ success: true, settings: serializePlatformSettings(settings) });
+    } catch (error) {
+      if (uploadedFileId) {
+        try { await deleteKaiBackgroundFile(uploadedFileId); } catch (cleanupError) { console.error("Kai background cleanup error:", cleanupError); }
+      }
+      console.error("Admin Kai background upload error:", error);
+      return res.status(500).json({ success: false, message: error.message || "Could not save the Kai background image" });
+    }
+  });
 });
 
 router.patch("/settings", async (req, res) => {
@@ -621,7 +703,7 @@ router.patch("/settings", async (req, res) => {
       { $set: { ...updates, updatedBy: String(req.admin._id) } },
       { upsert: true, new: true, setDefaultsOnInsert: true, runValidators: true }
     ).lean();
-    return res.json({ success: true, settings });
+    return res.json({ success: true, settings: serializePlatformSettings(settings) });
   } catch (error) {
     console.error("Admin update settings error:", error);
     return res.status(500).json({ success: false, message: "Could not update settings" });

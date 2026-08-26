@@ -1,4 +1,5 @@
 const Challenge = require("../models/Challenge");
+const mongoose = require("mongoose");
 const PlatformSettings = require("../models/PlatformSettings");
 
 const CHALLENGE_INTERVAL_MS = 24 * 60 * 60 * 1000;
@@ -70,6 +71,20 @@ const DEFAULT_CHALLENGES = [
 ];
 
 async function getPlatformSettings() {
+  if (mongoose.connection.readyState !== 1) {
+    return {
+      academyName: "CodeLab Academy",
+      challengeWindowHours: 24,
+      defaultChallengeXP: 10,
+      dailyChallengesEnabled: true,
+      kaiBackground: "neon-orbit",
+      kaiBackgroundImageFileId: null,
+      kaiBackgroundImageFilename: "",
+      kaiBackgroundImageMimeType: "",
+      kaiBackgroundImageUpdatedAt: null,
+    };
+  }
+
   const settings = await PlatformSettings.findOneAndUpdate(
     { _id: "platform" },
     {

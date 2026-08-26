@@ -10,6 +10,7 @@ const {
   isComplete,
 } = require("../lib/progression");
 const { getPlatformSettings } = require("../lib/challenges");
+const { getKaiBackgroundFile, streamKaiBackground } = require("../lib/videoStorage");
 
 const router = express.Router();
 
@@ -123,10 +124,35 @@ async function markCourseReadyForNext(userId, courseId, readinessSummary) {
 router.get("/background", async (req, res) => {
   try {
     const settings = await getPlatformSettings();
-    return res.json({ success: true, kaiBackground: settings.kaiBackground || "neon-orbit" });
+    const imageId = settings?.kaiBackgroundImageFileId ? String(settings.kaiBackgroundImageFileId) : "";
+    const imageVersion = settings?.kaiBackgroundImageUpdatedAt || settings?.updatedAt || "";
+    return res.json({
+      success: true,
+      kaiBackground: settings?.kaiBackground || "neon-orbit",
+      imageUrl: imageId
+        ? `/api/kai/background/image?v=${encodeURIComponent(new Date(imageVersion).getTime() || imageId)}`
+        : "",
+      imageFilename: settings?.kaiBackgroundImageFilename || "",
+    });
   } catch (error) {
     console.error("Kai background settings error:", error);
-    return res.status(200).json({ success: true, kaiBackground: "neon-orbit" });
+    return res.status(200).json({ success: true, kaiBackground: "neon-orbit", imageUrl: "", imageFilename: "" });
+  }
+});
+
+router.get("/background/image", async (req, res) => {
+  try {
+    const settings = await getPlatformSettings();
+    const imageId = settings?.kaiBackgroundImageFileId ? String(settings.kaiBackgroundImageFileId) : "";
+    if (!imageId) return res.status(404).json({ success: false, message: "No custom Kai background image has been uploaded" });
+
+    const file = await getKaiBackgroundFile(imageId);
+    if (!file) return res.status(404).json({ success: false, message: "Kai background image not found" });
+    await streamKaiBackground(imageId, res, file);
+  } catch (error) {
+    console.error("Kai background image stream error:", error);
+    if (!res.headersSent) return res.status(404).json({ success: false, message: "Kai background image is unavailable" });
+    return res.end();
   }
 });
 
