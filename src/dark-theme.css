@@ -6809,3 +6809,149 @@ html:not([data-design="canvas"]) .dashboard-category-view {
     width: 100%;
   }
 }
+
+
+/* Final Kai composition: one transparent teaching card, with all dynamic content inside it. */
+.learn-page[data-kai-background] .kai-teaching-card {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: clamp(22px, 3.2vw, 38px);
+  border: 1px solid rgba(171, 135, 255, 0.32) !important;
+  border-radius: 24px;
+  background: rgba(5, 3, 14, 0.46) !important;
+  box-shadow:
+    0 26px 80px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 38px rgba(124, 58, 237, 0.12);
+  backdrop-filter: blur(14px) saturate(1.06);
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-bubble,
+.learn-page[data-kai-background] .kai-teaching-card .learner-bubble {
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text {
+  display: block;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text p,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h2,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h3,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h4,
+.learn-page[data-kai-background] .kai-teaching-card .kai-list-item {
+  width: auto;
+  max-width: none;
+  margin: 0 0 11px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #f4efff;
+  backdrop-filter: none;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h2,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h3,
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text h4 {
+  color: #ffffff;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text p:last-child,
+.learn-page[data-kai-background] .kai-teaching-card .kai-list-item:last-child {
+  margin-bottom: 0;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-message-text .kai-message-spacer {
+  display: block;
+  height: 7px;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-code-wrapper {
+  width: 100%;
+  margin: 18px 0;
+  border-color: rgba(171, 135, 255, 0.3);
+  background: rgba(3, 2, 9, 0.68);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 26px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(6px);
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-content {
+  display: block;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-message-text {
+  width: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-message-text p {
+  margin: 0 0 8px;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-message-text p:last-child {
+  margin-bottom: 0;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .kai-readiness-panel,
+.learn-page[data-kai-background] .kai-teaching-card .course-state-error,
+.learn-page[data-kai-background] .kai-teaching-card .kai-video-recommendation {
+  width: auto;
+  margin: 18px 0;
+  padding: 0;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.learn-page[data-kai-background] .kai-teaching-card .learner-input-area {
+  margin-top: 24px;
+  background: rgba(3, 2, 10, 0.46) !important;
+  border-color: rgba(171, 135, 255, 0.38) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.learn-page[data-kai-background="soft-study"] .kai-teaching-card {
+  background: rgba(255, 255, 255, 0.54) !important;
+  border-color: rgba(112, 64, 232, 0.28) !important;
+  box-shadow: 0 24px 70px rgba(112, 64, 232, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.learn-page[data-kai-background="soft-study"] .kai-teaching-card .kai-message-text p,
+.learn-page[data-kai-background="soft-study"] .kai-teaching-card .kai-message-text h2,
+.learn-page[data-kai-background="soft-study"] .kai-teaching-card .kai-message-text h3,
+.learn-page[data-kai-background="soft-study"] .kai-teaching-card .kai-message-text h4,
+.learn-page[data-kai-background="soft-study"] .kai-teaching-card .kai-list-item {
+  color: #211a35;
+}
+
+.learn-page[data-kai-background="soft-study"] .kai-teaching-card .kai-message-text h2,
+.learn-page[data-kai-background="soft-study"] .kai-teaching-card .kai-message-text h3,
+.learn-page[data-kai-background="soft-study"] .kai-teaching-card .kai-message-text h4 {
+  color: #211a35;
+}
+
+@media (max-width: 720px) {
+  .learn-page[data-kai-background] .kai-teaching-card {
+    padding: 18px 14px 22px;
+    border-radius: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-page[data-kai-background] .kai-teaching-card {
+    backdrop-filter: none;
+  }
+}
