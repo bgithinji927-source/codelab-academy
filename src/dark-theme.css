@@ -6206,3 +6206,72 @@ html:not([data-design="canvas"]) .dashboard-category-view {
     min-width: min(292px, 82vw) !important;
   }
 }
+
+
+/* Dashboard course library: horizontal touch rail for the cards shown by category. */
+.dashboard-category-grid {
+  display: flex !important;
+  gap: 14px !important;
+  padding: 20px 2px 14px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--theme-accent, #39ff14) var(--theme-input, #173728);
+}
+
+.dashboard-category-grid::-webkit-scrollbar {
+  height: 7px;
+}
+
+.dashboard-category-grid::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: var(--theme-input, #173728);
+}
+
+.dashboard-category-grid::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--theme-accent, #39ff14);
+}
+
+.dashboard-category-grid .dashboard-course-card {
+  flex: 0 0 min(330px, 82vw) !important;
+  width: min(330px, 82vw) !important;
+  min-width: min(330px, 82vw) !important;
+  margin: 0 !important;
+  scroll-snap-align: start;
+  touch-action: pan-y;
+}
+
+.dashboard-category-grid .dashboard-course-card.is-resumable {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dashboard-category-grid .dashboard-course-card.is-resumable:focus-visible {
+  outline: 2px solid var(--theme-accent, #39ff14);
+  outline-offset: 3px;
+}
+
+.dashboard-category-grid .dashboard-course-card.is-resumable:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.dashboard-category-grid .dashboard-course-card.is-locked {
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .dashboard-category-grid {
+    gap: 12px !important;
+    padding-right: 8px !important;
+  }
+
+  .dashboard-category-grid .dashboard-course-card {
+    flex-basis: min(292px, 82vw) !important;
+    width: min(292px, 82vw) !important;
+    min-width: min(292px, 82vw) !important;
+  }
+}

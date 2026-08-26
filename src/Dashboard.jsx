@@ -69,7 +69,23 @@ function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAc
           const label = locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
 
           return (
-            <article className={`dashboard-course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""}`} key={course.id}>
+            <article
+              className={`dashboard-course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""} ${locked ? "" : "is-resumable"}`}
+              key={course.id}
+              role={locked ? undefined : "button"}
+              tabIndex={locked ? -1 : 0}
+              aria-label={locked ? `${course.title} is locked by Kai` : `${label}: ${course.title}`}
+              aria-disabled={locked || undefined}
+              onClick={(event) => {
+                if (!locked && !event.target.closest("button")) onOpenCourse(course);
+              }}
+              onKeyDown={(event) => {
+                if (!locked && !event.target.closest("button") && (event.key === "Enter" || event.key === " ")) {
+                  event.preventDefault();
+                  onOpenCourse(course);
+                }
+              }}
+            >
               <div className="dashboard-course-card-icon">
                 <CourseLogo course={course} />
                 {(locked || completed) && (
