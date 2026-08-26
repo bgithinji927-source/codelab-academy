@@ -6998,3 +6998,48 @@ html:not([data-design="canvas"]) .dashboard-category-view {
     background-attachment: scroll;
   }
 }
+
+
+/* Use the generated avatar artwork as the real Kai canvas; the card stays translucent so the face remains visible. */
+.learn-page[data-kai-background="neon-orbit"]::before,
+.learn-page[data-kai-background="violet-aurora"]::before,
+.learn-page[data-kai-background="circuit-night"]::before,
+.learn-page[data-kai-background="terminal-green"]::before {
+  background:
+    linear-gradient(180deg, rgba(1, 2, 9, 0.2), rgba(1, 2, 9, 0.46)),
+    url("/kai-background-neon-orbit.png") center center / cover no-repeat,
+    #02030a;
+}
+
+.learn-page[data-kai-background="violet-aurora"]::before {
+  background-position: center center;
+  filter: hue-rotate(22deg) saturate(1.08);
+}
+
+.learn-page[data-kai-background="terminal-green"]::before {
+  filter: hue-rotate(94deg) saturate(0.96);
+}
+
+.learn-page[data-kai-background="circuit-night"]::before {
+  filter: saturate(0.84) brightness(0.86);
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card {
+  background: rgba(4, 3, 13, 0.22) !important;
+  border-color: rgba(190, 169, 255, 0.38) !important;
+  backdrop-filter: blur(5px) saturate(1.03);
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .kai-code-wrapper {
+  background: rgba(3, 2, 9, 0.58);
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .learner-input-area {
+  background: rgba(3, 2, 10, 0.34) !important;
+}
+
+@media (max-width: 720px) {
+  .learn-page[data-kai-background]::before {
+    background-position: 50% 42%;
+  }
+}

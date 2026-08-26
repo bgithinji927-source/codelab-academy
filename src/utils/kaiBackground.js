@@ -31,7 +31,7 @@ export const KAI_BACKGROUND_OPTIONS = [
   },
 ];
 
-export const DEFAULT_KAI_BACKGROUND = "violet-aurora";
+export const DEFAULT_KAI_BACKGROUND = "neon-orbit";
 const validBackgroundIds = new Set(KAI_BACKGROUND_OPTIONS.map((option) => option.id));
 
 export function normalizeKaiBackground(value) {
