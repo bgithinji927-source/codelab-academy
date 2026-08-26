@@ -323,3 +323,27 @@ html[data-appearance="white-purple"] #root :where(
 ) {
   color: var(--theme-accent) !important;
 }
+
+
+/* Kai background selections must remain visible beneath the White & Purple page shell. */
+html[data-appearance="white-purple"] #root .learn-page[data-kai-background] {
+  background: transparent !important;
+}
+
+html[data-appearance="white-purple"] #root .learn-page[data-kai-background] .conversation-container {
+  background: transparent !important;
+}
+
+
+/* Keep White & Purple's Kai navbar readable when a dark Kai wallpaper is selected. */
+html[data-appearance="white-purple"] #root .learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar {
+  background: rgba(5, 3, 14, 0.72) !important;
+  border-bottom-color: rgba(171, 135, 255, 0.28) !important;
+  color: #f8f5ff !important;
+}
+
+html[data-appearance="white-purple"] #root .learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .learn-course-title,
+html[data-appearance="white-purple"] #root .learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .learn-progress,
+html[data-appearance="white-purple"] #root .learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .lesson-status {
+  color: #f8f5ff !important;
+}

@@ -6520,3 +6520,147 @@ html:not([data-design="canvas"]) .dashboard-category-view {
     background-attachment: scroll;
   }
 }
+
+
+/* Kai wallpaper visibility correction: keep the atmosphere above the page background and below the learning UI. */
+.learn-page[data-kai-background]::before,
+.learn-page[data-kai-background]::after {
+  z-index: 0;
+}
+
+.learn-page[data-kai-background] > .learn-navbar,
+.learn-page[data-kai-background] > .conversation-container,
+.learn-page[data-kai-background] > .kai-video-modal-backdrop {
+  position: relative;
+  z-index: 1;
+}
+
+.learn-page[data-kai-background] .conversation-container {
+  background: transparent !important;
+}
+
+.learn-page[data-kai-background] .kai-avatar-wallpaper {
+  position: fixed;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  width: min(78vw, 760px);
+  height: min(78vw, 760px);
+  opacity: 0.28;
+  transform: translate(-50%, -44%);
+}
+
+.learn-page[data-kai-background] .kai-avatar-wallpaper svg {
+  stroke-width: 0.6;
+  filter:
+    drop-shadow(0 0 16px color-mix(in srgb, var(--theme-accent, #8b5cf6) 72%, transparent))
+    drop-shadow(0 28px 52px color-mix(in srgb, var(--theme-accent, #8b5cf6) 35%, transparent));
+}
+
+.learn-page[data-kai-background] .kai-avatar-wallpaper-glow {
+  width: 72%;
+  height: 72%;
+  opacity: 0.9;
+  filter: blur(58px);
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card {
+  background: rgba(5, 3, 14, 0.62) !important;
+  border-color: rgba(171, 135, 255, 0.34) !important;
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 42px rgba(124, 58, 237, 0.12);
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .kai-bubble {
+  background: rgba(10, 8, 23, 0.78) !important;
+  border-color: rgba(171, 135, 255, 0.28) !important;
+  color: #f4efff;
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .kai-message-text h2,
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .kai-message-text h3,
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .kai-message-text h4,
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .chat-name,
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .chat-name strong {
+  color: #f8f5ff;
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .chat-name span,
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .kai-online {
+  color: #b9abd4;
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .learner-input-area {
+  background: rgba(7, 5, 17, 0.78) !important;
+  border-color: rgba(171, 135, 255, 0.32) !important;
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .learner-input-area input {
+  color: #f8f5ff;
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .kai-teaching-card .input-hint {
+  color: #b9abd4;
+}
+
+.learn-page[data-kai-background="circuit-night"] .kai-avatar-wallpaper {
+  opacity: 0.3;
+}
+
+.learn-page[data-kai-background="terminal-green"] .kai-avatar-wallpaper {
+  opacity: 0.25;
+}
+
+@media (max-width: 720px) {
+  .learn-page[data-kai-background] .kai-avatar-wallpaper {
+    width: min(122vw, 560px);
+    height: min(122vw, 560px);
+    opacity: 0.18;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-page[data-kai-background] .kai-avatar-wallpaper svg {
+    filter: none;
+  }
+}
+
+
+/* Final wallpaper stacking fix: the selected atmosphere must be visible through the Kai page shell. */
+.learn-page[data-kai-background] {
+  background: transparent !important;
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar {
+  background: rgba(5, 3, 14, 0.72) !important;
+  border-bottom-color: rgba(171, 135, 255, 0.28) !important;
+  color: #f8f5ff;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.24);
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .learn-course-title,
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .learn-progress,
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .lesson-status {
+  color: #f8f5ff;
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .learn-back {
+  background: rgba(12, 8, 28, 0.72);
+  border-color: rgba(171, 135, 255, 0.34);
+  color: #d9c9ff;
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .learn-back:hover {
+  background: rgba(112, 64, 232, 0.22);
+  border-color: #a987ff;
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .progress-track {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.learn-page[data-kai-background]:not([data-kai-background="soft-study"]) .learn-navbar .progress-label {
+  color: #c0b4d4;
+}
