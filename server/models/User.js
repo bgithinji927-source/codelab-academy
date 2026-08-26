@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
 
     appearancePreset: {
       type: String,
-      enum: ["default", "midnight", "light", "cyber-purple", "matrix", "ocean", "sunset", "clean", "forest", "contrast"],
+      enum: ["default", "midnight", "light", "cyber-purple", "matrix", "ocean", "sunset", "clean", "forest", "contrast", "white-purple"],
       default: "default",
     },
 
@@ -42,6 +42,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["classic", "focus", "rail", "canvas"],
       default: "classic",
+    },
+
+    kaiBackground: {
+      type: String,
+      enum: ["violet-aurora", "circuit-night", "terminal-green", "soft-study"],
+      default: "violet-aurora",
     },
 
     xp: {

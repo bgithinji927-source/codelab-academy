@@ -1,7 +1,13 @@
-import { ArrowLeft, ChevronRight, LayoutDashboard, Palette, Settings as SettingsIcon, SunMoon, UserRound } from "lucide-react";
+import { ArrowLeft, Bot, Check, ChevronRight, LayoutDashboard, Palette, Settings as SettingsIcon, SunMoon, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import fetchWithAuth from "../utils/fetchWithAuth";
 import ThemeToggle from "../components/ThemeToggle";
+import {
+  DEFAULT_KAI_BACKGROUND,
+  KAI_BACKGROUND_OPTIONS,
+  kaiBackgroundStorageKey,
+  normalizeKaiBackground,
+} from "../utils/kaiBackground";
 import AppearanceSettings from "./AppearanceSettings";
 import DesignSettings from "./DesignSettings";
 import "./Settings.css";
@@ -115,6 +121,97 @@ function ProfileSection({ user, onBack, onUserUpdated }) {
   );
 }
 
+function KaiBackgroundSettings({ user, onUserUpdated }) {
+  const [selectedBackground, setSelectedBackground] = useState(() => normalizeKaiBackground(
+    localStorage.getItem(kaiBackgroundStorageKey(user?.id))
+      || localStorage.getItem("codelabKaiBackground:guest")
+      || user?.kaiBackground
+      || DEFAULT_KAI_BACKGROUND
+  ));
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setSelectedBackground(normalizeKaiBackground(
+      localStorage.getItem(kaiBackgroundStorageKey(user?.id))
+        || localStorage.getItem("codelabKaiBackground:guest")
+        || user?.kaiBackground
+        || DEFAULT_KAI_BACKGROUND
+    ));
+  }, [user?.id, user?.kaiBackground]);
+
+  const saveBackground = async (backgroundId) => {
+    const nextBackground = normalizeKaiBackground(backgroundId);
+    setSelectedBackground(nextBackground);
+    setMessage("");
+    setError("");
+    localStorage.setItem(kaiBackgroundStorageKey(user?.id), nextBackground);
+    setIsSaving(true);
+
+    try {
+      const response = await fetchWithAuth("/api/auth/preferences", {
+        method: "PATCH",
+        body: JSON.stringify({ kaiBackground: nextBackground }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not save your Kai background.");
+      }
+      if (data.user && onUserUpdated) onUserUpdated(data.user);
+      setMessage("Kai background saved to your account.");
+    } catch (saveError) {
+      setError(saveError.message || "Could not save your Kai background.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <section className="settings-kai-background-panel" aria-labelledby="settings-kai-background-title">
+      <div className="settings-kai-background-heading">
+        <span className="settings-option-icon"><Bot size={20} aria-hidden="true" /></span>
+        <div>
+          <span className="settings-kicker">KAI TEACHING SPACE</span>
+          <h2 id="settings-kai-background-title">Choose Kai’s background.</h2>
+          <p>This changes the atmosphere behind Kai’s teaching card only. Your lessons and progress stay the same.</p>
+        </div>
+      </div>
+      <div className="settings-kai-background-options" role="group" aria-label="Kai background options">
+        {KAI_BACKGROUND_OPTIONS.map((option) => {
+          const isSelected = selectedBackground === option.id;
+          return (
+            <button
+              type="button"
+              key={option.id}
+              className={`settings-kai-background-option${isSelected ? " selected" : ""}`}
+              onClick={() => saveBackground(option.id)}
+              disabled={isSaving}
+              aria-pressed={isSelected}
+            >
+              <span
+                className={`settings-kai-background-preview settings-kai-background-preview-${option.id}`}
+                style={{ "--kai-preview-accent": option.swatches[2] }}
+                aria-hidden="true"
+              >
+                <Bot size={28} strokeWidth={1.25} />
+                <span />
+              </span>
+              <span className="settings-kai-background-copy">
+                <strong>{option.name}</strong>
+                <small>{option.description}</small>
+              </span>
+              <span className="settings-kai-background-status">{isSelected ? <><Check size={14} /> Selected</> : "Choose"}</span>
+            </button>
+          );
+        })}
+      </div>
+      {message && <p className="settings-form-success" role="status">{message}</p>}
+      {error && <p className="settings-form-error" role="alert">{error} Your local choice is still active.</p>}
+    </section>
+  );
+}
+
 function SettingsPage({ user, onBack, onUserUpdated }) {
   const [activeSection, setActiveSection] = useState("overview");
 
@@ -208,6 +305,8 @@ function SettingsPage({ user, onBack, onUserUpdated }) {
                 <ThemeToggle />
               </div>
             </div>
+
+            <KaiBackgroundSettings user={user} onUserUpdated={onUserUpdated} />
           </section>
 
           <section className="settings-help-panel" aria-label="Settings information">

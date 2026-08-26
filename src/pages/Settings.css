@@ -516,3 +516,186 @@
     min-height: 42px;
   }
 }
+
+
+.settings-kai-background-panel {
+  margin-top: 18px;
+  padding-top: 24px;
+  border-top: 1px solid var(--theme-border, #244536);
+}
+
+.settings-kai-background-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.settings-kai-background-heading > div {
+  min-width: 0;
+}
+
+.settings-kai-background-heading h2 {
+  margin: 8px 0 7px;
+  color: var(--theme-text-primary, #e7ffe9);
+  font-size: clamp(20px, 3vw, 28px);
+  letter-spacing: -0.03em;
+}
+
+.settings-kai-background-heading p {
+  max-width: 680px;
+  margin: 0;
+  color: var(--theme-text-secondary, #b8d2c1);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.settings-kai-background-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.settings-kai-background-option {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--theme-border, #244536);
+  background: var(--theme-surface-elevated, #10271c);
+  color: var(--theme-text-primary, #e7ffe9);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.settings-kai-background-option:hover:not(:disabled),
+.settings-kai-background-option.selected {
+  border-color: var(--theme-accent, #39ff14);
+  background: color-mix(in srgb, var(--theme-accent, #39ff14) 8%, var(--theme-surface-elevated, #10271c));
+  transform: translateY(-1px);
+}
+
+.settings-kai-background-option:focus-visible {
+  outline: 2px solid var(--theme-accent, #39ff14);
+  outline-offset: 2px;
+}
+
+.settings-kai-background-option:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.settings-kai-background-preview {
+  position: relative;
+  display: grid;
+  width: 62px;
+  height: 48px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--kai-preview-accent) 55%, #ffffff 10%);
+  color: color-mix(in srgb, var(--kai-preview-accent) 80%, #ffffff);
+  isolation: isolate;
+}
+
+.settings-kai-background-preview::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  content: "";
+  background:
+    radial-gradient(circle at 50% 48%, color-mix(in srgb, var(--kai-preview-accent) 55%, transparent), transparent 42%),
+    linear-gradient(135deg, #05030d, #15102b 55%, #020207);
+}
+
+.settings-kai-background-preview::after {
+  position: absolute;
+  inset: 9px 7px;
+  z-index: -1;
+  border: 1px solid color-mix(in srgb, var(--kai-preview-accent) 35%, transparent);
+  border-radius: 50%;
+  content: "";
+  opacity: 0.7;
+}
+
+.settings-kai-background-preview span {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--kai-preview-accent) 30%, transparent);
+  filter: blur(9px);
+}
+
+.settings-kai-background-preview-circuit-night::before {
+  background:
+    linear-gradient(135deg, transparent 42%, rgba(79, 140, 255, 0.35) 43%, transparent 45%),
+    linear-gradient(35deg, transparent 56%, rgba(79, 140, 255, 0.25) 57%, transparent 59%),
+    radial-gradient(circle at 50% 48%, rgba(79, 140, 255, 0.5), transparent 40%),
+    #020611;
+}
+
+.settings-kai-background-preview-terminal-green::before {
+  background:
+    linear-gradient(90deg, transparent 47%, rgba(57, 255, 20, 0.28) 48%, transparent 49%),
+    radial-gradient(circle at 50% 48%, rgba(57, 255, 20, 0.42), transparent 40%),
+    #020804;
+}
+
+.settings-kai-background-preview-soft-study {
+  color: #7040e8;
+}
+
+.settings-kai-background-preview-soft-study::before {
+  background:
+    radial-gradient(circle at 50% 48%, rgba(112, 64, 232, 0.2), transparent 42%),
+    linear-gradient(135deg, #ffffff, #ebe5ff);
+}
+
+.settings-kai-background-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.settings-kai-background-copy strong {
+  overflow: hidden;
+  color: var(--theme-text-primary, #e7ffe9);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-kai-background-copy small {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--theme-text-secondary, #b8d2c1);
+  font-size: 10px;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.settings-kai-background-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--theme-accent, #39ff14);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .settings-kai-background-options {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-kai-background-option {
+    grid-template-columns: 62px minmax(0, 1fr) auto;
+  }
+}

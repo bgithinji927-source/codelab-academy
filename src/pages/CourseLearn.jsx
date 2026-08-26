@@ -15,6 +15,7 @@ import {
 import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import ThemeToggle from "../components/ThemeToggle";
+import { DEFAULT_KAI_BACKGROUND, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
 import "./CourseLearn.css";
 
 function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
@@ -42,6 +43,12 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
   const [activeVideo, setActiveVideo] = useState(null);
   const [resolvedVideoUrl, setResolvedVideoUrl] = useState("");
   const [videoPlaybackError, setVideoPlaybackError] = useState("");
+  const [kaiBackground] = useState(() => normalizeKaiBackground(
+    localStorage.getItem(kaiBackgroundStorageKey(user?.id))
+      || localStorage.getItem("codelabKaiBackground:guest")
+      || user?.kaiBackground
+      || DEFAULT_KAI_BACKGROUND
+  ));
 
   const typingTimerRef = useRef(null);
   const lessonStartKeyRef = useRef("");
@@ -1021,7 +1028,7 @@ ${startMessage}
   // ============================================
 
   return (
-    <div className="learn-page">
+    <div className="learn-page" data-kai-background={kaiBackground}>
 
       {/* ========================================
           NAVBAR

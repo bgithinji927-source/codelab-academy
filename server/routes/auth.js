@@ -26,6 +26,7 @@ function serializeUser(user) {
     isActive: user.isActive !== false,
     appearancePreset: user.appearancePreset || "default",
     designPreset: user.designPreset || "classic",
+    kaiBackground: user.kaiBackground || "violet-aurora",
     xp: user.xp,
     level: user.level,
     completedLessons: user.completedLessons,
@@ -133,6 +134,7 @@ router.patch("/preferences", ensureAuth, async (req, res) => {
       "clean",
       "forest",
       "contrast",
+      "white-purple",
     ]);
     const allowedDesignPresets = new Set(["classic", "focus", "rail", "canvas"]);
     const update = {};
@@ -143,6 +145,15 @@ router.patch("/preferences", ensureAuth, async (req, res) => {
         return res.status(400).json({ success: false, message: "Invalid appearance preset" });
       }
       update.appearancePreset = appearancePreset;
+    }
+
+    if (req.body?.kaiBackground !== undefined) {
+      const kaiBackground = String(req.body.kaiBackground || "");
+      const allowedKaiBackgrounds = new Set(["violet-aurora", "circuit-night", "terminal-green", "soft-study"]);
+      if (!allowedKaiBackgrounds.has(kaiBackground)) {
+        return res.status(400).json({ success: false, message: "Invalid Kai background" });
+      }
+      update.kaiBackground = kaiBackground;
     }
 
     if (req.body?.designPreset !== undefined) {
