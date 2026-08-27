@@ -1064,6 +1064,10 @@ ${startMessage}
 
     const previousHtmlBackground = html.style.getPropertyValue("background");
     const previousHtmlBackgroundPriority = html.style.getPropertyPriority("background");
+    const previousHtmlBackgroundImage = html.style.getPropertyValue("background-image");
+    const previousHtmlBackgroundSize = html.style.getPropertyValue("background-size");
+    const previousHtmlBackgroundPosition = html.style.getPropertyValue("background-position");
+    const previousHtmlBackgroundRepeat = html.style.getPropertyValue("background-repeat");
     const previousRootBackground = root.style.getPropertyValue("background");
     const previousRootBackgroundPriority = root.style.getPropertyPriority("background");
     const previousBodyBackgroundImage = body.style.getPropertyValue("background-image");
@@ -1074,6 +1078,10 @@ ${startMessage}
 
     if (hasCustomKaiBackground) {
       html.style.setProperty("background", "transparent", "important");
+      html.style.setProperty("background-image", `url("${kaiBackgroundImageUrl}")`, "important");
+      html.style.setProperty("background-size", "cover", "important");
+      html.style.setProperty("background-position", "center center", "important");
+      html.style.setProperty("background-repeat", "no-repeat", "important");
       root.style.setProperty("background", "transparent", "important");
       body.style.setProperty("background-image", `url("${kaiBackgroundImageUrl}")`, "important");
       body.style.setProperty("background-size", "cover", "important");
@@ -1085,6 +1093,14 @@ ${startMessage}
     return () => {
       if (previousHtmlBackground) html.style.setProperty("background", previousHtmlBackground, previousHtmlBackgroundPriority);
       else html.style.removeProperty("background");
+      if (previousHtmlBackgroundImage) html.style.setProperty("background-image", previousHtmlBackgroundImage);
+      else html.style.removeProperty("background-image");
+      if (previousHtmlBackgroundSize) html.style.setProperty("background-size", previousHtmlBackgroundSize);
+      else html.style.removeProperty("background-size");
+      if (previousHtmlBackgroundPosition) html.style.setProperty("background-position", previousHtmlBackgroundPosition);
+      else html.style.removeProperty("background-position");
+      if (previousHtmlBackgroundRepeat) html.style.setProperty("background-repeat", previousHtmlBackgroundRepeat);
+      else html.style.removeProperty("background-repeat");
       if (previousRootBackground) root.style.setProperty("background", previousRootBackground, previousRootBackgroundPriority);
       else root.style.removeProperty("background");
       if (previousBodyBackgroundImage) body.style.setProperty("background-image", previousBodyBackgroundImage);
