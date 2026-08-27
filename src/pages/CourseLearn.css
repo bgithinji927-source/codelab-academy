@@ -1317,9 +1317,9 @@
 
 .learn-page.has-custom-kai-background .kai-wallpaper-image {
   display: block !important;
-  position: absolute !important;
+  position: fixed !important;
   inset: 0 !important;
-  z-index: 1 !important;
+  z-index: 2147483000 !important;
   min-height: 100vh !important;
   background: url("/api/kai/background/image") center center / cover no-repeat !important;
   opacity: 1 !important;
@@ -1346,10 +1346,12 @@
 
 .learn-page.has-custom-kai-background > *:not(.kai-wallpaper-image) {
   position: relative !important;
-  z-index: 2 !important;
+  z-index: 2147483001 !important;
 }
 
 .learn-page.has-custom-kai-background > .conversation-container {
+  position: relative !important;
+  z-index: 2147483001 !important;
   background: transparent !important;
   box-shadow: none !important;
 }
