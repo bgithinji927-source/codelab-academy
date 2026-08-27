@@ -6447,4 +6447,30 @@ html .learn-page.has-custom-kai-background > .conversation-container > .kai-teac
   border-radius: 0 !important;
 }
 
+/* Keep the Kai teaching top bar fixed while the lesson scrolls. */
+html .learn-page > .learn-navbar {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  z-index: 50 !important;
+}
+
+html .learn-page > .conversation-container {
+  padding-top: 100px !important;
+}
+
+@media (max-width: 900px) {
+  html .learn-page > .conversation-container {
+    padding-top: 146px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  html .learn-page > .conversation-container {
+    padding-top: 138px !important;
+  }
+}
+
 /* End of Kai teaching wallpaper composition. */
