@@ -7148,9 +7148,11 @@ html[data-appearance] .learn-page.has-custom-kai-background,
 .learn-page.has-custom-kai-background {
   position: relative !important;
   isolation: isolate !important;
-  background:
-    linear-gradient(180deg, rgba(1, 2, 9, 0.16), rgba(1, 2, 9, 0.28)),
-    var(--kai-custom-wallpaper) center / cover no-repeat !important;
+  background-color: transparent !important;
+  background-image: var(--kai-custom-wallpaper) !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
 }
 
 .learn-page.has-custom-kai-background::before,
