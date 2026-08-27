@@ -1062,8 +1062,37 @@ ${startMessage}
       data-kai-background={kaiBackground}
       style={{ "--kai-custom-wallpaper": hasCustomKaiBackground ? `url("${kaiBackgroundImageUrl}")` : "none" }}
     >
-      <div className="kai-wallpaper-image" aria-hidden="true">
-        <img src={kaiBackgroundImageUrl} alt="" />
+      <div
+        className="kai-wallpaper-image"
+        aria-hidden="true"
+        style={hasCustomKaiBackground ? {
+          position: "absolute",
+          inset: 0,
+          zIndex: 10,
+          minHeight: "100vh",
+          overflow: "hidden",
+          backgroundImage: `url("${kaiBackgroundImageUrl}")`,
+          backgroundPosition: "center center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+        } : undefined}
+      >
+        <img
+          src={kaiBackgroundImageUrl}
+          alt=""
+          style={hasCustomKaiBackground ? {
+            position: "absolute",
+            inset: 0,
+            zIndex: 10,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center center",
+            display: "block",
+            opacity: 1,
+            visibility: "visible",
+          } : undefined}
+        />
       </div>
 
       {/* ========================================
