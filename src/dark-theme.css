@@ -7162,7 +7162,7 @@ html[data-appearance] .learn-page.has-custom-kai-background,
 .learn-page.has-custom-kai-background .kai-wallpaper-image {
   display: block !important;
   position: fixed !important;
-  z-index: 0 !important;
+  z-index: 1 !important;
   inset: 0 !important;
   opacity: 1 !important;
   visibility: visible !important;
@@ -7185,7 +7185,7 @@ html[data-appearance] .learn-page.has-custom-kai-background,
 
 .learn-page.has-custom-kai-background > *:not(.kai-wallpaper-image) {
   position: relative !important;
-  z-index: 1 !important;
+  z-index: 2 !important;
 }
 
 .learn-page.has-custom-kai-background > .conversation-container {
