@@ -1094,6 +1094,43 @@ ${startMessage}
     };
   }, [hasCustomKaiBackground, kaiBackgroundImageUrl]);
 
+  useEffect(() => {
+    if (!hasCustomKaiBackground) return undefined;
+    const root = document.getElementById("root");
+    const body = document.body;
+    if (!root || !body) return undefined;
+
+    const wallpaper = document.createElement("img");
+    wallpaper.src = kaiBackgroundImageUrl;
+    wallpaper.alt = "";
+    wallpaper.setAttribute("aria-hidden", "true");
+    wallpaper.className = "kai-admin-wallpaper-portal";
+    Object.assign(wallpaper.style, {
+      position: "fixed",
+      inset: "0",
+      zIndex: "2147483000",
+      width: "100vw",
+      height: "100vh",
+      objectFit: "cover",
+      objectPosition: "center center",
+      display: "block",
+      opacity: "1",
+      visibility: "visible",
+      pointerEvents: "none",
+    });
+    root.style.setProperty("position", "relative", "important");
+    root.style.setProperty("z-index", "2147483001", "important");
+    root.style.setProperty("background", "transparent", "important");
+    body.insertBefore(wallpaper, body.firstChild);
+
+    return () => {
+      wallpaper.remove();
+      root.style.removeProperty("position");
+      root.style.removeProperty("z-index");
+      root.style.removeProperty("background");
+    };
+  }, [hasCustomKaiBackground, kaiBackgroundImageUrl]);
+
   return (
     <div
       className={`learn-page${hasCustomKaiBackground ? " has-custom-kai-background" : ""}`}
