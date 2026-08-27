@@ -1057,10 +1057,13 @@ ${startMessage}
   const hasCustomKaiBackground = kaiBackgroundImageUrl.startsWith("/api/kai/background/image");
 
   useEffect(() => {
+    const html = document.documentElement;
     const root = document.getElementById("root");
     const body = document.body;
-    if (!root || !body) return undefined;
+    if (!html || !root || !body) return undefined;
 
+    const previousHtmlBackground = html.style.getPropertyValue("background");
+    const previousHtmlBackgroundPriority = html.style.getPropertyPriority("background");
     const previousRootBackground = root.style.getPropertyValue("background");
     const previousRootBackgroundPriority = root.style.getPropertyPriority("background");
     const previousBodyBackgroundImage = body.style.getPropertyValue("background-image");
@@ -1070,6 +1073,7 @@ ${startMessage}
     const previousBodyBackgroundAttachment = body.style.getPropertyValue("background-attachment");
 
     if (hasCustomKaiBackground) {
+      html.style.setProperty("background", "transparent", "important");
       root.style.setProperty("background", "transparent", "important");
       body.style.setProperty("background-image", `url("${kaiBackgroundImageUrl}")`, "important");
       body.style.setProperty("background-size", "cover", "important");
@@ -1079,6 +1083,8 @@ ${startMessage}
     }
 
     return () => {
+      if (previousHtmlBackground) html.style.setProperty("background", previousHtmlBackground, previousHtmlBackgroundPriority);
+      else html.style.removeProperty("background");
       if (previousRootBackground) root.style.setProperty("background", previousRootBackground, previousRootBackgroundPriority);
       else root.style.removeProperty("background");
       if (previousBodyBackgroundImage) body.style.setProperty("background-image", previousBodyBackgroundImage);
