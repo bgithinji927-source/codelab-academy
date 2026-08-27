@@ -1237,3 +1237,52 @@
     justify-content: center;
   }
 }
+
+/* Kai Teaching readability: larger lesson text without changing other pages. */
+.learn-page .kai-teaching-card .kai-bubble {
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: 1.8;
+}
+
+.learn-page .kai-teaching-card .kai-message-text p,
+.learn-page .kai-teaching-card .learner-message-text p {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.learn-page .kai-teaching-card .kai-message-text h2 {
+  font-size: clamp(23px, 1.65vw, 27px);
+}
+
+.learn-page .kai-teaching-card .kai-message-text h3 {
+  font-size: clamp(20px, 1.35vw, 23px);
+}
+
+.learn-page .kai-teaching-card .kai-message-text h4 {
+  font-size: clamp(18px, 1.15vw, 20px);
+}
+
+.learn-page .kai-teaching-card .kai-code-block {
+  font-size: clamp(13px, 0.95vw, 15px);
+  line-height: 1.7;
+}
+
+.learn-page .kai-teaching-card .chat-name {
+  font-size: 15px;
+}
+
+.learn-page .kai-teaching-card .chat-name span,
+.learn-page .kai-teaching-card .kai-online {
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .learn-page .kai-teaching-card .kai-bubble {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .learn-page .kai-teaching-card .kai-code-block {
+    font-size: 13px;
+  }
+}
