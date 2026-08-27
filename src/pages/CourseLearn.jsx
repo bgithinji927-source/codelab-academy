@@ -60,18 +60,16 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
     const savedLearnerBackground = localStorage.getItem(kaiBackgroundStorageKey(user?.id))
       || localStorage.getItem("codelabKaiBackground:guest")
       || user?.kaiBackground;
+    let cancelled = false;
     if (savedLearnerBackground) {
       setKaiBackground(normalizeKaiBackground(savedLearnerBackground));
-      setKaiBackgroundImageUrl("/kai-background-neon-orbit.png");
-      return undefined;
     }
 
-    let cancelled = false;
     fetch("/api/kai/background")
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
         if (!cancelled && data?.success) {
-          setKaiBackground(normalizeKaiBackground(data.kaiBackground));
+          if (!savedLearnerBackground) setKaiBackground(normalizeKaiBackground(data.kaiBackground));
           setKaiBackgroundImageUrl(data.imageUrl || "/kai-background-neon-orbit.png");
         }
       })
