@@ -6413,4 +6413,20 @@ html .learn-page.has-custom-kai-background > .conversation-container > .kai-teac
   border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
+/* Scoped document canvas for the live admin wallpaper. */
+html:has(.learn-page.has-custom-kai-background) body {
+  background-color: #02030a !important;
+  background-image: url("/api/kai/background/image") !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+}
+
+html:has(.learn-page.has-custom-kai-background) #root,
+html:has(.learn-page.has-custom-kai-background) .learn-page.has-custom-kai-background {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
 /* End of Kai teaching wallpaper composition. */
