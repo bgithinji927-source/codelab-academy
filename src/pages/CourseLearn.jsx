@@ -1056,6 +1056,44 @@ ${startMessage}
 
   const hasCustomKaiBackground = kaiBackgroundImageUrl.startsWith("/api/kai/background/image");
 
+  useEffect(() => {
+    const root = document.getElementById("root");
+    const body = document.body;
+    if (!root || !body) return undefined;
+
+    const previousRootBackground = root.style.getPropertyValue("background");
+    const previousRootBackgroundPriority = root.style.getPropertyPriority("background");
+    const previousBodyBackgroundImage = body.style.getPropertyValue("background-image");
+    const previousBodyBackgroundSize = body.style.getPropertyValue("background-size");
+    const previousBodyBackgroundPosition = body.style.getPropertyValue("background-position");
+    const previousBodyBackgroundRepeat = body.style.getPropertyValue("background-repeat");
+    const previousBodyBackgroundAttachment = body.style.getPropertyValue("background-attachment");
+
+    if (hasCustomKaiBackground) {
+      root.style.setProperty("background", "transparent", "important");
+      body.style.setProperty("background-image", `url("${kaiBackgroundImageUrl}")`, "important");
+      body.style.setProperty("background-size", "cover", "important");
+      body.style.setProperty("background-position", "center center", "important");
+      body.style.setProperty("background-repeat", "no-repeat", "important");
+      body.style.setProperty("background-attachment", "fixed", "important");
+    }
+
+    return () => {
+      if (previousRootBackground) root.style.setProperty("background", previousRootBackground, previousRootBackgroundPriority);
+      else root.style.removeProperty("background");
+      if (previousBodyBackgroundImage) body.style.setProperty("background-image", previousBodyBackgroundImage);
+      else body.style.removeProperty("background-image");
+      if (previousBodyBackgroundSize) body.style.setProperty("background-size", previousBodyBackgroundSize);
+      else body.style.removeProperty("background-size");
+      if (previousBodyBackgroundPosition) body.style.setProperty("background-position", previousBodyBackgroundPosition);
+      else body.style.removeProperty("background-position");
+      if (previousBodyBackgroundRepeat) body.style.setProperty("background-repeat", previousBodyBackgroundRepeat);
+      else body.style.removeProperty("background-repeat");
+      if (previousBodyBackgroundAttachment) body.style.setProperty("background-attachment", previousBodyBackgroundAttachment);
+      else body.style.removeProperty("background-attachment");
+    };
+  }, [hasCustomKaiBackground, kaiBackgroundImageUrl]);
+
   return (
     <div
       className={`learn-page${hasCustomKaiBackground ? " has-custom-kai-background" : ""}`}
