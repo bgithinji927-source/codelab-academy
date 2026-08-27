@@ -326,7 +326,7 @@ html[data-appearance="white-purple"] #root :where(
 
 
 /* Kai background selections must remain visible beneath the White & Purple page shell. */
-html[data-appearance="white-purple"] #root .learn-page[data-kai-background] {
+html[data-appearance="white-purple"] #root .learn-page[data-kai-background]:not(.has-custom-kai-background) {
   background: transparent !important;
 }
 

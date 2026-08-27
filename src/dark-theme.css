@@ -6378,4 +6378,13 @@ html:not([data-design="canvas"]) .dashboard-category-view {
 .kai-teaching-card .kai-avatar-small {
   display: inline-flex !important;
 }
+.learn-page.has-custom-kai-background {
+  background-color: #02030a !important;
+  background-image: url("/api/kai/background/image") !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+}
+
 /* End of Kai teaching wallpaper composition. */
