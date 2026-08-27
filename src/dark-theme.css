@@ -7149,7 +7149,7 @@ html[data-appearance] .learn-page.has-custom-kai-background,
   position: relative !important;
   isolation: isolate !important;
   background-color: transparent !important;
-  background-image: var(--kai-custom-wallpaper) !important;
+  background-image: url("/api/kai/background/image") !important;
   background-position: center center !important;
   background-repeat: no-repeat !important;
   background-size: cover !important;
@@ -7167,7 +7167,7 @@ html[data-appearance] .learn-page.has-custom-kai-background,
   z-index: 1 !important;
   inset: 0 !important;
   min-height: 100vh !important;
-  background-image: var(--kai-custom-wallpaper) !important;
+  background-image: url("/api/kai/background/image") !important;
   background-position: center center !important;
   background-repeat: no-repeat !important;
   background-size: cover !important;
