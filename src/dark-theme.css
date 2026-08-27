@@ -7141,3 +7141,57 @@ html:not([data-design="canvas"]) .dashboard-category-view {
 .learn-page[data-kai-background] > .conversation-container > .kai-teaching-card {
   background: rgba(4, 3, 13, 0.08) !important;
 }
+
+/* Final cascade: a real admin-uploaded image replaces every decorative wallpaper layer. */
+html[data-appearance][data-theme] .learn-page.has-custom-kai-background,
+html[data-appearance] .learn-page.has-custom-kai-background,
+.learn-page.has-custom-kai-background {
+  position: relative !important;
+  isolation: isolate !important;
+  background: transparent !important;
+}
+
+.learn-page.has-custom-kai-background::before,
+.learn-page.has-custom-kai-background::after,
+.learn-page.has-custom-kai-background .kai-avatar-wallpaper {
+  display: none !important;
+}
+
+.learn-page.has-custom-kai-background .kai-wallpaper-image {
+  display: block !important;
+  position: fixed !important;
+  z-index: 0 !important;
+  inset: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.learn-page.has-custom-kai-background .kai-wallpaper-image::after {
+  display: none !important;
+}
+
+.learn-page.has-custom-kai-background .kai-wallpaper-image img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: none !important;
+}
+
+.learn-page.has-custom-kai-background > *:not(.kai-wallpaper-image) {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.learn-page.has-custom-kai-background > .conversation-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.learn-page.has-custom-kai-background > .conversation-container > .kai-teaching-card {
+  background: rgba(4, 3, 13, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
