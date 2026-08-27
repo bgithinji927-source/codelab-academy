@@ -6387,4 +6387,30 @@ html:not([data-design="canvas"]) .dashboard-category-view {
   background-attachment: fixed !important;
 }
 
+/* High-specificity exception: custom Kai wallpaper owns this page’s canvas. */
+html[data-appearance][data-theme] .learn-page.has-custom-kai-background,
+html[data-appearance] .learn-page.has-custom-kai-background,
+html .learn-page.has-custom-kai-background {
+  background-color: #02030a !important;
+  background-image: url("/api/kai/background/image") !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+}
+
+html[data-appearance][data-theme] .learn-page.has-custom-kai-background > .conversation-container,
+html[data-appearance] .learn-page.has-custom-kai-background > .conversation-container,
+html .learn-page.has-custom-kai-background > .conversation-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-appearance][data-theme] .learn-page.has-custom-kai-background > .conversation-container > .kai-teaching-card,
+html[data-appearance] .learn-page.has-custom-kai-background > .conversation-container > .kai-teaching-card,
+html .learn-page.has-custom-kai-background > .conversation-container > .kai-teaching-card {
+  background: rgba(4, 3, 13, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
 /* End of Kai teaching wallpaper composition. */
