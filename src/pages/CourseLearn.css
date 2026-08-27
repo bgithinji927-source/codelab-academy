@@ -1296,3 +1296,77 @@
 .kai-teaching-card .kai-avatar-small {
   display: inline-flex !important;
 }
+
+
+/* Final component cascade: show the real admin image, not the legacy icon or theme canvas. */
+.learn-page.has-custom-kai-background {
+  position: relative !important;
+  isolation: isolate !important;
+  background-color: transparent !important;
+  background-image: url("/api/kai/background/image") !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
+.learn-page.has-custom-kai-background::before,
+.learn-page.has-custom-kai-background::after,
+.learn-page.has-custom-kai-background .kai-avatar-wallpaper {
+  display: none !important;
+}
+
+.learn-page.has-custom-kai-background .kai-wallpaper-image {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  min-height: 100vh !important;
+  background: url("/api/kai/background/image") center center / cover no-repeat !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.learn-page.has-custom-kai-background .kai-wallpaper-image::after {
+  display: none !important;
+}
+
+.learn-page.has-custom-kai-background .kai-wallpaper-image img {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: none !important;
+}
+
+.learn-page.has-custom-kai-background > *:not(.kai-wallpaper-image) {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.learn-page.has-custom-kai-background > .conversation-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.learn-page.has-custom-kai-background > .conversation-container > .kai-teaching-card {
+  background: rgba(4, 3, 13, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+@media (max-width: 720px) {
+  .learn-page.has-custom-kai-background .kai-wallpaper-image img {
+    object-position: center center !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-page.has-custom-kai-background .kai-wallpaper-image img {
+    filter: none !important;
+  }
+}
