@@ -7163,9 +7163,14 @@ html[data-appearance] .learn-page.has-custom-kai-background,
 
 .learn-page.has-custom-kai-background .kai-wallpaper-image {
   display: block !important;
-  position: fixed !important;
+  position: absolute !important;
   z-index: 1 !important;
   inset: 0 !important;
+  min-height: 100vh !important;
+  background-image: var(--kai-custom-wallpaper) !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
   opacity: 1 !important;
   visibility: visible !important;
 }
