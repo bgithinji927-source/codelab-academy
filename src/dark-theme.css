@@ -6429,4 +6429,22 @@ html:has(.learn-page.has-custom-kai-background) .learn-page.has-custom-kai-backg
   background-image: none !important;
 }
 
+/* Full-bleed custom Kai stage: remove the empty horizontal gutters. */
+html .learn-page.has-custom-kai-background > .conversation-container {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+html .learn-page.has-custom-kai-background > .conversation-container > .kai-teaching-card {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+  border-radius: 0 !important;
+}
+
 /* End of Kai teaching wallpaper composition. */
