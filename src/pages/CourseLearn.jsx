@@ -1057,7 +1057,11 @@ ${startMessage}
   const hasCustomKaiBackground = kaiBackgroundImageUrl.startsWith("/api/kai/background/image");
 
   return (
-    <div className={`learn-page${hasCustomKaiBackground ? " has-custom-kai-background" : ""}`} data-kai-background={kaiBackground}>
+    <div
+      className={`learn-page${hasCustomKaiBackground ? " has-custom-kai-background" : ""}`}
+      data-kai-background={kaiBackground}
+      style={{ "--kai-custom-wallpaper": hasCustomKaiBackground ? `url("${kaiBackgroundImageUrl}")` : "none" }}
+    >
       <div className="kai-wallpaper-image" aria-hidden="true">
         <img src={kaiBackgroundImageUrl} alt="" />
       </div>
