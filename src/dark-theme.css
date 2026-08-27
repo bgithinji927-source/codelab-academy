@@ -6293,11 +6293,13 @@ html:not([data-design="canvas"]) .dashboard-category-view {
 }
 
 .learn-page[data-kai-background] .kai-wallpaper-image {
-  position: absolute !important;
+  position: fixed !important;
   z-index: 0 !important;
   inset: 0 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
   overflow: hidden;
-  min-height: 100%;
   pointer-events: none;
   background: transparent !important;
 }
