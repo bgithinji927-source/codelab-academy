@@ -215,7 +215,7 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
           </h1>
           <p>
             {selectedCategory
-              ? `${courseAccess ? `${unlockedCount} of ${visibleCourses.length}` : visibleCourses.length} structured courses currently open in ${selectedCategory.toLowerCase()}. Kai confirms when the next course is ready.`
+              ? `${courseAccess ? `${unlockedCount} of ${visibleCourses.length}` : visibleCourses.length} structured courses currently open in ${selectedCategory.toLowerCase()}. Lessons unlock sequentially with Kai.`
               : "Choose a category from the sidebar to explore focused courses, guided lessons, and practical projects."}
           </p>
         </div>

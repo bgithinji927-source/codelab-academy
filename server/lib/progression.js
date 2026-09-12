@@ -68,21 +68,13 @@ function buildLearnerCourseAccess(user, courses = []) {
   }, -1);
 
   const access = [];
-  let sequentialUnlockedIndex = entryIndex;
-
-  for (let index = entryIndex + 1; index < activeCourses.length; index += 1) {
-    const previousCourse = activeCourses[index - 1];
-    const previousProgress = progressById.get(String(previousCourse.id));
-    if (!isKaiReady(previousProgress)) break;
-    sequentialUnlockedIndex = index;
-  }
-
-  const highestUnlockedIndex = Math.max(sequentialUnlockedIndex, highestRecordedIndex, entryIndex);
-
   activeCourses.forEach((course, index) => {
     const progressRecord = progressById.get(String(course.id));
     const progress = asPlainProgress(progressRecord);
-    const unlocked = index <= highestUnlockedIndex;
+    // Courses are all available to explore. Kai gates the lessons inside a
+    // course sequentially; course-level readiness is retained as progress
+    // metadata but no longer hides or blocks the course itself.
+    const unlocked = true;
     const completed = isComplete(progressRecord);
     const started = isStarted(progressRecord);
     const previousCourse = activeCourses[index - 1] || null;
@@ -104,12 +96,10 @@ function buildLearnerCourseAccess(user, courses = []) {
       status,
       progress,
       unlockReason: index === entryIndex
-        ? "Start here with Kai."
-        : unlocked
-          ? (started ? "Kai is tracking your progress." : "Kai has opened this course for you.")
-          : `Complete ${previousCourse?.title || "the previous course"} and wait for Kai to confirm you are ready.`,
-      requiredCourseId: unlocked ? null : String(previousCourse?.id || ""),
-      requiredCourseTitle: unlocked ? null : previousCourse?.title || null,
+        ? "Start here with Kai, or explore any available course."
+        : (started ? "Kai is tracking your progress." : "This course is open. Lessons unlock one at a time with Kai."),
+      requiredCourseId: null,
+      requiredCourseTitle: null,
       previousCourseReady: index === entryIndex ? true : isKaiReady(previousProgress),
       unlockedAt: progress?.unlockedAt || (index <= highestRecordedIndex ? progress?.startedAt || null : null),
     });

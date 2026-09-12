@@ -60,7 +60,7 @@ function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAc
         <div>
           <span className="dashboard-category-kicker">COURSE LIBRARY</span>
           <h1>{category}</h1>
-          <p>{courseAccess ? `${unlockedCount} of ${visibleCourses.length} courses currently open. Kai unlocks the next course after confirming your readiness.` : `${visibleCourses.length} courses available in this learning category.`}</p>
+          <p>{courseAccess ? `${unlockedCount} courses open. Lessons unlock one at a time as Kai confirms your readiness.` : `${visibleCourses.length} courses available in this learning category.`}</p>
         </div>
         <span className="dashboard-category-count">{courseAccess ? `${unlockedCount}/${visibleCourses.length} OPEN` : `${visibleCourses.length} COURSES`}</span>
       </div>
