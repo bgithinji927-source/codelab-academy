@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Play, RotateCcw, Copy, Check, Lightbulb, AlertTriangle, Info, ArrowRight } from "lucide-react";
+import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import "./AIContentRenderer.css";
 
 const SAFE_ACTIONS = new Set([
@@ -103,6 +104,30 @@ function Table({ block }) {
   return <div className="kai-rich-table-wrap"><table><thead><tr>{(block.columns || []).map((column) => <th key={column}>{column}</th>)}</tr></thead><tbody>{(block.rows || []).map((row, index) => <tr key={index}>{(Array.isArray(row) ? row : block.columns.map((column) => row?.[column])).map((cell, cellIndex) => <td key={cellIndex}><InlineText>{cell}</InlineText></td>)}</tr>)}</tbody></table></div>;
 }
 
+export function KaiVideoPlayer({ video, aspectRatio = "16 / 9" }) {
+  const [playbackUrl, setPlaybackUrl] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    setPlaybackUrl("");
+    setError("");
+    if (!video?.playbackUrl) return undefined;
+    resolveVideoPlaybackUrl(video)
+      .then((url) => { if (!cancelled) setPlaybackUrl(url); })
+      .catch((reason) => { if (!cancelled) setError(reason.message || "Could not load this video."); });
+    return () => { cancelled = true; };
+  }, [video]);
+
+  if (!video?.playbackUrl) return null;
+  return <figure className="kai-rich-video">
+    <div className="kai-rich-video-frame" style={{ aspectRatio: String(aspectRatio).replace(":", " /") }}>
+      {video.playerType === "embed" ? <iframe src={video.playbackUrl} title={video.title || "Kai video"} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /> : playbackUrl ? <video src={playbackUrl} controls playsInline preload="metadata" referrerPolicy="no-referrer" /> : <div className="kai-rich-video-status">{error || "Preparing secure video playback..."}</div>}
+    </div>
+    {(video.title || video.description) && <figcaption><strong>{video.title}</strong>{video.description && <span>{video.description}</span>}</figcaption>}
+  </figure>;
+}
+
 export default function AIContentRenderer({ content, onAction, onChoice }) {
   const blocks = useMemo(() => Array.isArray(content) ? content : [], [content]);
   if (!blocks.length) return null;
@@ -119,6 +144,7 @@ export default function AIContentRenderer({ content, onAction, onChoice }) {
     if (block.type === "table") return <Table block={block} key={key} />;
     if (block.type === "choice") return <Choice block={block} onChoice={onChoice} key={key} />;
     if (block.type === "callout") return <Callout block={block} key={key} />;
+    if (block.type === "video") return <KaiVideoPlayer video={block.video || block} aspectRatio={block.aspectRatio || "16 / 9"} key={key} />;
     if (block.type === "exercise") return <button type="button" className="kai-rich-exercise" onClick={() => onAction?.("openExercise", block)} key={key}>{block.title || "Try this exercise"} <ArrowRight size={15} /></button>;
     if (block.type === "action" && SAFE_ACTIONS.has(block.action)) return <button type="button" className="kai-rich-action" onClick={() => onAction?.(block.action, block)} key={key}>{block.label || "Continue"} <ArrowRight size={14} /></button>;
     return null;

@@ -16,7 +16,7 @@ import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import ThemeToggle from "../components/ThemeToggle";
 import { DEFAULT_KAI_BACKGROUND, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
-import AIContentRenderer from "../components/AIContentRenderer";
+import AIContentRenderer, { KaiVideoPlayer } from "../components/AIContentRenderer";
 import "./CourseLearn.css";
 
 function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
@@ -1020,6 +1020,7 @@ ${startMessage}
               </button>
             </div>
           )}
+          {video?.playbackUrl && <KaiVideoPlayer video={video} aspectRatio={video.aspectRatio || "16 / 9"} />}
 
         </div>
       </div>
