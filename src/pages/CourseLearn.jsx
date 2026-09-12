@@ -18,7 +18,7 @@ import ThemeToggle from "../components/ThemeToggle";
 import { DEFAULT_KAI_BACKGROUND, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
 import "./CourseLearn.css";
 
-function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
+function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
   const [messages, setMessages] = useState([]);
   const [answer, setAnswer] = useState("");
   const [isKaiTyping, setIsKaiTyping] = useState(false);
@@ -239,7 +239,14 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
         const safeIndex = idIndex >= 0
           ? idIndex
           : Math.min(Math.max(serverIndex, 0), courseLessons.length - 1);
-        const activeLesson = courseLessons[safeIndex];
+        const requestedIndex = initialLessonId
+          ? courseLessons.findIndex((item) => String(item.id) === String(initialLessonId))
+          : -1;
+        const completedCount = Math.max(0, Number(stateData.courseProgress?.lessonsCompleted) || 0);
+        const safeRequestedIndex = requestedIndex >= 0 && requestedIndex <= completedCount
+          ? requestedIndex
+          : safeIndex;
+        const activeLesson = courseLessons[safeRequestedIndex];
         const normalizeHistory = (history) => Array.isArray(history)
           ? history
               .filter((message) => message && (message.role === "user" || message.role === "assistant") && typeof message.content === "string" && message.content.trim())
@@ -248,14 +255,14 @@ function CourseLearn({ user, course, onBack, nextCourse = null, onNextCourse, on
         const savedHistory = normalizeHistory(stateData.session?.conversationHistory);
         const savedSessions = Array.isArray(stateData.sessions)
           ? stateData.sessions
-              .filter((session) => Number(session.lessonIndex) < safeIndex)
+              .filter((session) => Number(session.lessonIndex) < safeRequestedIndex)
               .map((session) => ({
                 ...session,
                 conversationHistory: normalizeHistory(session.conversationHistory),
               }))
           : [];
 
-        setCurrentLessonIndex(safeIndex);
+        setCurrentLessonIndex(safeRequestedIndex);
         setCompletedLessonsCount(Math.max(0, Math.min(
           courseLessons.length,
           Number(stateData.courseProgress?.lessonsCompleted) || 0

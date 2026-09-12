@@ -45,6 +45,8 @@ import LessonsPage from "./pages/LessonsPage";
 import fetchWithAuth from "./utils/fetchWithAuth";
 import { buildFallbackCourseAccess, findCourseAccess } from "./utils/courseAccess";
 import CourseLogo from "./components/CourseLogo";
+import { getLessonsByCourse } from "./data/lessons";
+import { KAI_UI_EVENT, installKaiUiBridge } from "./utils/kaiUiBridge";
 
 function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAccess }) {
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
@@ -137,6 +139,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
   const [activeView, setActiveView] = useState("dashboard");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [selectedLessonId, setSelectedLessonId] = useState(null);
   const [courseCatalog, setCourseCatalog] = useState(courses);
   const [courseAccess, setCourseAccess] = useState(() => buildFallbackCourseAccess(courses));
 
@@ -260,10 +263,80 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
     };
   }, [user, courseCatalog]);
 
+  useEffect(() => installKaiUiBridge(), []);
+
+  useEffect(() => {
+    const handleKaiAction = (event) => {
+      const action = event.detail || {};
+      const type = action.type;
+      const view = action.view;
+
+      if (type === "open_view" || type === "show_progress") {
+        const nextView = type === "show_progress" ? "dashboard" : view;
+        if (["dashboard", "kai", "roadmap", "challenge", "settings", "videos"].includes(nextView)) {
+          setActiveView(nextView);
+          setSelectedCategory(null);
+        }
+        return;
+      }
+
+      if (type === "open_category") {
+        const category = String(action.category || "");
+        if (sidebarItems.some((item) => item.category === category)) {
+          setActiveView("dashboard");
+          setSelectedCategory(category);
+        }
+        return;
+      }
+
+      if (type === "show_videos") {
+        setActiveView("videos");
+        setSelectedCategory(null);
+        return;
+      }
+
+      if (type === "show_challenges") {
+        setActiveView("challenge");
+        setSelectedCategory(null);
+        return;
+      }
+
+      if (type === "update_learning_preferences") {
+        setActiveView("settings");
+        setSelectedCategory(null);
+        return;
+      }
+
+      if (type === "open_course" || type === "start_or_resume_course") {
+        const course = courseCatalog.find((item) => String(item.id) === String(action.courseId));
+        if (course) openCourseWithKai(course);
+        return;
+      }
+
+      if (["open_lesson", "mark_lesson_complete", "unlock_next_lesson"].includes(type)) {
+        const course = selectedCourse || courseCatalog.find((item) => String(item.id) === String(action.courseId));
+        if (!course || findCourseAccess(courseAccess, course.id)?.locked) return;
+        const lessons = getLessonsByCourse(course.id);
+        const requested = lessons.find((item) => String(item.id) === String(action.lessonId));
+        const completedLessons = Math.max(0, Number(findCourseAccess(courseAccess, course.id)?.progress?.lessonsCompleted) || 0);
+        const requestedIndex = requested ? lessons.findIndex((item) => String(item.id) === String(requested.id)) : completedLessons;
+        if (requestedIndex > completedLessons) return;
+        setSelectedCourse(course);
+        setSelectedLessonId(requested?.id || null);
+        setSelectedCategory(null);
+        setActiveView("courseLearn");
+      }
+    };
+
+    window.addEventListener(KAI_UI_EVENT, handleKaiAction);
+    return () => window.removeEventListener(KAI_UI_EVENT, handleKaiAction);
+  }, [courseCatalog, courseAccess, selectedCourse]);
+
   const openCourseWithKai = (course) => {
     const access = findCourseAccess(courseAccess, course?.id);
     if (access?.locked) return;
     setSelectedCourse(course);
+    setSelectedLessonId(null);
     setActiveView("lessons");
     setSelectedCategory(null);
   };
@@ -278,6 +351,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
       <CourseLearn
         user={user}
         course={selectedCourse}
+        initialLessonId={selectedLessonId}
         nextCourse={(() => {
           const selectedAccess = findCourseAccess(courseAccess, selectedCourse.id);
           const nextAccess = selectedAccess
@@ -305,6 +379,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
         }}
         onBack={() => {
           setSelectedCourse(null);
+          setSelectedLessonId(null);
           setActiveView("dashboard");
           setSelectedCategory(null);
         }}
@@ -317,9 +392,13 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
       <LessonsPage
         course={selectedCourse}
         courseAccess={findCourseAccess(courseAccess, selectedCourse.id)}
-        onOpenLesson={openLessonWithKai}
+        onOpenLesson={(lesson) => {
+          setSelectedLessonId(lesson?.id || null);
+          openLessonWithKai();
+        }}
         onBack={() => {
           setSelectedCourse(null);
+          setSelectedLessonId(null);
           setActiveView("dashboard");
           setSelectedCategory(null);
         }}
