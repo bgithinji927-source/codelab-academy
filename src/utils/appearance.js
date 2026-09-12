@@ -23,6 +23,34 @@ const THEME_TOKEN_KEYS = [
 
 const THEME_DEFINITIONS = [
   {
+    id: "monochrome",
+    name: "Black & White",
+    description: "A strict dark appearance with black surfaces, white text, and grayscale controls only.",
+    swatches: ["#000000", "#111111", "#ffffff"],
+    tokens: {
+      background: "#000000",
+      surface: "#111111",
+      surfaceElevated: "#181818",
+      border: "#303030",
+      textPrimary: "#ffffff",
+      textSecondary: "#e8e8e8",
+      textMuted: "#b8b8b8",
+      accent: "#ffffff",
+      accentHover: "#d8d8d8",
+      accentText: "#000000",
+      success: "#ffffff",
+      warning: "#ffffff",
+      error: "#ffffff",
+      info: "#ffffff",
+      inputBackground: "#111111",
+      inputBorder: "#303030",
+      buttonBackground: "#ffffff",
+      buttonText: "#000000",
+      codeBackground: "#080808",
+      codeText: "#ffffff",
+    },
+  },
+  {
     id: "default",
     name: "Classic Terminal",
     description: "Keep the current CodeLab Academy green developer design exactly as it is.",
@@ -403,7 +431,7 @@ if (invalidThemeIds.length > 0 && typeof console !== "undefined") {
 }
 
 export const APPEARANCE_PRESETS = validatedDefinitions;
-export const DEFAULT_APPEARANCE = "default";
+export const DEFAULT_APPEARANCE = "monochrome";
 const validPresetIds = new Set(
   APPEARANCE_PRESETS
     .filter((preset) => preset.validation.valid)
