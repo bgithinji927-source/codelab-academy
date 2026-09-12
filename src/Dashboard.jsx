@@ -86,8 +86,8 @@ function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAc
                 }
               }}
             >
-              <div className="dashboard-course-card-icon">
-                <CourseLogo course={course} />
+              <div className="dashboard-course-card-image">
+                <CourseLogo course={course} className="dashboard-course-card-image-logo" />
                 {(locked || completed) && (
                   <span className="dashboard-course-card-status-icon" aria-hidden="true">
                     {locked ? <LockKeyhole size={15} /> : <CircleCheck size={15} />}
