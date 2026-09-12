@@ -332,13 +332,16 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
 
                   return (
                     <article className={`course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""}`} key={course.id}>
-                      <div className="course-card-icon">
-                        <CourseLogo course={course} />
-                        {(locked || completed) && (
-                          <span className="course-card-status-icon" aria-hidden="true">
-                            {locked ? <LockKeyhole size={16} /> : <CircleCheck size={16} />}
-                          </span>
-                        )}
+                      <div className="course-card-visual">
+                        <div className="course-card-icon">
+                          <CourseLogo course={course} />
+                          {(locked || completed) && (
+                            <span className="course-card-status-icon" aria-hidden="true">
+                              {locked ? <LockKeyhole size={16} /> : <CircleCheck size={16} />}
+                            </span>
+                          )}
+                        </div>
+                        <span className="course-card-logo-label">{course.category}</span>
                       </div>
                       <div className="course-card-content">
                         <span className="course-level">
@@ -349,6 +352,8 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
                         {access?.progress && access.progress.totalLessons > 0 && (
                           <span className="course-access-progress">{access.progress.lessonsCompleted}/{access.progress.totalLessons} lessons complete</span>
                         )}
+                      </div>
+                      <div className="course-card-footer">
                         <button
                           type="button"
                           className="start-course-button"
