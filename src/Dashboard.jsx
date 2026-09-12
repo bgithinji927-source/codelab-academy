@@ -41,6 +41,7 @@ import createStore from "./data/store";
 import courses from "./data/course";
 import SettingsPage from "./pages/Settings";
 import VideoTutorials from "./pages/VideoTutorials";
+import LessonsPage from "./pages/LessonsPage";
 import fetchWithAuth from "./utils/fetchWithAuth";
 import { buildFallbackCourseAccess, findCourseAccess } from "./utils/courseAccess";
 import CourseLogo from "./components/CourseLogo";
@@ -263,8 +264,12 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
     const access = findCourseAccess(courseAccess, course?.id);
     if (access?.locked) return;
     setSelectedCourse(course);
-    setActiveView("courseLearn");
+    setActiveView("lessons");
     setSelectedCategory(null);
+  };
+
+  const openLessonWithKai = () => {
+    setActiveView("courseLearn");
   };
 
   // Open the selected course in the real Kai teaching screen
@@ -298,6 +303,21 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
             }));
           }
         }}
+        onBack={() => {
+          setSelectedCourse(null);
+          setActiveView("dashboard");
+          setSelectedCategory(null);
+        }}
+      />
+    );
+  }
+
+  if (activeView === "lessons" && selectedCourse) {
+    return (
+      <LessonsPage
+        course={selectedCourse}
+        courseAccess={findCourseAccess(courseAccess, selectedCourse.id)}
+        onOpenLesson={openLessonWithKai}
         onBack={() => {
           setSelectedCourse(null);
           setActiveView("dashboard");
