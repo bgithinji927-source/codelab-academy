@@ -990,7 +990,7 @@ ${startMessage}
             </div>
           </div>
 
-          <div className="chat-bubble kai-bubble">
+          <div className="kai-board-content">
             <div className="kai-message-text">
               {contentBlocks?.length ? (
                 <AIContentRenderer
@@ -1053,7 +1053,7 @@ ${startMessage}
             </div>
           </div>
 
-          <div className="chat-bubble learner-bubble">
+          <div className="learner-board-content">
             <div className="learner-message-text">
               {String(content)
                 .split("\n")
@@ -1193,7 +1193,7 @@ ${startMessage}
         <section className="conversation-messages">
 
           {courseStateError && (
-            <div className="course-state-error" role="alert">
+            <div className="kai-board-status" role="alert">
               {courseStateError}
             </div>
           )}
@@ -1285,7 +1285,7 @@ ${startMessage}
                     </div>
                   </div>
 
-                  <div className="chat-bubble kai-bubble">
+                  <div className="kai-board-thinking">
 
                     <div className="kai-thinking">
                       <span />
@@ -1312,7 +1312,7 @@ ${startMessage}
             INPUT
         ====================================== */}
 
-        <div className="learner-input-area">
+        <div className="kai-input-dock">
 
           <div className="input-avatar">
             <UserRound size={18} />
