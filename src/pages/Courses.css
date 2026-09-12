@@ -861,7 +861,7 @@
   border-bottom: 1px solid #eee3ff;
 }
 
-.course-grid .course-card-icon {
+.course-grid .course-card-image {
   position: relative;
   width: 100%;
   height: 150px;
@@ -871,7 +871,7 @@
   box-shadow: none;
 }
 
-.course-grid .course-card-icon .course-logo {
+.course-grid .course-card-image .course-logo {
   width: 150px;
   height: 150px;
 }
@@ -935,11 +935,11 @@
     padding: 20px 18px 16px;
   }
 
-  .course-grid .course-card-icon {
+  .course-grid .course-card-image {
     height: 128px;
   }
 
-  .course-grid .course-card-icon .course-logo {
+  .course-grid .course-card-image .course-logo {
     width: 128px;
     height: 128px;
   }

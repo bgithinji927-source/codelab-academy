@@ -333,8 +333,8 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
                   return (
                     <article className={`course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""}`} key={course.id}>
                       <div className="course-card-visual">
-                        <div className="course-card-icon">
-                          <CourseLogo course={course} />
+                        <div className="course-card-image">
+                          <CourseLogo course={course} className="course-card-image-logo" />
                           {(locked || completed) && (
                             <span className="course-card-status-icon" aria-hidden="true">
                               {locked ? <LockKeyhole size={16} /> : <CircleCheck size={16} />}
