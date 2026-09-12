@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import "./dark-theme.css";
 import "./nonKaiAnimations.css";
 import "./whitePurpleTypography.css";
+import "./monochrome.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
