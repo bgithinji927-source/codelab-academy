@@ -6571,3 +6571,55 @@ html .dashboard-category-grid .dashboard-course-card > button {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Category library viewport: course cards scroll, the dashboard shell does not stretch. */
+html .dashboard-page.has-category-library {
+  height: 100vh;
+  overflow: hidden;
+}
+
+html .dashboard-page.has-category-library .dashboard-main {
+  height: calc(100vh - 64px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+html .dashboard-page.has-category-library .dashboard-content-container,
+html .dashboard-page.has-category-library .dashboard-category-view {
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+html .dashboard-page.has-category-library .dashboard-category-view {
+  display: flex;
+  flex-direction: column;
+}
+
+html .dashboard-page.has-category-library .dashboard-category-heading {
+  flex: 0 0 auto;
+}
+
+html .dashboard-page.has-category-library .dashboard-category-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  align-content: start;
+  padding-right: 8px !important;
+  scrollbar-width: thin;
+  scrollbar-color: var(--terminal-green) var(--terminal-panel);
+}
+
+html .dashboard-page.has-category-library .dashboard-category-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+html .dashboard-page.has-category-library .dashboard-category-grid::-webkit-scrollbar-track {
+  background: var(--terminal-panel);
+}
+
+html .dashboard-page.has-category-library .dashboard-category-grid::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: var(--terminal-green);
+}

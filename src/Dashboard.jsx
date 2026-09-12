@@ -346,7 +346,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
 
   // Dashboard view
   return (
-    <div className="dashboard-page">
+    <div className={`dashboard-page${selectedCategory ? " has-category-library" : ""}`}>
 
       {/* NAVBAR */}
       <header className="dashboard-navbar">
