@@ -16,6 +16,7 @@ import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import ThemeToggle from "../components/ThemeToggle";
 import { DEFAULT_KAI_BACKGROUND, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
+import AIContentRenderer from "../components/AIContentRenderer";
 import "./CourseLearn.css";
 
 function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
@@ -163,6 +164,16 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     text = text.replace(/\[VIDEO_RECOMMEND(?:\s*:\s*.*?)?\]/gi, "");
 
     return text.trim();
+  };
+
+  const parseStructuredContent = (value) => {
+    if (Array.isArray(value)) return value;
+    try {
+      const parsed = JSON.parse(cleanKaiResponse(value));
+      return parsed?.type === "lesson_response" && Array.isArray(parsed.content) ? parsed.content : null;
+    } catch {
+      return null;
+    }
   };
 
   // ============================================
@@ -409,6 +420,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       const kaiReply = cleanKaiResponse(
         data.reply
       );
+      const contentBlocks = parseStructuredContent(data.content) || parseStructuredContent(data.reply);
 
       if (!kaiReply) {
         throw new Error(
@@ -443,6 +455,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         {
           role: "assistant",
           content: kaiReply,
+          contentBlocks,
           video: data.videoRecommendation || null,
         },
       ]);
@@ -931,7 +944,8 @@ ${startMessage}
   const renderKaiMessage = (
     content,
     messageIndex,
-    video = null
+    video = null,
+    contentBlocks = null
   ) => {
     const assistantMessages =
       messages.filter(
@@ -978,7 +992,18 @@ ${startMessage}
 
           <div className="chat-bubble kai-bubble">
             <div className="kai-message-text">
-              {renderMarkdown(text)}
+              {contentBlocks?.length ? (
+                <AIContentRenderer
+                  content={contentBlocks}
+                  onChoice={(choice) => askKai({ learnerMessage: choice, conversation: [...messages, { role: "user", content: choice }] })}
+                  onAction={(action) => {
+                    if (["unlockNextLesson", "nextLesson"].includes(action)) handleNextLesson();
+                    else if (action === "showHint") askKai({ learnerMessage: "Please give me a focused hint for this step.", conversation: messages });
+                    else if (action === "completeSection") askKai({ learnerMessage: "I am ready to complete this section. Please check my understanding.", conversation: messages });
+                    else askKai({ learnerMessage: `Please ${action}.`, conversation: messages });
+                  }}
+                />
+              ) : renderMarkdown(text)}
             </div>
           </div>
 
@@ -1195,7 +1220,7 @@ ${startMessage}
                 </div>
                 {(session.conversationHistory || []).map((message, index) => {
                   if (message.role === "assistant") {
-                    return renderKaiMessage(message.content, `saved-${session.lessonIndex}-${index}`, message.video);
+                    return renderKaiMessage(message.content, `saved-${session.lessonIndex}-${index}`, message.video, message.contentBlocks);
                   }
                   if (message.role === "user") {
                     return renderLearnerMessage(message.content, `saved-${session.lessonIndex}-${index}`);
@@ -1215,7 +1240,8 @@ ${startMessage}
                   return renderKaiMessage(
                   message.content,
                   `active-${index}`,
-                  message.video
+                  message.video,
+                  message.contentBlocks
                 );
               }
 
