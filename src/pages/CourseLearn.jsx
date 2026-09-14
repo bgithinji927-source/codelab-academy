@@ -18,6 +18,8 @@ import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_IMAGE_URLS, kaiBackgroundStorage
 import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
 import "./CourseLearn.css";
 
+const KAI_UI_MODE_KEY = "codelabKaiUiMode";
+
 function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
   const [messages, setMessages] = useState([]);
   const [answer, setAnswer] = useState("");
@@ -51,6 +53,9 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       || DEFAULT_KAI_BACKGROUND
   ));
   const [kaiBackgroundImageUrl, setKaiBackgroundImageUrl] = useState("");
+  const [kaiUiMode, setKaiUiMode] = useState(() => (
+    localStorage.getItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`) === "chatgpt" ? "chatgpt" : "normal"
+  ));
 
   const typingTimerRef = useRef(null);
   const lessonStartKeyRef = useRef("");
@@ -1148,7 +1153,7 @@ ${startMessage}
 
   return (
     <div
-      className={`learn-page${hasCustomKaiBackground ? " has-custom-kai-background" : ""}`}
+      className={`learn-page${hasCustomKaiBackground ? " has-custom-kai-background" : ""}${kaiUiMode === "chatgpt" ? " kai-chatgpt-mode" : ""}`}
       data-kai-background={kaiBackground}
     >
       <div className="kai-wallpaper-image" aria-hidden="true">
@@ -1193,6 +1198,10 @@ ${startMessage}
         </div>
 
         <div className="learn-top-actions">
+          <div className="kai-ui-mode-switch" role="group" aria-label="Kai interface design">
+            <button type="button" className={kaiUiMode === "normal" ? "active" : ""} onClick={() => { setKaiUiMode("normal"); localStorage.setItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`, "normal"); }}>Normal UI</button>
+            <button type="button" className={kaiUiMode === "chatgpt" ? "active" : ""} onClick={() => { setKaiUiMode("chatgpt"); localStorage.setItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`, "chatgpt"); }}>ChatGPT UI</button>
+          </div>
           <ThemeToggle />
           <div className="lesson-status">
             <CheckCircle2 size={16} />
