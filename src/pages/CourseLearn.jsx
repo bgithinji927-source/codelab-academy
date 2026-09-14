@@ -170,7 +170,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     if (Array.isArray(value)) return value;
     try {
       const parsed = JSON.parse(cleanKaiResponse(value));
-      return parsed?.type === "lesson_response" && Array.isArray(parsed.content) ? parsed.content : null;
+      if (parsed?.type !== "lesson_response" || !Array.isArray(parsed.content)) return null;
+      // Videos are rendered only from the server's verified database
+      // recommendation, never from an AI-supplied URL in generated JSON.
+      return parsed.content.filter((block) => block?.type !== "video");
     } catch {
       return null;
     }
