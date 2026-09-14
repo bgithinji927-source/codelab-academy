@@ -373,6 +373,12 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    // Normalize records created before progress/session fields were added.
+    // Mongoose normally applies array defaults, but older documents can still
+    // contain null values that make .find(), .filter(), or .push() fail.
+    if (!Array.isArray(user.courseProgress)) user.courseProgress = [];
+    if (!Array.isArray(user.lessonSessions)) user.lessonSessions = [];
+
     const catalogCourses = await getCatalogCourses();
     const learnerAccess = buildLearnerCourseAccess(user, catalogCourses);
     const requestedCourseAccess = findCourseAccess(learnerAccess, courseId);
@@ -479,7 +485,11 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
     });
   } catch (err) {
     console.error("Error starting course:", err);
-    return res.status(500).json({ success: false, message: "Failed to start course" });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to start course",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
   }
 });
 
