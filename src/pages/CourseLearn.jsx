@@ -810,6 +810,7 @@ ${startMessage}
     const elements = [];
     const tableBlocks = new Map();
     const tableRowsToSkip = new Set();
+    const listRowsToSkip = new Set();
     const isTableRow = (line) => line.trim().startsWith("|") && line.trim().endsWith("|");
     const splitTableRow = (line) => line.trim().slice(1, -1).split("|").map((cell) => cell.trim());
     const isTableDivider = (line) => splitTableRow(line).length > 0
@@ -857,6 +858,7 @@ ${startMessage}
       const trimmed = line.trim();
 
       if (tableRowsToSkip.has(index)) return;
+      if (listRowsToSkip.has(index)) return;
       const table = tableBlocks.get(index);
       if (table) {
         const columnCount = table.header.length;
@@ -963,21 +965,23 @@ ${startMessage}
         trimmed.startsWith("- ") ||
         trimmed.startsWith("* ")
       ) {
+        const items = [];
+        let end = index;
+        while (end < lines.length) {
+          const itemLine = lines[end].trim();
+          if (!itemLine.startsWith("- ") && !itemLine.startsWith("* ")) break;
+          items.push(itemLine.slice(2));
+          if (end > index) listRowsToSkip.add(end);
+          end += 1;
+        }
         elements.push(
-          <div
-            className="kai-list-item"
-            key={index}
-          >
-            <span className="kai-list-dot">
-              •
-            </span>
-
-            <span>
-              {renderInlineMarkdown(
-                trimmed.slice(2)
-              )}
-            </span>
-          </div>
+          <ul className="kai-list" key={index}>
+            {items.map((item, itemIndex) => (
+              <li className="kai-list-item" key={itemIndex}>
+                {renderInlineMarkdown(item)}
+              </li>
+            ))}
+          </ul>
         );
 
         return;
@@ -990,21 +994,24 @@ ${startMessage}
         );
 
       if (numbered) {
+        const items = [];
+        let end = index;
+        while (end < lines.length) {
+          const itemLine = lines[end].trim();
+          const itemMatch = itemLine.match(/^(\d+)\.\s+(.*)$/);
+          if (!itemMatch) break;
+          items.push({ number: itemMatch[1], text: itemMatch[2] });
+          if (end > index) listRowsToSkip.add(end);
+          end += 1;
+        }
         elements.push(
-          <div
-            className="kai-list-item kai-numbered"
-            key={index}
-          >
-            <span className="kai-number">
-              {numbered[1]}
-            </span>
-
-            <span>
-              {renderInlineMarkdown(
-                numbered[2]
-              )}
-            </span>
-          </div>
+          <ol className="kai-list kai-numbered" key={index}>
+            {items.map((item, itemIndex) => (
+              <li className="kai-list-item" key={itemIndex}>
+                {renderInlineMarkdown(item.text)}
+              </li>
+            ))}
+          </ol>
         );
 
         return;
