@@ -50,7 +50,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       || user?.kaiBackground
       || DEFAULT_KAI_BACKGROUND
   ));
-  const [kaiBackgroundImageUrl, setKaiBackgroundImageUrl] = useState("/kai-background-neon-orbit.png");
+  const [kaiBackgroundImageUrl, setKaiBackgroundImageUrl] = useState("");
 
   const typingTimerRef = useRef(null);
   const lessonStartKeyRef = useRef("");
@@ -71,7 +71,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       .then((data) => {
         if (!cancelled && data?.success) {
           if (!savedLearnerBackground) setKaiBackground(normalizeKaiBackground(data.kaiBackground));
-          setKaiBackgroundImageUrl(data.imageUrl || "/kai-background-neon-orbit.png");
+          setKaiBackgroundImageUrl(data.imageUrl || "");
         }
       })
       .catch(() => {
@@ -1141,10 +1141,10 @@ ${startMessage}
   // MAIN UI
   // ============================================
 
-  const selectedKaiBackgroundImage = kaiBackgroundImageUrl.startsWith("/api/kai/background/image")
+  const selectedKaiBackgroundImage = kaiBackground === "uploaded-image"
     ? kaiBackgroundImageUrl
     : KAI_BACKGROUND_IMAGE_URLS[kaiBackground] || "";
-  const hasCustomKaiBackground = kaiBackgroundImageUrl.startsWith("/api/kai/background/image");
+  const hasCustomKaiBackground = kaiBackground === "uploaded-image" && kaiBackgroundImageUrl.startsWith("/api/kai/background/image");
 
   return (
     <div

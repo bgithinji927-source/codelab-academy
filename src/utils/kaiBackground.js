@@ -1,5 +1,11 @@
 export const KAI_BACKGROUND_OPTIONS = [
   {
+    id: "uploaded-image",
+    name: "Uploaded Image",
+    description: "Use the image uploaded by the administrator.",
+    swatches: ["#020805", "#12301b", "#39ff14"],
+  },
+  {
     id: "violet-aurora",
     name: "Violet Aurora",
     description: "A dark violet AI atmosphere with a soft central glow.",

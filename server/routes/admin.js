@@ -692,6 +692,7 @@ router.patch("/settings", async (req, res) => {
     }
     if (updates.kaiBackground !== undefined) {
       const allowedKaiBackgrounds = new Set([
+        "uploaded-image",
         "violet-aurora", "circuit-night", "neon-orbit", "terminal-green", "soft-study",
         "aurora-study", "circuit-study", "forest-study", "cosmic-study",
       ]);

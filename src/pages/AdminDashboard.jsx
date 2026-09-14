@@ -699,7 +699,7 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
                   <div>
                     <span className="admin-eyebrow">REAL IMAGE WALLPAPER</span>
                     <h3>Upload Kai’s background image</h3>
-                    <p>This actual image is shown behind Kai’s teaching card for learners who do not have a personal wallpaper.</p>
+                    <p>Upload an image once, then choose “Uploaded Image” below when you want learners to use it.</p>
                   </div>
                   <Bot size={22} />
                 </div>
@@ -729,7 +729,7 @@ function AdminDashboard({ user, onBack, onReauthenticate }) {
                   <div>
                     <span className="admin-eyebrow">KAI TEACHING SPACE</span>
                     <h3>Set the learner Kai background</h3>
-                    <p>This becomes the default wallpaper for learners who have not chosen a personal Kai background.</p>
+                    <p>Choose the exact default wallpaper learners should see. Generated options replace the uploaded image until “Uploaded Image” is selected.</p>
                   </div>
                   <Bot size={22} />
                 </div>
