@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Download } from "lucide-react";
 import "./App.css";
 import Login from "./Login";
 import Signup from "./Signup";
@@ -107,28 +106,6 @@ function App() {
   const [showCourses, setShowCourses] = useState(() => window.location.pathname.replace(/\/+$/, "") === "/courses");
   const [visibleCategories, setVisibleCategories] = useState(categories);
   const [adminLoginRequested, setAdminLoginRequested] = useState(false);
-  const [installPrompt, setInstallPrompt] = useState(null);
-
-  useEffect(() => {
-    const handleInstallAvailable = (event) => {
-      event.preventDefault();
-      setInstallPrompt(event);
-    };
-    const handleInstalled = () => setInstallPrompt(null);
-    window.addEventListener("beforeinstallprompt", handleInstallAvailable);
-    window.addEventListener("appinstalled", handleInstalled);
-    return () => {
-      window.removeEventListener("beforeinstallprompt", handleInstallAvailable);
-      window.removeEventListener("appinstalled", handleInstalled);
-    };
-  }, []);
-
-  const installApp = async () => {
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    await installPrompt.userChoice;
-    setInstallPrompt(null);
-  };
 
   useEffect(() => {
     let mounted = true;
@@ -452,13 +429,6 @@ function App() {
         <div className="nav-actions">
 
           <ThemeToggle />
-
-          {installPrompt && (
-            <button type="button" className="install-app-button" onClick={installApp}>
-              <Download size={15} aria-hidden="true" />
-              Install app
-            </button>
-          )}
 
           <button
             type="button"
