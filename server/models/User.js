@@ -23,7 +23,9 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["user", "admin"],
+      // Keep compatibility with accounts created by the earlier schema,
+      // which stored regular learners as "student" instead of "user".
+      enum: ["user", "student", "admin"],
       default: "user",
     },
 
