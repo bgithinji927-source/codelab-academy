@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const User = require("../models/User");
 const Video = require("../models/Video");
 const ensureAuth = require("../middleware/ensureAuth");
@@ -366,6 +367,14 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
 
     if (!userId) {
       return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        code: "DATABASE_UNAVAILABLE",
+        message: "Progress storage is unavailable. Configure MONGODB_URI and reconnect the database before starting a course.",
+      });
     }
 
     const user = await User.findById(userId);
