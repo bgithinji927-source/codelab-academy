@@ -1056,11 +1056,17 @@ ${startMessage}
                 <AIContentRenderer
                   content={contentBlocks}
                   onChoice={(choice) => askKai({ learnerMessage: choice, conversation: [...messages, { role: "user", content: choice }] })}
-                  onAction={(action) => {
+                  onAction={(action, payload) => {
                     if (["unlockNextLesson", "nextLesson"].includes(action)) handleNextLesson();
+                    else if (["next_lesson", "continue", "continue_lesson"].includes(action)) handleNextLesson();
+                    else if (action === "practice") askKai({ learnerMessage: payload || "Give me a practice question for this topic. Do not reveal the answer until I try.", conversation: messages });
+                    else if (action === "example") askKai({ learnerMessage: payload || "Show me another practical example of this topic and explain it step by step.", conversation: messages });
+                    else if (["review", "review_topic"].includes(action)) askKai({ learnerMessage: payload || "Give me a concise review of this topic, including the key ideas and common mistakes.", conversation: messages });
+                    else if (["quiz", "test"].includes(action)) askKai({ learnerMessage: payload || "Test my understanding with a short quiz, one question at a time.", conversation: messages });
+                    else if (["challenge", "run_example"].includes(action)) askKai({ learnerMessage: payload || "Give me a hands-on challenge for this topic and let me attempt it before showing the solution.", conversation: messages });
                     else if (action === "showHint") askKai({ learnerMessage: "Please give me a focused hint for this step.", conversation: messages });
                     else if (action === "completeSection") askKai({ learnerMessage: "I am ready to complete this section. Please check my understanding.", conversation: messages });
-                    else askKai({ learnerMessage: `Please ${action}.`, conversation: messages });
+                    else askKai({ learnerMessage: payload || `Please ${action}.`, conversation: messages });
                   }}
                 />
               ) : renderMarkdown(text)}

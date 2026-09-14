@@ -183,6 +183,18 @@ function Choice({ block, onChoice }) {
   return <section className="kai-rich-choice"><h3>{block.question}</h3><div className="kai-choice-options">{(block.options || []).map((option) => <button type="button" key={option} className={selected === option ? "selected" : ""} onClick={() => { setSelected(option); onChoice?.(option); }}>{option}</button>)}</div></section>;
 }
 
+function Suggestions({ block, onAction }) {
+  const items = Array.isArray(block.items) ? block.items : [];
+  return <section className="kai-rich-suggestions" aria-label={block.title || "Suggested next steps"}>
+    {block.title && <p className="kai-rich-suggestions-title">{block.title}</p>}
+    <div className="kai-suggestion-links">{items.map((item, index) => {
+      const text = typeof item === "string" ? item : item.text || item.label;
+      if (!text) return null;
+      return <button type="button" className="kai-suggestion-link" key={`${text}-${index}`} onClick={() => onAction?.(typeof item === "string" ? "prompt" : item.action || "prompt", typeof item === "string" ? text : item.prompt || item.payload || text)}><span aria-hidden="true">→</span>{text}</button>;
+    })}</div>
+  </section>;
+}
+
 function Callout({ block }) {
   const kind = String(block.kind || "tip").toLowerCase();
   const Icon = kind === "warning" ? AlertTriangle : kind === "important" ? Info : Lightbulb;
@@ -234,6 +246,7 @@ export default function AIContentRenderer({ content, onAction, onChoice }) {
     if (block.type === "table") return <Table block={block} key={key} />;
     if (block.type === "choice") return <Choice block={block} onChoice={onChoice} key={key} />;
     if (block.type === "quiz") return <Choice block={block} onChoice={onChoice} key={key} />;
+    if (block.type === "suggestions") return <Suggestions block={block} onAction={onAction} key={key} />;
     if (block.type === "callout") return <Callout block={block} key={key} />;
     if (block.type === "quote") return <QuoteBlock block={block} key={key} />;
     if (block.type === "checklist") return <Checklist block={block} key={key} />;
