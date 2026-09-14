@@ -1017,6 +1017,33 @@ ${startMessage}
         return;
       }
 
+      // Some model responses place several Markdown bullets on one line,
+      // for example: "Explanation: - first point - second point". Split
+      // those into a lead-in paragraph and a real unordered list instead of
+      // leaving the markers inside one paragraph.
+      const inlineBulletMatch = trimmed.match(/^(.*?:)\s+-\s+(.+)$/);
+      if (inlineBulletMatch) {
+        const bulletItems = inlineBulletMatch[2]
+          .split(/\s+-\s+/)
+          .map((item) => item.trim())
+          .filter(Boolean);
+        if (bulletItems.length > 0) {
+          elements.push(
+            <div className="kai-inline-list-group" key={index}>
+              <p>{renderInlineMarkdown(inlineBulletMatch[1])}</p>
+              <ul className="kai-list">
+                {bulletItems.map((item, itemIndex) => (
+                  <li className="kai-list-item" key={itemIndex}>
+                    {renderInlineMarkdown(item)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+          return;
+        }
+      }
+
       // Normal paragraph
       elements.push(
         <p key={index}>
