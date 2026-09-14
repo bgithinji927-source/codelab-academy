@@ -6491,13 +6491,19 @@ html .learn-page .conversation-messages {
   width: min(100%, 1120px) !important;
   max-width: 1120px !important;
   margin: 0 auto !important;
+  padding-bottom: 128px !important;
 }
 
 html .learn-page .kai-input-dock {
   width: min(calc(100% - 32px), 900px) !important;
   max-width: 900px !important;
   min-height: 58px;
-  margin: 2.5rem auto 0 !important;
+  position: fixed !important;
+  left: 50%;
+  bottom: 18px;
+  z-index: 60;
+  transform: translateX(-50%);
+  margin: 0 !important;
   padding: 9px 10px 9px 14px !important;
   display: flex;
   align-items: center;
@@ -6570,8 +6576,13 @@ html .learn-page .kai-input-dock > button:disabled {
 }
 
 html .learn-page > .conversation-container > .input-hint {
+  position: fixed;
+  left: 50%;
+  bottom: 5px;
+  z-index: 60;
   width: min(100%, 900px);
-  margin: 9px auto 0;
+  margin: 0;
+  transform: translateX(-50%);
   color: rgba(226, 220, 246, 0.48);
   text-align: center;
   font-size: 11px;
@@ -6580,7 +6591,12 @@ html .learn-page > .conversation-container > .input-hint {
 @media (max-width: 600px) {
   html .learn-page .kai-input-dock {
     width: calc(100% - 20px) !important;
+    bottom: 16px;
     border-radius: 15px !important;
+  }
+
+  html .learn-page .conversation-messages {
+    padding-bottom: 124px !important;
   }
 }
 
