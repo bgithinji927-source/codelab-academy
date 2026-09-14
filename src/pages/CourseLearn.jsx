@@ -1030,6 +1030,7 @@ ${startMessage}
         if (bulletItems.length > 0) {
           elements.push(
             <div className="kai-inline-list-group" key={index}>
+              <p>{renderInlineMarkdown(inlineBulletMatch[1])}</p>
               <ul className="kai-list">
                 {bulletItems.map((item, itemIndex) => (
                   <li className="kai-list-item" key={itemIndex}>

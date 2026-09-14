@@ -24,6 +24,7 @@
 }
 
 .kai-rich-note-list { margin: .25rem 0; }
+.kai-rich-note-heading { font-weight: 650; color: #eeeaff; }
 .kai-rich-note-list .kai-rich-text { margin-bottom: .35rem; }
 .kai-rich-bullet-list { margin: .35rem 0 .75rem; padding-left: 1.35rem; }
 .kai-rich-bullet-list li { margin: .3rem 0; padding-left: .2rem; color: #e5e2f5; }

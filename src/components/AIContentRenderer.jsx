@@ -35,6 +35,7 @@ function TextBlock({ value }) {
   const items = inlineBullets[2].split(/\s+-\s+/).map((item) => item.trim()).filter(Boolean);
   if (!items.length) return <p className="kai-rich-text"><InlineText>{text}</InlineText></p>;
   return <div className="kai-rich-note-list">
+    <p className="kai-rich-text kai-rich-note-heading"><InlineText>{inlineBullets[1]}</InlineText></p>
     <ul className="kai-rich-bullet-list">{items.map((item, index) => <li key={`${index}-${item}`}><InlineText>{item}</InlineText></li>)}</ul>
   </div>;
 }
