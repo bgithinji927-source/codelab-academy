@@ -7278,3 +7278,67 @@ html .learn-page > .conversation-container > .input-hint {
     margin-bottom: 30px !important;
   }
 }
+
+
+/* Compact lesson controls and an opaque top bar: content must never bleed
+   through the fixed navigation surface. */
+html .learn-page > .learn-navbar {
+  background: #18191e !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
+  backdrop-filter: none !important;
+}
+
+html .learn-page.kai-chatgpt-mode > .learn-navbar {
+  background: #202123 !important;
+  border-bottom-color: #3a3b3e !important;
+}
+
+html .learn-page .kai-ui-mode-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: #bfc2cb;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+html .learn-page .kai-ui-mode-select select {
+  min-width: 112px;
+  height: 34px;
+  border: 1px solid #575a64;
+  border-radius: 8px;
+  padding: 0 27px 0 9px;
+  outline: 0;
+  color: #f3f4f6;
+  background: #2a2c33;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+html .learn-page .kai-ui-mode-select select:focus-visible {
+  border-color: #a296ff;
+  box-shadow: 0 0 0 3px rgba(162, 150, 255, 0.18);
+}
+
+@media (max-width: 700px) {
+  html .learn-page > .learn-navbar {
+    min-height: 128px !important;
+    height: auto !important;
+    padding: 10px 12px !important;
+    align-content: center;
+    row-gap: 8px;
+  }
+
+  html .learn-page .kai-ui-mode-select > span {
+    display: none;
+  }
+
+  html .learn-page .kai-ui-mode-select select {
+    min-width: 96px;
+    height: 32px;
+  }
+}

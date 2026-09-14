@@ -13,7 +13,6 @@ import {
 
 import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
-import ThemeToggle from "../components/ThemeToggle";
 import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_IMAGE_URLS, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
 import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
 import "./CourseLearn.css";
@@ -1333,11 +1332,21 @@ ${startMessage}
         </div>
 
         <div className="learn-top-actions">
-          <div className="kai-ui-mode-switch" role="group" aria-label="Kai interface design">
-            <button type="button" className={kaiUiMode === "normal" ? "active" : ""} onClick={() => { setKaiUiMode("normal"); localStorage.setItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`, "normal"); }}>Normal UI</button>
-            <button type="button" className={kaiUiMode === "chatgpt" ? "active" : ""} onClick={() => { setKaiUiMode("chatgpt"); localStorage.setItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`, "chatgpt"); }}>ChatGPT UI</button>
-          </div>
-          <ThemeToggle />
+          <label className="kai-ui-mode-select">
+            <span>Interface</span>
+            <select
+              value={kaiUiMode}
+              aria-label="Kai interface design"
+              onChange={(event) => {
+                const nextMode = event.target.value;
+                setKaiUiMode(nextMode);
+                localStorage.setItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`, nextMode);
+              }}
+            >
+              <option value="normal">Normal UI</option>
+              <option value="chatgpt">ChatGPT UI</option>
+            </select>
+          </label>
           <div className="lesson-status">
             <CheckCircle2 size={16} />
             <span>
