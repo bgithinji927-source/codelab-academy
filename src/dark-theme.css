@@ -7342,3 +7342,69 @@ html .learn-page .kai-ui-mode-select select:focus-visible {
     height: 32px;
   }
 }
+
+
+/* Integrated composer surface: no inner input box, no resize handle, and no
+   translucent floating card over the lesson. */
+html .learn-page .kai-input-dock {
+  width: 100% !important;
+  max-width: none !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  transform: none !important;
+  min-height: 108px !important;
+  padding: 16px max(18px, calc((100% - 900px) / 2)) calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 0 !important;
+  background: #18191e !important;
+  box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.24) !important;
+  backdrop-filter: none !important;
+  align-items: flex-end !important;
+}
+
+html .learn-page.kai-chatgpt-mode .kai-input-dock {
+  background: #202123 !important;
+  border-top-color: #3a3b3e !important;
+}
+
+html .learn-page .kai-input-dock textarea,
+html .learn-page .kai-input-dock textarea:focus,
+html .learn-page .kai-input-dock textarea:focus-visible {
+  min-height: 54px;
+  max-height: 132px;
+  padding: 8px 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  resize: none !important;
+  background: transparent !important;
+  appearance: none;
+}
+
+html .learn-page .kai-input-dock .input-avatar {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html .learn-page .kai-input-dock > button {
+  border-radius: 10px !important;
+}
+
+html .learn-page > .conversation-container > .input-hint {
+  bottom: calc(4px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+@media (max-width: 700px) {
+  html .learn-page .kai-input-dock {
+    min-height: 100px !important;
+    padding: 12px 14px calc(11px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  html .learn-page .kai-input-dock textarea {
+    min-height: 54px;
+  }
+}
