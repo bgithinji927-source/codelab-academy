@@ -691,7 +691,10 @@ router.patch("/settings", async (req, res) => {
       updates.defaultChallengeXP = Math.max(0, Math.min(10000, Number(updates.defaultChallengeXP) || 0));
     }
     if (updates.kaiBackground !== undefined) {
-      const allowedKaiBackgrounds = new Set(["violet-aurora", "circuit-night", "neon-orbit", "terminal-green", "soft-study"]);
+      const allowedKaiBackgrounds = new Set([
+        "violet-aurora", "circuit-night", "neon-orbit", "terminal-green", "soft-study",
+        "aurora-study", "circuit-study", "forest-study", "cosmic-study",
+      ]);
       updates.kaiBackground = String(updates.kaiBackground || "");
       if (!allowedKaiBackgrounds.has(updates.kaiBackground)) {
         return res.status(400).json({ success: false, message: "Invalid Kai background" });

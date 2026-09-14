@@ -14,7 +14,7 @@ import {
 import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import ThemeToggle from "../components/ThemeToggle";
-import { DEFAULT_KAI_BACKGROUND, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
+import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_IMAGE_URLS, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
 import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
 import "./CourseLearn.css";
 
@@ -1141,6 +1141,9 @@ ${startMessage}
   // MAIN UI
   // ============================================
 
+  const selectedKaiBackgroundImage = kaiBackgroundImageUrl.startsWith("/api/kai/background/image")
+    ? kaiBackgroundImageUrl
+    : KAI_BACKGROUND_IMAGE_URLS[kaiBackground] || "";
   const hasCustomKaiBackground = kaiBackgroundImageUrl.startsWith("/api/kai/background/image");
 
   return (
@@ -1149,7 +1152,7 @@ ${startMessage}
       data-kai-background={kaiBackground}
     >
       <div className="kai-wallpaper-image" aria-hidden="true">
-        {hasCustomKaiBackground && <img src={kaiBackgroundImageUrl} alt="" />}
+        {selectedKaiBackgroundImage && <img src={selectedKaiBackgroundImage} alt="" />}
       </div>
 
       {/* ========================================

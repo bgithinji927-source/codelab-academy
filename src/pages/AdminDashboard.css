@@ -1335,6 +1335,22 @@
   color: #4c1d95;
 }
 
+.admin-kai-background-preview-aurora-study {
+  background: url("/kai-background-aurora-study.jpg") center / cover;
+}
+
+.admin-kai-background-preview-circuit-study {
+  background: url("/kai-background-circuit-study.jpg") center / cover;
+}
+
+.admin-kai-background-preview-forest-study {
+  background: url("/kai-background-forest-study.jpg") center / cover;
+}
+
+.admin-kai-background-preview-cosmic-study {
+  background: url("/kai-background-cosmic-study.jpg") center / cover;
+}
+
 .admin-kai-background-copy {
   display: flex;
   min-width: 0;
