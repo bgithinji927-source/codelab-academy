@@ -30,6 +30,46 @@ function InlineText({ children }) {
 
 function TextBlock({ value }) {
   const text = String(value || "").trim();
+  const normalizedText = text
+    .replace(/\s+(?=(?:\d+[.)]|[1-9]\uFE0F?\u20E3)\s+)/g, "\n")
+    .replace(/\s+(?=[•*-]\s+)/g, "\n");
+  const lines = normalizedText.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const hasListMarkers = lines.some((line) => /^(?:[-*•]|\d+[.)]|[1-9]\uFE0F?\u20E3)\s+/.test(line));
+  if (hasListMarkers && lines.length > 1) {
+    const parts = [];
+    let paragraphLines = [];
+    let list = null;
+    const flushParagraph = () => {
+      if (!paragraphLines.length) return;
+      parts.push(<p className="kai-rich-text" key={`text-${parts.length}`}><InlineText>{paragraphLines.join(" ")}</InlineText></p>);
+      paragraphLines = [];
+    };
+    const flushList = () => {
+      if (!list?.items.length) return;
+      const ListTag = list.type === "numbered" ? "ol" : "ul";
+      parts.push(<ListTag className="kai-rich-bullet-list" key={`list-${parts.length}`}>{list.items.map((item, index) => <li key={`${index}-${item}`}><InlineText>{item}</InlineText></li>)}</ListTag>);
+      list = null;
+    };
+    lines.forEach((line) => {
+      const numbered = line.match(/^(?:\d+[.)]|[1-9]\uFE0F?\u20E3)\s+(.+)$/);
+      const bullet = line.match(/^[-*•]\s+(.+)$/);
+      if (numbered || bullet) {
+        const type = numbered ? "numbered" : "bullets";
+        if (!list || list.type !== type) {
+          flushParagraph();
+          flushList();
+          list = { type, items: [] };
+        }
+        list.items.push((numbered || bullet)[1].trim());
+      } else {
+        flushList();
+        paragraphLines.push(line);
+      }
+    });
+    flushParagraph();
+    flushList();
+    return <>{parts}</>;
+  }
   const inlineBullets = text.match(/^(.*?:)\s+-\s+(.+)$/);
   if (!inlineBullets) return <p className="kai-rich-text"><InlineText>{text}</InlineText></p>;
   const items = inlineBullets[2].split(/\s+-\s+/).map((item) => item.trim()).filter(Boolean);
