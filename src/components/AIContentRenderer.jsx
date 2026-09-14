@@ -183,7 +183,7 @@ function Choice({ block, onChoice }) {
   return <section className="kai-rich-choice"><h3>{block.question}</h3><div className="kai-choice-options">{(block.options || []).map((option) => <button type="button" key={option} className={selected === option ? "selected" : ""} onClick={() => { setSelected(option); onChoice?.(option); }}>{option}</button>)}</div></section>;
 }
 
-function Suggestions({ block, onAction }) {
+export function Suggestions({ block, onAction }) {
   const items = Array.isArray(block.items) ? block.items : [];
   return <section className="kai-rich-suggestions" aria-label={block.title || "Suggested next steps"}>
     {block.title && <p className="kai-rich-suggestions-title">{block.title}</p>}

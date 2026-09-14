@@ -15,7 +15,7 @@ import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import ThemeToggle from "../components/ThemeToggle";
 import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_IMAGE_URLS, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
-import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
+import AIContentRenderer, { CodeBlock, KaiVideoPlayer, Suggestions } from "../components/AIContentRenderer";
 import "./CourseLearn.css";
 
 const KAI_UI_MODE_KEY = "codelabKaiUiMode";
@@ -1026,6 +1026,24 @@ ${startMessage}
       displayedKaiText.length > 0
         ? displayedKaiText
         : content;
+    const richSuggestions = contentBlocks?.find((block) => block?.type === "suggestions");
+    const fallbackSuggestions = lessonCompletionReady
+      ? [{ text: "Take the lesson quiz", action: "quiz" }, { text: "Practice what I learned", action: "practice" }, { text: "Continue to the next lesson", action: "next_lesson" }]
+      : /```|\b(code|function|variable|class|loop|syntax|query|command|program)\b/i.test(String(text))
+      ? [{ text: "Try this yourself", action: "practice" }, { text: "Explain it again", action: "review" }, { text: "Give me a challenge", action: "challenge" }]
+      : [{ text: "Give me an example", action: "example" }, { text: "Test my understanding", action: "quiz" }, { text: "Explain it more simply", action: "review" }];
+    const handleKaiAction = (action, payload) => {
+      if (["unlockNextLesson", "nextLesson"].includes(action)) handleNextLesson();
+      else if (["next_lesson", "continue", "continue_lesson"].includes(action)) handleNextLesson();
+      else if (action === "practice") askKai({ learnerMessage: payload || "Give me a practice question for this topic. Do not reveal the answer until I try.", conversation: messages });
+      else if (action === "example") askKai({ learnerMessage: payload || "Show me another practical example of this topic and explain it step by step.", conversation: messages });
+      else if (["review", "review_topic"].includes(action)) askKai({ learnerMessage: payload || "Give me a concise review of this topic, including the key ideas and common mistakes.", conversation: messages });
+      else if (["quiz", "test"].includes(action)) askKai({ learnerMessage: payload || "Test my understanding with a short quiz, one question at a time.", conversation: messages });
+      else if (["challenge", "run_example"].includes(action)) askKai({ learnerMessage: payload || "Give me a hands-on challenge for this topic and let me attempt it before showing the solution.", conversation: messages });
+      else if (action === "showHint") askKai({ learnerMessage: "Please give me a focused hint for this step.", conversation: messages });
+      else if (action === "completeSection") askKai({ learnerMessage: "I am ready to complete this section. Please check my understanding.", conversation: messages });
+      else askKai({ learnerMessage: payload || `Please ${action}.`, conversation: messages });
+    };
 
     return (
       <div
@@ -1056,20 +1074,10 @@ ${startMessage}
                 <AIContentRenderer
                   content={contentBlocks}
                   onChoice={(choice) => askKai({ learnerMessage: choice, conversation: [...messages, { role: "user", content: choice }] })}
-                  onAction={(action, payload) => {
-                    if (["unlockNextLesson", "nextLesson"].includes(action)) handleNextLesson();
-                    else if (["next_lesson", "continue", "continue_lesson"].includes(action)) handleNextLesson();
-                    else if (action === "practice") askKai({ learnerMessage: payload || "Give me a practice question for this topic. Do not reveal the answer until I try.", conversation: messages });
-                    else if (action === "example") askKai({ learnerMessage: payload || "Show me another practical example of this topic and explain it step by step.", conversation: messages });
-                    else if (["review", "review_topic"].includes(action)) askKai({ learnerMessage: payload || "Give me a concise review of this topic, including the key ideas and common mistakes.", conversation: messages });
-                    else if (["quiz", "test"].includes(action)) askKai({ learnerMessage: payload || "Test my understanding with a short quiz, one question at a time.", conversation: messages });
-                    else if (["challenge", "run_example"].includes(action)) askKai({ learnerMessage: payload || "Give me a hands-on challenge for this topic and let me attempt it before showing the solution.", conversation: messages });
-                    else if (action === "showHint") askKai({ learnerMessage: "Please give me a focused hint for this step.", conversation: messages });
-                    else if (action === "completeSection") askKai({ learnerMessage: "I am ready to complete this section. Please check my understanding.", conversation: messages });
-                    else askKai({ learnerMessage: payload || `Please ${action}.`, conversation: messages });
-                  }}
+                  onAction={handleKaiAction}
                 />
               ) : renderMarkdown(text)}
+              {!isKaiTyping && !richSuggestions && <Suggestions block={{ items: fallbackSuggestions }} onAction={handleKaiAction} />}
             </div>
           </div>
 

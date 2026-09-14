@@ -49,3 +49,8 @@
 @media (max-width: 700px) {
   .kai-rich-diagram svg { width: 980px !important; max-width: none !important; min-width: 980px !important; }
 }
+
+.learn-page.kai-chatgpt-mode .kai-suggestion-link,
+.learn-page.kai-chatgpt-mode .kai-suggestion-link span { color: #d0d0d0 !important; }
+.learn-page.kai-chatgpt-mode .kai-suggestion-link:hover,
+.learn-page.kai-chatgpt-mode .kai-suggestion-link:focus-visible { color: #ffffff !important; }
