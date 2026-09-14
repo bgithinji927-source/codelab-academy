@@ -1429,3 +1429,28 @@ html[data-theme="dark"] .learn-page.kai-chatgpt-mode .kai-input-dock input { col
 html[data-theme="dark"] .learn-page.kai-chatgpt-mode .kai-input-dock input::placeholder { color: #a0a0a0 !important; }
 html[data-theme="dark"] .learn-page.kai-chatgpt-mode .kai-input-dock > button { background: #ececec !important; color: #212121 !important; }
 @media (max-width: 800px) { .kai-ui-mode-switch button { padding: 5px 6px; font-size: 9px; } }
+
+/* ChatGPT UI stays dark in both theme states; the Light/Dark control changes
+   the shade and control contrast, but never introduces a white canvas. */
+html[data-theme="light"] .learn-page.kai-chatgpt-mode,
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .learn-navbar,
+html[data-theme="light"] .learn-page.kai-chatgpt-mode > .conversation-container {
+  background: #2f2f2f !important;
+  color: #ececec !important;
+}
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .learn-navbar { border-bottom-color: #444 !important; }
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .learn-back,
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .theme-toggle { background: #2f2f2f !important; border-color: #555 !important; color: #ececec !important; }
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .learn-course-title,
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .learn-progress,
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .conversation-intro h1,
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-message-text,
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-message-text p,
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-message-text li { color: #ececec !important; }
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card { background: #2f2f2f !important; border-color: #444 !important; box-shadow: 0 12px 36px rgba(0,0,0,.3) !important; }
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-bubble { background: #3a3a3a !important; border-color: #4a4a4a !important; color: #ececec !important; }
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .learner-bubble { background: #444 !important; border-color: #555 !important; color: #ececec !important; }
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock { background: #3a3a3a !important; border-color: #555 !important; }
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock input { color: #ececec !important; }
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock input::placeholder { color: #aaa !important; }
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock > button { background: #ececec !important; color: #212121 !important; }
