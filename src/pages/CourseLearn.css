@@ -1515,3 +1515,51 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock > button {
 .learn-page.kai-chatgpt-mode .progress-label,
 .learn-page.kai-chatgpt-mode .kai-video-kicker,
 .learn-page.kai-chatgpt-mode .kai-play-icon { color: #d0d0d0 !important; }
+
+/* Walk-through dark table contrast: purple remains an accent, never the text. */
+html[data-theme="dark"] .learn-page .kai-table-scroll,
+.learn-page.kai-chatgpt-mode .kai-table-scroll {
+  border-color: #4a4a4a !important;
+  background: #242424 !important;
+}
+html[data-theme="dark"] .learn-page .kai-markdown-table,
+.learn-page.kai-chatgpt-mode .kai-markdown-table {
+  background: #242424 !important;
+  color: #e5e7eb !important;
+}
+html[data-theme="dark"] .learn-page .kai-markdown-table th,
+.learn-page.kai-chatgpt-mode .kai-markdown-table th {
+  background: #363636 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid #5a5a5a !important;
+}
+html[data-theme="dark"] .learn-page .kai-markdown-table td,
+html[data-theme="dark"] .learn-page .kai-markdown-table td span,
+.learn-page.kai-chatgpt-mode .kai-markdown-table td,
+.learn-page.kai-chatgpt-mode .kai-markdown-table td span {
+  background: #242424 !important;
+  color: #e5e7eb !important;
+  border-bottom: 1px solid #444 !important;
+}
+html[data-theme="dark"] .learn-page .kai-markdown-table tbody tr:nth-child(even),
+html[data-theme="dark"] .learn-page .kai-markdown-table tbody tr:nth-child(even) td,
+.learn-page.kai-chatgpt-mode .kai-markdown-table tbody tr:nth-child(even),
+.learn-page.kai-chatgpt-mode .kai-markdown-table tbody tr:nth-child(even) td {
+  background: #2b2b2b !important;
+  color: #f1f1f1 !important;
+}
+html[data-theme="dark"] .learn-page .kai-markdown-table tr:hover td,
+.learn-page.kai-chatgpt-mode .kai-markdown-table tr:hover td {
+  background: #353535 !important;
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .learn-page .kai-markdown-table .kai-inline-code,
+html[data-theme="dark"] .learn-page .kai-markdown-table code,
+.learn-page.kai-chatgpt-mode .kai-markdown-table .kai-inline-code,
+.learn-page.kai-chatgpt-mode .kai-markdown-table code {
+  background: #51407c !important;
+  border: 1px solid #8068b8 !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
