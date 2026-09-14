@@ -6872,3 +6872,149 @@ html .learn-page .kai-rich-table-wrap {
     width: calc(100% - 24px) !important;
   }
 }
+
+
+/* Final lesson reading-flow overrides. Keep the response column readable and
+   let prose wrap naturally instead of breaking at arbitrary characters. */
+html .learn-page .kai-board-content {
+  width: min(100%, 900px) !important;
+  max-width: 900px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: left !important;
+}
+
+html .learn-page .kai-message-text,
+html .learn-page .learner-message-text {
+  font-size: 1rem !important;
+  line-height: 1.78 !important;
+  text-align: left !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  hyphens: none !important;
+}
+
+html .learn-page .kai-message-text p,
+html .learn-page .learner-message-text p {
+  max-width: 78ch;
+  margin: 0 0 1.05em !important;
+}
+
+html .learn-page .kai-message-text p:last-child,
+html .learn-page .learner-message-text p:last-child {
+  margin-bottom: 0 !important;
+}
+
+html .learn-page .kai-message-spacer {
+  height: 0.35rem !important;
+}
+
+html .learn-page .kai-rich-content {
+  display: block !important;
+  width: 100% !important;
+  max-width: 78ch !important;
+  line-height: inherit !important;
+  text-align: left !important;
+}
+
+html .learn-page .kai-rich-content > div {
+  margin: 0 !important;
+}
+
+html .learn-page .kai-rich-content .kai-rich-text {
+  margin: 0 0 1.05em !important;
+  line-height: inherit !important;
+}
+
+html .learn-page .kai-rich-content .kai-rich-text:last-child {
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 700px) {
+  html .learn-page .kai-board-content {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  html .learn-page .kai-message-text,
+  html .learn-page .learner-message-text {
+    font-size: 0.98rem !important;
+    line-height: 1.72 !important;
+  }
+}
+
+
+/* Taller, independently fixed lesson composer. It sits in its own layer so
+   lesson scrolling and the teaching header cannot move or cover it. */
+html .learn-page > .learn-navbar {
+  top: env(safe-area-inset-top, 0px) !important;
+  height: calc(66px + env(safe-area-inset-top, 0px)) !important;
+  padding-top: env(safe-area-inset-top, 0px) !important;
+  box-sizing: border-box !important;
+  z-index: 100 !important;
+}
+
+html .learn-page .conversation-messages {
+  padding-bottom: 176px !important;
+}
+
+html .learn-page .kai-input-dock {
+  bottom: calc(26px + env(safe-area-inset-bottom, 0px)) !important;
+  min-height: 88px !important;
+  padding: 13px 14px !important;
+  align-items: flex-end !important;
+  z-index: 110 !important;
+}
+
+html .learn-page .kai-input-dock textarea {
+  min-width: 0;
+  flex: 1;
+  min-height: 54px;
+  max-height: 132px;
+  padding: 8px 0;
+  border: 0 !important;
+  outline: 0;
+  resize: vertical;
+  overflow-y: auto;
+  background: transparent !important;
+  color: #f5f2ff !important;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+html .learn-page .kai-input-dock textarea::placeholder {
+  color: rgba(226, 220, 246, 0.56) !important;
+}
+
+html .learn-page .kai-input-dock .input-avatar {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+html .learn-page .kai-input-dock > button {
+  align-self: flex-end;
+}
+
+html .learn-page > .conversation-container > .input-hint {
+  bottom: calc(7px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 105 !important;
+}
+
+@media (max-width: 600px) {
+  html .learn-page .conversation-messages {
+    padding-bottom: 164px !important;
+  }
+
+  html .learn-page .kai-input-dock {
+    width: calc(100% - 20px) !important;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: 84px !important;
+    padding: 11px 12px !important;
+  }
+
+  html .learn-page .kai-input-dock textarea {
+    min-height: 50px;
+  }
+}

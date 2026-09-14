@@ -1462,8 +1462,8 @@ ${startMessage}
             <UserRound size={18} />
           </div>
 
-          <input
-            type="text"
+          <textarea
+            rows={2}
             value={answer}
             onChange={(event) =>
               setAnswer(

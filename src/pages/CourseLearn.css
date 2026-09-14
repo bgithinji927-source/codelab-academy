@@ -1563,3 +1563,100 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
   color: #ffffff !important;
   text-shadow: none !important;
 }
+
+
+/* Lesson response typography: keep Kai's teaching text continuous, readable,
+   and aligned like a conversational answer rather than a stack of fragments. */
+.learn-page .kai-board-content {
+  width: min(100%, 900px);
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.learn-page .kai-message-text,
+.learn-page .learner-message-text {
+  font-size: 1rem;
+  line-height: 1.78;
+  letter-spacing: 0;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
+}
+
+.learn-page .kai-message-text p,
+.learn-page .learner-message-text p {
+  margin: 0 0 1.05em;
+  max-width: 78ch;
+}
+
+.learn-page .kai-message-text p:last-child,
+.learn-page .learner-message-text p:last-child {
+  margin-bottom: 0;
+}
+
+.learn-page .kai-message-spacer {
+  height: 0.35rem;
+}
+
+.learn-page .kai-message-text h2,
+.learn-page .kai-message-text h3,
+.learn-page .kai-message-text h4 {
+  max-width: 78ch;
+  text-align: left;
+}
+
+.learn-page .kai-message-text ul,
+.learn-page .kai-message-text ol {
+  max-width: 78ch;
+  margin: 0.35rem 0 1.1rem;
+  padding-left: 1.45rem;
+}
+
+.learn-page .kai-message-text li {
+  margin: 0.3rem 0;
+  padding-left: 0.15rem;
+}
+
+.learn-page .kai-rich-content {
+  display: block;
+  width: 100%;
+  max-width: 78ch;
+  color: inherit;
+  line-height: inherit;
+  text-align: left;
+}
+
+.learn-page .kai-rich-content > div {
+  margin: 0;
+}
+
+.learn-page .kai-rich-content .kai-rich-text {
+  margin: 0 0 1.05em;
+  color: inherit;
+  line-height: inherit;
+}
+
+.learn-page .kai-rich-content .kai-rich-text:last-child {
+  margin-bottom: 0;
+}
+
+.learn-page .kai-rich-heading,
+.learn-page .kai-rich-subheading {
+  text-align: left;
+}
+
+@media (max-width: 700px) {
+  .learn-page .kai-board-content {
+    width: 100%;
+    max-width: none;
+  }
+
+  .learn-page .kai-message-text,
+  .learn-page .learner-message-text {
+    font-size: 0.98rem;
+    line-height: 1.72;
+  }
+}
