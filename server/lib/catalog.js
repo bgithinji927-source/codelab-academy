@@ -1,10 +1,24 @@
 const path = require("path");
 const { pathToFileURL } = require("url");
+const mongoose = require("mongoose");
 const CourseOverride = require("../models/CourseOverride");
 const LessonOverride = require("../models/LessonOverride");
 
 let staticCoursesPromise;
 let staticLessonsPromise;
+
+async function getOverrides(model, courseId = null) {
+  // Public catalog data must remain available when the optional database is
+  // offline. Overrides are additive and never a prerequisite for the bundle.
+  if (mongoose.connection.readyState !== 1) return [];
+  try {
+    const query = courseId ? model.find({ courseId }) : model.find({});
+    return await query.lean();
+  } catch (error) {
+    console.warn("Catalog overrides unavailable; using bundled catalog:", error.message);
+    return [];
+  }
+}
 
 async function getStaticCourses() {
   if (!staticCoursesPromise) {
@@ -25,7 +39,7 @@ async function getStaticLessons() {
 async function getCatalogCourses({ includeInactive = false } = {}) {
   const [staticCourses, overrides] = await Promise.all([
     getStaticCourses(),
-    CourseOverride.find({}).lean(),
+    getOverrides(CourseOverride),
   ]);
   const overrideMap = new Map(overrides.map((override) => [override.courseId, override]));
 
@@ -53,7 +67,7 @@ async function getCatalogCourses({ includeInactive = false } = {}) {
 async function getCatalogLessons(courseId, { includeInactive = false } = {}) {
   const [staticLessons, overrides] = await Promise.all([
     getStaticLessons(),
-    LessonOverride.find({ courseId }).lean(),
+    getOverrides(LessonOverride, courseId),
   ]);
   const baseLessons = staticLessons[courseId] || [];
   const overrideMap = new Map(overrides.map((override) => [override.lessonId, override]));
