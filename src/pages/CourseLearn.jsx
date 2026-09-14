@@ -125,6 +125,30 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     };
   }, [activeVideo]);
 
+  // Keep keyboard resizing local to the lesson viewport. Mobile browsers can
+  // report a smaller visual viewport when the keyboard opens; expose that
+  // inset to the fixed composer without moving the document itself.
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return undefined;
+
+    const syncVisualViewport = () => {
+      const keyboardInset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+      document.documentElement.style.setProperty("--kai-visual-viewport-height", `${viewport.height}px`);
+      document.documentElement.style.setProperty("--kai-keyboard-inset", `${keyboardInset}px`);
+    };
+
+    syncVisualViewport();
+    viewport.addEventListener("resize", syncVisualViewport);
+    viewport.addEventListener("scroll", syncVisualViewport);
+    window.addEventListener("resize", syncVisualViewport);
+    return () => {
+      viewport.removeEventListener("resize", syncVisualViewport);
+      viewport.removeEventListener("scroll", syncVisualViewport);
+      window.removeEventListener("resize", syncVisualViewport);
+    };
+  }, []);
+
   // Keep the latest Kai text visible while the response is being typed.
   // requestAnimationFrame coalesces the 15ms typing updates into one scroll
   // per rendered frame instead of creating a queue of smooth scrolls.

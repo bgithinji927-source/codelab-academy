@@ -7116,3 +7116,48 @@ html .learn-page .kai-rich-content li {
   text-indent: 0 !important;
   text-align: left !important;
 }
+
+
+/* Mobile keyboard viewport: resize only the lesson canvas/composer. Do not
+   translate the document, which would hide the teaching header under the
+   browser chrome when the keyboard opens. */
+html .learn-page {
+  min-height: 100dvh;
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}
+
+html .learn-page > .conversation-container {
+  min-height: var(--kai-visual-viewport-height, 100dvh) !important;
+  scroll-padding-top: calc(100px + env(safe-area-inset-top, 0px));
+  scroll-padding-bottom: 190px;
+}
+
+html .learn-page .kai-input-dock {
+  bottom: calc(
+    26px + env(safe-area-inset-bottom, 0px) +
+    var(--kai-keyboard-inset, 0px)
+  ) !important;
+}
+
+html .learn-page > .conversation-container > .input-hint {
+  bottom: calc(
+    7px + env(safe-area-inset-bottom, 0px) +
+    var(--kai-keyboard-inset, 0px)
+  ) !important;
+}
+
+@media (max-width: 600px) {
+  html .learn-page > .learn-navbar {
+    transform: none !important;
+  }
+
+  html .learn-page > .conversation-container {
+    min-height: var(--kai-visual-viewport-height, 100dvh) !important;
+    padding-bottom: calc(164px + var(--kai-keyboard-inset, 0px)) !important;
+  }
+
+  html .learn-page .conversation-messages {
+    padding-bottom: calc(164px + var(--kai-keyboard-inset, 0px)) !important;
+  }
+}
