@@ -7098,3 +7098,21 @@ html .learn-page .kai-rich-content li {
     max-width: none !important;
   }
 }
+
+
+/* Sentence-start alignment: a new sentence after a full stop and every
+   wrapped continuation line must begin in the same left-to-right flow. */
+html .learn-page .kai-message-text,
+html .learn-page .kai-message-text p,
+html .learn-page .kai-message-text span,
+html .learn-page .learner-message-text,
+html .learn-page .learner-message-text p,
+html .learn-page .kai-rich-content,
+html .learn-page .kai-rich-content p,
+html .learn-page .kai-rich-content span,
+html .learn-page .kai-rich-content li {
+  direction: ltr !important;
+  unicode-bidi: normal !important;
+  text-indent: 0 !important;
+  text-align: left !important;
+}
