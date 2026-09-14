@@ -85,6 +85,21 @@ async function findRelevantVideo({ course, lesson, learnerMessage }) {
   }
 }
 
+async function findVerifiedVideoById({ course, lesson, videoId }) {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(videoId)) return null;
+    const video = await Video.findOne({ _id: videoId, active: true }).lean();
+    if (!video) return null;
+    const sameCourse = !course || String(video.courseId) === String(course.id);
+    const sameLesson = !lesson || String(video.lessonId) === String(lesson.id);
+    if (!sameCourse && !sameLesson) return null;
+    return serializeVideo(video);
+  } catch (error) {
+    console.error("Kai verified video ID lookup error:", error);
+    return null;
+  }
+}
+
 async function markCurrentLessonComplete(userId, courseId, lessonId) {
   return User.findOneAndUpdate(
     {
@@ -869,6 +884,21 @@ router.post("/", ensureAuth, async (req, res) => {
         })
       : [];
 
+    let verifiedVideoLibrary = [];
+    try {
+      verifiedVideoLibrary = (await Video.find({
+        active: true,
+        $or: [{ courseId: String(course.id) }, { lessonId: String(lesson.id) }],
+      }).limit(30).lean()).map((video) => ({
+        id: String(video._id),
+        title: video.title,
+        description: video.description,
+        lesson: video.lessonTitle || video.lessonId,
+      }));
+    } catch (error) {
+      console.error("Kai video library context error:", error);
+    }
+
     // ========================================
     // LESSON CONTEXT
     // ========================================
@@ -881,7 +911,8 @@ router.post("/", ensureAuth, async (req, res) => {
       teachingSections.length > 0
         ? JSON.stringify(teachingSections, null, 2)
         : "Use your own practical examples that match the lesson objectives."
-    }\n`;
+    }
+\nVERIFIED VIDEO LIBRARY (select by ID only; never invent IDs or URLs):\n${verifiedVideoLibrary.length ? JSON.stringify(verifiedVideoLibrary, null, 2) : "No verified videos are available for this lesson."}\n`;
 
     // ========================================
     // KAI SYSTEM PROMPT (ENHANCED FOR COMPLETION)
@@ -904,7 +935,7 @@ IN-APP CONTROLS:
 - Never emit UI_ACTION for an incomplete lesson, an unavailable lesson, or a request that is only informational.
 - The interface validates this action and will not execute arbitrary clicks or computer controls.
 
-VIDEO RECOMMENDATIONS:\n\n- Never invent, guess, or write a YouTube, Vimeo, or other external video URL in your learner-visible answer.\n- Never claim an external video belongs to CodeLab Academy unless it is returned by the verified database video library.\n- If a verified matching video exists, explain the concept first and end with [VIDEO_RECOMMEND] so the interface renders the database video as an embedded player. Do not render a Markdown link yourself.\n- If no verified matching video exists, do not include a video title, URL, or watch link.\n\n
+VIDEO RECOMMENDATIONS:\n\n- Never invent, guess, or write a YouTube, Vimeo, or other external video URL in your learner-visible answer.\n- Never claim an external video belongs to CodeLab Academy unless it is returned by the verified database video library.\n- If a verified matching video exists, explain the concept first and end with [VIDEO_RECOMMEND_ID: exact_id] using an ID from VERIFIED VIDEO LIBRARY so the interface renders that database video as an embedded player. Do not render a Markdown link yourself.\n- If no verified matching video exists, do not include a video title, URL, or watch link.\n\n
 
 - Always explain the concept in text before recommending anything.
 - Decide whether a visual demonstration would genuinely help this learner.
@@ -912,7 +943,7 @@ VIDEO RECOMMENDATIONS:\n\n- Never invent, guess, or write a YouTube, Vimeo, or o
 - If a visual would help, recommend one only after your explanation and only when it matches the learner's course, lesson, or concept.
 - When a visual would help, end your response with this control marker:
   [VIDEO_RECOMMEND]
-- You may optionally name a known matching title with [VIDEO_RECOMMEND: Exact video title], but never invent a title.
+- Never emit a video URL, Markdown video link, or an ID that is not in VERIFIED VIDEO LIBRARY.
 - If no relevant library video exists, do not emit the marker.
 - Do not mention or display the control marker itself to the learner.
 
@@ -1026,14 +1057,9 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     const uiAction = uiActionMatch && shouldCompleteLesson && !isFinalCourseLesson
       ? { type: "continue_lesson" }
       : null;
-    const videoRequestMatch = reply.match(/\[VIDEO_RECOMMEND(?:\s*:\s*(.*?))?\]/i);
-    const requestedVideoTitle = videoRequestMatch?.[1]?.trim() || "";
-    const videoRecommendation = videoRequestMatch
-      ? await findRelevantVideo({
-          course,
-          lesson,
-          learnerMessage: `${learnerMessage || ""} ${requestedVideoTitle}`,
-        })
+    const videoIdMatch = reply.match(/\[VIDEO_RECOMMEND_ID\s*:\s*([a-f0-9]{24})\]/i);
+    const videoRecommendation = videoIdMatch
+      ? await findVerifiedVideoById({ course, lesson, videoId: videoIdMatch[1] })
       : null;
 
     // Clean control markers from the learner-visible reply.
@@ -1041,7 +1067,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       .replace(/\[LESSON_COMPLETE:.*?\]/g, "")
       .replace(/\[COURSE_READY:.*?\]/gi, "")
       .replace(/\[UI_ACTION:\s*CONTINUE_LESSON\]/gi, "")
-      .replace(/\[VIDEO_RECOMMEND(?:\s*:\s*.*?)?\]/gi, "")
+      .replace(/\[VIDEO_RECOMMEND(?:_ID)?(?:\s*:\s*.*?)?\]/gi, "")
       .trim();
 
     // ========================================

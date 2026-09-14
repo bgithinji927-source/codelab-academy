@@ -175,7 +175,7 @@ export function KaiVideoPlayer({ video, aspectRatio = "16 / 9" }) {
   if (!video?.playbackUrl) return null;
   return <figure className="kai-rich-video">
     <div className="kai-rich-video-frame" style={{ aspectRatio: String(aspectRatio).replace(":", " /") }}>
-      {video.playerType === "embed" ? <iframe src={video.playbackUrl} title={video.title || "Kai video"} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /> : playbackUrl ? <video src={playbackUrl} controls playsInline preload="metadata" referrerPolicy="no-referrer" /> : <div className="kai-rich-video-status">{error || "Preparing secure video playback..."}</div>}
+      {video.playerType === "embed" ? <iframe src={video.playbackUrl} title={video.title || "Kai video"} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /> : playbackUrl ? <video src={playbackUrl} poster={video.posterUrl || undefined} controls playsInline preload="metadata" referrerPolicy="no-referrer" /> : <div className="kai-rich-video-status">{error || "Preparing secure video playback..."}</div>}
     </div>
     {(video.title || video.description) && <figcaption><strong>{video.title}</strong>{video.description && <span>{video.description}</span>}</figcaption>}
   </figure>;

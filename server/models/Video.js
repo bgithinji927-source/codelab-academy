@@ -62,6 +62,16 @@ const videoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    duration: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    posterUrl: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     active: {
       type: Boolean,
       default: true,

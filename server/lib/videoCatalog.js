@@ -9,7 +9,7 @@ function getExternalPlayback(videoUrl) {
       if (videoId) {
         return {
           playerType: "embed",
-          playbackUrl: `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?rel=0`,
+          playbackUrl: `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?rel=0&controls=1`,
         };
       }
     }
@@ -19,7 +19,7 @@ function getExternalPlayback(videoUrl) {
       if (videoId) {
         return {
           playerType: "embed",
-          playbackUrl: `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?rel=0`,
+          playbackUrl: `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?rel=0&controls=1`,
         };
       }
     }
@@ -29,7 +29,7 @@ function getExternalPlayback(videoUrl) {
       if (videoId && /^\d+$/.test(videoId)) {
         return {
           playerType: "embed",
-          playbackUrl: `https://player.vimeo.com/video/${videoId}`,
+          playbackUrl: `https://player.vimeo.com/video/${videoId}?dnt=1`,
         };
       }
     }
@@ -63,6 +63,8 @@ function serializeVideo(video) {
     originalFilename: plain.originalFilename || "",
     mimeType: plain.mimeType || "video/mp4",
     fileSize: plain.fileSize || 0,
+    duration: Number(plain.duration || 0),
+    posterUrl: plain.posterUrl || "",
     active: plain.active !== false,
     createdAt: plain.createdAt,
     updatedAt: plain.updatedAt,
