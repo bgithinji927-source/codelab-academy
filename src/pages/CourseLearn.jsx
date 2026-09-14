@@ -175,6 +175,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     if (Array.isArray(value)) return value;
     try {
       const parsed = JSON.parse(cleanKaiResponse(value));
+      if (parsed?.type === "diagram" && Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)) return [parsed];
       if (parsed?.type !== "lesson_response" || !Array.isArray(parsed.content)) return null;
       // Videos are rendered only from the server's verified database
       // recommendation, never from an AI-supplied URL in generated JSON.

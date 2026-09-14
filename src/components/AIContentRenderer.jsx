@@ -151,7 +151,7 @@ function Diagram({ block }) {
     <div className="kai-rich-diagram-scroll"><svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMin meet">
       <defs><marker id={markerId} markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" /></marker></defs>
       {edges.map((edge, index) => { const from = nodeById.get(String(edge.from)); const to = nodeById.get(String(edge.to)); if (!from || !to) return null; const fromPos = position(from); const toPos = position(to); const x = width / 2; const y1 = fromPos.y + nodeHeight + 3; const y2 = toPos.y - 3; return <g key={`edge-${index}`}><line x1={x} y1={y1} x2={x} y2={y2} markerEnd={`url(#${markerId})`} /><text className="kai-rich-diagram-edge-label" x={x + 10} y={(y1 + y2) / 2}>{edge.label || ""}</text></g>; })}
-      {nodes.map((node, index) => { const { x, y } = position({ ...node, index }); return <g key={node.id || index} className="kai-rich-diagram-node">{shape(node, x, y)}<text x={width / 2} y={y + 33} textAnchor="middle">{node.label || node.title || node.id}</text></g>; })}
+      {nodes.map((node, index) => { const { x, y } = position({ ...node, index }); const labelLines = String(node.label || node.title || node.id || "").split(/\\n|\n/); return <g key={node.id || index} className="kai-rich-diagram-node">{shape(node, x, y)}<text x={width / 2} y={y + 28 - ((labelLines.length - 1) * 8)} textAnchor="middle">{labelLines.map((line, lineIndex) => <tspan x={width / 2} dy={lineIndex === 0 ? 0 : 16} key={lineIndex}>{line}</tspan>)}</text></g>; })}
     </svg></div>
   </section>;
 }
