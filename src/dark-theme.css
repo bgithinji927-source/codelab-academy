@@ -6820,3 +6820,55 @@ html .dashboard-page.has-category-library .dashboard-category-grid::-webkit-scro
   background: var(--terminal-green);
 }
 
+
+/* Desktop Kai conversation geometry: one predictable column for every
+   message, with a wider responsive reading width and safe overflow handling. */
+html .learn-page .conversation-messages {
+  width: min(calc(100% - 48px), 1280px) !important;
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  min-width: 0 !important;
+}
+html .learn-page .chat-row,
+html .learn-page .kai-row,
+html .learn-page .learner-row {
+  width: 100% !important;
+  min-width: 0 !important;
+  justify-content: flex-start !important;
+}
+html .learn-page .chat-content,
+html .learn-page .learner-content {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+html .learn-page .learner-message-header {
+  justify-content: flex-start !important;
+}
+html .learn-page .learner-bubble {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+}
+html .learn-page .kai-message-text,
+html .learn-page .learner-message-text,
+html .learn-page .kai-board-content,
+html .learn-page .kai-table-scroll,
+html .learn-page .kai-code-wrapper,
+html .learn-page .kai-rich-content,
+html .learn-page .kai-rich-table-wrap,
+html .learn-page .kai-video-recommendation {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere;
+}
+html .learn-page .kai-table-scroll,
+html .learn-page .kai-rich-table-wrap {
+  overflow-x: auto !important;
+}
+@media (max-width: 700px) {
+  html .learn-page .conversation-messages {
+    width: calc(100% - 24px) !important;
+  }
+}
