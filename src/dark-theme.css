@@ -1373,6 +1373,29 @@ body,
   font-weight: 800 !important;
 }
 
+/* Tables intentionally use alternating light and dark surfaces. Their cell
+   text must override the global Kai dark-theme text rule on light rows. */
+.kai-bubble .kai-markdown-table th,
+.kai-bubble .kai-markdown-table td,
+.kai-bubble .kai-rich-table-wrap th,
+.kai-bubble .kai-rich-table-wrap td {
+  color: #e7f7e8 !important;
+}
+
+.kai-bubble .kai-markdown-table th,
+.kai-bubble .kai-rich-table-wrap th {
+  color: #4c1d95 !important;
+}
+
+.kai-bubble .kai-markdown-table tbody tr:nth-child(even) td {
+  color: #18221c !important;
+}
+
+.kai-bubble .kai-markdown-table td span,
+.kai-bubble .kai-rich-table-wrap td span {
+  color: inherit !important;
+}
+
 .kai-bubble .kai-inline-code {
   background: #0a2411 !important;
   border: 1px solid rgba(57, 255, 20, 0.45) !important;
@@ -2198,6 +2221,16 @@ html[data-theme="light"] .kai-message-text h4 {
 html[data-theme="light"] .learner-bubble {
   background: #e2f5e5 !important;
   border-color: #9bd2a5 !important;
+}
+
+html[data-theme="light"] .kai-bubble .kai-markdown-table td,
+html[data-theme="light"] .kai-bubble .kai-rich-table-wrap td {
+  color: #18221c !important;
+}
+
+html[data-theme="light"] .kai-bubble .kai-markdown-table th,
+html[data-theme="light"] .kai-bubble .kai-rich-table-wrap th {
+  color: #4c1d95 !important;
 }
 
 html[data-theme="light"] .admin-nav button,
