@@ -1454,3 +1454,15 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock { backgrou
 html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock input { color: #ececec !important; }
 html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock input::placeholder { color: #aaa !important; }
 html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock > button { background: #ececec !important; color: #212121 !important; }
+
+/* ChatGPT UI tables stay monochrome too: no white alternating cells. */
+.learn-page.kai-chatgpt-mode .kai-markdown-table,
+.learn-page.kai-chatgpt-mode .kai-rich-table-wrap table { background: #2f2f2f !important; }
+.learn-page.kai-chatgpt-mode .kai-markdown-table th,
+.learn-page.kai-chatgpt-mode .kai-rich-table-wrap th { background: #444 !important; color: #f2f2f2 !important; border-color: #555 !important; }
+.learn-page.kai-chatgpt-mode .kai-markdown-table td,
+.learn-page.kai-chatgpt-mode .kai-rich-table-wrap td,
+.learn-page.kai-chatgpt-mode .kai-markdown-table tbody tr:nth-child(even),
+.learn-page.kai-chatgpt-mode .kai-markdown-table tbody tr:nth-child(even) td { background: #2f2f2f !important; color: #ececec !important; border-color: #4a4a4a !important; }
+.learn-page.kai-chatgpt-mode .kai-markdown-table td span,
+.learn-page.kai-chatgpt-mode .kai-rich-table-wrap td span { color: inherit !important; }
