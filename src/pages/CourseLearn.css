@@ -1466,3 +1466,52 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-input-dock > button {
 .learn-page.kai-chatgpt-mode .kai-markdown-table tbody tr:nth-child(even) td { background: #2f2f2f !important; color: #ececec !important; border-color: #4a4a4a !important; }
 .learn-page.kai-chatgpt-mode .kai-markdown-table td span,
 .learn-page.kai-chatgpt-mode .kai-rich-table-wrap td span { color: inherit !important; }
+
+/* ChatGPT UI uses neutral typography only; retain the colorful Normal UI. */
+.learn-page.kai-chatgpt-mode .kai-message-text h1,
+.learn-page.kai-chatgpt-mode .kai-message-text h2,
+.learn-page.kai-chatgpt-mode .kai-message-text h3,
+.learn-page.kai-chatgpt-mode .kai-message-text h4,
+.learn-page.kai-chatgpt-mode .kai-message-text strong,
+.learn-page.kai-chatgpt-mode .kai-message-text a,
+.learn-page.kai-chatgpt-mode .kai-message-text .kai-inline-code,
+.learn-page.kai-chatgpt-mode .kai-message-text .kai-list-dot,
+.learn-page.kai-chatgpt-mode .kai-message-text .kai-number,
+.learn-page.kai-chatgpt-mode .kai-rich-content,
+.learn-page.kai-chatgpt-mode .kai-rich-content h1,
+.learn-page.kai-chatgpt-mode .kai-rich-content h2,
+.learn-page.kai-chatgpt-mode .kai-rich-content h3,
+.learn-page.kai-chatgpt-mode .kai-rich-content h4,
+.learn-page.kai-chatgpt-mode .kai-rich-content strong,
+.learn-page.kai-chatgpt-mode .kai-rich-content a,
+.learn-page.kai-chatgpt-mode .kai-rich-content code,
+.learn-page.kai-chatgpt-mode .kai-rich-table-wrap th,
+.learn-page.kai-chatgpt-mode .kai-code-header,
+.learn-page.kai-chatgpt-mode .kai-code-title,
+.learn-page.kai-chatgpt-mode .kai-code-label,
+.learn-page.kai-chatgpt-mode .kai-video-kicker,
+.learn-page.kai-chatgpt-mode .kai-video-recommendation-copy strong,
+.learn-page.kai-chatgpt-mode .kai-video-recommendation-copy p,
+.learn-page.kai-chatgpt-mode .kai-readiness-panel,
+.learn-page.kai-chatgpt-mode .lesson-status,
+.learn-page.kai-chatgpt-mode .kai-online,
+.learn-page.kai-chatgpt-mode .kai-message-header,
+.learn-page.kai-chatgpt-mode .kai-message-header strong,
+.learn-page.kai-chatgpt-mode .kai-message-header span {
+  color: #ececec !important;
+  text-shadow: none !important;
+}
+.learn-page.kai-chatgpt-mode .kai-message-text a,
+.learn-page.kai-chatgpt-mode .kai-rich-content a { text-decoration-color: #999 !important; }
+.learn-page.kai-chatgpt-mode .kai-teaching-card svg,
+.learn-page.kai-chatgpt-mode .learn-course-title svg,
+.learn-page.kai-chatgpt-mode .lesson-status svg,
+.learn-page.kai-chatgpt-mode .kai-online span,
+.learn-page.kai-chatgpt-mode .kai-avatar-small { color: #d0d0d0 !important; }
+.learn-page.kai-chatgpt-mode .kai-inline-code,
+.learn-page.kai-chatgpt-mode .kai-rich-content code { background: #444 !important; border-color: #5a5a5a !important; color: #f0f0f0 !important; }
+.learn-page.kai-chatgpt-mode .lesson-label,
+.learn-page.kai-chatgpt-mode .progress-percent,
+.learn-page.kai-chatgpt-mode .progress-label,
+.learn-page.kai-chatgpt-mode .kai-video-kicker,
+.learn-page.kai-chatgpt-mode .kai-play-icon { color: #d0d0d0 !important; }
