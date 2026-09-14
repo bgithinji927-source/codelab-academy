@@ -15,7 +15,7 @@ import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import ThemeToggle from "../components/ThemeToggle";
 import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_IMAGE_URLS, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
-import AIContentRenderer, { CodeBlock, KaiVideoPlayer, Suggestions } from "../components/AIContentRenderer";
+import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
 import "./CourseLearn.css";
 
 const KAI_UI_MODE_KEY = "codelabKaiUiMode";
@@ -1026,12 +1026,6 @@ ${startMessage}
       displayedKaiText.length > 0
         ? displayedKaiText
         : content;
-    const richSuggestions = contentBlocks?.find((block) => block?.type === "suggestions");
-    const fallbackSuggestions = lessonCompletionReady
-      ? [{ text: "Take the lesson quiz", action: "quiz" }, { text: "Practice what I learned", action: "practice" }, { text: "Continue to the next lesson", action: "next_lesson" }]
-      : /```|\b(code|function|variable|class|loop|syntax|query|command|program)\b/i.test(String(text))
-      ? [{ text: "Try this yourself", action: "practice" }, { text: "Explain it again", action: "review" }, { text: "Give me a challenge", action: "challenge" }]
-      : [{ text: "Give me an example", action: "example" }, { text: "Test my understanding", action: "quiz" }, { text: "Explain it more simply", action: "review" }];
     const handleKaiAction = (action, payload) => {
       if (["unlockNextLesson", "nextLesson"].includes(action)) handleNextLesson();
       else if (["next_lesson", "continue", "continue_lesson"].includes(action)) handleNextLesson();
@@ -1077,7 +1071,6 @@ ${startMessage}
                   onAction={handleKaiAction}
                 />
               ) : renderMarkdown(text)}
-              {!isKaiTyping && !richSuggestions && <Suggestions block={{ items: fallbackSuggestions }} onAction={handleKaiAction} />}
             </div>
           </div>
 
