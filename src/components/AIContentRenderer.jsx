@@ -131,13 +131,13 @@ function Diagram({ block }) {
   const nodes = Array.isArray(block.nodes) ? block.nodes : Array.isArray(block.data?.nodes) ? block.data.nodes : [];
   const edges = Array.isArray(block.edges) ? block.edges : Array.isArray(block.data?.edges) ? block.data.edges : [];
   const nodeById = new Map(nodes.map((node, index) => [String(node.id || index), { ...node, index }]));
-  const width = 980;
-  const nodeWidth = 190;
-  const nodeHeight = 64;
+  const width = 760;
+  const nodeWidth = 155;
+  const nodeHeight = 50;
   const layoutName = String(block.layout || block.direction || (['architecture', 'class', 'network', 'dataflow'].includes(String(block.diagramType).toLowerCase()) ? 'horizontal' : 'auto')).toLowerCase();
   const columns = layoutName === 'horizontal' ? Math.min(4, Math.max(2, nodes.length)) : layoutName === 'grid' ? 3 : 1;
   const rows = Math.max(1, Math.ceil(nodes.length / columns));
-  const height = Math.max(230, rows * 150 + 50);
+  const height = Math.max(190, rows * 112 + 36);
   const markerId = `kai-arrow-${String(block.title || block.label || 'diagram').replace(/[^a-z0-9]/gi, '').slice(0, 12) || 'diagram'}`;
   const position = (node) => {
     if (node.position && Number.isFinite(Number(node.position.x)) && Number.isFinite(Number(node.position.y))) {
@@ -154,18 +154,18 @@ function Diagram({ block }) {
     const col = index % columns;
     const row = Math.floor(index / columns);
     const gap = (width - columns * nodeWidth) / (columns + 1);
-    return { x: gap + col * (nodeWidth + gap), y: 26 + row * 150 };
+    return { x: gap + col * (nodeWidth + gap), y: 18 + row * 112 };
   };
   const shape = (node, x, y) => {
     const kind = String(node.shape || 'process').toLowerCase();
-    if (['start', 'end', 'terminal'].includes(kind)) return <rect x={x} y={y} width={nodeWidth} height={nodeHeight} rx="32" />;
+    if (['start', 'end', 'terminal'].includes(kind)) return <rect x={x} y={y} width={nodeWidth} height={nodeHeight} rx="25" />;
     if (['decision', 'diamond'].includes(kind)) return <polygon points={
       `${x + nodeWidth / 2},${y - 10} ${x + nodeWidth + 12},${y + nodeHeight / 2} ${x + nodeWidth / 2},${y + nodeHeight + 10} ${x - 12},${y + nodeHeight / 2}`
     } />;
     if (['input', 'output', 'io'].includes(kind)) return <polygon points={
       `${x + 18},${y} ${x + nodeWidth},${y} ${x + nodeWidth - 18},${y + nodeHeight} ${x},${y + nodeHeight}`
     } />;
-    if (['circle', 'connector'].includes(kind)) return <circle cx={x + nodeWidth / 2} cy={y + nodeHeight / 2} r="31" />;
+    if (['circle', 'connector'].includes(kind)) return <circle cx={x + nodeWidth / 2} cy={y + nodeHeight / 2} r="25" />;
     return <rect x={x} y={y} width={nodeWidth} height={nodeHeight} rx="12" />;
   };
   const anchor = (node, side) => { const p = position(node); return { x: p.x + nodeWidth / 2, y: p.y + nodeHeight / 2, top: p.y, bottom: p.y + nodeHeight, left: p.x, right: p.x + nodeWidth, side }; };
