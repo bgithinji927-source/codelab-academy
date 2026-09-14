@@ -173,16 +173,42 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
   const parseStructuredContent = (value) => {
     if (Array.isArray(value)) return value;
-    try {
-      const parsed = JSON.parse(cleanKaiResponse(value));
-      if (parsed?.type === "diagram" && Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)) return [parsed];
-      if (parsed?.type !== "lesson_response" || !Array.isArray(parsed.content)) return null;
-      // Videos are rendered only from the server's verified database
-      // recommendation, never from an AI-supplied URL in generated JSON.
-      return parsed.content.filter((block) => block?.type !== "video");
-    } catch {
-      return null;
+    const text = cleanKaiResponse(value)
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
+    const candidates = [text];
+    // Model responses can occasionally include a short preamble or trailing
+    // explanation around the JSON object. Do not expose that transport format
+    // to the learner when the object itself is still valid.
+    const firstBrace = text.indexOf("{");
+    const lastBrace = text.lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      candidates.push(text.slice(firstBrace, lastBrace + 1));
     }
+    for (const candidate of candidates) {
+      try {
+        let parsed = JSON.parse(candidate);
+        if (typeof parsed === "string") parsed = JSON.parse(parsed);
+        if (parsed?.type === "diagram" && Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)) return [parsed];
+        if (Array.isArray(parsed)) return parsed;
+        if (!Array.isArray(parsed?.content)) continue;
+        const blocks = [...parsed.content];
+        // Support both the documented content-array form and the variant
+        // where the model places suggestions beside content.
+        if (parsed.suggestions && !blocks.some((block) => block?.type === "suggestions")) {
+          blocks.push(parsed.suggestions.type === "suggestions"
+            ? parsed.suggestions
+            : { type: "suggestions", items: parsed.suggestions.items || [] });
+        }
+        // Videos are rendered only from the server's verified database
+        // recommendation, never from an AI-supplied URL in generated JSON.
+        return blocks.filter((block) => block?.type !== "video");
+      } catch {
+        // Try the next candidate, then use the existing Markdown renderer.
+      }
+    }
+    return null;
   };
 
   // ============================================
@@ -270,7 +296,12 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         const normalizeHistory = (history) => Array.isArray(history)
           ? history
               .filter((message) => message && (message.role === "user" || message.role === "assistant") && typeof message.content === "string" && message.content.trim())
-              .map((message) => ({ role: message.role, content: message.content, video: message.video || null }))
+              .map((message) => ({
+                role: message.role,
+                content: message.content,
+                contentBlocks: message.role === "assistant" ? parseStructuredContent(message.content) : null,
+                video: message.video || null,
+              }))
           : [];
         const savedHistory = normalizeHistory(stateData.session?.conversationHistory);
         const savedSessions = Array.isArray(stateData.sessions)
@@ -652,7 +683,12 @@ ${startMessage}
         Array.isArray(data.session?.conversationHistory)
           ? data.session.conversationHistory
               .filter((message) => message && (message.role === "user" || message.role === "assistant") && typeof message.content === "string")
-              .map((message) => ({ role: message.role, content: message.content, video: message.video || null }))
+              .map((message) => ({
+                role: message.role,
+                content: message.content,
+                contentBlocks: message.role === "assistant" ? parseStructuredContent(message.content) : null,
+                video: message.video || null,
+              }))
           : []
       );
       setLessonCompletionReady(Boolean(data.session?.completed));
