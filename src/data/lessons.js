@@ -904,6 +904,45 @@ const cloudCourseLessonPlans = {
   ),
 };
 
+const pythonMasteryLessonPlans = [
+  ["python-collections", "Lists, Tuples, Sets, and Dictionaries", "Work confidently with Python's core collection types.", "const", "Create a contact book using a dictionary and a list of tags."],
+  ["python-comprehensions", "Comprehensions and Iteration Patterns", "Write clear list, set, and dictionary comprehensions.", "squares = [n * n for n in range(1, 6)]", "Build a filtered dictionary of learners who passed."],
+  ["python-modules-packages", "Modules and Packages", "Split reusable code across modules and packages.", "from math import sqrt\nprint(sqrt(81))", "Design a small package with a calculator module and a public function."],
+  ["python-files", "Files, Paths, and Serialization", "Read, write, and safely exchange data with files.", "from pathlib import Path\nPath(\"notes.txt\").write_text(\"Hello\")", "Save and reload a JSON list of course tasks."],
+  ["python-exceptions", "Exceptions and Defensive Programming", "Handle expected failures without hiding real bugs.", "try:\n    age = int(input(\"Age: \"))\nexcept ValueError:\n    print(\"Enter a number\")", "Validate user input and report useful error messages."],
+  ["python-oop", "Object-Oriented Python", "Model behavior with classes, objects, methods, and composition.", "class Course:\n    def __init__(self, title):\n        self.title = title", "Create Student and Course classes that track enrollment."],
+  ["python-iterators-generators", "Iterators and Generators", "Process sequences lazily and efficiently.", "def count_up_to(limit):\n    for value in range(limit):\n        yield value", "Write a generator that reads large records one at a time."],
+  ["python-decorators-context-managers", "Decorators and Context Managers", "Reuse cross-cutting behavior and manage resources safely.", "from contextlib import contextmanager\n\n@contextmanager\ndef managed():\n    yield", "Add a timing decorator and a safe temporary-resource context manager."],
+  ["python-typing-dataclasses", "Type Hints and Dataclasses", "Make Python code clearer and easier to maintain with typing.", "from dataclasses import dataclass\n\n@dataclass\nclass Lesson:\n    title: str", "Define typed dataclasses for a course catalog."],
+  ["python-virtualenv-pip", "Virtual Environments and pip", "Create reproducible Python environments and manage dependencies.", "python -m venv .venv\npython -m pip install requests", "Write a requirements file and explain how another developer reproduces the setup."],
+  ["python-testing", "Testing with pytest", "Design focused tests and use assertions to prevent regressions.", "def add(a, b):\n    return a + b\n\ndef test_add():\n    assert add(2, 3) == 5", "Add tests for a score calculator, including an edge case."],
+  ["python-debugging-logging", "Debugging and Logging", "Diagnose failures with tracebacks, debuggers, and structured logs.", "import logging\nlogging.basicConfig(level=logging.INFO)\nlogging.info(\"Starting job\")", "Replace print-based debugging with useful log levels and context."],
+  ["python-http-apis", "HTTP Clients and APIs", "Call web APIs, validate responses, and handle timeouts.", "import requests\nresponse = requests.get(\"https://example.com\", timeout=5)\nresponse.raise_for_status()", "Design a function that fetches JSON and handles network errors."],
+  ["python-databases", "Python and Databases", "Use parameterized queries, transactions, and repository boundaries.", "import sqlite3\nwith sqlite3.connect(\"app.db\") as db:\n    db.execute(\"CREATE TABLE IF NOT EXISTS tasks (title TEXT)\")", "Build a small CRUD repository for learning tasks."],
+  ["python-flask-fastapi", "Web APIs with Flask and FastAPI", "Expose Python logic through reliable web endpoints.", "from fastapi import FastAPI\napp = FastAPI()\n\n@app.get(\"/health\")\ndef health():\n    return {\"ok\": True}", "Design endpoints for listing courses and recording progress."],
+  ["python-async", "Async Python", "Use async and await for concurrent I/O-bound work.", "import asyncio\n\nasync def main():\n    await asyncio.sleep(0.1)\n    return \"done\"", "Run several independent API calls concurrently and explain when async helps."],
+  ["python-security", "Python Security Practices", "Protect secrets, validate input, and avoid unsafe execution patterns.", "import os\napi_key = os.environ.get(\"API_KEY\")", "Review a script for hard-coded secrets, unsafe input, and missing validation."],
+  ["python-performance", "Performance and Profiling", "Measure before optimizing and choose suitable data structures.", "import timeit\nprint(timeit.timeit(\"sum(range(100))\", number=1000))", "Profile a slow loop and improve it without changing its result."],
+  ["python-automation-project", "Python Automation Project", "Build a useful command-line automation tool from start to finish.", "from pathlib import Path\nfor path in Path(\".\").glob(\"*.txt\"):\n    print(path)", "Create a safe file organizer with a dry-run mode and clear logs."],
+  ["python-production-project", "Production Python Capstone", "Combine testing, APIs, persistence, security, and deployment habits.", "class ProgressService:\n    def __init__(self, repository):\n        self.repository = repository", "Plan and implement a tested learning-progress API with documentation and error handling."],
+];
+
+function makePythonMasteryLesson([id, title, description, code, challenge]) {
+  return {
+    id,
+    title,
+    description,
+    level: id.includes("production") || id.includes("security") ? "Advanced" : "Intermediate",
+    estimatedTime: "30 min",
+    objectives: [description, "Explain the trade-offs behind the approach", "Apply the concept in a practical exercise"],
+    sections: [
+      { type: "explanation", title: "Core Idea", content: `${description} Study the example, explain why it works, and consider how it behaves when inputs or requirements change.` },
+      { type: "example", title: "Practical Example", code, explanation: "Read the example carefully, then adapt it rather than copying it blindly." },
+      { type: "challenge", title: "Practice Project", instructions: challenge, starterCode: `${code}\n\n# Extend this example to complete the challenge` },
+    ],
+  };
+}
+
 export const lessons = {
   javascript: [
     {
@@ -1311,6 +1350,7 @@ print(language)`,
         { type: "challenge", title: "Build a Score Tracker", instructions: "Create a small program that stores scores, calculates the average, and prints whether the learner passed.", starterCode: `def average(scores):\n    pass\n\nscores = []\n# Add scores, calculate the average, and check the result` },
       ],
     },
+    ...pythonMasteryLessonPlans.map(makePythonMasteryLesson),
   ],
 
   ...expandedCourseLessonPlans,
