@@ -15,3 +15,10 @@
 .kai-rich-diagram line { stroke: #b8b0ff; stroke-width: 2.5; }
 .kai-rich-diagram marker path { fill: #b8b0ff; }
 .kai-rich-diagram-edge-label { fill: #d8d3ff !important; font-size: 12px !important; font-weight: 600; }
+
+/* Keep inline lesson videos readable without letting them dominate the page. */
+.kai-rich-video {
+  width: min(100%, 760px) !important;
+  max-width: 760px !important;
+  margin: 1rem auto !important;
+}
