@@ -44,6 +44,9 @@ function LessonsPage({ course, courseAccess, onOpenLesson, onBack }) {
                   <span className="lesson-card-status">
                     {completed ? <><CheckCircle2 size={14} /> Completed</> : unlocked ? <><PlayCircle size={14} /> Ready with Kai</> : <><LockKeyhole size={14} /> Locked</>}
                   </span>
+                  <span className={`lesson-card-level level-${String(lesson.level || "Beginner").toLowerCase()}`}>
+                    {lesson.level || "Beginner"}
+                  </span>
                   <h3>{lesson.title}</h3>
                   <p>{lesson.focus || "Build understanding through guided practice with Kai."}</p>
                 </div>

@@ -17,7 +17,7 @@ function CourseCard({ course, onSelect }) {
 
         {course.level && (
           <span className="course-level">
-            {course.level}
+            Beginner → Advanced
           </span>
         )}
       </div>

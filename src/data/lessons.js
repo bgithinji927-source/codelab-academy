@@ -19,68 +19,38 @@ function makeLesson({
   return {
     id,
     title,
-    description: `Build a practical understanding of ${focus.toLowerCase()}.`,
+    description: `Learn ${focus.toLowerCase()} through a clear explanation, a practical example, and guided practice.`,
     level: "Beginner",
     estimatedTime: "25 min",
     objectives: [
-      `Explain the role of ${focus.toLowerCase()}`,
-      "Recognize the key decisions involved",
-      "Apply the idea to a practical scenario",
-      "Check your understanding with a short challenge",
+      `Understand ${focus.toLowerCase()}`,
+      `Explain why ${focus.toLowerCase()} is useful`,
+      "Read and adapt a practical example",
+      "Apply the concept in a guided challenge",
     ],
     sections: [
       {
         type: "explanation",
-        title: `Understanding ${focus}`,
+        title: `What is ${focus}?`,
         content: `
 ${focus} is an important building block for developers who want to create reliable, useful software.
 
-In this lesson, Kai will help you understand the idea, connect it to a real development workflow, and identify the trade-offs that matter when you use it.
+Start with the problem it solves. Kai will explain the idea in simple language, connect it to a real development workflow, and point out the decisions that matter when you use it.
 
-Start with the problem it solves: good engineering makes systems easier to understand, operate, test, and improve.
+You do not need to memorize every detail at once. Focus on what the concept does, when to use it, and what can go wrong.
         `,
       },
       {
         type: "example",
-        title: "A Practical Example",
+        title: `A ${focus} Example`,
         code,
-        explanation: `This example gives you a small, concrete way to see ${focus.toLowerCase()} in action. Read it line by line, then change one part and observe how the behavior changes.`,
-      },
-      {
-        type: "deepDive",
-        title: "How to Think About It",
-        content: `
-When applying ${focus.toLowerCase()}, ask three questions:
-
-1. What problem is the design solving?
-2. What can fail or become difficult to maintain?
-3. How will you observe, test, and improve the result?
-
-These questions help you move from memorizing terms to making sound engineering decisions.
-        `,
+        explanation: `Read this example line by line. Notice how ${focus.toLowerCase()} solves a small, realistic problem. Then change one value or step and observe how the behavior changes.`,
       },
       {
         type: "challenge",
         title: "Try It Yourself",
         instructions: challenge,
         starterCode,
-      },
-      {
-        type: "quiz",
-        title: "Quick Check",
-        question: quizQuestion,
-        options: quizOptions,
-        answer: quizAnswer,
-        explanation: `${quizAnswer} is the best answer because it directly supports the main goal of this lesson: applying ${focus.toLowerCase()} deliberately and safely.`,
-      },
-      {
-        type: "summary",
-        title: "Lesson Summary",
-        content: `
-You learned the core idea behind ${focus.toLowerCase()}, saw a practical example, and considered the trade-offs involved.
-
-Next, practice explaining the idea in your own words and use the challenge as a starting point for a small project.
-        `,
       },
     ],
   };
@@ -361,18 +331,26 @@ const generatedTopicTemplates = {
     "Control Flow",
     "Functions and Reusable Logic",
     "Collections and Data",
+    "Modules and Packages",
     "Object-Oriented Design",
-    "Errors, Testing, and Debugging",
-    "Build a Practical Project",
+    "Errors and Defensive Programming",
+    "Testing and Debugging",
+    "APIs, Persistence, and Integration",
+    "Performance, Security, and Production Practice",
+    "Build and Ship a Complete Project",
   ],
   engines: [
     "The Core Pipeline",
     "Inputs and Representation",
     "Algorithms and Decisions",
     "State and Memory",
+    "Interfaces and Extensibility",
     "Performance Trade-offs",
-    "Reliability and Failure",
+    "Concurrency and Resource Management",
+    "Reliability and Failure Recovery",
     "Testing and Observability",
+    "Security and Operational Boundaries",
+    "Design Review and Architecture Trade-offs",
     "Build an Engine-Inspired Project",
   ],
   ai: [
@@ -380,20 +358,28 @@ const generatedTopicTemplates = {
     "Preparing Useful Inputs",
     "Prompt and Task Design",
     "Calling a Model or Tool",
+    "Structured Outputs and Application State",
     "Evaluating Output Quality",
-    "Safety and Failure Handling",
+    "Safety, Privacy, and Failure Handling",
+    "Retrieval, Memory, and Context",
     "Testing and Observability",
-    "Build an AI-Powered Project",
+    "Production Cost and Reliability",
+    "Responsible Architecture and Governance",
+    "Build and Evaluate an AI-Powered Project",
   ],
   tools: [
     "Installation and Setup",
     "The Everyday Workflow",
     "Projects, Files, and State",
     "Automation and Scripting",
+    "Configuration and Environment Management",
     "Collaboration and Sharing",
     "Security and Permissions",
     "Troubleshooting and Recovery",
-    "Build a Repeatable Workflow",
+    "Integration with a Development Pipeline",
+    "Performance and Reliable Operations",
+    "Team Standards and Maintainability",
+    "Build a Repeatable Production Workflow",
   ],
   web: [
     "Web Foundations",
@@ -401,9 +387,13 @@ const generatedTopicTemplates = {
     "State and Interaction",
     "Requests and Responses",
     "Components and Reuse",
-    "Validation and Security",
-    "Testing and Deployment",
-    "Build a Production Feature",
+    "Data, Forms, and Validation",
+    "Authentication and Web Security",
+    "Testing and Accessibility",
+    "Performance and SEO",
+    "Deployment and Observability",
+    "Architecture and Maintainability",
+    "Build and Ship a Production Feature",
   ],
   data: [
     "Data and Table Foundations",
@@ -412,7 +402,11 @@ const generatedTopicTemplates = {
     "Indexes and Performance",
     "Transactions and Consistency",
     "Security and Backups",
-    "Testing and Operations",
+    "Views, Aggregations, and Reporting",
+    "Testing and Data Migration",
+    "Operations, Monitoring, and Recovery",
+    "Scaling and Distributed Data Patterns",
+    "Production Design Trade-offs",
     "Build a Data-Driven Feature",
   ],
 };
@@ -943,7 +937,7 @@ function makePythonMasteryLesson([id, title, description, code, challenge]) {
   };
 }
 
-export const lessons = {
+const lessons = {
   javascript: [
     {
       id: "js-variables",
@@ -1360,6 +1354,75 @@ print(language)`,
   ...aiCourseLessonPlans,
   ...databaseCourseLessonPlans,
 };
+
+// JavaScript has two hand-written beginner lessons; extend it with the same
+// complete path used by the other programming languages.
+lessons.javascript = [
+  ...lessons.javascript,
+  ...makeGeneratedCourseLessons("javascript", [
+    "Control Flow and Functions",
+    "Arrays, Objects, and Data Transformation",
+    "Modules and Package Management",
+    "DOM, Events, and Browser State",
+    "Asynchronous JavaScript and Promises",
+    "APIs, Errors, Testing, and Debugging",
+    "Performance, Security, and Deployment",
+    "Build and Ship a Complete JavaScript Application",
+  ]),
+];
+
+function makeMasteryProjectLesson(courseId, courseLessons) {
+  const courseTitle = courseId
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+  return makeLesson({
+    id: `${courseId}-mastery-project`,
+    title: `${courseTitle} Mastery Project`,
+    focus: `${courseTitle} mastery project`,
+    code: `const masteryProject = {
+  course: "${courseTitle}",
+  requirements: ["design", "implement", "test", "document"],
+  completedLessons: ${courseLessons.length}
+};
+
+console.log(masteryProject);`,
+    challenge: `Build a complete ${courseTitle} project that combines the major ideas from this course. Define requirements, implement the core behavior, test normal and failure cases, document your decisions, and explain how you would operate or improve it in production.`,
+    starterCode: `const masteryProject = {
+  requirements: [],
+  implementation: "",
+  tests: [],
+  documentation: "",
+  nextImprovement: ""
+};
+
+console.log(masteryProject);`,
+  });
+}
+
+function getProgressiveLevel(index, totalLessons) {
+  if (totalLessons <= 1) return "Beginner";
+  const beginnerEnd = Math.ceil(totalLessons / 3);
+  const intermediateEnd = Math.ceil((totalLessons * 2) / 3);
+  if (index < beginnerEnd) return "Beginner";
+  if (index < intermediateEnd) return "Intermediate";
+  return "Advanced";
+}
+
+// Every course follows the same learning arc: foundations first, then
+// applied skills, then advanced and project-level work. This also keeps
+// hand-written courses consistent with the generated course catalog.
+Object.values(lessons).forEach((courseLessons) => {
+  const courseId = Object.keys(lessons).find((key) => lessons[key] === courseLessons);
+  const hasMasteryProject = courseLessons.some((lesson) => /mastery project|capstone|complete .*project|build and ship/i.test(lesson.title || ""));
+  if (!hasMasteryProject) courseLessons.push(makeMasteryProjectLesson(courseId, courseLessons));
+  const totalLessons = courseLessons.length;
+  courseLessons.forEach((lesson, index) => {
+    lesson.level = getProgressiveLevel(index, totalLessons);
+  });
+});
+
+export { lessons };
 
 // ============================================
 // HELPER FUNCTIONS
