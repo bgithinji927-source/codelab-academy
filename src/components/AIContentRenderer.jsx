@@ -201,9 +201,9 @@ export default function AIContentRenderer({ content, onAction, onChoice }) {
   return <div className="kai-rich-content">{blocks.map((block, index) => {
     if (!block || typeof block !== "object") return null;
     const key = `${block.type || "block"}-${index}`;
-    if (block.type === "heading") return <h2 className="kai-rich-heading" key={key}>{block.text}</h2>;
-    if (block.type === "subheading") return <h3 className="kai-rich-subheading" key={key}>{block.text}</h3>;
-    if (block.type === "text") return <p className="kai-rich-text" key={key}><InlineText>{block.text}</InlineText></p>;
+    if (block.type === "heading") return <h2 className="kai-rich-heading" key={key}>{block.text || block.content}</h2>;
+    if (block.type === "subheading") return <h3 className="kai-rich-subheading" key={key}>{block.text || block.content}</h3>;
+    if (block.type === "text") return <p className="kai-rich-text" key={key}><InlineText>{block.text || block.content}</InlineText></p>;
     if (block.type === "bullets") return <ul key={key}>{(block.items || []).map((item) => <li key={item}><InlineText>{item}</InlineText></li>)}</ul>;
     if (block.type === "numbered") return <ol key={key}>{(block.items || []).map((item) => <li key={item}><InlineText>{item}</InlineText></li>)}</ol>;
     if (["code", "terminal", "json", "xml"].includes(block.type)) return <CodeBlock block={{ ...block, language: block.language || (block.type === "terminal" ? "shell" : block.type) }} key={key} />;
