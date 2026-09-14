@@ -131,31 +131,53 @@ function Diagram({ block }) {
   const nodes = Array.isArray(block.nodes) ? block.nodes : Array.isArray(block.data?.nodes) ? block.data.nodes : [];
   const edges = Array.isArray(block.edges) ? block.edges : Array.isArray(block.data?.edges) ? block.data.edges : [];
   const nodeById = new Map(nodes.map((node, index) => [String(node.id || index), { ...node, index }]));
-  const width = 820;
-  const nodeWidth = 520;
-  const nodeHeight = 54;
-  const gap = 92;
-  const height = Math.max(210, nodes.length * gap + 30);
-  const markerId = `kai-arrow-${String(block.title || block.label || "diagram").replace(/[^a-z0-9]/gi, "").slice(0, 12) || "diagram"}`;
-  const position = (node) => ({ x: (width - nodeWidth) / 2, y: node.index * gap + 14 });
+  const width = 980;
+  const nodeWidth = 190;
+  const nodeHeight = 64;
+  const layoutName = String(block.layout || block.direction || (['architecture', 'class', 'network', 'dataflow'].includes(String(block.diagramType).toLowerCase()) ? 'horizontal' : 'auto')).toLowerCase();
+  const columns = layoutName === 'horizontal' ? Math.min(4, Math.max(2, nodes.length)) : layoutName === 'grid' ? 3 : 1;
+  const rows = Math.max(1, Math.ceil(nodes.length / columns));
+  const height = Math.max(230, rows * 150 + 50);
+  const markerId = `kai-arrow-${String(block.title || block.label || 'diagram').replace(/[^a-z0-9]/gi, '').slice(0, 12) || 'diagram'}`;
+  const position = (node) => {
+    if (node.position && Number.isFinite(Number(node.position.x)) && Number.isFinite(Number(node.position.y))) {
+      return { x: Number(node.position.x), y: Number(node.position.y) };
+    }
+    const index = node.index;
+    if (layoutName === 'radial' || layoutName === 'radial/all-sides' || layoutName === 'all-sides') {
+      const centerX = width / 2 - nodeWidth / 2;
+      const centerY = height / 2 - nodeHeight / 2;
+      if (index === 0) return { x: centerX, y: centerY };
+      const angle = ((index - 1) / Math.max(1, nodes.length - 1)) * Math.PI * 2 - Math.PI / 2;
+      return { x: centerX + Math.cos(angle) * 300, y: centerY + Math.sin(angle) * 120 };
+    }
+    const col = index % columns;
+    const row = Math.floor(index / columns);
+    const gap = (width - columns * nodeWidth) / (columns + 1);
+    return { x: gap + col * (nodeWidth + gap), y: 26 + row * 150 };
+  };
   const shape = (node, x, y) => {
-    const kind = String(node.shape || "process").toLowerCase();
-    if (["start", "end", "terminal"].includes(kind)) return <rect x={x} y={y} width={nodeWidth} height={nodeHeight} rx="27" />;
-    if (["decision", "diamond"].includes(kind)) return <polygon points={`${width / 2},${y - 8} ${width / 2 + 80},${y + nodeHeight / 2} ${width / 2},${y + nodeHeight + 8} ${width / 2 - 80},${y + nodeHeight / 2}`} />;
-    if (["input", "output", "io"].includes(kind)) return <polygon points={`${x + 22},${y} ${x + nodeWidth},${y} ${x + nodeWidth - 22},${y + nodeHeight} ${x},${y + nodeHeight}`} />;
-    if (["circle", "connector"].includes(kind)) return <circle cx={width / 2} cy={y + nodeHeight / 2} r="27" />;
+    const kind = String(node.shape || 'process').toLowerCase();
+    if (['start', 'end', 'terminal'].includes(kind)) return <rect x={x} y={y} width={nodeWidth} height={nodeHeight} rx="32" />;
+    if (['decision', 'diamond'].includes(kind)) return <polygon points={
+      `${x + nodeWidth / 2},${y - 10} ${x + nodeWidth + 12},${y + nodeHeight / 2} ${x + nodeWidth / 2},${y + nodeHeight + 10} ${x - 12},${y + nodeHeight / 2}`
+    } />;
+    if (['input', 'output', 'io'].includes(kind)) return <polygon points={
+      `${x + 18},${y} ${x + nodeWidth},${y} ${x + nodeWidth - 18},${y + nodeHeight} ${x},${y + nodeHeight}`
+    } />;
+    if (['circle', 'connector'].includes(kind)) return <circle cx={x + nodeWidth / 2} cy={y + nodeHeight / 2} r="31" />;
     return <rect x={x} y={y} width={nodeWidth} height={nodeHeight} rx="12" />;
   };
-  return <section className="kai-rich-diagram" role="img" aria-label={block.title || block.label || "Kai diagram"}>
+  const anchor = (node, side) => { const p = position(node); return { x: p.x + nodeWidth / 2, y: p.y + nodeHeight / 2, top: p.y, bottom: p.y + nodeHeight, left: p.x, right: p.x + nodeWidth, side }; };
+  return <section className="kai-rich-diagram" role="img" aria-label={block.title || block.label || 'Kai diagram'}>
     {block.title && <h3>{block.title}</h3>}
     <div className="kai-rich-diagram-scroll"><svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMin meet">
       <defs><marker id={markerId} markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" /></marker></defs>
-      {edges.map((edge, index) => { const from = nodeById.get(String(edge.from)); const to = nodeById.get(String(edge.to)); if (!from || !to) return null; const fromPos = position(from); const toPos = position(to); const x = width / 2; const y1 = fromPos.y + nodeHeight + 3; const y2 = toPos.y - 3; return <g key={`edge-${index}`}><line x1={x} y1={y1} x2={x} y2={y2} markerEnd={`url(#${markerId})`} /><text className="kai-rich-diagram-edge-label" x={x + 10} y={(y1 + y2) / 2}>{edge.label || ""}</text></g>; })}
-      {nodes.map((node, index) => { const { x, y } = position({ ...node, index }); const labelLines = String(node.label || node.title || node.id || "").split(/\\n|\n/); return <g key={node.id || index} className="kai-rich-diagram-node">{shape(node, x, y)}<text x={width / 2} y={y + 28 - ((labelLines.length - 1) * 8)} textAnchor="middle">{labelLines.map((line, lineIndex) => <tspan x={width / 2} dy={lineIndex === 0 ? 0 : 16} key={lineIndex}>{line}</tspan>)}</text></g>; })}
+      {edges.map((edge, index) => { const from = nodeById.get(String(edge.from)); const to = nodeById.get(String(edge.to)); if (!from || !to) return null; const a = anchor(from); const b = anchor(to); const horizontal = Math.abs(b.x - a.x) >= Math.abs(b.y - a.y); const x1 = horizontal ? (b.x > a.x ? a.right : a.left) : a.x; const y1 = horizontal ? a.y : (b.y > a.y ? a.bottom : a.top); const x2 = horizontal ? (b.x > a.x ? b.left : b.right) : b.x; const y2 = horizontal ? b.y : (b.y > a.y ? b.top : b.bottom); const midX = (x1 + x2) / 2; const midY = (y1 + y2) / 2; return <g key={`edge-${index}`}><path d={horizontal ? `M ${x1} ${y1} L ${x2} ${y2}` : `M ${x1} ${y1} L ${x2} ${y2}`} markerEnd={`url(#${markerId})`} /><text className="kai-rich-diagram-edge-label" x={midX + 8} y={midY - 5}>{edge.label || ''}</text></g>; })}
+      {nodes.map((node, index) => { const positioned = { ...node, index }; const { x, y } = position(positioned); const labelLines = String(node.label || node.title || node.id || '').split(/\\n|\n/); return <g key={node.id || index} className="kai-rich-diagram-node">{shape(node, x, y)}<text x={x + nodeWidth / 2} y={y + 27 - ((labelLines.length - 1) * 8)} textAnchor="middle">{labelLines.map((line, lineIndex) => <tspan x={x + nodeWidth / 2} dy={lineIndex === 0 ? 0 : 16} key={lineIndex}>{line}</tspan>)}</text></g>; })}
     </svg></div>
   </section>;
 }
-
 function Choice({ block, onChoice }) {
   const [selected, setSelected] = useState(null);
   return <section className="kai-rich-choice"><h3>{block.question}</h3><div className="kai-choice-options">{(block.options || []).map((option) => <button type="button" key={option} className={selected === option ? "selected" : ""} onClick={() => { setSelected(option); onChoice?.(option); }}>{option}</button>)}</div></section>;
