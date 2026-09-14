@@ -2233,6 +2233,32 @@ html[data-theme="light"] .kai-bubble .kai-rich-table-wrap th {
   color: #4c1d95 !important;
 }
 
+/* The current lesson layout renders Kai responses in kai-board-content, not
+   kai-bubble. Keep the same contrast guarantees in that layout. */
+.learn-page .kai-board-content .kai-markdown-table td,
+.learn-page .kai-board-content .kai-rich-table-wrap td {
+  color: #e7f7e8 !important;
+}
+
+.learn-page .kai-board-content .kai-markdown-table th,
+.learn-page .kai-board-content .kai-rich-table-wrap th {
+  color: #4c1d95 !important;
+}
+
+.learn-page .kai-board-content .kai-markdown-table tbody tr:nth-child(even) td {
+  color: #18221c !important;
+}
+
+.learn-page .kai-board-content .kai-markdown-table td span,
+.learn-page .kai-board-content .kai-rich-table-wrap td span {
+  color: inherit !important;
+}
+
+html[data-theme="light"] .learn-page .kai-board-content .kai-markdown-table td,
+html[data-theme="light"] .learn-page .kai-board-content .kai-rich-table-wrap td {
+  color: #18221c !important;
+}
+
 html[data-theme="light"] .admin-nav button,
 html[data-theme="light"] .admin-operator,
 html[data-theme="light"] .admin-sidebar-footer small,

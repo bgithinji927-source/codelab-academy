@@ -80,7 +80,7 @@ function ImageBlock({ block }) {
   return <figure className="kai-rich-image"><img src={src} alt={block.alt || block.title || "Kai illustration"} loading="lazy" /><figcaption>{block.title || block.alt}</figcaption></figure>;
 }
 
-function CodeBlock({ block }) {
+export function CodeBlock({ block }) {
   const [value, setValue] = useState(String(block.code || ""));
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);

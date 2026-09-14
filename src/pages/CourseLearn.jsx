@@ -4,7 +4,6 @@ import {
   ArrowRight,
   Bot,
   BookOpen,
-  Code2,
   UserRound,
   Send,
   Sparkles,
@@ -16,7 +15,7 @@ import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import ThemeToggle from "../components/ThemeToggle";
 import { DEFAULT_KAI_BACKGROUND, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
-import AIContentRenderer, { KaiVideoPlayer } from "../components/AIContentRenderer";
+import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
 import "./CourseLearn.css";
 
 function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
@@ -795,30 +794,14 @@ ${startMessage}
       }
 
       elements.push(
-        <div
-          className="kai-code-wrapper"
+        <CodeBlock
           key={`code-${key}`}
-        >
-          <div className="kai-code-header">
-            <div className="kai-code-title">
-              <Code2 size={13} />
-
-              <span>
-                {codeLanguage || "code"}
-              </span>
-            </div>
-
-            <span className="kai-code-label">
-              Example
-            </span>
-          </div>
-
-          <pre className="kai-code-block">
-            <code>
-              {codeLines.join("\n")}
-            </code>
-          </pre>
-        </div>
+          block={{
+            code: codeLines.join("\n"),
+            language: codeLanguage || "text",
+            filename: codeLanguage || "code",
+          }}
+        />
       );
 
       codeLines = [];
