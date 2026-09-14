@@ -337,6 +337,14 @@ const generatedTopicTemplates = {
     "Testing and Debugging",
     "APIs, Persistence, and Integration",
     "Performance, Security, and Production Practice",
+    "Advanced Language Patterns",
+    "Concurrency and Parallel Work",
+    "API Design and Compatibility",
+    "Data Modeling and Persistence",
+    "Observability and Diagnostics",
+    "Secure Dependency and Supply-Chain Practice",
+    "Architecture Refactoring and Technical Debt",
+    "Team-Scale Code Review and Delivery",
     "Build and Ship a Complete Project",
   ],
   engines: [
@@ -351,6 +359,14 @@ const generatedTopicTemplates = {
     "Testing and Observability",
     "Security and Operational Boundaries",
     "Design Review and Architecture Trade-offs",
+    "Caching and Resource Lifecycles",
+    "Concurrency, Scheduling, and Backpressure",
+    "Compatibility and Versioning",
+    "Security Boundaries and Threat Modeling",
+    "Profiling and Capacity Planning",
+    "Incident Response and Recovery",
+    "Maintainable Architecture Refactoring",
+    "Build and Ship an Advanced Engine Project",
     "Build an Engine-Inspired Project",
   ],
   ai: [
@@ -365,6 +381,14 @@ const generatedTopicTemplates = {
     "Testing and Observability",
     "Production Cost and Reliability",
     "Responsible Architecture and Governance",
+    "Advanced Evaluation and Regression Testing",
+    "Tool Use, Agents, and Permission Boundaries",
+    "Data Protection and Privacy Engineering",
+    "Latency, Throughput, and Cost Optimization",
+    "Model Failure Analysis and Red Teaming",
+    "Production Rollouts and Incident Response",
+    "Architecture Review and Long-Term Maintenance",
+    "Build and Operate a Mastery AI System",
     "Build and Evaluate an AI-Powered Project",
   ],
   tools: [
@@ -379,6 +403,14 @@ const generatedTopicTemplates = {
     "Integration with a Development Pipeline",
     "Performance and Reliable Operations",
     "Team Standards and Maintainability",
+    "Advanced Automation Patterns",
+    "Plugin and Extension Design",
+    "Cross-Platform Compatibility",
+    "Performance Profiling and Capacity",
+    "Auditability and Compliance",
+    "Incident Response and Recovery",
+    "Architecture Refactoring",
+    "Build and Operate an Expert Workflow",
     "Build a Repeatable Production Workflow",
   ],
   web: [
@@ -393,6 +425,14 @@ const generatedTopicTemplates = {
     "Performance and SEO",
     "Deployment and Observability",
     "Architecture and Maintainability",
+    "Advanced State and Data Architecture",
+    "Caching, Streaming, and Real-Time Interaction",
+    "Internationalization and Complex Forms",
+    "Web Performance Profiling",
+    "Threat Modeling and Secure Architecture",
+    "Release Engineering and Feature Flags",
+    "Observability and Incident Response",
+    "Build and Operate a Production Web System",
     "Build and Ship a Production Feature",
   ],
   data: [
@@ -407,6 +447,14 @@ const generatedTopicTemplates = {
     "Operations, Monitoring, and Recovery",
     "Scaling and Distributed Data Patterns",
     "Production Design Trade-offs",
+    "Advanced Query Planning",
+    "Concurrency, Locking, and Isolation",
+    "Distributed Data and Replication",
+    "Partitioning and Sharding Strategies",
+    "Data Governance and Privacy",
+    "Performance Benchmarking and Capacity",
+    "Disaster Recovery and Operational Readiness",
+    "Build and Operate a Production Data System",
     "Build a Data-Driven Feature",
   ],
 };
@@ -1409,11 +1457,64 @@ function getProgressiveLevel(index, totalLessons) {
   return "Advanced";
 }
 
+const supplementalMasteryTopics = [
+  "Intermediate Patterns and Composition",
+  "Input Validation and Failure Cases",
+  "Testing Strategies and Debugging",
+  "Integration with Real Systems",
+  "Performance and Resource Management",
+  "Security Boundaries and Threat Modeling",
+  "Observability and Operational Readiness",
+  "Scalability and Architecture Trade-offs",
+  "Refactoring for Maintainability",
+  "Production Readiness Review",
+];
+
+function makeSupplementalMasteryLesson(courseId, topic, index) {
+  const courseTitle = courseId
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+  return makeLesson({
+    id: `${courseId}-mastery-${String(index + 1).padStart(2, "0")}-${slugifyTopic(topic)}`,
+    title: `${courseTitle}: ${topic}`,
+    focus: `${courseTitle} ${topic}`,
+    code: `const lesson = {
+  course: "${courseTitle}",
+  topic: "${topic}",
+  inputsValidated: true,
+  testsAdded: true,
+  productionReady: false
+};
+
+console.log(lesson);`,
+    challenge: `Apply ${topic.toLowerCase()} to ${courseTitle}. Build a focused example, include a normal case and a failure case, test the behavior, and explain the trade-off you made.`,
+    starterCode: `const practice = {
+  course: "${courseTitle}",
+  topic: "${topic}",
+  design: "",
+  tests: [],
+  failureCase: "",
+  improvement: ""
+};
+
+console.log(practice);`,
+  });
+}
+
 // Every course follows the same learning arc: foundations first, then
 // applied skills, then advanced and project-level work. This also keeps
 // hand-written courses consistent with the generated course catalog.
 Object.values(lessons).forEach((courseLessons) => {
   const courseId = Object.keys(lessons).find((key) => lessons[key] === courseLessons);
+  if (courseLessons.length < 12) {
+    const needed = 12 - courseLessons.length;
+    const existingIds = new Set(courseLessons.map((lesson) => lesson.id));
+    supplementalMasteryTopics.slice(0, needed).forEach((topic, index) => {
+      const lesson = makeSupplementalMasteryLesson(courseId, topic, index);
+      if (!existingIds.has(lesson.id)) courseLessons.push(lesson);
+    });
+  }
   const hasMasteryProject = courseLessons.some((lesson) => /mastery project|capstone|complete .*project|build and ship/i.test(lesson.title || ""));
   if (!hasMasteryProject) courseLessons.push(makeMasteryProjectLesson(courseId, courseLessons));
   const totalLessons = courseLessons.length;
