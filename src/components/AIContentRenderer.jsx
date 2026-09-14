@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Play, RotateCcw, Copy, Check, Lightbulb, AlertTriangle, Info, ArrowRight } from "lucide-react";
+import { Play, RotateCcw, Copy, Check, Lightbulb, AlertTriangle, Info, ArrowRight, Quote, CheckSquare, Clock, ExternalLink } from "lucide-react";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import "./AIContentRenderer.css";
 
@@ -20,11 +20,64 @@ const SAFE_ACTIONS = new Set([
 ]);
 
 function InlineText({ children }) {
-  return <span>{String(children || "").split(/(`[^`]+`|\*\*[^*]+\*\*)/g).map((part, index) => {
+  return <span>{String(children || "").split(/(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g).map((part, index) => {
     if (part.startsWith("`") && part.endsWith("`")) return <code key={index}>{part.slice(1, -1)}</code>;
     if (part.startsWith("**") && part.endsWith("**")) return <strong key={index}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith("*") && part.endsWith("*")) return <em key={index}>{part.slice(1, -1)}</em>;
     return <span key={index}>{part}</span>;
   })}</span>;
+}
+
+function Copyable({ block }) {
+  const [copied, setCopied] = useState(false);
+  const value = String(block.content ?? block.text ?? block.code ?? "");
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch { setCopied(false); }
+  };
+  return <section className="kai-rich-copyable"><header><strong>{block.title || block.filename || block.language || "Copyable content"}</strong><button type="button" onClick={copy}>{copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Copied" : "Copy"}</button></header><pre>{value}</pre></section>;
+}
+
+function QuoteBlock({ block }) {
+  return <blockquote className="kai-rich-quote"><Quote size={18} /><div><InlineText>{block.text || block.content}</InlineText>{block.author && <cite>— {block.author}</cite>}</div></blockquote>;
+}
+
+function Checklist({ block }) {
+  const [checked, setChecked] = useState(() => new Set((block.items || []).map((item) => item.done ? String(item.text || item) : "")));
+  return <section className="kai-rich-checklist"><h3>{block.title || "Checklist"}</h3>{(block.items || []).map((item, index) => { const text = typeof item === "string" ? item : item.text; const active = checked.has(String(text)); return <label key={index}><input type="checkbox" checked={active} onChange={() => setChecked((current) => { const next = new Set(current); if (next.has(String(text))) next.delete(String(text)); else next.add(String(text)); return next; })} /><CheckSquare size={16} /><span className={active ? "done" : ""}><InlineText>{text}</InlineText></span></label>; })}</section>;
+}
+
+function Comparison({ block }) {
+  return <section className="kai-rich-comparison"><h3>{block.title || "Comparison"}</h3><div className="kai-comparison-grid">{(block.options || block.items || []).map((item, index) => <article key={index}><h4>{item.name || item.title || `Option ${index + 1}`}</h4>{item.bestFor && <p><strong>Best for:</strong> <InlineText>{item.bestFor}</InlineText></p>}<ul>{(item.pros || []).map((value) => <li key={`p-${value}`}><strong>+</strong> <InlineText>{value}</InlineText></li>)}{(item.cons || []).map((value) => <li key={`c-${value}`}><strong>−</strong> <InlineText>{value}</InlineText></li>)}</ul></article>)}</div></section>;
+}
+
+function Timeline({ block }) {
+  return <section className="kai-rich-timeline"><h3>{block.title || "Timeline"}</h3>{(block.items || block.events || []).map((item, index) => <div className="kai-timeline-item" key={index}><span className="kai-timeline-dot" /><div><strong>{item.time || item.label || `Step ${index + 1}`}</strong><p><InlineText>{item.text || item.description || item.content}</InlineText></p></div></div>)}</section>;
+}
+
+function Progress({ block }) {
+  const value = Math.min(100, Math.max(0, Number(block.value ?? block.percent ?? 0)));
+  return <section className="kai-rich-progress"><div><strong>{block.label || "Progress"}</strong><span>{value}%</span></div><div className="kai-progress-track"><span style={{ width: `${value}%` }} /></div></section>;
+}
+
+function FileTree({ block }) {
+  return <section className="kai-rich-filetree"><strong>{block.title || "File structure"}</strong><pre>{String(block.tree || block.content || "")}</pre></section>;
+}
+
+function Preview({ block }) {
+  const url = String(block.url || block.src || "");
+  const allowed = /^https?:\/\//i.test(url);
+  if (!allowed) return <Callout block={{ kind: "warning", title: "Preview unavailable", text: "This preview URL is not safe to embed." }} />;
+  return <figure className="kai-rich-preview"><iframe src={url} title={block.title || "Interactive preview"} sandbox="allow-scripts" loading="lazy" /><figcaption>{block.title || "Interactive preview"} <a href={url} target="_blank" rel="noreferrer"><ExternalLink size={13} /></a></figcaption></figure>;
+}
+
+function ImageBlock({ block }) {
+  const src = String(block.url || block.src || "");
+  if (!/^https?:\/\//i.test(src)) return null;
+  return <figure className="kai-rich-image"><img src={src} alt={block.alt || block.title || "Kai illustration"} loading="lazy" /><figcaption>{block.title || block.alt}</figcaption></figure>;
 }
 
 function CodeBlock({ block }) {
@@ -139,11 +192,22 @@ export default function AIContentRenderer({ content, onAction, onChoice }) {
     if (block.type === "text") return <p className="kai-rich-text" key={key}><InlineText>{block.text}</InlineText></p>;
     if (block.type === "bullets") return <ul key={key}>{(block.items || []).map((item) => <li key={item}><InlineText>{item}</InlineText></li>)}</ul>;
     if (block.type === "numbered") return <ol key={key}>{(block.items || []).map((item) => <li key={item}><InlineText>{item}</InlineText></li>)}</ol>;
-    if (block.type === "code") return <CodeBlock block={block} key={key} />;
+    if (["code", "terminal", "json", "xml"].includes(block.type)) return <CodeBlock block={{ ...block, language: block.language || (block.type === "terminal" ? "shell" : block.type) }} key={key} />;
+    if (["copy", "copyable", "command", "config"].includes(block.type)) return <Copyable block={block} key={key} />;
     if (block.type === "diagram") return <Diagram block={block} key={key} />;
     if (block.type === "table") return <Table block={block} key={key} />;
     if (block.type === "choice") return <Choice block={block} onChoice={onChoice} key={key} />;
+    if (block.type === "quiz") return <Choice block={block} onChoice={onChoice} key={key} />;
     if (block.type === "callout") return <Callout block={block} key={key} />;
+    if (block.type === "quote") return <QuoteBlock block={block} key={key} />;
+    if (block.type === "checklist") return <Checklist block={block} key={key} />;
+    if (["comparison", "compare"].includes(block.type)) return <Comparison block={block} key={key} />;
+    if (block.type === "timeline") return <Timeline block={block} key={key} />;
+    if (["equation", "math"].includes(block.type)) return <div className="kai-rich-equation" key={key}>{block.label && <span>{block.label}</span>}<code>{block.latex || block.expression || block.text}</code></div>;
+    if (block.type === "progress") return <Progress block={block} key={key} />;
+    if (["filetree", "file-tree"].includes(block.type)) return <FileTree block={block} key={key} />;
+    if (block.type === "image") return <ImageBlock block={block} key={key} />;
+    if (["preview", "embed"].includes(block.type)) return <Preview block={block} key={key} />;
     if (block.type === "video") return <KaiVideoPlayer video={block.video || block} aspectRatio={block.aspectRatio || "16 / 9"} key={key} />;
     if (block.type === "exercise") return <button type="button" className="kai-rich-exercise" onClick={() => onAction?.("openExercise", block)} key={key}>{block.title || "Try this exercise"} <ArrowRight size={15} /></button>;
     if (block.type === "action" && SAFE_ACTIONS.has(block.action)) return <button type="button" className="kai-rich-action" onClick={() => onAction?.(block.action, block)} key={key}>{block.label || "Continue"} <ArrowRight size={14} /></button>;
