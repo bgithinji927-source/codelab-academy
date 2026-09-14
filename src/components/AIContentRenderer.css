@@ -39,3 +39,13 @@
 @media (max-width: 700px) {
   .kai-rich-diagram svg { width: 680px !important; min-width: 680px !important; }
 }
+
+/* Large but responsive diagrams: use the available conversation width and
+   preserve a readable viewBox; only narrow screens scroll when necessary. */
+.kai-rich-diagram { max-width: 1080px; }
+.kai-rich-diagram svg { width: 100% !important; max-width: 980px !important; min-width: 0 !important; max-height: none !important; margin: 0 auto; }
+.kai-rich-diagram-node text { font-size: 15px !important; }
+.kai-rich-diagram-edge-label { font-size: 12px !important; }
+@media (max-width: 700px) {
+  .kai-rich-diagram svg { width: 980px !important; max-width: none !important; min-width: 980px !important; }
+}
