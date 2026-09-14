@@ -1418,7 +1418,41 @@ Object.values(lessons).forEach((courseLessons) => {
   if (!hasMasteryProject) courseLessons.push(makeMasteryProjectLesson(courseId, courseLessons));
   const totalLessons = courseLessons.length;
   courseLessons.forEach((lesson, index) => {
-    lesson.level = getProgressiveLevel(index, totalLessons);
+    const level = getProgressiveLevel(index, totalLessons);
+    lesson.level = level;
+
+    // Depth increases with the learner's progress. Beginners get the core
+    // idea; intermediate learners examine boundaries and trade-offs; advanced
+    // learners must reason about production-quality design and failure.
+    if (level !== "Beginner") {
+      const topic = lesson.title || lesson.id;
+      const depthSection = {
+        type: "deepDive",
+        title: level === "Intermediate" ? "Go Deeper: Edge Cases and Trade-offs" : "Advanced Practice: Production Thinking",
+        content: level === "Intermediate"
+          ? `${topic} is more than the happy-path example. Investigate what happens with invalid input, empty or unusually large data, repeated operations, partial failure, and changing requirements. Compare at least two reasonable approaches, explain the trade-offs, and decide which behavior should be tested and documented.`
+          : `${topic} at an advanced level requires more than making one example work. Design the boundaries between components, define failure and recovery behavior, protect data and permissions, measure performance, and choose observability signals. Review maintainability, security, scalability, deployment, and rollback before calling the solution production-ready.`,
+      };
+      lesson.sections = [
+        ...(lesson.sections || []),
+        depthSection,
+      ];
+      lesson.objectives = [
+        ...(lesson.objectives || []),
+        level === "Intermediate"
+          ? "Analyze edge cases and compare alternative approaches"
+          : "Design, test, secure, observe, and improve a production-quality solution",
+      ];
+    }
+
+    if (level === "Advanced") {
+      lesson.sections.push({
+        type: "challenge",
+        title: "Advanced Review Challenge",
+        instructions: `Extend your ${lesson.title || "solution"} example into a production-ready design. Include automated tests, an error or failure path, a security decision, a performance consideration, and a short plan for monitoring and rollback. Explain why each decision is appropriate.`,
+        starterCode: "// Document the design, tests, failure handling, security, performance, and operations plan here\n",
+      });
+    }
   });
 });
 
