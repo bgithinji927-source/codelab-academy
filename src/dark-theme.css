@@ -7018,3 +7018,83 @@ html .learn-page > .conversation-container > .input-hint {
     min-height: 50px;
   }
 }
+
+
+/* Final alignment correction: prose and list rows must use normal document
+   flow so wrapped lines never appear centered or restart unpredictably. */
+html .learn-page .kai-message-text,
+html .learn-page .kai-message-text *,
+html .learn-page .learner-message-text,
+html .learn-page .learner-message-text *,
+html .learn-page .kai-rich-content,
+html .learn-page .kai-rich-content * {
+  text-align: left !important;
+}
+
+html .learn-page .kai-message-text p,
+html .learn-page .learner-message-text p,
+html .learn-page .kai-rich-content .kai-rich-text {
+  display: block !important;
+  width: 100% !important;
+  max-width: 78ch !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+html .learn-page .kai-message-text .kai-list,
+html .learn-page .kai-message-text .kai-rich-bullet-list,
+html .learn-page .kai-rich-content ul,
+html .learn-page .kai-rich-content ol {
+  display: block !important;
+  width: 100% !important;
+  max-width: 78ch !important;
+  margin: 0 0 1.1em !important;
+  padding-left: 1.4rem !important;
+  text-align: left !important;
+}
+
+html .learn-page .kai-message-text .kai-list-item {
+  display: list-item !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0.35em 0 !important;
+  padding-left: 0.15rem !important;
+  text-align: left !important;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+html .learn-page .kai-message-text .kai-numbered {
+  list-style-type: decimal !important;
+}
+
+html .learn-page .kai-message-text .kai-list:not(.kai-numbered) {
+  list-style-type: disc !important;
+}
+
+html .learn-page .kai-rich-content .kai-rich-bullet-list li,
+html .learn-page .kai-rich-content li {
+  display: list-item !important;
+  margin: 0.35em 0 !important;
+  padding-left: 0.15rem !important;
+  text-align: left !important;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+@media (max-width: 700px) {
+  html .learn-page .kai-message-text p,
+  html .learn-page .learner-message-text p,
+  html .learn-page .kai-rich-content .kai-rich-text,
+  html .learn-page .kai-message-text .kai-list,
+  html .learn-page .kai-message-text .kai-rich-bullet-list,
+  html .learn-page .kai-rich-content ul,
+  html .learn-page .kai-rich-content ol {
+    max-width: none !important;
+  }
+}
