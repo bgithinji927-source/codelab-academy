@@ -23,6 +23,10 @@
   margin: 1rem auto !important;
 }
 
+.kai-rich-note-list { margin: .25rem 0; }
+.kai-rich-note-list .kai-rich-text { margin-bottom: .35rem; }
+.kai-rich-bullet-list { margin: .35rem 0 .75rem; padding-left: 1.35rem; }
+.kai-rich-bullet-list li { margin: .3rem 0; padding-left: .2rem; color: #e5e2f5; }
 .kai-rich-suggestions { width: 100%; margin: .25rem 0 0; }
 .kai-rich-suggestions-title { margin: 0 0 .35rem; color: #cfd2ea; font-size: .9rem; }
 .kai-suggestion-links { display: flex; flex-wrap: wrap; gap: .2rem 1.1rem; align-items: center; }

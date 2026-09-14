@@ -28,6 +28,18 @@ function InlineText({ children }) {
   })}</span>;
 }
 
+function TextBlock({ value }) {
+  const text = String(value || "").trim();
+  const inlineBullets = text.match(/^(.*?:)\s+-\s+(.+)$/);
+  if (!inlineBullets) return <p className="kai-rich-text"><InlineText>{text}</InlineText></p>;
+  const items = inlineBullets[2].split(/\s+-\s+/).map((item) => item.trim()).filter(Boolean);
+  if (!items.length) return <p className="kai-rich-text"><InlineText>{text}</InlineText></p>;
+  return <div className="kai-rich-note-list">
+    <p className="kai-rich-text"><InlineText>{inlineBullets[1]}</InlineText></p>
+    <ul className="kai-rich-bullet-list">{items.map((item, index) => <li key={`${index}-${item}`}><InlineText>{item}</InlineText></li>)}</ul>
+  </div>;
+}
+
 function Copyable({ block }) {
   const [copied, setCopied] = useState(false);
   const value = String(block.content ?? block.text ?? block.code ?? "");
@@ -237,8 +249,8 @@ export default function AIContentRenderer({ content, onAction, onChoice }) {
     const key = `${block.type || "block"}-${index}`;
     if (block.type === "heading") return <h2 className="kai-rich-heading" key={key}>{block.text || block.content}</h2>;
     if (block.type === "subheading") return <h3 className="kai-rich-subheading" key={key}>{block.text || block.content}</h3>;
-    if (block.type === "text") return <p className="kai-rich-text" key={key}><InlineText>{block.text || block.content}</InlineText></p>;
-    if (block.type === "bullets") return <ul key={key}>{(block.items || []).map((item) => <li key={item}><InlineText>{item}</InlineText></li>)}</ul>;
+    if (block.type === "text") return <div key={key}><TextBlock value={block.text || block.content} /></div>;
+    if (block.type === "bullets") return <ul className="kai-rich-bullet-list" key={key}>{(block.items || []).flatMap((item) => String(item).split(/\s+-\s+/).map((part) => part.trim()).filter(Boolean)).map((item, itemIndex) => <li key={`${itemIndex}-${item}`}><InlineText>{item}</InlineText></li>)}</ul>;
     if (block.type === "numbered") return <ol key={key}>{(block.items || []).map((item) => <li key={item}><InlineText>{item}</InlineText></li>)}</ol>;
     if (["code", "terminal", "json", "xml"].includes(block.type)) return <CodeBlock block={{ ...block, language: block.language || (block.type === "terminal" ? "shell" : block.type) }} key={key} />;
     if (["copy", "copyable", "command", "config"].includes(block.type)) return <Copyable block={block} key={key} />;
