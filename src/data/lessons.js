@@ -1524,6 +1524,37 @@ const supplementalMasteryTopics = [
   "Production Readiness Review",
 ];
 
+const comprehensiveCourseTopics = [
+  "Terminology, Mental Models, and Professional Vocabulary",
+  "Tools, Setup, and a Repeatable Working Environment",
+  "Core Workflow from Input to Outcome",
+  "Essential Data, State, and Resource Management",
+  "Interfaces, Components, and Reusable Boundaries",
+  "Configuration and Environment Separation",
+  "Validation, Invariants, and Safe Defaults",
+  "Errors, Recovery, and Failure Analysis",
+  "Testing Fundamentals and Regression Prevention",
+  "Debugging, Diagnostics, and Root-Cause Analysis",
+  "Automation and Repeatable Operations",
+  "Integration with Adjacent Systems",
+  "Security Principles and Access Boundaries",
+  "Privacy, Compliance, and Responsible Practice",
+  "Performance Measurement and Bottleneck Analysis",
+  "Capacity Planning and Resource Trade-offs",
+  "Reliability, Availability, and Resilience",
+  "Monitoring, Logging, and Operational Feedback",
+  "Scaling Patterns and Distributed Concerns",
+  "Versioning, Compatibility, and Change Management",
+  "Architecture Review and Design Alternatives",
+  "Refactoring, Maintainability, and Technical Debt",
+  "Case Study: Analyze a Real-World Failure",
+  "Project: Build a Useful Intermediate System",
+  "Project: Test and Harden the System",
+  "Project: Deploy and Operate the System",
+  "Expert Review: Defend Your Design Decisions",
+  "Mastery Portfolio and Further Research",
+];
+
 function makeSupplementalMasteryLesson(courseId, topic, index) {
   const courseTitle = courseId
     .split("-")
@@ -1569,7 +1600,15 @@ Object.values(lessons).forEach((courseLessons) => {
       if (!existingIds.has(lesson.id)) courseLessons.push(lesson);
     });
   }
-  const hasMasteryProject = courseLessons.some((lesson) => /mastery project|capstone|complete .*project|build and ship/i.test(lesson.title || ""));
+  if (courseId !== "javascript" && courseId !== "python" && courseLessons.length < 36) {
+    const needed = 36 - courseLessons.length;
+    const existingIds = new Set(courseLessons.map((lesson) => lesson.id));
+    comprehensiveCourseTopics.slice(0, needed).forEach((topic, index) => {
+      const lesson = makeSupplementalMasteryLesson(courseId, topic, 100 + index);
+      if (!existingIds.has(lesson.id)) courseLessons.push(lesson);
+    });
+  }
+  const hasMasteryProject = courseLessons.some((lesson) => /mastery project|capstone|project:/i.test(lesson.title || ""));
   if (!hasMasteryProject) courseLessons.push(makeMasteryProjectLesson(courseId, courseLessons));
   const totalLessons = courseLessons.length;
   courseLessons.forEach((lesson, index) => {
