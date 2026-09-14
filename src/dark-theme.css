@@ -7408,3 +7408,33 @@ html .learn-page > .conversation-container > .input-hint {
     min-height: 54px;
   }
 }
+
+
+/* Desktop reading width: use more available horizontal space while keeping
+   prose comfortably readable instead of leaving oversized side gutters. */
+@media (min-width: 701px) {
+  html .learn-page .conversation-messages {
+    width: min(calc(100% - 32px), 1480px) !important;
+    max-width: 1480px !important;
+  }
+
+  html .learn-page .kai-board-content {
+    width: min(100%, 1120px) !important;
+    max-width: 1120px !important;
+  }
+
+  html .learn-page .kai-message-text,
+  html .learn-page .learner-message-text,
+  html .learn-page .kai-rich-content {
+    max-width: 92ch !important;
+  }
+
+  html .learn-page .kai-message-text p,
+  html .learn-page .learner-message-text p,
+  html .learn-page .kai-rich-content .kai-rich-text,
+  html .learn-page .kai-message-text .kai-list,
+  html .learn-page .kai-rich-content ul,
+  html .learn-page .kai-rich-content ol {
+    max-width: 92ch !important;
+  }
+}
