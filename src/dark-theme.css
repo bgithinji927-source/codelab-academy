@@ -6473,6 +6473,117 @@ html .learn-page > .conversation-container {
   }
 }
 
+/* Kai teaching interface: full-bleed lesson canvas with a focused composer. */
+html .learn-page > .conversation-container > .kai-teaching-card,
+html .learn-page.has-custom-kai-background > .conversation-container > .kai-teaching-card {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html .learn-page .conversation-messages {
+  width: min(100%, 1120px) !important;
+  max-width: 1120px !important;
+  margin: 0 auto !important;
+}
+
+html .learn-page .kai-input-dock {
+  width: min(calc(100% - 32px), 900px) !important;
+  max-width: 900px !important;
+  min-height: 58px;
+  margin: 2.5rem auto 0 !important;
+  padding: 9px 10px 9px 14px !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 18px !important;
+  background: rgba(10, 8, 20, 0.76) !important;
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(18px) saturate(1.15);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+html .learn-page .kai-input-dock:focus-within {
+  border-color: rgba(139, 124, 246, 0.72) !important;
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(139, 124, 246, 0.12) !important;
+}
+
+html .learn-page .kai-input-dock .input-avatar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(139, 124, 246, 0.16) !important;
+  color: #c8c1ff !important;
+}
+
+html .learn-page .kai-input-dock input {
+  min-width: 0;
+  flex: 1;
+  height: 38px;
+  border: 0 !important;
+  outline: 0;
+  background: transparent !important;
+  color: #f5f2ff !important;
+  font-size: 14px;
+}
+
+html .learn-page .kai-input-dock input::placeholder {
+  color: rgba(226, 220, 246, 0.56) !important;
+}
+
+html .learn-page .kai-input-dock > button {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 12px;
+  background: #8b7cf6;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+html .learn-page .kai-input-dock > button:hover:not(:disabled) {
+  background: #a296ff;
+  transform: translateY(-1px);
+}
+
+html .learn-page .kai-input-dock > button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+html .learn-page > .conversation-container > .input-hint {
+  width: min(100%, 900px);
+  margin: 9px auto 0;
+  color: rgba(226, 220, 246, 0.48);
+  text-align: center;
+  font-size: 11px;
+}
+
+@media (max-width: 600px) {
+  html .learn-page .kai-input-dock {
+    width: calc(100% - 20px) !important;
+    border-radius: 15px !important;
+  }
+}
+
 /* End of Kai teaching wallpaper composition. */
 
 /* Course listing cards: the logo is the large hero image. */

@@ -879,6 +879,12 @@ COURSE PROGRESSION AND READINESS:
 - Do not use [COURSE_READY:] for a non-final lesson or when the learner needs more practice.
 - A course is not unlocked merely because the learner opened it; only your explicit COURSE_READY decision unlocks the next course.
 
+IN-APP CONTROLS:
+- Kai may request a CodeLab Academy interface action only when it is safe and clearly requested by the learner.
+- If the current lesson is complete, the learner explicitly asks to continue, and the next lesson is available, end your response with [UI_ACTION: CONTINUE_LESSON].
+- Never emit UI_ACTION for an incomplete lesson, an unavailable lesson, or a request that is only informational.
+- The interface validates this action and will not execute arbitrary clicks or computer controls.
+
 VIDEO RECOMMENDATIONS:
 
 - Always explain the concept in text before recommending anything.
@@ -997,6 +1003,10 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     const courseReadinessSummary = courseReadyMatch ? courseReadyMatch[1].trim() : "";
     const isCourseReady = Boolean(courseReadyMatch && isFinalCourseLesson && isLessonComplete);
     const shouldCompleteLesson = Boolean(isLessonComplete && (!isFinalCourseLesson || isCourseReady));
+    const uiActionMatch = reply.match(/\[UI_ACTION:\s*(CONTINUE_LESSON)\]/i);
+    const uiAction = uiActionMatch && shouldCompleteLesson && !isFinalCourseLesson
+      ? { type: "continue_lesson" }
+      : null;
     const videoRequestMatch = reply.match(/\[VIDEO_RECOMMEND(?:\s*:\s*(.*?))?\]/i);
     const requestedVideoTitle = videoRequestMatch?.[1]?.trim() || "";
     const videoRecommendation = videoRequestMatch
@@ -1011,6 +1021,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     const cleanReply = reply
       .replace(/\[LESSON_COMPLETE:.*?\]/g, "")
       .replace(/\[COURSE_READY:.*?\]/gi, "")
+      .replace(/\[UI_ACTION:\s*CONTINUE_LESSON\]/gi, "")
       .replace(/\[VIDEO_RECOMMEND(?:\s*:\s*.*?)?\]/gi, "")
       .trim();
 
@@ -1058,6 +1069,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
             courseReady: Boolean(isCourseReady || courseProgress?.readyForNextCourse),
             readinessSummary: courseProgress?.readinessSummary || courseReadinessSummary,
             lessonSummary,
+            uiAction,
             videoRecommendation,
             courseProgress,
             courseAccess,
@@ -1087,6 +1099,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       courseReady: false,
       readinessSummary: "",
       lessonSummary,
+      uiAction,
       videoRecommendation,
     });
   } catch (error) {

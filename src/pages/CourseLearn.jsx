@@ -40,6 +40,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [courseStateLoaded, setCourseStateLoaded] = useState(false);
   const [courseStateError, setCourseStateError] = useState("");
   const [isAdvancing, setIsAdvancing] = useState(false);
+  const [pendingUiAction, setPendingUiAction] = useState(null);
   const [savedLessonSessions, setSavedLessonSessions] = useState([]);
   const [activeVideo, setActiveVideo] = useState(null);
   const [resolvedVideoUrl, setResolvedVideoUrl] = useState("");
@@ -446,7 +447,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
       if (data.courseReady) {
         setCourseReadyForNext(true);
-        setReadinessSummary(data.readinessSummary || "Kai confirmed that you are ready for the next course.");
+        setReadinessSummary(data.readinessSummary || "Kai confirmed you are ready for the next course.");
+      }
+      if (data.uiAction?.type === "continue_lesson") {
+        setPendingUiAction(data.uiAction);
       }
       if (data.courseAccess) onProgressChanged?.(data);
 
@@ -654,6 +658,21 @@ ${startMessage}
       setIsAdvancing(false);
     }
   };
+
+  // Execute only the server-approved action supported by this page. Waiting
+  // for Kai's typing animation and completion state prevents bypassing rules.
+  useEffect(() => {
+    if (
+      pendingUiAction?.type !== "continue_lesson" ||
+      !lessonCompletionReady ||
+      isKaiTyping ||
+      isAdvancing
+    ) {
+      return;
+    }
+    setPendingUiAction(null);
+    handleNextLesson();
+  }, [pendingUiAction, lessonCompletionReady, isKaiTyping, isAdvancing]);
 
   // ============================================
   // SEND LEARNER MESSAGE
