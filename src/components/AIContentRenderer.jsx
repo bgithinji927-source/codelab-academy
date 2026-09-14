@@ -128,18 +128,32 @@ export function CodeBlock({ block }) {
 }
 
 function Diagram({ block }) {
-  const nodes = Array.isArray(block.data?.nodes) ? block.data.nodes : [];
-  const edges = Array.isArray(block.data?.edges) ? block.data.edges : [];
+  const nodes = Array.isArray(block.nodes) ? block.nodes : Array.isArray(block.data?.nodes) ? block.data.nodes : [];
+  const edges = Array.isArray(block.edges) ? block.edges : Array.isArray(block.data?.edges) ? block.data.edges : [];
   const nodeById = new Map(nodes.map((node, index) => [String(node.id || index), { ...node, index }]));
-  const width = 720;
-  const height = Math.max(180, nodes.length * 78);
-  return <div className="kai-rich-diagram" role="img" aria-label={block.label || "Kai diagram"}>
-    <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
-      <defs><marker id="kai-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" /></marker></defs>
-      {edges.map((edge, index) => { const from = nodeById.get(String(edge.from)); const to = nodeById.get(String(edge.to)); if (!from || !to) return null; const x = width / 2; const y1 = from.index * 78 + 56; const y2 = to.index * 78 + 8; return <line key={index} x1={x} y1={y1} x2={x} y2={y2} stroke="currentColor" strokeWidth="2" markerEnd="url(#kai-arrow)" />; })}
-      {nodes.map((node, index) => <g key={node.id || index}><rect x="120" y={index * 78 + 8} width="480" height="48" rx="12" /><text x="360" y={index * 78 + 38} textAnchor="middle">{node.label || node.title || node.id}</text></g>)}
-    </svg>
-  </div>;
+  const width = 820;
+  const nodeWidth = 520;
+  const nodeHeight = 54;
+  const gap = 92;
+  const height = Math.max(210, nodes.length * gap + 30);
+  const markerId = `kai-arrow-${String(block.title || block.label || "diagram").replace(/[^a-z0-9]/gi, "").slice(0, 12) || "diagram"}`;
+  const position = (node) => ({ x: (width - nodeWidth) / 2, y: node.index * gap + 14 });
+  const shape = (node, x, y) => {
+    const kind = String(node.shape || "process").toLowerCase();
+    if (["start", "end", "terminal"].includes(kind)) return <rect x={x} y={y} width={nodeWidth} height={nodeHeight} rx="27" />;
+    if (["decision", "diamond"].includes(kind)) return <polygon points={`${width / 2},${y - 8} ${width / 2 + 80},${y + nodeHeight / 2} ${width / 2},${y + nodeHeight + 8} ${width / 2 - 80},${y + nodeHeight / 2}`} />;
+    if (["input", "output", "io"].includes(kind)) return <polygon points={`${x + 22},${y} ${x + nodeWidth},${y} ${x + nodeWidth - 22},${y + nodeHeight} ${x},${y + nodeHeight}`} />;
+    if (["circle", "connector"].includes(kind)) return <circle cx={width / 2} cy={y + nodeHeight / 2} r="27" />;
+    return <rect x={x} y={y} width={nodeWidth} height={nodeHeight} rx="12" />;
+  };
+  return <section className="kai-rich-diagram" role="img" aria-label={block.title || block.label || "Kai diagram"}>
+    {block.title && <h3>{block.title}</h3>}
+    <div className="kai-rich-diagram-scroll"><svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMin meet">
+      <defs><marker id={markerId} markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" /></marker></defs>
+      {edges.map((edge, index) => { const from = nodeById.get(String(edge.from)); const to = nodeById.get(String(edge.to)); if (!from || !to) return null; const fromPos = position(from); const toPos = position(to); const x = width / 2; const y1 = fromPos.y + nodeHeight + 3; const y2 = toPos.y - 3; return <g key={`edge-${index}`}><line x1={x} y1={y1} x2={x} y2={y2} markerEnd={`url(#${markerId})`} /><text className="kai-rich-diagram-edge-label" x={x + 10} y={(y1 + y2) / 2}>{edge.label || ""}</text></g>; })}
+      {nodes.map((node, index) => { const { x, y } = position({ ...node, index }); return <g key={node.id || index} className="kai-rich-diagram-node">{shape(node, x, y)}<text x={width / 2} y={y + 33} textAnchor="middle">{node.label || node.title || node.id}</text></g>; })}
+    </svg></div>
+  </section>;
 }
 
 function Choice({ block, onChoice }) {
