@@ -764,6 +764,26 @@ ${startMessage}
 
     const lines = text.split("\n");
     const elements = [];
+    const tableBlocks = new Map();
+    const tableRowsToSkip = new Set();
+    const isTableRow = (line) => line.trim().startsWith("|") && line.trim().endsWith("|");
+    const splitTableRow = (line) => line.trim().slice(1, -1).split("|").map((cell) => cell.trim());
+    const isTableDivider = (line) => splitTableRow(line).length > 0
+      && splitTableRow(line).every((cell) => /^:?-{3,}:?$/.test(cell));
+
+    for (let index = 0; index < lines.length - 1; index += 1) {
+      if (!isTableRow(lines[index]) || !isTableDivider(lines[index + 1])) continue;
+      const header = splitTableRow(lines[index]);
+      const rows = [];
+      let end = index + 2;
+      while (end < lines.length && isTableRow(lines[end])) {
+        rows.push(splitTableRow(lines[end]));
+        end += 1;
+      }
+      tableBlocks.set(index, { header, rows });
+      for (let rowIndex = index + 1; rowIndex < end; rowIndex += 1) tableRowsToSkip.add(rowIndex);
+      index = end - 1;
+    }
 
     let insideCodeBlock = false;
     let codeLanguage = "code";
@@ -807,6 +827,35 @@ ${startMessage}
 
     lines.forEach((line, index) => {
       const trimmed = line.trim();
+
+      if (tableRowsToSkip.has(index)) return;
+      const table = tableBlocks.get(index);
+      if (table) {
+        const columnCount = table.header.length;
+        elements.push(
+          <div className="kai-table-scroll" key={`table-${index}`}>
+            <table className="kai-markdown-table">
+              <thead>
+                <tr>
+                  {table.header.map((cell, cellIndex) => (
+                    <th key={cellIndex}>{renderInlineMarkdown(cell)}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {table.rows.map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {Array.from({ length: columnCount }, (_, cellIndex) => (
+                      <td key={cellIndex}>{renderInlineMarkdown(row[cellIndex] || "")}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        return;
+      }
 
       // Markdown code fence
       if (trimmed.startsWith("```")) {

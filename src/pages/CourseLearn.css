@@ -464,6 +464,43 @@
   font-weight: 800;
 }
 
+.kai-table-scroll {
+  width: 100%;
+  margin: 16px 0 20px;
+  overflow-x: auto;
+  border: 1px solid #e8def7;
+  border-radius: 10px;
+}
+
+.kai-markdown-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 0.94rem;
+}
+
+.kai-markdown-table th,
+.kai-markdown-table td {
+  padding: 10px 13px;
+  border-bottom: 1px solid #eee9f7;
+  text-align: left;
+  vertical-align: top;
+}
+
+.kai-markdown-table th {
+  background: #f4efff;
+  color: #4c1d95;
+  font-weight: 800;
+}
+
+.kai-markdown-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.kai-markdown-table tbody tr:nth-child(even) {
+  background: #fcfaff;
+}
+
 .learner-message-text p {
   color: #ffffff;
 }
