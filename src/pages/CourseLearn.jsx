@@ -1068,6 +1068,39 @@ ${startMessage}
         }
       }
 
+      // Some model responses place numbered steps in one paragraph using
+      // either Markdown numbers ("1.", "2.") or keycap digits ("1️⃣").
+      // Keep the lead-in as prose, but render the steps as a real list so the
+      // response remains readable on narrow screens.
+      const numberedStepPattern = /(?:^|\s)([1-9](?:\.\s|\uFE0F\u20E3|\u20E3\s))/g;
+      const numberedMarkers = [...trimmed.matchAll(numberedStepPattern)];
+      if (numberedMarkers.length >= 2) {
+        const firstMarker = numberedMarkers[0];
+        const leadIn = trimmed.slice(0, firstMarker.index).trim();
+        const steps = numberedMarkers.map((marker, markerIndex) => {
+          const start = marker.index + marker[0].length;
+          const end = markerIndex + 1 < numberedMarkers.length
+            ? numberedMarkers[markerIndex + 1].index
+            : trimmed.length;
+          return trimmed.slice(start, end).replace(/[–—-]\s*$/, "").trim();
+        }).filter(Boolean);
+        if (steps.length >= 2) {
+          elements.push(
+            <div className="kai-inline-list-group" key={index}>
+              {leadIn && <p>{renderInlineMarkdown(leadIn)}</p>}
+              <ol className="kai-list kai-numbered">
+                {steps.map((step, stepIndex) => (
+                  <li className="kai-list-item" key={`${index}-${stepIndex}`}>
+                    {renderInlineMarkdown(step)}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          );
+          return;
+        }
+      }
+
       // Normal paragraph
       elements.push(
         <p key={index}>

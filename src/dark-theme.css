@@ -7244,3 +7244,37 @@ html .learn-page > .conversation-container > .input-hint {
     overflow: hidden !important;
   }
 }
+
+
+/* Mobile Kai lesson spacing: reserve the full multi-row control header and
+   keep the first response heading/paragraph separated below it. */
+@media (max-width: 700px) {
+  html .learn-page > .conversation-container {
+    padding-top: 174px !important;
+  }
+
+  html .learn-page .conversation-messages {
+    padding-top: 12px !important;
+  }
+
+  html .learn-page .kai-message-text h2,
+  html .learn-page .kai-message-text h3,
+  html .learn-page .kai-message-text h4,
+  html .learn-page .kai-rich-content .kai-rich-heading,
+  html .learn-page .kai-rich-content .kai-rich-subheading {
+    display: block !important;
+    margin-top: 1.1rem !important;
+    margin-bottom: 0.9rem !important;
+    line-height: 1.25 !important;
+  }
+
+  html .learn-page .kai-message-text h2:first-child,
+  html .learn-page .kai-message-text h3:first-child,
+  html .learn-page .kai-rich-content .kai-rich-heading:first-child {
+    margin-top: 0 !important;
+  }
+
+  html .learn-page .chat-row {
+    margin-bottom: 30px !important;
+  }
+}
