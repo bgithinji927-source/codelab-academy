@@ -1612,3 +1612,32 @@ a {
     font-size: 12px;
   }
 }
+
+
+/* Keep authentication actions accessible on phones. */
+@media (max-width: 760px) {
+  .nav-actions {
+    gap: 6px;
+    flex-shrink: 1;
+  }
+
+  .nav-actions .theme-toggle {
+    display: none;
+  }
+
+  .nav-actions .install-app-button {
+    display: none;
+  }
+
+  .nav-actions .sign-in,
+  .nav-actions .get-started {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}
