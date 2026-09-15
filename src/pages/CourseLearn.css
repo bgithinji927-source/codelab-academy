@@ -1325,18 +1325,22 @@
 }
 
 /* Continuous Kai teaching board: content flows directly on the lesson surface. */
-.learn-page .conversation-container{padding:clamp(1.5rem,3vw,3rem) clamp(1rem,2.5vw,2.5rem) 5rem;background:transparent}
+.learn-page .conversation-container{padding:clamp(1.5rem,3vw,3rem) clamp(.75rem,1.25vw,1.25rem) 5rem;background:transparent}
 .learn-page .kai-teaching-card{width:100%;max-width:none;background:transparent;border:0;box-shadow:none}
-.learn-page .conversation-messages{width:100%;max-width:1100px;margin:0 auto}
+.learn-page .conversation-messages{width:100%;max-width:1400px;margin:0 auto}
 .learn-page .chat-row{margin-bottom:clamp(1.8rem,3vw,3rem)}
 .learn-page .chat-content,.learn-page .learner-content{width:100%;max-width:none}
+.learn-page .learner-row{display:flex;justify-content:flex-end}
+.learn-page .learner-row .learner-content{width:min(78%,900px);margin-left:auto;text-align:right}
+.learn-page .learner-row .learner-message-header{justify-content:flex-end}
+.learn-page .learner-row .learner-board-content{text-align:left}
 .learn-page .kai-message-header{margin-bottom:.65rem;padding-bottom:.45rem;border-bottom:1px solid color-mix(in srgb,#9b8cff 18%,transparent)}
 .learn-page .kai-bubble{padding:.25rem 0 0;background:transparent;border:0;border-radius:0;box-shadow:none;color:inherit}
 .learn-page .learner-message-header{opacity:.72}
 .learn-page .learner-bubble{max-width:none;margin:0;padding:.65rem 0 .65rem 1rem;background:transparent;border:0;border-left:2px solid #9b8cff;border-radius:0;box-shadow:none;color:inherit}
 .learn-page .saved-lesson-session{margin:0 0 clamp(2rem,4vw,4rem);padding:0 0 1.5rem;border-bottom:1px solid color-mix(in srgb,#9b8cff 18%,transparent);background:transparent}
 .learn-page .saved-lesson-heading{margin-bottom:1.25rem;background:transparent;border:0;padding:0;color:inherit}
-.learn-page .learner-input-area{width:100%;max-width:1100px;margin-left:auto;margin-right:auto}
+.learn-page .learner-input-area{width:100%;max-width:1400px;margin-left:auto;margin-right:auto}
 .learn-page .kai-rich-video{margin-left:0;margin-right:0}
 @media (max-width:600px){.learn-page .conversation-container{padding-left:1rem;padding-right:1rem}.learn-page .kai-message-header{gap:7px}.learn-page .learner-bubble{padding-left:.75rem}}
 
@@ -1345,12 +1349,87 @@
 .learn-page .kai-board-content{font-size:clamp(1rem,1.2vw,1.12rem);line-height:1.8}
 .learn-page .learner-board-content{padding:.45rem 0 .45rem 1rem;border-left:2px solid color-mix(in srgb,#8b7cf6 60%,transparent);font-size:.95rem;line-height:1.65}
 .learn-page .kai-board-status{width:100%;margin:0 auto 2rem;padding:.7rem 0;color:#a65b66;border:0;border-bottom:1px solid color-mix(in srgb,#c97d88 35%,transparent);background:transparent;font-size:.9rem}
-.learn-page .kai-input-dock{position:static;width:100%;max-width:1100px;margin:2.5rem auto .25rem;padding:.75rem 0;border:0;border-top:1px solid color-mix(in srgb,#8b7cf6 24%,transparent);border-radius:0;background:transparent;box-shadow:none}
+.learn-page .kai-input-dock{position:static;width:100%;max-width:1400px;margin:2.5rem auto .25rem;padding:.75rem 0;border:0;border-top:1px solid color-mix(in srgb,#8b7cf6 24%,transparent);border-radius:0;background:transparent;box-shadow:none}
 .learn-page .kai-input-dock:focus-within{border-color:color-mix(in srgb,#8b7cf6 45%,transparent);box-shadow:none}
 .learn-page .kai-input-dock .input-avatar{background:transparent;color:#7c3aed}
 .learn-page .kai-input-dock input{border:0;background:transparent}
 .learn-page .kai-input-dock>button{border-radius:7px}
+@media (max-width:700px){.learn-page .learner-row .learner-content{width:92%}}
 @media (max-width:600px){.learn-page .kai-input-dock{margin-top:2rem}.learn-page .learner-board-content{padding-left:.75rem}}
+
+/* Reference-style floating composer: a rounded message box, not a full-width
+   bottom bar. */
+.learn-page .kai-input-dock {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  width: min(100%, 900px);
+  max-width: 900px;
+  margin: 2.5rem auto 0;
+  padding: 12px 12px 9px;
+  border: 1px solid #454545;
+  border-radius: 20px;
+  background: #242424;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+}
+.learn-page .kai-input-dock:focus-within {
+  border-color: #5b5b5b;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, .28);
+}
+.learn-page .kai-input-dock textarea {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 42px;
+  max-height: 130px;
+  padding: 2px 3px;
+  border: 0;
+  outline: 0;
+  resize: none;
+  overflow-y: auto;
+  background: transparent;
+  color: #ececec;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.learn-page .kai-input-dock textarea::placeholder {color: #777}
+.learn-page .kai-input-dock textarea:disabled {cursor: not-allowed;opacity: .55}
+.learn-page .kai-input-dock .kai-composer-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  color: #a9a9a9;
+  background: transparent;
+  cursor: pointer;
+}
+.learn-page .kai-input-dock .kai-composer-icon:hover {background: #303030;color: #ededed}
+.learn-page .kai-input-dock .kai-composer-send {
+  grid-column: 2;
+  grid-row: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #aaa;
+  background: #454545;
+  cursor: pointer;
+}
+.learn-page .kai-input-dock .kai-composer-send:not(:disabled) {background:#6b6b6b;color:#fff}
+.learn-page .kai-input-dock .kai-composer-send:disabled {cursor:not-allowed;opacity:.55}
+.learn-page .input-hint {display:none}
+@media (max-width:600px) {
+  .learn-page .kai-input-dock {width:calc(100% - 1rem);margin-top:2rem;border-radius:18px}
+}
 
 /* Optional ChatGPT-style Kai design. Normal UI remains unchanged unless the
    learner selects ChatGPT UI in the Kai header. */

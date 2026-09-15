@@ -4,8 +4,9 @@ import {
   ArrowRight,
   Bot,
   BookOpen,
-  UserRound,
+  Plus,
   Send,
+  UserRound,
   Sparkles,
   CheckCircle2,
   X,
@@ -195,7 +196,18 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   };
 
   const parseStructuredContent = (value) => {
-    if (Array.isArray(value)) return value;
+    const structuredBlockTypes = new Set([
+      "heading", "subheading", "text", "bullets", "numbered", "code", "terminal", "json", "xml",
+      "copy", "copyable", "command", "config", "diagram", "table", "choice", "quiz", "suggestions",
+      "callout", "quote", "checklist", "comparison", "compare", "timeline", "equation", "math",
+      "progress", "filetree", "file-tree", "image", "preview", "embed", "video", "exercise", "action",
+    ]);
+    const normalizeBlock = (block) => (
+      block && typeof block === "object" && block.diagramType && Array.isArray(block.nodes) && Array.isArray(block.edges)
+        ? { ...block, type: "diagram" }
+        : block
+    );
+    if (Array.isArray(value)) return value.map(normalizeBlock);
     const text = cleanKaiResponse(value)
       .replace(/^```(?:json)?\s*/i, "")
       .replace(/\s*```$/i, "")
@@ -213,20 +225,33 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       try {
         let parsed = JSON.parse(candidate);
         if (typeof parsed === "string") parsed = JSON.parse(parsed);
-        if (parsed?.type === "diagram" && Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)) return [parsed];
-        if (Array.isArray(parsed)) return parsed;
-        if (!Array.isArray(parsed?.content)) continue;
-        const blocks = [...parsed.content];
+        // Accept both the current diagram shape and the legacy shape that
+        // identifies diagrams with diagramType. Both must render as a diagram
+        // block; neither should fall through to the raw JSON markdown view.
+        if ((parsed?.type === "diagram" || parsed?.diagramType) && Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)) {
+          return [{ ...parsed, type: "diagram" }];
+        }
+        if (Array.isArray(parsed)) return parsed.map(normalizeBlock);
+        if (parsed && typeof parsed === "object" && structuredBlockTypes.has(parsed.type)) {
+          return [normalizeBlock(parsed)];
+        }
+        const blocks = Array.isArray(parsed?.content)
+          ? [...parsed.content]
+          : parsed?.content && typeof parsed.content === "object"
+            ? [parsed.content]
+            : null;
+        if (!blocks) continue;
+        const normalizedBlocks = blocks.map(normalizeBlock);
         // Support both the documented content-array form and the variant
         // where the model places suggestions beside content.
-        if (parsed.suggestions && !blocks.some((block) => block?.type === "suggestions")) {
-          blocks.push(parsed.suggestions.type === "suggestions"
+        if (parsed.suggestions && !normalizedBlocks.some((block) => block?.type === "suggestions")) {
+          normalizedBlocks.push(parsed.suggestions.type === "suggestions"
             ? parsed.suggestions
             : { type: "suggestions", items: parsed.suggestions.items || [] });
         }
         // Videos are rendered only from the server's verified database
         // recommendation, never from an AI-supplied URL in generated JSON.
-        return blocks.filter((block) => block?.type !== "video");
+        return normalizedBlocks.filter((block) => block?.type !== "video");
       } catch {
         // Try the next candidate, then use the existing Markdown renderer.
       }
@@ -1523,11 +1548,6 @@ ${startMessage}
         ====================================== */}
 
         <div className="kai-input-dock">
-
-          <div className="input-avatar">
-            <UserRound size={18} />
-          </div>
-
           <textarea
             rows={2}
             value={answer}
@@ -1554,8 +1574,13 @@ ${startMessage}
             autoComplete="off"
           />
 
+          <button type="button" className="kai-composer-icon" aria-label="Add attachment" title="Add attachment">
+            <Plus size={17} />
+          </button>
+
           <button
             type="button"
+            className="kai-composer-send"
             onClick={handleSend}
             disabled={
               isKaiTyping ||
@@ -1565,7 +1590,7 @@ ${startMessage}
             }
             aria-label="Send message"
           >
-            <Send size={17} />
+            <Send size={15} />
           </button>
 
         </div>
