@@ -1721,7 +1721,35 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
 .learn-page .kai-rich-content .kai-rich-text:last-child {
   margin-bottom: 0;
 }
-
+.learn-page .kai-rich-content > * + * {
+  margin-top: 1.15rem;
+}
+.learn-page .kai-rich-content .kai-rich-text + .kai-rich-text {
+  margin-top: 1.15rem;
+}
+.learn-page .kai-message-text p + p,
+.learn-page .kai-message-text ul + p,
+.learn-page .kai-message-text p + ul,
+.learn-page .kai-message-text ol + p,
+.learn-page .kai-message-text p + ol {
+  margin-top: 1.15rem;
+}
+.learn-page .kai-rich-code .monaco-editor .margin {
+  min-width: 42px !important;
+  width: 42px !important;
+  overflow: visible !important;
+}
+.learn-page .kai-rich-code .monaco-editor .line-numbers {
+  width: 34px !important;
+  min-width: 34px !important;
+  padding-right: 8px !important;
+  overflow: visible !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+}
+.learn-page .kai-rich-code .monaco-editor .lines-content {
+  margin-left: 42px !important;
+}
 .learn-page .kai-rich-heading,
 .learn-page .kai-rich-subheading {
   text-align: left;
