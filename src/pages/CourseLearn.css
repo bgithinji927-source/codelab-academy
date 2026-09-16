@@ -2100,3 +2100,17 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
   display: none !important;
   content: none !important;
 }
+
+
+/* Ensure no lesson-shell edge can appear at the top, bottom, or final scroll
+   position of the Kai teaching view. */
+.learn-page.kai-chatgpt-mode .conversation-container,
+.learn-page.kai-chatgpt-mode .conversation-messages,
+.learn-page.kai-chatgpt-mode .kai-teaching-card,
+.learn-page.kai-chatgpt-mode .kai-board-content,
+.learn-page.kai-chatgpt-mode .kai-board-thinking {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
