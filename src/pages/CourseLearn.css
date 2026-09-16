@@ -2138,3 +2138,39 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
   outline: 0 !important;
   box-shadow: none !important;
 }
+
+/* Final alignment: keep the visible Kai response and composer on one 900px column. */
+.learn-page.kai-chatgpt-mode .conversation-messages,
+.learn-page.kai-chatgpt-mode .learner-input-area,
+.learn-page.kai-chatgpt-mode .chat-content,
+.learn-page.kai-chatgpt-mode .learner-content,
+.learn-page.kai-chatgpt-mode .kai-board-content,
+.learn-page.kai-chatgpt-mode .kai-rich-content,
+.learn-page.kai-chatgpt-mode .kai-rich-content > div,
+.learn-page.kai-chatgpt-mode .kai-message-text,
+.learn-page.kai-chatgpt-mode .learner-message-text {
+  width: min(100%, 900px) !important;
+  max-width: 900px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box;
+}
+
+.learn-page.kai-chatgpt-mode .kai-input-dock {
+  width: min(100%, 900px) !important;
+  max-width: 900px !important;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .learn-page.kai-chatgpt-mode .conversation-messages,
+  .learn-page.kai-chatgpt-mode .chat-content,
+  .learn-page.kai-chatgpt-mode .kai-board-content,
+  .learn-page.kai-chatgpt-mode .kai-rich-content,
+  .learn-page.kai-chatgpt-mode .kai-rich-content > div,
+  .learn-page.kai-chatgpt-mode .kai-message-text,
+  .learn-page.kai-chatgpt-mode .kai-input-dock {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
