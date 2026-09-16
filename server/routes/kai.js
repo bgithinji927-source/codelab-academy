@@ -1039,26 +1039,31 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       // Groq now prefers max_completion_tokens. A larger budget is important
       // for reasoning models because it includes their hidden reasoning tokens.
       max_completion_tokens: 4096,
+      // JSON mode prevents the model from leaking prose, Markdown fences, or
+      // partially serialized objects into the learner-facing response.
+      response_format: { type: "json_object" },
     };
     if (/gpt-oss/i.test(GROQ_MODEL)) {
       groqRequestBody.reasoning_effort = "low";
       groqRequestBody.include_reasoning = false;
     }
 
-    const response = await fetch(GROQ_API_URL, {
+    const requestGroq = (messages) => fetch(GROQ_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
-      body: JSON.stringify(groqRequestBody),
+      body: JSON.stringify({ ...groqRequestBody, messages }),
     });
+
+    let response = await requestGroq(groqMessages);
 
     // ========================================
     // READ RESPONSE
     // ========================================
 
-    const data = await response.json();
+    let data = await response.json();
 
     if (!response.ok) {
       console.error("Groq API error:", response.status, data);
@@ -1069,9 +1074,35 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       });
     }
 
-    const reply = extractAssistantText(data)
+    let reply = extractAssistantText(data)
       .replace(/<think>[\s\S]*?<\/think>/gi, "")
       .trim();
+
+    // JSON mode guarantees syntax, while this validation guarantees the
+    // application contract. Retry once if the model returns a valid but
+    // unusable JSON value (for example, an empty object or a plain string).
+    if (response.ok && !parseStructuredReply(reply)?.length) {
+      const correctionMessages = [
+        ...groqMessages,
+        { role: "assistant", content: reply },
+        {
+          role: "user",
+          content: "Your previous response did not contain a usable lesson_response JSON object. Return only valid JSON with a non-empty content array of learner-facing blocks. Do not include Markdown fences or any text outside the JSON object.",
+        },
+      ];
+      response = await requestGroq(correctionMessages);
+      data = await response.json();
+      if (!response.ok) {
+        console.error("Groq correction request error:", response.status, data);
+        return res.status(response.status).json({
+          success: false,
+          message: data?.error?.message || "Kai could not format a valid teaching response.",
+        });
+      }
+      reply = extractAssistantText(data)
+        .replace(/<think>[\s\S]*?<\/think>/gi, "")
+        .trim();
+    }
 
     if (!reply) {
       console.error("Groq returned no visible message:", {
