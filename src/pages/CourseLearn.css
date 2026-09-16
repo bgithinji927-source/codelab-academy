@@ -1350,7 +1350,7 @@
 /* Continuous Kai teaching board: content flows directly on the lesson surface. */
 .learn-page .conversation-container{padding:clamp(1.5rem,3vw,3rem) clamp(.75rem,1.25vw,1.25rem) 5rem;background:transparent}
 .learn-page .kai-teaching-card{width:100%;max-width:none;background:transparent;border:0;box-shadow:none}
-.learn-page .conversation-messages{width:100%;max-width:1400px;margin:0 auto}
+.learn-page .conversation-messages{width:100%;max-width:1340px;margin:0 auto}
 .learn-page .chat-row{margin-bottom:clamp(1.8rem,3vw,3rem)}
 .learn-page .chat-content,.learn-page .learner-content{width:100%;max-width:none}
 .learn-page .learner-row{display:flex;justify-content:flex-end}
@@ -1363,7 +1363,7 @@
 .learn-page .learner-bubble{max-width:none;margin:0;padding:.65rem 0 .65rem 1rem;background:transparent;border:0;border-left:2px solid #9b8cff;border-radius:0;box-shadow:none;color:inherit}
 .learn-page .saved-lesson-session{margin:0 0 clamp(2rem,4vw,4rem);padding:0 0 1.5rem;border-bottom:1px solid color-mix(in srgb,#9b8cff 18%,transparent);background:transparent}
 .learn-page .saved-lesson-heading{margin-bottom:1.25rem;background:transparent;border:0;padding:0;color:inherit}
-.learn-page .learner-input-area{width:100%;max-width:1400px;margin-left:auto;margin-right:auto}
+.learn-page .learner-input-area{width:100%;max-width:1340px;margin-left:auto;margin-right:auto}
 .learn-page .kai-rich-video{margin-left:0;margin-right:0}
 @media (max-width:600px){.learn-page .conversation-container{padding-left:1rem;padding-right:1rem}.learn-page .kai-message-header{gap:7px}.learn-page .learner-bubble{padding-left:.75rem}}
 
@@ -1372,7 +1372,7 @@
 .learn-page .kai-board-content{font-size:clamp(1rem,1.2vw,1.12rem);line-height:1.8}
 .learn-page .learner-board-content{padding:.45rem 0 .45rem 1rem;border-left:2px solid color-mix(in srgb,#8b7cf6 60%,transparent);font-size:.95rem;line-height:1.65}
 .learn-page .kai-board-status{width:100%;margin:0 auto 2rem;padding:.7rem 0;color:#a65b66;border:0;border-bottom:1px solid color-mix(in srgb,#c97d88 35%,transparent);background:transparent;font-size:.9rem}
-.learn-page .kai-input-dock{position:static;width:100%;max-width:1400px;margin:2.5rem auto .25rem;padding:.75rem 0;border:0;border-top:1px solid color-mix(in srgb,#8b7cf6 24%,transparent);border-radius:0;background:transparent;box-shadow:none}
+.learn-page .kai-input-dock{position:static;width:100%;max-width:1340px;margin:2.5rem auto .25rem;padding:.75rem 0;border:0;border-top:1px solid color-mix(in srgb,#8b7cf6 24%,transparent);border-radius:0;background:transparent;box-shadow:none}
 .learn-page .kai-input-dock:focus-within{border-color:color-mix(in srgb,#8b7cf6 45%,transparent);box-shadow:none}
 .learn-page .kai-input-dock .input-avatar{background:transparent;color:#7c3aed}
 .learn-page .kai-input-dock input{border:0;background:transparent}
