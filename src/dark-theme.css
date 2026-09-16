@@ -7669,3 +7669,24 @@ html .learn-page .chat-row {
     box-sizing: border-box;
   }
 }
+
+
+/* Equal breathing room belongs on the message cards themselves, not on the
+   suggestion or quick-reply controls. */
+html .learn-page .kai-board-content,
+html .learn-page .learner-board-content {
+  width: calc(100% - 1rem) !important;
+  max-width: none !important;
+  margin-left: .5rem !important;
+  margin-right: .5rem !important;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  html .learn-page .kai-board-content,
+  html .learn-page .learner-board-content {
+    width: calc(100% - .9rem) !important;
+    margin-left: .45rem !important;
+    margin-right: .45rem !important;
+  }
+}
