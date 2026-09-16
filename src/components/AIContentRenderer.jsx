@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Play, RotateCcw, Copy, Check, Lightbulb, AlertTriangle, Info, ArrowRight, Quote, CheckSquare, Clock, ExternalLink } from "lucide-react";
+import { Play, RotateCcw, Copy, Check, Lightbulb, AlertTriangle, Info, ArrowRight, Quote, CheckSquare, Clock, ExternalLink, MessageCircle, Code2, HelpCircle, Dumbbell, Sparkles, ListChecks } from "lucide-react";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import "./AIContentRenderer.css";
 
@@ -256,6 +256,29 @@ export function Suggestions({ block, onAction }) {
   </section>;
 }
 
+const QUICK_REPLY_ICONS = {
+  example: Code2,
+  practice: Dumbbell,
+  quiz: HelpCircle,
+  review: ListChecks,
+  challenge: Sparkles,
+  prompt: MessageCircle,
+};
+
+export function QuickReplies({ block, onAction }) {
+  const items = Array.isArray(block.items) ? block.items : [];
+  return <section className="kai-quick-replies" aria-label={block.title || "Quick replies"}>
+    {block.title && <p className="kai-quick-replies-title">{block.title}</p>}
+    <div className="kai-quick-reply-list">{items.slice(0, 5).map((item, index) => {
+      const value = typeof item === "string" ? { text: item, action: "prompt" } : item;
+      const text = value.text || value.label;
+      if (!text) return null;
+      const Icon = QUICK_REPLY_ICONS[value.action] || MessageCircle;
+      return <button type="button" className="kai-quick-reply" key={`${text}-${index}`} onClick={() => onAction?.(value.action || "prompt", value.prompt || value.payload || text)}><Icon size={15} aria-hidden="true" /><span>{text}</span></button>;
+    })}</div>
+  </section>;
+}
+
 function Callout({ block }) {
   const kind = String(block.kind || "tip").toLowerCase();
   const Icon = kind === "warning" ? AlertTriangle : kind === "important" ? Info : Lightbulb;
@@ -308,6 +331,7 @@ export default function AIContentRenderer({ content, onAction, onChoice }) {
     if (block.type === "choice") return <Choice block={block} onChoice={onChoice} key={key} />;
     if (block.type === "quiz") return <Choice block={block} onChoice={onChoice} key={key} />;
     if (block.type === "suggestions") return <Suggestions block={block} onAction={onAction} key={key} />;
+    if (["quick_replies", "quickReplies"].includes(block.type)) return <QuickReplies block={block} onAction={onAction} key={key} />;
     if (block.type === "callout") return <Callout block={block} key={key} />;
     if (block.type === "quote") return <QuoteBlock block={block} key={key} />;
     if (block.type === "checklist") return <Checklist block={block} key={key} />;

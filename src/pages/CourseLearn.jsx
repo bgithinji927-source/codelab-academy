@@ -239,7 +239,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     const structuredBlockTypes = new Set([
       "heading", "subheading", "text", "bullets", "numbered", "code", "terminal", "json", "xml",
       "copy", "copyable", "command", "config", "diagram", "table", "choice", "quiz", "suggestions",
-      "callout", "quote", "checklist", "comparison", "compare", "timeline", "equation", "math",
+      "callout", "quote", "checklist", "comparison", "compare", "timeline", "equation", "math", "quick_replies", "quickReplies",
       "progress", "filetree", "file-tree", "image", "preview", "embed", "video", "exercise", "action",
     ]);
     const normalizeBlock = (block) => (
@@ -297,9 +297,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             ? parsed.suggestions
             : { type: "suggestions", items: parsed.suggestions.items || [] });
         }
+        if (parsed.quick_replies && !normalizedBlocks.some((block) => ["quick_replies", "quickReplies"].includes(block?.type))) {
+          normalizedBlocks.push({ type: "quick_replies", items: parsed.quick_replies.items || [] });
+        }
+        const hasQuickReplies = normalizedBlocks.some((block) => ["quick_replies", "quickReplies"].includes(block?.type));
         // Videos are rendered only from the server's verified database
         // recommendation, never from an AI-supplied URL in generated JSON.
-        return normalizedBlocks.filter((block) => block?.type !== "video");
+        return normalizedBlocks.filter((block) => block?.type !== "video" && !(hasQuickReplies && block?.type === "suggestions"));
       } catch {
         // Try the next candidate, then use the existing Markdown renderer.
       }
