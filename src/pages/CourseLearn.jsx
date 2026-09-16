@@ -862,7 +862,14 @@ ${startMessage}
       return null;
     }
 
-    const lines = text.split("\n");
+    // Models occasionally place a fenced code block directly after prose
+    // (for example: "### Example ```js function...```"). Split every fence
+    // onto its own line before parsing. Otherwise code lines such as
+    // "1. continue" are incorrectly rendered as an ordered list.
+    const normalizedText = text
+      .replace(/\r\n?/g, "\n")
+      .replace(/```([A-Za-z0-9+#._-]*)/g, "\n```$1\n");
+    const lines = normalizedText.split("\n");
     const elements = [];
     const tableBlocks = new Map();
     const tableRowsToSkip = new Set();
