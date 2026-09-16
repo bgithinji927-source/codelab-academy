@@ -7652,3 +7652,20 @@ html .learn-page > .conversation-container > .input-hint {
     flex: 0 0 42px;
   }
 }
+
+
+/* Equal breathing room for Kai chat bubbles; action controls keep their own
+   layout and spacing. */
+html .learn-page .chat-row {
+  padding-left: .5rem !important;
+  padding-right: .5rem !important;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  html .learn-page .chat-row {
+    padding-left: .45rem !important;
+    padding-right: .45rem !important;
+    box-sizing: border-box;
+  }
+}
