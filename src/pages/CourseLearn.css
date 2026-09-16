@@ -1873,12 +1873,12 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
    tool row, and a short safety note underneath. */
 .learn-page.kai-chatgpt-mode .kai-input-dock {
   position: fixed !important;
-  left: 50% !important;
+  left: clamp(16px, 4.5vw, 70px) !important;
   right: auto !important;
   bottom: 30px !important;
-  transform: translateX(-50%);
-  width: min(calc(100% - 32px), 692px) !important;
-  max-width: 692px !important;
+  transform: none !important;
+  width: min(calc(100% - 9vw), 940px) !important;
+  max-width: 940px !important;
   min-height: 126px !important;
   display: grid !important;
   grid-template-columns: 44px minmax(0, 1fr) 44px !important;
@@ -1942,12 +1942,12 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
 }
 @media (max-width: 640px) {
   .learn-page.kai-chatgpt-mode .kai-input-dock {
-    left: 50% !important;
+    left: 12px !important;
     right: auto !important;
     bottom: 28px !important;
-    width: calc(100% - 16px) !important;
-    max-width: calc(100% - 16px) !important;
-    transform: translateX(-50%) !important;
+    width: calc(100% - 24px) !important;
+    max-width: calc(100% - 24px) !important;
+    transform: none !important;
   }
   .learn-page.kai-chatgpt-mode .kai-input-dock::before { font-size: 10px; }
   .learn-page.kai-chatgpt-mode .kai-input-dock::after { font-size: 9px; }

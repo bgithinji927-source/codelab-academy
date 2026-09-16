@@ -174,7 +174,7 @@ export function CodeBlock({ block }) {
         <button type="button" onClick={runCode}><Play size={14} /> Run</button>
       </div>
     </header>
-    <Editor height={Math.min(420, Math.max(150, value.split("\n").length * 21 + 24))} language={language === "py" ? "python" : language} value={value} onChange={(next) => setValue(next || "")} theme="vs-dark" options={{ minimap: { enabled: false }, lineNumbers: "on", fontSize: 14, padding: { top: 12, bottom: 12 }, scrollBeyondLastLine: false }} />
+    <Editor height={Math.min(420, Math.max(150, value.split("\n").length * 21 + 24))} language={language === "py" ? "python" : language} value={value} onChange={(next) => setValue(next || "")} theme="vs-dark" options={{ minimap: { enabled: false }, lineNumbers: "on", lineNumbersMinChars: 3, lineDecorationsWidth: 8, glyphMargin: false, fontSize: 14, padding: { top: 12, bottom: 12, left: 8, right: 8 }, scrollBeyondLastLine: false, scrollBeyondLastColumn: 0 }} />
     {output && <pre className="kai-rich-code-output">{output}</pre>}
   </section>;
 }
