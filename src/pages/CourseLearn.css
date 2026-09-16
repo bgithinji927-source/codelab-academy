@@ -1825,6 +1825,44 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
   min-height: 76px;
 }
 
+/* Match the reference composer: one horizontal row with the add button,
+   message field, and send button aligned on the same baseline. */
+.learn-page.kai-chatgpt-mode .kai-input-dock {
+  left: 4px !important;
+  right: 12px !important;
+  bottom: 8px !important;
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr) 44px !important;
+  grid-template-rows: 1fr !important;
+  align-items: center !important;
+  min-height: 76px !important;
+  padding: 10px 12px !important;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock textarea {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  width: 100% !important;
+  min-height: 42px !important;
+  height: 42px !important;
+  align-self: center !important;
+  padding: 10px 8px !important;
+  margin: 0 !important;
+  resize: none !important;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock .kai-composer-icon {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  justify-self: start !important;
+  align-self: center !important;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock .kai-composer-send {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  justify-self: end !important;
+  align-self: center !important;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock .input-hint { display: none !important; }
+
 @media (max-width: 640px) {
   .learn-page.kai-chatgpt-mode .kai-board-content,
   .learn-page.kai-chatgpt-mode .learner-board-content { width: calc(100% - 24px) !important; }
