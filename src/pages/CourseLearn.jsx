@@ -187,26 +187,19 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   // requestAnimationFrame coalesces the 15ms typing updates into one scroll
   // per rendered frame instead of creating a queue of smooth scrolls.
   useEffect(() => {
+    // Do not move the viewport while Kai is typing. The learner must be able
+    // to review earlier messages and then scroll back down freely; repeatedly
+    // calling scrollIntoView here makes downward and upward swipes compete
+    // with the stream.
+    if (isKaiTyping) return undefined;
+
     if (scrollFrameRef.current) {
       cancelAnimationFrame(scrollFrameRef.current);
     }
 
     scrollFrameRef.current = requestAnimationFrame(() => {
-      // While Kai is streaming a response, follow the text only when the
-      // learner is already near the bottom. If they swipe upward to review an
-      // earlier message, do not repeatedly pull the page back down.
-      const scrollTarget = document.scrollingElement || document.documentElement;
-      const distanceFromBottom = Math.max(
-        0,
-        scrollTarget.scrollHeight - (window.scrollY + window.innerHeight)
-      );
-      if (isKaiTyping && distanceFromBottom > 220) {
-        scrollFrameRef.current = null;
-        return;
-      }
-
       conversationEndRef.current?.scrollIntoView({
-        behavior: isKaiTyping ? "auto" : "smooth",
+        behavior: "smooth",
         block: "end",
       });
       scrollFrameRef.current = null;
