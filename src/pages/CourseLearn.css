@@ -2079,3 +2079,24 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
     transform: translateX(-50%) !important;
   }
 }
+
+
+/* Remove only the visible teaching-surface shell: Kai content remains, while
+   the surrounding rectangle, vertical edges, and shadow are invisible. */
+html[data-theme="dark"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
+html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
+.learn-page.kai-chatgpt-mode .kai-teaching-card,
+.learn-page.kai-chatgpt-mode .conversation-messages {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.learn-page.kai-chatgpt-mode .kai-teaching-card::before,
+.learn-page.kai-chatgpt-mode .kai-teaching-card::after {
+  display: none !important;
+  content: none !important;
+}
