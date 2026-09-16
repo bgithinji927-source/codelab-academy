@@ -7471,3 +7471,184 @@ html .learn-page > .conversation-container > .input-hint {
     max-width: 92ch !important;
   }
 }
+
+
+/* Mobile Kai chat UX: compact header, distinct speaker bubbles, readable
+   message width, and a smaller composer that leaves more room for the lesson. */
+@media (max-width: 700px) {
+  html .learn-page > .learn-navbar {
+    min-height: 112px !important;
+    padding: 9px 12px !important;
+    row-gap: 6px !important;
+  }
+
+  html .learn-page > .learn-navbar .learn-course-title {
+    min-width: 0;
+    max-width: 42vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  html .learn-page > .learn-navbar .learn-progress {
+    gap: 5px;
+    font-size: 10px;
+  }
+
+  html .learn-page > .learn-navbar .progress-label {
+    display: none;
+  }
+
+  html .learn-page > .learn-navbar .progress-track {
+    width: 62px;
+  }
+
+  html .learn-page > .learn-navbar .learn-top-actions {
+    width: 100%;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  html .learn-page > .learn-navbar .learn-top-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  html .learn-page > .learn-navbar .lesson-status,
+  html .learn-page > .learn-navbar .next-lesson,
+  html .learn-page > .learn-navbar .next-course-button {
+    flex: 0 0 auto;
+    min-height: 31px;
+    padding: 6px 9px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  html .learn-page > .conversation-container {
+    padding: 132px 10px 122px !important;
+  }
+
+  html .learn-page .conversation-messages {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 2px 128px !important;
+  }
+
+  html .learn-page .chat-row {
+    width: 100% !important;
+    margin-bottom: 19px !important;
+  }
+
+  html .learn-page .chat-content {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  html .learn-page .learner-row {
+    justify-content: flex-end !important;
+  }
+
+  html .learn-page .learner-row .chat-content {
+    width: min(89%, 680px) !important;
+    margin-left: auto !important;
+  }
+
+  html .learn-page .kai-message-header,
+  html .learn-page .learner-message-header {
+    gap: 7px;
+    margin: 0 4px 6px !important;
+    min-height: 25px;
+  }
+
+  html .learn-page .chat-name {
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  html .learn-page .chat-name span,
+  html .learn-page .kai-online {
+    font-size: 9px;
+  }
+
+  html .learn-page .chat-avatar {
+    width: 27px;
+    height: 27px;
+    border-radius: 9px;
+  }
+
+  html .learn-page .kai-board-content,
+  html .learn-page .learner-board-content {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 13px 14px !important;
+    border-radius: 15px !important;
+    box-sizing: border-box;
+  }
+
+  html .learn-page .kai-board-content {
+    background: rgba(24, 25, 30, 0.94) !important;
+    border: 1px solid rgba(145, 133, 255, 0.24) !important;
+    border-top-left-radius: 5px !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14) !important;
+  }
+
+  html .learn-page .learner-board-content {
+    background: #7666e8 !important;
+    border: 1px solid #8b7cf0 !important;
+    border-top-right-radius: 5px !important;
+    color: #fff !important;
+    box-shadow: 0 5px 14px rgba(72, 57, 154, 0.18) !important;
+  }
+
+  html .learn-page .kai-message-text,
+  html .learn-page .learner-message-text,
+  html .learn-page .kai-rich-content {
+    font-size: 15px !important;
+    line-height: 1.62 !important;
+  }
+
+  html .learn-page .kai-message-text p,
+  html .learn-page .learner-message-text p {
+    max-width: none !important;
+    margin-bottom: 0.8em !important;
+  }
+
+  html .learn-page .kai-message-text p:last-child,
+  html .learn-page .learner-message-text p:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  html .learn-page .kai-rich-code,
+  html .learn-page .kai-rich-copyable,
+  html .learn-page .kai-rich-table-wrap,
+  html .learn-page .kai-table-scroll {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html .learn-page .kai-rich-code pre,
+  html .learn-page .kai-rich-copyable pre {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+
+  html .learn-page .kai-input-dock {
+    min-height: 84px !important;
+    padding: 9px 12px calc(9px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  html .learn-page .kai-input-dock textarea {
+    min-height: 46px !important;
+    max-height: 92px !important;
+    font-size: 15px !important;
+    line-height: 1.35 !important;
+  }
+
+  html .learn-page .kai-input-dock > button {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+  }
+}
