@@ -2009,3 +2009,20 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
     line-height: 1.8 !important;
   }
 }
+
+
+/* The lesson column is intentionally wide; do not re-constrain Kai's reply
+   text, headings, lists, or structured content inside it. */
+.learn-page.kai-chatgpt-mode .kai-message-text,
+.learn-page.kai-chatgpt-mode .kai-message-text p,
+.learn-page.kai-chatgpt-mode .kai-message-text h2,
+.learn-page.kai-chatgpt-mode .kai-message-text h3,
+.learn-page.kai-chatgpt-mode .kai-message-text h4,
+.learn-page.kai-chatgpt-mode .kai-message-text ul,
+.learn-page.kai-chatgpt-mode .kai-message-text ol,
+.learn-page.kai-chatgpt-mode .kai-rich-content,
+.learn-page.kai-chatgpt-mode .kai-rich-content > div,
+.learn-page.kai-chatgpt-mode .learner-message-text {
+  width: 100% !important;
+  max-width: none !important;
+}
