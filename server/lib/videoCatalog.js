@@ -45,7 +45,9 @@ function serializeVideo(video) {
   const id = String(plain._id || plain.id);
   const externalPlayback = plain.sourceType === "url"
     ? getExternalPlayback(plain.videoUrl)
-    : { playerType: "video", playbackUrl: `/api/videos/${id}/stream` };
+    : plain.cloudinaryUrl
+      ? { playerType: "video", playbackUrl: plain.cloudinaryUrl }
+      : { playerType: "video", playbackUrl: `/api/videos/${id}/stream` };
 
   return {
     id,
@@ -58,6 +60,7 @@ function serializeVideo(video) {
     lessonTitle: plain.lessonTitle || "",
     sourceType: plain.sourceType,
     sourceUrl: plain.sourceType === "url" ? plain.videoUrl || "" : "",
+    cloudinaryPublicId: plain.cloudinaryPublicId || "",
     playbackUrl: externalPlayback.playbackUrl,
     playerType: externalPlayback.playerType,
     originalFilename: plain.originalFilename || "",

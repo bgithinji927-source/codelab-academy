@@ -1,5 +1,28 @@
 const fs = require("fs");
 const mongoose = require("mongoose");
+const { v2: cloudinary } = require("cloudinary");
+
+const cloudinaryConfigured = Boolean(
+  process.env.CLOUDINARY_URL
+  || (
+    process.env.CLOUDINARY_CLOUD_NAME
+    && process.env.CLOUDINARY_API_KEY
+    && process.env.CLOUDINARY_API_SECRET
+  )
+);
+
+if (cloudinaryConfigured) {
+  if (process.env.CLOUDINARY_URL) {
+    cloudinary.config(process.env.CLOUDINARY_URL);
+  } else {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true,
+    });
+  }
+}
 
 let bucket;
 let kaiBackgroundBucket;
@@ -72,6 +95,37 @@ function uploadVideoFile(filePath, filename, contentType, metadata = {}) {
       reject(error);
     }
   });
+}
+
+function isCloudinaryConfigured() {
+  return cloudinaryConfigured;
+}
+
+async function uploadCloudinaryVideo(filePath, filename, metadata = {}) {
+  if (!cloudinaryConfigured) {
+    throw new Error("Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.");
+  }
+  const result = await cloudinary.uploader.upload(filePath, {
+    resource_type: "video",
+    folder: process.env.CLOUDINARY_VIDEO_FOLDER || "codelab-academy/videos",
+    use_filename: true,
+    unique_filename: true,
+    filename_override: filename,
+    context: Object.entries(metadata).map(([key, value]) => `${key}=${String(value)}`).join("|"),
+  });
+  return {
+    publicId: result.public_id,
+    secureUrl: result.secure_url,
+    resourceType: result.resource_type || "video",
+    format: result.format || "",
+    duration: Number(result.duration || 0),
+    bytes: Number(result.bytes || 0),
+  };
+}
+
+async function deleteCloudinaryVideo(publicId) {
+  if (!publicId || !cloudinaryConfigured) return;
+  await cloudinary.uploader.destroy(publicId, { resource_type: "video", invalidate: true, type: "upload" });
 }
 
 async function deleteVideoFile(fileId) {
@@ -193,6 +247,9 @@ module.exports = {
   getKaiBackgroundBucket,
   uploadVideo,
   uploadVideoFile,
+  isCloudinaryConfigured,
+  uploadCloudinaryVideo,
+  deleteCloudinaryVideo,
   getVideoFile,
   deleteVideoFile,
   uploadKaiBackground,

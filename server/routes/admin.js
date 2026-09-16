@@ -16,6 +16,9 @@ const { getCatalogCourses, getCatalogLessons } = require("../lib/catalog");
 const {
   uploadVideoFile,
   deleteVideoFile,
+  isCloudinaryConfigured,
+  uploadCloudinaryVideo,
+  deleteCloudinaryVideo,
   uploadKaiBackground,
   deleteKaiBackgroundFile,
 } = require("../lib/videoStorage");
@@ -307,6 +310,7 @@ router.get("/videos", async (req, res) => {
 
 router.post("/videos", parseVideoUpload, async (req, res) => {
   let storageFileId = null;
+  let cloudinaryAsset = null;
   let temporaryFilePath = null;
   try {
     temporaryFilePath = req.file?.path || null;
@@ -343,12 +347,12 @@ router.post("/videos", parseVideoUpload, async (req, res) => {
     }
 
     if (req.file) {
-      storageFileId = await uploadVideoFile(
-        req.file.path,
-        req.file.originalname,
-        req.file.mimetype,
-        { uploadedBy: String(req.admin._id), courseId: String(courseId), lessonId: String(lessonId) }
-      );
+      const metadata = { uploadedBy: String(req.admin._id), courseId: String(courseId), lessonId: String(lessonId) };
+      if (isCloudinaryConfigured()) {
+        cloudinaryAsset = await uploadCloudinaryVideo(req.file.path, req.file.originalname, metadata);
+      } else {
+        storageFileId = await uploadVideoFile(req.file.path, req.file.originalname, req.file.mimetype, metadata);
+      }
     }
 
     const video = await Video.create({
@@ -362,9 +366,13 @@ router.post("/videos", parseVideoUpload, async (req, res) => {
       sourceType: req.file ? "upload" : "url",
       videoUrl: normalizedUrl,
       storageFileId,
+      cloudinaryPublicId: cloudinaryAsset?.publicId || "",
+      cloudinaryUrl: cloudinaryAsset?.secureUrl || "",
+      cloudinaryResourceType: cloudinaryAsset?.resourceType || "video",
       originalFilename: req.file?.originalname || "",
       mimeType: req.file?.mimetype || "",
-      fileSize: req.file?.size || 0,
+      fileSize: cloudinaryAsset?.bytes || req.file?.size || 0,
+      duration: cloudinaryAsset?.duration || 0,
       active: true,
       createdBy: String(req.admin._id),
       updatedBy: String(req.admin._id),
@@ -374,6 +382,9 @@ router.post("/videos", parseVideoUpload, async (req, res) => {
   } catch (error) {
     if (storageFileId) {
       try { await deleteVideoFile(storageFileId); } catch (cleanupError) { console.error("Video cleanup error:", cleanupError); }
+    }
+    if (cloudinaryAsset?.publicId) {
+      try { await deleteCloudinaryVideo(cloudinaryAsset.publicId); } catch (cleanupError) { console.error("Cloudinary video cleanup error:", cleanupError); }
     }
     console.error("Admin create video error:", error);
     return res.status(500).json({ success: false, message: error.message || "Could not create video" });
@@ -453,6 +464,7 @@ router.post("/videos/generate-description", async (req, res) => {
 
 router.patch("/videos/:videoId", parseVideoUpload, async (req, res) => {
   let replacementFileId = null;
+  let replacementCloudinaryAsset = null;
   let temporaryFilePath = null;
   try {
     temporaryFilePath = req.file?.path || null;
@@ -481,18 +493,22 @@ router.patch("/videos/:videoId", parseVideoUpload, async (req, res) => {
     }
 
     if (req.file) {
-      replacementFileId = await uploadVideoFile(
-        req.file.path,
-        req.file.originalname,
-        req.file.mimetype,
-        { uploadedBy: String(req.admin._id), courseId: String(req.body?.courseId || video.courseId), lessonId: String(req.body?.lessonId || video.lessonId) }
-      );
+      const metadata = { uploadedBy: String(req.admin._id), courseId: String(req.body?.courseId || video.courseId), lessonId: String(req.body?.lessonId || video.lessonId) };
+      if (isCloudinaryConfigured()) {
+        replacementCloudinaryAsset = await uploadCloudinaryVideo(req.file.path, req.file.originalname, metadata);
+      } else {
+        replacementFileId = await uploadVideoFile(req.file.path, req.file.originalname, req.file.mimetype, metadata);
+      }
       updates.sourceType = "upload";
       updates.videoUrl = "";
       updates.storageFileId = replacementFileId;
+      updates.cloudinaryPublicId = replacementCloudinaryAsset?.publicId || "";
+      updates.cloudinaryUrl = replacementCloudinaryAsset?.secureUrl || "";
+      updates.cloudinaryResourceType = replacementCloudinaryAsset?.resourceType || "video";
       updates.originalFilename = req.file.originalname || "";
       updates.mimeType = req.file.mimetype || "video/mp4";
-      updates.fileSize = req.file.size || 0;
+      updates.fileSize = replacementCloudinaryAsset?.bytes || req.file.size || 0;
+      updates.duration = replacementCloudinaryAsset?.duration || 0;
     } else if (incomingUrl) {
       try {
         const parsedUrl = new URL(incomingUrl);
@@ -500,6 +516,8 @@ router.patch("/videos/:videoId", parseVideoUpload, async (req, res) => {
         updates.sourceType = "url";
         updates.videoUrl = parsedUrl.toString();
         updates.storageFileId = null;
+        updates.cloudinaryPublicId = "";
+        updates.cloudinaryUrl = "";
         updates.originalFilename = "";
         updates.mimeType = "";
         updates.fileSize = 0;
@@ -514,20 +532,32 @@ router.patch("/videos/:videoId", parseVideoUpload, async (req, res) => {
       if (replacementFileId) {
         try { await deleteVideoFile(replacementFileId); } catch (cleanupError) { console.error("Replacement video cleanup error:", cleanupError); }
       }
+      if (replacementCloudinaryAsset?.publicId) {
+        try { await deleteCloudinaryVideo(replacementCloudinaryAsset.publicId); } catch (cleanupError) { console.error("Replacement Cloudinary cleanup error:", cleanupError); }
+      }
       return res.status(404).json({ success: false, message: "Video not found" });
     }
 
     if (replacementFileId && video.storageFileId) {
       try { await deleteVideoFile(video.storageFileId); } catch (cleanupError) { console.error("Previous video cleanup error:", cleanupError); }
     }
+    if (replacementCloudinaryAsset?.publicId && video.cloudinaryPublicId) {
+      try { await deleteCloudinaryVideo(video.cloudinaryPublicId); } catch (cleanupError) { console.error("Previous Cloudinary cleanup error:", cleanupError); }
+    }
     if (incomingUrl && video.storageFileId) {
       try { await deleteVideoFile(video.storageFileId); } catch (cleanupError) { console.error("Previous video cleanup error:", cleanupError); }
+    }
+    if (incomingUrl && video.cloudinaryPublicId) {
+      try { await deleteCloudinaryVideo(video.cloudinaryPublicId); } catch (cleanupError) { console.error("Previous Cloudinary cleanup error:", cleanupError); }
     }
 
     return res.json({ success: true, video: serializeVideo(updatedVideo) });
   } catch (error) {
     if (replacementFileId) {
       try { await deleteVideoFile(replacementFileId); } catch (cleanupError) { console.error("Replacement video cleanup error:", cleanupError); }
+    }
+    if (replacementCloudinaryAsset?.publicId) {
+      try { await deleteCloudinaryVideo(replacementCloudinaryAsset.publicId); } catch (cleanupError) { console.error("Replacement Cloudinary cleanup error:", cleanupError); }
     }
     console.error("Admin update video error:", error);
     return res.status(500).json({ success: false, message: error.message || "Could not update video" });
@@ -544,6 +574,9 @@ router.delete("/videos/:videoId", async (req, res) => {
     if (!video) return res.status(404).json({ success: false, message: "Video not found" });
     if (video.storageFileId) {
       try { await deleteVideoFile(video.storageFileId); } catch (cleanupError) { console.error("Video file cleanup error:", cleanupError); }
+    }
+    if (video.cloudinaryPublicId) {
+      try { await deleteCloudinaryVideo(video.cloudinaryPublicId); } catch (cleanupError) { console.error("Cloudinary video cleanup error:", cleanupError); }
     }
     return res.json({ success: true, id: String(video._id) });
   } catch (error) {

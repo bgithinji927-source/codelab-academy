@@ -50,6 +50,21 @@ const videoSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       default: null,
     },
+    cloudinaryPublicId: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    cloudinaryUrl: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    cloudinaryResourceType: {
+      type: String,
+      default: "video",
+      trim: true,
+    },
     originalFilename: {
       type: String,
       default: "",
