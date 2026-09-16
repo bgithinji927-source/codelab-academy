@@ -7246,6 +7246,39 @@ html .learn-page > .conversation-container > .input-hint {
 }
 
 
+/* The Kai teaching route should use the browser's native page scroll on
+   phones. A nested fixed-height scroller is unreliable on iOS and Android
+   when the keyboard or browser chrome changes the visual viewport. */
+@media (max-width: 700px) {
+  html:has(.learn-page),
+  body:has(.learn-page),
+  body:has(.learn-page) #root {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior-y: auto !important;
+  }
+
+  html .learn-page,
+  html #root > .learn-page {
+    height: auto !important;
+    min-height: 100svh !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
+  }
+
+  html .learn-page > .conversation-container {
+    height: auto !important;
+    min-height: calc(100svh - 66px) !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
+  }
+}
+
+
 /* Mobile Kai lesson spacing: reserve the full multi-row control header and
    keep the first response heading/paragraph separated below it. */
 @media (max-width: 700px) {
