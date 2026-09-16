@@ -208,6 +208,14 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         : block
     );
     if (Array.isArray(value)) return value.map(normalizeBlock);
+    if (value && typeof value === "object") {
+      if ((value.type === "diagram" || value.diagramType) && Array.isArray(value.nodes) && Array.isArray(value.edges)) {
+        return [{ ...value, type: "diagram" }];
+      }
+      if (value.type && structuredBlockTypes.has(value.type)) return [normalizeBlock(value)];
+      if (Array.isArray(value.content)) return value.content.map(normalizeBlock);
+      if (value.content && typeof value.content === "object") return [normalizeBlock(value.content)];
+    }
     const text = cleanKaiResponse(value)
       .replace(/^```(?:json)?\s*/i, "")
       .replace(/\s*```$/i, "")
@@ -1177,6 +1185,8 @@ ${startMessage}
       displayedKaiText.length > 0
         ? displayedKaiText
         : content;
+    const fallbackBlocks = contentBlocks?.length ? contentBlocks : parseStructuredContent(text);
+    const looksLikeJson = /^\s*[\[{]/.test(String(text || ""));
     const handleKaiAction = (action, payload) => {
       if (["unlockNextLesson", "nextLesson"].includes(action)) handleNextLesson();
       else if (["next_lesson", "continue", "continue_lesson"].includes(action)) handleNextLesson();
@@ -1215,12 +1225,14 @@ ${startMessage}
 
           <div className="kai-board-content">
             <div className="kai-message-text">
-              {contentBlocks?.length ? (
+              {fallbackBlocks?.length ? (
                 <AIContentRenderer
-                  content={contentBlocks}
+                  content={fallbackBlocks}
                   onChoice={(choice) => askKai({ learnerMessage: choice, conversation: [...messages, { role: "user", content: choice }] })}
                   onAction={handleKaiAction}
                 />
+              ) : looksLikeJson ? (
+                <p>Kai is preparing a formatted lesson response. Please try sending your question again.</p>
               ) : renderMarkdown(text)}
             </div>
           </div>

@@ -1739,3 +1739,68 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
     line-height: 1.72;
   }
 }
+
+/* Final lesson layout: content uses the available board width and the composer
+   is a rectangular inline message field, never a fixed bottom navigation bar. */
+.learn-page .conversation-container {
+  padding-left: clamp(1rem, 2vw, 2rem) !important;
+  padding-right: clamp(1rem, 2vw, 2rem) !important;
+}
+.learn-page .conversation-messages,
+.learn-page .learner-input-area {
+  width: 100% !important;
+  max-width: none !important;
+}
+.learn-page .kai-board-content {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+.learn-page .kai-message-text,
+.learn-page .kai-message-text p,
+.learn-page .kai-message-text h2,
+.learn-page .kai-message-text h3,
+.learn-page .kai-message-text h4,
+.learn-page .kai-message-text ul,
+.learn-page .kai-message-text ol,
+.learn-page .kai-rich-content {
+  max-width: none !important;
+}
+.learn-page .kai-input-dock {
+  position: relative !important;
+  inset: auto !important;
+  display: grid !important;
+  width: min(100%, 760px) !important;
+  max-width: 760px !important;
+  min-height: 96px;
+  margin: 2rem auto 0 !important;
+  padding: 14px 14px 10px !important;
+  grid-template-columns: 1fr auto !important;
+  grid-template-rows: 1fr auto !important;
+  border: 1px solid #505050 !important;
+  border-radius: 16px !important;
+  background: #242424 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .24) !important;
+}
+.learn-page .kai-input-dock textarea {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  min-height: 48px !important;
+  margin: 0 !important;
+}
+.learn-page .kai-input-dock .kai-composer-icon {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  justify-self: start;
+}
+.learn-page .kai-input-dock .kai-composer-send {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  justify-self: end;
+}
+@media (max-width: 600px) {
+  .learn-page .kai-input-dock {
+    width: 100% !important;
+    min-height: 92px;
+  }
+}
