@@ -1839,8 +1839,10 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
 .learn-page.kai-chatgpt-mode .learner-board-content,
 .learn-page.kai-chatgpt-mode .kai-readiness-panel,
 .learn-page.kai-chatgpt-mode .kai-board-status {
-  width: min(calc(100% - 40px), 1530px) !important;
-  max-width: 1530px !important;
+  width: calc(100% - 80px) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 .learn-page.kai-chatgpt-mode .kai-board-content,
 .learn-page.kai-chatgpt-mode .learner-board-content { padding-top: 30px; padding-bottom: 30px; }
@@ -1893,7 +1895,11 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
 
 @media (max-width: 640px) {
   .learn-page.kai-chatgpt-mode .kai-board-content,
-  .learn-page.kai-chatgpt-mode .learner-board-content { width: calc(100% - 24px) !important; }
+  .learn-page.kai-chatgpt-mode .learner-board-content {
+    width: calc(100% - 24px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
   .learn-page.kai-chatgpt-mode .kai-input-dock { left: 8px !important; right: 8px !important; bottom: 8px !important; }
 }
 
