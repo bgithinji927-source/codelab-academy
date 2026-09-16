@@ -1907,6 +1907,7 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
    tool row, and a short safety note underneath. */
 .learn-page.kai-chatgpt-mode .kai-input-dock {
   position: fixed !important;
+  z-index: 100 !important;
   left: clamp(16px, 4.5vw, 70px) !important;
   right: auto !important;
   bottom: 30px !important;
@@ -1920,6 +1921,14 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
   align-items: center !important;
   padding: 0 10px 4px !important;
   border-radius: 18px !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: #2f2f2f !important;
+  box-shadow: 0 -12px 30px rgba(0, 0, 0, .28), 0 6px 20px rgba(0, 0, 0, .22) !important;
+}
+.learn-page.kai-chatgpt-mode .conversation-container {
+  padding-bottom: 190px !important;
 }
 .learn-page.kai-chatgpt-mode .kai-input-dock::before {
   content: "☷   Agent todo completed                                      1 subagent running  ›";
@@ -1985,6 +1994,7 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
   }
   .learn-page.kai-chatgpt-mode .kai-input-dock::before { font-size: 10px; }
   .learn-page.kai-chatgpt-mode .kai-input-dock::after { font-size: 9px; }
+  .learn-page.kai-chatgpt-mode .conversation-container { padding-bottom: 188px !important; }
 }
 
 /* Mobile lesson readability: keep authored line breaks visible and give each
