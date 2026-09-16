@@ -2174,3 +2174,19 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
     max-width: 100% !important;
   }
 }
+
+/* Keep scrolling lesson text from showing through or peeking beneath the fixed composer. */
+.learn-page.kai-chatgpt-mode .kai-input-dock::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -18px;
+  right: -100vw;
+  bottom: -100vh;
+  left: -100vw;
+  background: #212121;
+  pointer-events: none;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock {
+  isolation: isolate;
+}
