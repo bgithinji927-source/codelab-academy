@@ -1804,3 +1804,29 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
     min-height: 92px;
   }
 }
+
+
+/* Layout correction: preserve the original ChatGPT UI palette; only tune margins and composer geometry. */
+.learn-page.kai-chatgpt-mode .kai-board-content,
+.learn-page.kai-chatgpt-mode .learner-board-content,
+.learn-page.kai-chatgpt-mode .kai-readiness-panel,
+.learn-page.kai-chatgpt-mode .kai-board-status {
+  width: min(calc(100% - 40px), 1530px) !important;
+  max-width: 1530px !important;
+}
+.learn-page.kai-chatgpt-mode .kai-board-content,
+.learn-page.kai-chatgpt-mode .learner-board-content { padding-top: 30px; padding-bottom: 30px; }
+.learn-page.kai-chatgpt-mode .kai-input-dock {
+  left: 20px !important;
+  right: 20px !important;
+  bottom: 12px !important;
+  width: auto !important;
+  max-width: none !important;
+  min-height: 76px;
+}
+
+@media (max-width: 640px) {
+  .learn-page.kai-chatgpt-mode .kai-board-content,
+  .learn-page.kai-chatgpt-mode .learner-board-content { width: calc(100% - 24px) !important; }
+  .learn-page.kai-chatgpt-mode .kai-input-dock { left: 8px !important; right: 8px !important; bottom: 8px !important; }
+}

@@ -54,7 +54,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   ));
   const [kaiBackgroundImageUrl, setKaiBackgroundImageUrl] = useState("");
   const [kaiUiMode, setKaiUiMode] = useState(() => (
-    localStorage.getItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`) === "chatgpt" ? "chatgpt" : "normal"
+    localStorage.getItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`) || "chatgpt"
   ));
 
   const typingTimerRef = useRef(null);
