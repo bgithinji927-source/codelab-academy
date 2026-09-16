@@ -1942,8 +1942,12 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
 }
 @media (max-width: 640px) {
   .learn-page.kai-chatgpt-mode .kai-input-dock {
+    left: 50% !important;
+    right: auto !important;
     bottom: 28px !important;
     width: calc(100% - 16px) !important;
+    max-width: calc(100% - 16px) !important;
+    transform: translateX(-50%) !important;
   }
   .learn-page.kai-chatgpt-mode .kai-input-dock::before { font-size: 10px; }
   .learn-page.kai-chatgpt-mode .kai-input-dock::after { font-size: 9px; }
