@@ -30,11 +30,11 @@
 .kai-rich-bullet-list li { margin: .3rem 0; padding-left: .2rem; color: #e5e2f5; }
 .kai-rich-suggestions { width: 100%; margin: .25rem 0 0; }
 .kai-rich-suggestions-title { margin: 0 0 .35rem; color: #cfd2ea; font-size: .9rem; }
-.kai-suggestion-links { display: flex; flex-wrap: wrap; gap: .2rem 1.1rem; align-items: center; }
+.kai-suggestion-links { display: flex; flex-direction: column; flex-wrap: nowrap; gap: .3rem; align-items: flex-start; }
 .kai-suggestion-link { display: inline-flex; align-items: center; gap: .35rem; padding: .2rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #c7beff; font: inherit; font-size: .92rem; cursor: pointer; text-align: left; transition: color .18s ease, border-color .18s ease; }
 .kai-suggestion-link span { color: #a79bff; font-weight: 700; }
 .kai-suggestion-link:hover, .kai-suggestion-link:focus-visible { color: #fff; border-bottom-color: currentColor; outline: none; }
-@media (max-width: 700px) { .kai-suggestion-links { align-items: flex-start; flex-direction: column; gap: .25rem; } }
+@media (max-width: 700px) { .kai-suggestion-links { align-items: stretch; flex-direction: column; gap: .25rem; } }
 
 /* Compact native diagrams and flowcharts. */
 .kai-rich-diagram { max-width: 820px; margin-left: auto; margin-right: auto; }

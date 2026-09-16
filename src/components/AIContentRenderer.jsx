@@ -246,12 +246,19 @@ function Choice({ block, onChoice }) {
 
 export function Suggestions({ block, onAction }) {
   const items = Array.isArray(block.items) ? block.items : [];
+  const normalizedItems = items.flatMap((item) => {
+    const value = typeof item === "string" ? { text: item, action: "prompt" } : item;
+    return String(value?.text || value?.label || "")
+      .split(/\r?\n|\s+(?=-\s*)/)
+      .map((text) => ({ ...value, text: text.replace(/^\s*[-•]\s*/, "").replace(/\s+/g, " ").trim() }))
+      .filter((value) => value.text);
+  });
   return <section className="kai-rich-suggestions" aria-label={block.title || "Suggested next steps"}>
     {block.title && <p className="kai-rich-suggestions-title">{block.title}</p>}
-    <div className="kai-suggestion-links">{items.map((item, index) => {
-      const text = typeof item === "string" ? item : item.text || item.label;
+    <div className="kai-suggestion-links">{normalizedItems.map((item, index) => {
+      const text = item.text;
       if (!text) return null;
-      return <button type="button" className="kai-suggestion-link" key={`${text}-${index}`} onClick={() => onAction?.(typeof item === "string" ? "prompt" : item.action || "prompt", typeof item === "string" ? text : item.prompt || item.payload || text)}><span aria-hidden="true">→</span>{text}</button>;
+      return <button type="button" className="kai-suggestion-link" key={`${text}-${index}`} onClick={() => onAction?.(item.action || "prompt", item.prompt || item.payload || text)}><span aria-hidden="true">→</span>{text}</button>;
     })}</div>
   </section>;
 }
