@@ -40,6 +40,47 @@ function extractAssistantText(data) {
   return String(content || "");
 }
 
+function parseStructuredReply(value) {
+  const text = String(value || "")
+    .replace(/```json\s*/gi, "")
+    .replace(/```/g, "")
+    .trim();
+  const candidates = [text];
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    candidates.push(text.slice(firstBrace, lastBrace + 1));
+  }
+
+  for (const candidate of candidates) {
+    try {
+      let parsed = JSON.parse(candidate);
+      if (typeof parsed === "string") parsed = JSON.parse(parsed);
+      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed?.content)) return parsed.content;
+      if (parsed?.content && typeof parsed.content === "object") return [parsed.content];
+    } catch {
+      // Keep the original text when the model response is not valid JSON.
+    }
+  }
+  return null;
+}
+
+function structuredReplyToMarkdown(blocks) {
+  if (!Array.isArray(blocks)) return "";
+  return blocks.map((block) => {
+    if (!block || typeof block !== "object") return "";
+    if (block.type === "heading" || block.type === "subheading") return `## ${block.text || block.content || ""}`;
+    if (block.type === "text" || block.type === "quote" || block.type === "callout") return block.text || block.content || block.description || "";
+    if (block.type === "bullets") return (block.items || []).map((item) => `- ${typeof item === "string" ? item : item.text || item.content || ""}`).join("\n");
+    if (block.type === "numbered") return (block.items || []).map((item, index) => `${index + 1}. ${typeof item === "string" ? item : item.text || item.content || ""}`).join("\n");
+    if (["code", "terminal", "json", "xml"].includes(block.type)) return `\n\`\`\`${block.language || (block.type === "terminal" ? "sh" : block.type)}\n${block.code || block.content || ""}\n\`\`\``;
+    if (block.type === "quiz" || block.type === "choice") return `${block.question || ""}\n${(block.options || []).map((option, index) => `${index + 1}. ${option}`).join("\n")}`;
+    if (block.type === "suggestions" || ["quick_replies", "quickReplies"].includes(block.type)) return (block.items || []).map((item) => `- ${typeof item === "string" ? item : item.text || item.label || ""}`).join("\n");
+    return block.content || block.text || block.title || "";
+  }).filter(Boolean).join("\n\n").trim();
+}
+
 function sessionPayload(session) {
   if (!session) return null;
   return {
@@ -1046,7 +1087,12 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     // CHECK FOR LESSON COMPLETION
     // ========================================
 
-    const isLessonComplete = reply.includes("[LESSON_COMPLETE:");
+    const structuredContent = parseStructuredReply(reply);
+    const friendlyReply = structuredContent
+      ? structuredReplyToMarkdown(structuredContent)
+      : reply;
+
+    const isLessonComplete = reply.includes("[LESSON_COMPLETE:") || friendlyReply.includes("[LESSON_COMPLETE:");
     const summaryMatch = reply.match(/\[LESSON_COMPLETE:\s*(.*?)\]/);
     const lessonSummary = summaryMatch ? summaryMatch[1].trim() : "";
     const courseReadyMatch = reply.match(/\[COURSE_READY:\s*(.*?)\]/i);
@@ -1063,7 +1109,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       : null;
 
     // Clean control markers from the learner-visible reply.
-    const cleanReply = reply
+    const cleanReply = friendlyReply
       .replace(/\[LESSON_COMPLETE:.*?\]/g, "")
       .replace(/\[COURSE_READY:.*?\]/gi, "")
       .replace(/\[UI_ACTION:\s*CONTINUE_LESSON\]/gi, "")
@@ -1106,6 +1152,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
           return res.json({
             success: true,
             reply: cleanReply,
+            content: structuredContent,
             instructor: "Kai",
             course: courseTitle,
             lesson: lessonTitle,
@@ -1136,6 +1183,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     return res.json({
       success: true,
       reply: cleanReply,
+      content: structuredContent,
       instructor: "Kai",
       course: courseTitle,
       lesson: lessonTitle,
