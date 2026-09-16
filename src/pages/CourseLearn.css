@@ -2036,3 +2036,46 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
   width: 100% !important;
   max-width: none !important;
 }
+
+
+/* Final layout-only correction: the lesson surface follows its content instead
+   of reserving a large empty viewport beneath it. */
+.learn-page.kai-chatgpt-mode .conversation-container {
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  padding-bottom: 150px !important;
+  background: transparent !important;
+}
+.learn-page.kai-chatgpt-mode .kai-board-content,
+.learn-page.kai-chatgpt-mode .learner-board-content,
+.learn-page.kai-chatgpt-mode .kai-readiness-panel,
+.learn-page.kai-chatgpt-mode .kai-board-status {
+  width: calc(100% - 40px) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+}
+@media (max-width: 640px) {
+  .learn-page.kai-chatgpt-mode .conversation-container {
+    padding-bottom: 150px !important;
+  }
+  .learn-page.kai-chatgpt-mode .kai-board-content,
+  .learn-page.kai-chatgpt-mode .learner-board-content,
+  .learn-page.kai-chatgpt-mode .kai-readiness-panel,
+  .learn-page.kai-chatgpt-mode .kai-board-status {
+    width: calc(100% - 24px) !important;
+  }
+  .learn-page.kai-chatgpt-mode .kai-input-dock {
+    left: 50% !important;
+    right: auto !important;
+    width: calc(100% - 24px) !important;
+    max-width: calc(100% - 24px) !important;
+    transform: translateX(-50%) !important;
+  }
+}
