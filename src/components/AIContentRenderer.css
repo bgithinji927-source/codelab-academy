@@ -30,7 +30,7 @@
 .kai-rich-bullet-list li { margin: .3rem 0; padding-left: .2rem; color: #e5e2f5; }
 .kai-rich-suggestions { width: 100%; margin: .25rem 0 0; }
 .kai-rich-suggestions-title { margin: 0 0 .35rem; color: #cfd2ea; font-size: .9rem; }
-.kai-suggestion-links { display: flex; flex-direction: column; flex-wrap: nowrap; gap: .3rem; align-items: flex-start; }
+.kai-suggestion-links { display: flex; flex-direction: column; flex-wrap: nowrap; gap: .3rem; align-items: stretch; margin: 0 .35rem; }
 .kai-suggestion-link { display: inline-flex; align-items: center; gap: .35rem; padding: .2rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #c7beff; font: inherit; font-size: .92rem; cursor: pointer; text-align: left; transition: color .18s ease, border-color .18s ease; }
 .kai-suggestion-link span { color: #a79bff; font-weight: 700; }
 .kai-suggestion-link:hover, .kai-suggestion-link:focus-visible { color: #fff; border-bottom-color: currentColor; outline: none; }
@@ -64,7 +64,7 @@
 /* Quick replies are intentionally separate from the existing suggestion links. */
 .kai-quick-replies { width: 100%; margin: .35rem 0 0; }
 .kai-quick-replies-title { margin: 0 0 .45rem; color: #aeb2cc; font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-.kai-quick-reply-list { display: flex; flex-direction: column; gap: .4rem; align-items: stretch; }
+.kai-quick-reply-list { display: flex; flex-direction: column; gap: .4rem; align-items: stretch; margin: 0 .35rem; }
 .kai-quick-reply { display: flex; align-items: center; gap: .42rem; width: 100%; min-height: 34px; padding: .45rem .72rem; border: 1px solid rgba(162, 150, 255, .34); border-radius: 11px; background: rgba(126, 112, 255, .1); color: #e8e6ff; font: inherit; font-size: .84rem; cursor: pointer; text-align: left; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
 .kai-quick-reply svg { color: #b9b1ff; flex: 0 0 auto; }
 .kai-quick-reply:hover, .kai-quick-reply:focus-visible { border-color: #a498ff; background: rgba(126, 112, 255, .24); outline: none; transform: translateY(-1px); }
