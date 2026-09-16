@@ -34,6 +34,15 @@ function TextBlock({ value }) {
     .replace(/\s+(?=(?:\d+[.)]|[1-9]\uFE0F?\u20E3)\s+)/g, "\n")
     .replace(/\s+(?=[•*-]\s+)/g, "\n");
   const lines = normalizedText.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const hasHeadings = lines.some((line) => /^#{1,4}\s+/.test(line));
+  if (hasHeadings) {
+    return <>{lines.map((line, index) => {
+      const heading = line.match(/^(#{1,4})\s+(.+)$/);
+      if (!heading) return <p className="kai-rich-text" key={`text-${index}`}><InlineText>{line}</InlineText></p>;
+      const Heading = heading[1].length === 1 ? "h2" : heading[1].length === 2 ? "h3" : "h4";
+      return <Heading className="kai-rich-heading" key={`heading-${index}`}><InlineText>{heading[2]}</InlineText></Heading>;
+    })}</>;
+  }
   const hasListMarkers = lines.some((line) => /^(?:[-*•]|\d+[.)]|[1-9]\uFE0F?\u20E3)\s+/.test(line));
   if (hasListMarkers && lines.length > 1) {
     const parts = [];
