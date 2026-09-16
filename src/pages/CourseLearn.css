@@ -2281,3 +2281,43 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
     bottom: 8px !important;
   }
 }
+
+/* Final normal-mode cascade: these rules intentionally come last so older
+   generic lesson rules cannot widen the content or hide the composer. */
+.learn-page:not(.kai-chatgpt-mode) .conversation-messages,
+.learn-page:not(.kai-chatgpt-mode) .learner-input-area,
+.learn-page:not(.kai-chatgpt-mode) .chat-content,
+.learn-page:not(.kai-chatgpt-mode) .learner-content,
+.learn-page:not(.kai-chatgpt-mode) .kai-board-content,
+.learn-page:not(.kai-chatgpt-mode) .kai-rich-content,
+.learn-page:not(.kai-chatgpt-mode) .kai-rich-content > div,
+.learn-page:not(.kai-chatgpt-mode) .kai-message-text,
+.learn-page:not(.kai-chatgpt-mode) .learner-message-text {
+  width: min(100%, 1300px) !important;
+  max-width: 1300px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box;
+}
+
+.learn-page:not(.kai-chatgpt-mode) .kai-input-dock {
+  display: grid !important;
+  visibility: visible !important;
+  width: min(calc(100% - 9vw), 1300px) !important;
+  max-width: 1300px !important;
+  box-sizing: border-box;
+  background: #242424 !important;
+}
+
+@media (max-width: 640px) {
+  .learn-page:not(.kai-chatgpt-mode) .conversation-messages,
+  .learn-page:not(.kai-chatgpt-mode) .chat-content,
+  .learn-page:not(.kai-chatgpt-mode) .kai-board-content,
+  .learn-page:not(.kai-chatgpt-mode) .kai-rich-content,
+  .learn-page:not(.kai-chatgpt-mode) .kai-rich-content > div,
+  .learn-page:not(.kai-chatgpt-mode) .kai-message-text,
+  .learn-page:not(.kai-chatgpt-mode) .kai-input-dock {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
