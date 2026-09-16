@@ -912,6 +912,29 @@
   color: #a78bfa;
 }
 
+.force-stop-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border: 1px solid #f0b7c4;
+  border-radius: 9px;
+  background: #fff7f8;
+  color: #b4233c;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.force-stop-button:hover {
+  background: #ffecef;
+  border-color: #e991a3;
+  transform: translateY(-1px);
+}
+
 .back-lesson,
 .next-lesson {
   display: inline-flex;

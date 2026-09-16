@@ -58,6 +58,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   ));
 
   const typingTimerRef = useRef(null);
+  const kaiRequestRef = useRef(null);
   const lessonStartKeyRef = useRef("");
   const conversationEndRef = useRef(null);
   const scrollFrameRef = useRef(null);
@@ -463,6 +464,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     setIsKaiTyping(false);
   };
 
+  const forceStopKai = () => {
+    kaiRequestRef.current?.abort();
+    kaiRequestRef.current = null;
+    stopTyping();
+    setPendingUiAction(null);
+  };
+
   // ============================================
   // TYPE KAI RESPONSE
   // ============================================
@@ -508,6 +516,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     nextLessonTitle,
     isIntro = false,
   } = {}) => {
+    const controller = new AbortController();
+    kaiRequestRef.current?.abort();
+    kaiRequestRef.current = controller;
+
     try {
       stopTyping();
       setDisplayedKaiText("");
@@ -516,9 +528,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       const response = await fetchWithAuth("/api/kai", {
         method: "POST",
 
-        headers: {
-          "Content-Type": "application/json",
-        },
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          signal: controller.signal,
 
         body: JSON.stringify({
           userId: user?.id,
@@ -605,6 +619,12 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
       typeKaiMessage(kaiReply);
     } catch (error) {
+      if (error?.name === "AbortError") {
+        setDisplayedKaiText("");
+        setIsKaiTyping(false);
+        return;
+      }
+
       console.error(
         "Kai teaching error:",
         error
@@ -625,6 +645,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
       setDisplayedKaiText(errorMessage);
       setIsKaiTyping(false);
+    } finally {
+      if (kaiRequestRef.current === controller) {
+        kaiRequestRef.current = null;
+      }
     }
   };
 
@@ -1449,6 +1473,17 @@ ${startMessage}
                     : "Lesson in progress"}
             </span>
           </div>
+          {isKaiTyping && (
+            <button
+              type="button"
+              className="force-stop-button"
+              onClick={forceStopKai}
+              aria-label="Force stop Kai"
+            >
+              <X size={15} />
+              Force stop
+            </button>
+          )}
           <button
             type="button"
             className="next-lesson"
