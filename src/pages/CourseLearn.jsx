@@ -149,6 +149,40 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     };
   }, []);
 
+  // The mobile app shell normally uses an inner scroller for other screens.
+  // Kai is a document-length teaching page, so restore native page scrolling
+  // explicitly here; this also overrides the shell's global overflow lock.
+  useEffect(() => {
+    const targets = [
+      document.documentElement,
+      document.body,
+      document.getElementById("root"),
+    ].filter(Boolean);
+    const properties = ["overflow-y", "overflow-x", "height", "min-height", "touch-action"];
+    const previous = targets.map((target) => properties.map((property) => ({
+      property,
+      value: target.style.getPropertyValue(property),
+      priority: target.style.getPropertyPriority(property),
+    })));
+
+    targets.forEach((target) => {
+      target.style.setProperty("overflow-y", "auto", "important");
+      target.style.setProperty("overflow-x", "hidden", "important");
+      target.style.setProperty("height", "auto", "important");
+      target.style.setProperty("min-height", "100%", "important");
+      target.style.setProperty("touch-action", "pan-y", "important");
+    });
+
+    return () => {
+      targets.forEach((target, targetIndex) => {
+        previous[targetIndex].forEach(({ property, value, priority }) => {
+          if (value) target.style.setProperty(property, value, priority);
+          else target.style.removeProperty(property);
+        });
+      });
+    };
+  }, []);
+
   // Keep the latest Kai text visible while the response is being typed.
   // requestAnimationFrame coalesces the 15ms typing updates into one scroll
   // per rendered frame instead of creating a queue of smooth scrolls.
