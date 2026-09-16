@@ -20,7 +20,7 @@ import {
   Gamepad2,
 } from "lucide-react";
 
-import courses from "../data/course";
+import courses from "../data/course.mjs";
 import CourseLogo from "../components/CourseLogo";
 import CourseLearn from "./CourseLearn";
 import ThemeToggle from "../components/ThemeToggle";

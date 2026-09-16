@@ -25,8 +25,8 @@ import {
   Zap,
 } from "lucide-react";
 import fetchWithAuth from "../utils/fetchWithAuth";
-import bundledCourseCatalog from "../data/course";
-import bundledLessonCatalog from "../data/lessons";
+import bundledCourseCatalog from "../data/course.mjs";
+import bundledLessonCatalog from "../data/lessons.mjs";
 import ThemeToggle from "../components/ThemeToggle";
 import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_OPTIONS, normalizeKaiBackground } from "../utils/kaiBackground";
 import "./AdminDashboard.css";

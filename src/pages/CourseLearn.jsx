@@ -349,7 +349,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         // Keep the bundled lesson catalog as a fallback for local previews,
         // while progression state always comes from the authenticated server.
         if (!catalogLoaded) {
-          const lessonModule = await import("../data/lessons.js");
+          const lessonModule = await import("../data/lessons.mjs");
           const lessonData = lessonModule.default || lessonModule.lessons;
           courseLessons = lessonData?.[course?.id] || [];
         }

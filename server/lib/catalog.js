@@ -22,7 +22,7 @@ async function getOverrides(model, courseId = null) {
 
 async function getStaticCourses() {
   if (!staticCoursesPromise) {
-    staticCoursesPromise = import(pathToFileURL(path.join(__dirname, "../../src/data/course.js")).href)
+    staticCoursesPromise = import(pathToFileURL(path.join(__dirname, "../../src/data/course.mjs")).href)
       .then((module) => module.default || module.courses || []);
   }
   return staticCoursesPromise;
@@ -30,7 +30,7 @@ async function getStaticCourses() {
 
 async function getStaticLessons() {
   if (!staticLessonsPromise) {
-    staticLessonsPromise = import(pathToFileURL(path.join(__dirname, "../../src/data/lessons.js")).href)
+    staticLessonsPromise = import(pathToFileURL(path.join(__dirname, "../../src/data/lessons.mjs")).href)
       .then((module) => module.default || module.lessons || {});
   }
   return staticLessonsPromise;

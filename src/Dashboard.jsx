@@ -38,14 +38,14 @@ import DailyChallenge from "./pages/DailyChallenge";
 import LearningRoadmap from "./pages/LearningRoadmap";
 import AdminDashboard from "./pages/AdminDashboard";
 import createStore from "./data/store";
-import courses from "./data/course";
+import courses from "./data/course.mjs";
 import SettingsPage from "./pages/Settings";
 import VideoTutorials from "./pages/VideoTutorials";
 import LessonsPage from "./pages/LessonsPage";
 import fetchWithAuth from "./utils/fetchWithAuth";
 import { buildFallbackCourseAccess, findCourseAccess } from "./utils/courseAccess";
 import CourseLogo from "./components/CourseLogo";
-import { getLessonsByCourse } from "./data/lessons";
+import { getLessonsByCourse } from "./data/lessons.mjs";
 import { KAI_UI_EVENT, installKaiUiBridge } from "./utils/kaiUiBridge";
 
 function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAccess }) {

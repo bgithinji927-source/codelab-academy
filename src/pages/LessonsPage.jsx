@@ -1,5 +1,5 @@
 import { ArrowLeft, BookOpen, CheckCircle2, LockKeyhole, PlayCircle } from "lucide-react";
-import { getLessonsByCourse } from "../data/lessons";
+import { getLessonsByCourse } from "../data/lessons.mjs";
 import CourseLogo from "../components/CourseLogo";
 import "./LessonsPage.css";
 
