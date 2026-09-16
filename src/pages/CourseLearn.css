@@ -1980,3 +1980,26 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
   .learn-page.kai-chatgpt-mode .kai-input-dock::before { font-size: 10px; }
   .learn-page.kai-chatgpt-mode .kai-input-dock::after { font-size: 9px; }
 }
+
+/* Mobile lesson readability: keep authored line breaks visible and give each
+   thought enough breathing room instead of rendering one dense text block. */
+@media (max-width: 700px) {
+  .learn-page .kai-message-text,
+  .learn-page .learner-message-text,
+  .learn-page .kai-rich-content {
+    line-height: 1.9 !important;
+  }
+  .learn-page .kai-message-text p,
+  .learn-page .learner-message-text p,
+  .learn-page .kai-rich-content .kai-rich-text {
+    margin-bottom: 1.15rem !important;
+    white-space: pre-line !important;
+  }
+  .learn-page .kai-message-spacer {
+    height: 1.25rem !important;
+  }
+  .learn-page .kai-message-text li {
+    margin-bottom: .7rem !important;
+    line-height: 1.8 !important;
+  }
+}
