@@ -192,6 +192,19 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     }
 
     scrollFrameRef.current = requestAnimationFrame(() => {
+      // While Kai is streaming a response, follow the text only when the
+      // learner is already near the bottom. If they swipe upward to review an
+      // earlier message, do not repeatedly pull the page back down.
+      const scrollTarget = document.scrollingElement || document.documentElement;
+      const distanceFromBottom = Math.max(
+        0,
+        scrollTarget.scrollHeight - (window.scrollY + window.innerHeight)
+      );
+      if (isKaiTyping && distanceFromBottom > 220) {
+        scrollFrameRef.current = null;
+        return;
+      }
+
       conversationEndRef.current?.scrollIntoView({
         behavior: isKaiTyping ? "auto" : "smooth",
         block: "end",
