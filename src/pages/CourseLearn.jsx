@@ -257,8 +257,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       if (value.content && typeof value.content === "object") return [normalizeBlock(value.content)];
     }
     const text = cleanKaiResponse(value)
-      .replace(/^```(?:json)?\s*/i, "")
-      .replace(/\s*```$/i, "")
+      .replace(/```(?:json)?/gi, "")
+      .replace(/```/g, "")
       .trim();
     const candidates = [text];
     // Model responses can occasionally include a short preamble or trailing
@@ -1279,7 +1279,9 @@ ${startMessage}
                   onAction={handleKaiAction}
                 />
               ) : looksLikeJson ? (
-                <p>Kai is preparing a formatted lesson response. Please try sending your question again.</p>
+                <div className="kai-unstructured-response">
+                  {renderMarkdown(String(text).replace(/^\s*[\[{]\s*/, "").replace(/\s*[\]}]\s*$/, ""))}
+                </div>
               ) : renderMarkdown(text)}
             </div>
           </div>
