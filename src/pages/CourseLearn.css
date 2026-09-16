@@ -1868,3 +1868,83 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
   .learn-page.kai-chatgpt-mode .learner-board-content { width: calc(100% - 24px) !important; }
   .learn-page.kai-chatgpt-mode .kai-input-dock { left: 8px !important; right: 8px !important; bottom: 8px !important; }
 }
+
+/* Manus-style compact composer: centered panel with status row, message area,
+   tool row, and a short safety note underneath. */
+.learn-page.kai-chatgpt-mode .kai-input-dock {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: 30px !important;
+  transform: translateX(-50%);
+  width: min(calc(100% - 32px), 692px) !important;
+  max-width: 692px !important;
+  min-height: 126px !important;
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr) 44px !important;
+  grid-template-rows: 36px 48px 40px !important;
+  align-items: center !important;
+  padding: 0 10px 4px !important;
+  border-radius: 18px !important;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock::before {
+  content: "☷   Agent todo completed                                      1 subagent running  ›";
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  margin: 0 -10px;
+  padding: 0 14px;
+  border-bottom: 1px solid currentColor;
+  border-radius: 18px 18px 0 0;
+  color: inherit;
+  opacity: .8;
+  font-size: 12px;
+  white-space: pre;
+  overflow: hidden;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock textarea {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 11px 4px !important;
+  font-size: 14px !important;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock .kai-composer-icon {
+  grid-column: 1 !important;
+  grid-row: 3 !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  justify-self: start !important;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock .kai-composer-send {
+  grid-column: 3 !important;
+  grid-row: 3 !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  justify-self: end !important;
+}
+.learn-page.kai-chatgpt-mode .kai-input-dock::after {
+  content: "Kai is an AI instructor and can make mistakes. Please double-check before use.";
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 0;
+  width: 100%;
+  color: inherit;
+  opacity: .58;
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .learn-page.kai-chatgpt-mode .kai-input-dock {
+    bottom: 28px !important;
+    width: calc(100% - 16px) !important;
+  }
+  .learn-page.kai-chatgpt-mode .kai-input-dock::before { font-size: 10px; }
+  .learn-page.kai-chatgpt-mode .kai-input-dock::after { font-size: 9px; }
+}
