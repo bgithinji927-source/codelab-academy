@@ -1154,8 +1154,8 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       ? structuredReplyToMarkdown(structuredContent)
       : reply;
 
-    const isLessonComplete = reply.includes("[LESSON_COMPLETE:") || friendlyReply.includes("[LESSON_COMPLETE:");
-    const summaryMatch = reply.match(/\[LESSON_COMPLETE:\s*(.*?)\]/);
+    const isLessonComplete = /\[LESSON_COMPLETE:/i.test(reply) || /\[LESSON_COMPLETE:/i.test(friendlyReply);
+    const summaryMatch = reply.match(/\[LESSON_COMPLETE:\s*(.*?)\]/i);
     const lessonSummary = summaryMatch ? summaryMatch[1].trim() : "";
     const courseReadyMatch = reply.match(/\[COURSE_READY:\s*(.*?)\]/i);
     const courseReadinessSummary = courseReadyMatch ? courseReadyMatch[1].trim() : "";
@@ -1172,7 +1172,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
 
     // Clean control markers from the learner-visible reply.
     const cleanReply = friendlyReply
-      .replace(/\[LESSON_COMPLETE:.*?\]/g, "")
+      .replace(/\[LESSON_COMPLETE:.*?\]/gi, "")
       .replace(/\[COURSE_READY:.*?\]/gi, "")
       .replace(/\[UI_ACTION:\s*CONTINUE_LESSON\]/gi, "")
       .replace(/\[VIDEO_RECOMMEND(?:_ID)?(?:\s*:\s*.*?)?\]/gi, "")

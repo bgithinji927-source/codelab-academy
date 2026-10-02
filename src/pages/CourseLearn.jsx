@@ -615,8 +615,9 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         )));
       }
 
-      if (data.lessonComplete || data.readyForNextLesson) {
-        setLessonCompletionReady(Boolean(data.readyForNextLesson || data.lessonComplete));
+      const kaiOpenedNextLesson = data.uiAction?.type === "continue_lesson";
+      if (data.lessonComplete || data.readyForNextLesson || kaiOpenedNextLesson) {
+        setLessonCompletionReady(Boolean(data.readyForNextLesson || data.lessonComplete || kaiOpenedNextLesson));
         if (data.lessonSummary) {
           setPreviousLessonSummary(data.lessonSummary);
         }
@@ -626,7 +627,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         setCourseReadyForNext(true);
         setReadinessSummary(data.readinessSummary || "Kai confirmed you are ready for the next course.");
       }
-      if (data.uiAction?.type === "continue_lesson") {
+      if (kaiOpenedNextLesson) {
         setPendingUiAction(data.uiAction);
       }
       if (data.courseAccess) onProgressChanged?.(data);
@@ -771,6 +772,7 @@ ${startMessage}
       !lessonCompletionReady ||
       isKaiTyping ||
       isAdvancing ||
+      viewingLessonIndex !== null ||
       currentLessonIndex >= allLessons.length - 1
     ) {
       return;
@@ -856,15 +858,21 @@ ${startMessage}
   // for Kai's typing animation and completion state prevents bypassing rules.
   useEffect(() => {
     if (
-      pendingUiAction?.type !== "continue_lesson" ||
-      !lessonCompletionReady ||
+      !["continue_lesson", "request_continue_lesson"].includes(pendingUiAction?.type) ||
       isKaiTyping ||
       isAdvancing
     ) {
       return;
     }
     setPendingUiAction(null);
-    handleNextLesson();
+    if (lessonCompletionReady) {
+      handleNextLesson();
+    } else if (pendingUiAction?.type === "request_continue_lesson") {
+      askKai({
+        learnerMessage: "I am ready to continue to the next lesson. Please check whether I have completed this lesson and open it only if I am ready.",
+        conversation: messages,
+      });
+    }
   }, [pendingUiAction, lessonCompletionReady, isKaiTyping, isAdvancing]);
 
   const isReviewingPastLesson = viewingLessonIndex !== null;
@@ -1338,8 +1346,16 @@ ${startMessage}
     const fallbackBlocks = contentBlocks?.length ? contentBlocks : parseStructuredContent(text);
     const looksLikeJson = /^\s*[\[{]/.test(String(text || ""));
     const handleKaiAction = (action, payload) => {
-      if (["unlockNextLesson", "nextLesson"].includes(action)) handleNextLesson();
-      else if (["next_lesson", "continue", "continue_lesson"].includes(action)) handleNextLesson();
+      if (["unlockNextLesson", "nextLesson", "next_lesson", "continue", "continue_lesson"].includes(action)) {
+        if (isReviewingPastLesson) return;
+        if (isKaiTyping) {
+          setPendingUiAction({ type: "request_continue_lesson" });
+        } else if (lessonCompletionReady) {
+          handleNextLesson();
+        } else {
+          setPendingUiAction({ type: "request_continue_lesson" });
+        }
+      }
       else if (action === "practice") askKai({ learnerMessage: payload || "Give me a practice question for this topic. Do not reveal the answer until I try.", conversation: messages });
       else if (action === "example") askKai({ learnerMessage: payload || "Show me another practical example of this topic and explain it step by step.", conversation: messages });
       else if (["review", "review_topic"].includes(action)) askKai({ learnerMessage: payload || "Give me a concise review of this topic, including the key ideas and common mistakes.", conversation: messages });
