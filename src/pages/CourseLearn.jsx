@@ -400,7 +400,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               .map((message) => ({
                 role: message.role,
                 content: message.content,
-                contentBlocks: message.role === "assistant" ? parseStructuredContent(message.content) : null,
+                contentBlocks: message.role === "assistant"
+                  ? (Array.isArray(message.contentBlocks) && message.contentBlocks.length
+                    ? message.contentBlocks
+                    : parseStructuredContent(message.content))
+                  : null,
                 video: message.video || null,
               }))
           : [];

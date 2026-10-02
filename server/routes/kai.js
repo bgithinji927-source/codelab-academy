@@ -274,7 +274,8 @@ async function saveConversation(
   lessonId,
   role,
   content,
-  video = null
+  video = null,
+  contentBlocks = null
 ) {
   try {
     const user = await User.findById(userId);
@@ -290,6 +291,7 @@ async function saveConversation(
       session.conversationHistory.push({
         role,
         content,
+        ...(Array.isArray(contentBlocks) ? { contentBlocks } : {}),
         ...(video ? { video } : {}),
         timestamp: new Date(),
       });
@@ -1048,14 +1050,29 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       groqRequestBody.include_reasoning = false;
     }
 
-    const requestGroq = (messages) => fetch(GROQ_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-      },
-      body: JSON.stringify({ ...groqRequestBody, messages }),
-    });
+    const requestGroq = (messages, { structured = true } = {}) => {
+      const requestBody = { ...groqRequestBody, messages };
+      // Some Groq/model combinations reject a generation even though the
+      // request itself is valid. A plain response is still renderable by the
+      // learner UI, so fall back instead of exposing the provider error.
+      if (!structured) delete requestBody.response_format;
+
+      return fetch(GROQ_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+    };
+
+    const isJsonGenerationFailure = (payload) => {
+      const message = String(payload?.error?.message || "").toLowerCase();
+      return payload?.error?.code === "failed_generation"
+        || message.includes("failed to generate json")
+        || message.includes("failed_generation");
+    };
 
     let response = await requestGroq(groqMessages);
 
@@ -1064,6 +1081,14 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     // ========================================
 
     let data = await response.json();
+    let structuredMode = true;
+
+    if (!response.ok && isJsonGenerationFailure(data)) {
+      console.warn("Groq JSON generation failed; retrying Kai in plain response mode.");
+      structuredMode = false;
+      response = await requestGroq(groqMessages, { structured: false });
+      data = await response.json();
+    }
 
     if (!response.ok) {
       console.error("Groq API error:", response.status, data);
@@ -1081,7 +1106,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     // JSON mode guarantees syntax, while this validation guarantees the
     // application contract. Retry once if the model returns a valid but
     // unusable JSON value (for example, an empty object or a plain string).
-    if (response.ok && !parseStructuredReply(reply)?.length) {
+    if (structuredMode && response.ok && !parseStructuredReply(reply)?.length) {
       const correctionMessages = [
         ...groqMessages,
         { role: "assistant", content: reply },
@@ -1092,6 +1117,12 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       ];
       response = await requestGroq(correctionMessages);
       data = await response.json();
+      if (!response.ok && isJsonGenerationFailure(data)) {
+        console.warn("Groq JSON correction failed; retrying Kai in plain response mode.");
+        structuredMode = false;
+        response = await requestGroq(correctionMessages, { structured: false });
+        data = await response.json();
+      }
       if (!response.ok) {
         console.error("Groq correction request error:", response.status, data);
         return res.status(response.status).json({
@@ -1156,7 +1187,15 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
         await saveConversation(userId, course.id, lesson.id, "user", learnerMessage);
       }
 
-      await saveConversation(userId, course.id, lesson.id, "assistant", cleanReply, videoRecommendation);
+      await saveConversation(
+        userId,
+        course.id,
+        lesson.id,
+        "assistant",
+        cleanReply,
+        videoRecommendation,
+        structuredContent
+      );
 
       // Mark lesson complete if Kai indicates it
       if (shouldCompleteLesson) {

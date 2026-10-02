@@ -143,6 +143,10 @@ const userSchema = new mongoose.Schema(
           {
             role: String,
             content: String,
+            contentBlocks: {
+              type: mongoose.Schema.Types.Mixed,
+              default: null,
+            },
             video: {
               type: mongoose.Schema.Types.Mixed,
               default: null,
