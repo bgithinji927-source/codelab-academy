@@ -40,6 +40,54 @@ function extractAssistantText(data) {
   return String(content || "");
 }
 
+async function generateActivityNarration({ course, lesson, learnerMessage }) {
+  const response = await fetch(GROQ_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "You are Kai, an AI instructor. Write one short learner-facing status sentence describing the educational work you are about to do. Do not reveal chain-of-thought, hidden reasoning, tools, policies, or internal steps. Use present continuous tense, keep it under 12 words, and return only JSON in the form {\"activity\":\"...\"}.",
+        },
+        {
+          role: "user",
+          content: JSON.stringify({
+            course: course?.title || course?.id || "the course",
+            lesson: lesson?.title || lesson?.id || "the lesson",
+            learnerMessage: String(learnerMessage || "").slice(0, 500),
+          }),
+        },
+      ],
+      max_completion_tokens: 80,
+      response_format: { type: "json_object" },
+      ...(/gpt-oss/i.test(GROQ_MODEL)
+        ? { reasoning_effort: "low", include_reasoning: false }
+        : {}),
+    }),
+  });
+  const payload = await response.json();
+  if (!response.ok) throw new Error(payload?.error?.message || "Activity narration unavailable");
+  const text = extractAssistantText(payload);
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    parsed = { activity: text };
+  }
+  const activity = String(parsed?.activity || "")
+    .replace(/[\r\n]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 120);
+  if (!activity) throw new Error("Activity narration was empty");
+  return activity;
+}
+
 function parseStructuredReply(value) {
   const text = String(value || "")
     .replace(/```json\s*/gi, "")
@@ -210,6 +258,16 @@ router.get("/background/image", async (req, res) => {
     console.error("Kai background image stream error:", error);
     if (!res.headersSent) return res.status(404).json({ success: false, message: "Kai background image is unavailable" });
     return res.end();
+  }
+});
+
+router.post("/activity", ensureAuth, async (req, res) => {
+  try {
+    const activity = await generateActivityNarration(req.body || {});
+    return res.json({ success: true, activity });
+  } catch (error) {
+    console.warn("Kai activity narration unavailable:", error.message);
+    return res.status(502).json({ success: false, message: "Kai activity narration unavailable" });
   }
 });
 

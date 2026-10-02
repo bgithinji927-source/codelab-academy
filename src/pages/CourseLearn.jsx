@@ -21,12 +21,6 @@ import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AICo
 import "./CourseLearn.css";
 
 const KAI_UI_MODE_KEY = "codelabKaiUiMode";
-const KAI_ACTIVITY_MESSAGES = [
-  "Reviewing your answer",
-  "Connecting it to this lesson",
-  "Preparing a practical explanation",
-  "Checking the next learning step",
-];
 
 function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
   const [messages, setMessages] = useState([]);
@@ -495,27 +489,19 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     setKaiActivityText("");
   };
 
-  const startKaiActivity = () => {
+  const startKaiActivity = (activity = "Kai is thinking") => {
     stopKaiActivity();
-    let phraseIndex = 0;
     let characterIndex = 0;
-    let pauseTicks = 0;
     setKaiActivityText("");
     kaiActivityTimerRef.current = setInterval(() => {
-      const phrase = KAI_ACTIVITY_MESSAGES[phraseIndex];
+      const phrase = String(activity || "Kai is thinking").trim();
       if (characterIndex < phrase.length) {
         characterIndex += 1;
         setKaiActivityText(phrase.slice(0, characterIndex));
         return;
       }
-      if (pauseTicks < 16) {
-        pauseTicks += 1;
-        return;
-      }
-      phraseIndex = (phraseIndex + 1) % KAI_ACTIVITY_MESSAGES.length;
-      characterIndex = 0;
-      pauseTicks = 0;
-      setKaiActivityText("");
+      clearInterval(kaiActivityTimerRef.current);
+      kaiActivityTimerRef.current = null;
     }, 48);
   };
 
@@ -590,6 +576,26 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       setDisplayedKaiText("");
       setIsKaiTyping(true);
       startKaiActivity();
+
+      try {
+        const activityResponse = await fetchWithAuth("/api/kai/activity", {
+          method: "POST",
+          signal: controller.signal,
+          body: JSON.stringify({
+            course: { ...course, title: courseTitle },
+            lesson,
+            learnerMessage,
+          }),
+        });
+        const activityData = await activityResponse.json();
+        if (activityResponse.ok && activityData.success && activityData.activity) {
+          startKaiActivity(activityData.activity);
+        }
+      } catch (activityError) {
+        if (activityError?.name === "AbortError") throw activityError;
+        // The teaching response remains available if the optional narration
+        // request fails; the generic Kai is thinking status stays visible.
+      }
 
       const response = await fetchWithAuth("/api/kai", {
         method: "POST",
