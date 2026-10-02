@@ -2094,9 +2094,11 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
   margin-right: auto !important;
 }
 .learn-page.kai-chatgpt-mode .kai-input-dock {
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
+  left: clamp(40px, 9vw, 140px) !important;
+  right: clamp(40px, 9vw, 140px) !important;
+  width: auto !important;
+  max-width: none !important;
+  transform: none !important;
 }
 @media (max-width: 640px) {
   .learn-page.kai-chatgpt-mode .conversation-container {
@@ -2109,11 +2111,11 @@ html[data-theme="dark"] .learn-page .kai-markdown-table code,
     width: calc(100% - 24px) !important;
   }
   .learn-page.kai-chatgpt-mode .kai-input-dock {
-    left: 50% !important;
-    right: auto !important;
-    width: calc(100% - 24px) !important;
-    max-width: calc(100% - 24px) !important;
-    transform: translateX(-50%) !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
   }
   .learn-page.kai-chatgpt-mode .conversation-container::before,
   .learn-page.kai-chatgpt-mode .conversation-container::after { display: none; }
