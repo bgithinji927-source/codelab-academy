@@ -868,6 +868,36 @@ html[data-theme="dark"] .lesson-picker-trigger[aria-expanded="true"] { border-co
   }
 }
 
+.kai-thinking-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  color: #aaa4b7;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+.kai-thinking-pulse {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #7c3aed;
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, .12);
+  animation: kaiActivityPulse 1.4s ease-in-out infinite;
+}
+.kai-thinking-cursor {
+  color: #a78bfa;
+  animation: kaiActivityCursor .8s steps(1, end) infinite;
+}
+@keyframes kaiActivityPulse {
+  50% { opacity: .45; transform: scale(.78); }
+}
+@keyframes kaiActivityCursor {
+  50% { opacity: 0; }
+}
+
 /* =========================================
    INPUT
 ========================================= */

@@ -21,12 +21,19 @@ import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AICo
 import "./CourseLearn.css";
 
 const KAI_UI_MODE_KEY = "codelabKaiUiMode";
+const KAI_ACTIVITY_MESSAGES = [
+  "Reviewing your answer",
+  "Connecting it to this lesson",
+  "Preparing a practical explanation",
+  "Checking the next learning step",
+];
 
 function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
   const [messages, setMessages] = useState([]);
   const [answer, setAnswer] = useState("");
   const [isKaiTyping, setIsKaiTyping] = useState(false);
   const [displayedKaiText, setDisplayedKaiText] = useState("");
+  const [kaiActivityText, setKaiActivityText] = useState("");
   const [lesson, setLesson] = useState(null);
   
   // ============================================
@@ -63,6 +70,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   ));
 
   const typingTimerRef = useRef(null);
+  const kaiActivityTimerRef = useRef(null);
   const kaiRequestRef = useRef(null);
   const lessonStartKeyRef = useRef("");
   const lessonViewCacheRef = useRef(new Map());
@@ -479,12 +487,45 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   // STOP TYPING ANIMATION
   // ============================================
 
+  const stopKaiActivity = () => {
+    if (kaiActivityTimerRef.current) {
+      clearInterval(kaiActivityTimerRef.current);
+      kaiActivityTimerRef.current = null;
+    }
+    setKaiActivityText("");
+  };
+
+  const startKaiActivity = () => {
+    stopKaiActivity();
+    let phraseIndex = 0;
+    let characterIndex = 0;
+    let pauseTicks = 0;
+    setKaiActivityText("");
+    kaiActivityTimerRef.current = setInterval(() => {
+      const phrase = KAI_ACTIVITY_MESSAGES[phraseIndex];
+      if (characterIndex < phrase.length) {
+        characterIndex += 1;
+        setKaiActivityText(phrase.slice(0, characterIndex));
+        return;
+      }
+      if (pauseTicks < 16) {
+        pauseTicks += 1;
+        return;
+      }
+      phraseIndex = (phraseIndex + 1) % KAI_ACTIVITY_MESSAGES.length;
+      characterIndex = 0;
+      pauseTicks = 0;
+      setKaiActivityText("");
+    }, 48);
+  };
+
   const stopTyping = () => {
     if (typingTimerRef.current) {
       clearInterval(typingTimerRef.current);
       typingTimerRef.current = null;
     }
 
+    stopKaiActivity();
     setIsKaiTyping(false);
   };
 
@@ -548,6 +589,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       stopTyping();
       setDisplayedKaiText("");
       setIsKaiTyping(true);
+      startKaiActivity();
 
       const response = await fetchWithAuth("/api/kai", {
         method: "POST",
@@ -1738,14 +1780,12 @@ ${startMessage}
                     </div>
                   </div>
 
-                  <div className="kai-board-thinking">
-
-                    <div className="kai-thinking">
-                      <span />
-                      <span />
-                      <span />
+                  <div className="kai-board-thinking" aria-live="polite" aria-label="Kai activity">
+                    <div className="kai-thinking-status">
+                      <span className="kai-thinking-pulse" aria-hidden="true" />
+                      <span>{kaiActivityText}</span>
+                      <span className="kai-thinking-cursor" aria-hidden="true">▌</span>
                     </div>
-
                   </div>
 
                 </div>
