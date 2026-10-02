@@ -9,6 +9,8 @@ import {
   UserRound,
   Sparkles,
   CheckCircle2,
+  ChevronDown,
+  Lock,
   X,
 } from "lucide-react";
 
@@ -32,6 +34,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   // ============================================
   
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
+  const [serverLessonIndex, setServerLessonIndex] = useState(0);
   const [completedLessonsCount, setCompletedLessonsCount] = useState(0);
   const [allLessons, setAllLessons] = useState([]);
   const [previousLessonSummary, setPreviousLessonSummary] = useState("");
@@ -43,6 +46,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [pendingUiAction, setPendingUiAction] = useState(null);
   const [savedLessonSessions, setSavedLessonSessions] = useState([]);
+  const [isLessonMenuOpen, setIsLessonMenuOpen] = useState(false);
+  const [viewingLessonIndex, setViewingLessonIndex] = useState(null);
   const [activeVideo, setActiveVideo] = useState(null);
   const [resolvedVideoUrl, setResolvedVideoUrl] = useState("");
   const [videoPlaybackError, setVideoPlaybackError] = useState("");
@@ -60,6 +65,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const typingTimerRef = useRef(null);
   const kaiRequestRef = useRef(null);
   const lessonStartKeyRef = useRef("");
+  const lessonViewCacheRef = useRef(new Map());
   const conversationEndRef = useRef(null);
   const scrollFrameRef = useRef(null);
 
@@ -323,13 +329,17 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       setCourseStateLoaded(false);
       setCourseStateError("");
       lessonStartKeyRef.current = "";
+      lessonViewCacheRef.current = new Map();
       setMessages([]);
       setSavedLessonSessions([]);
+      setIsLessonMenuOpen(false);
+      setViewingLessonIndex(null);
       setLesson(null);
       setLessonCompletionReady(false);
       setCourseReadyForNext(false);
       setReadinessSummary("");
       setCurrentLessonIndex(0);
+      setServerLessonIndex(0);
       setCompletedLessonsCount(0);
       setPreviousLessonSummary("");
 
@@ -408,26 +418,36 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
                 video: message.video || null,
               }))
           : [];
-        const savedHistory = normalizeHistory(stateData.session?.conversationHistory);
-        const savedSessions = Array.isArray(stateData.sessions)
+        const normalizedSessions = Array.isArray(stateData.sessions)
           ? stateData.sessions
-              .filter((session) => Number(session.lessonIndex) < safeRequestedIndex)
               .map((session) => ({
                 ...session,
                 conversationHistory: normalizeHistory(session.conversationHistory),
               }))
           : [];
+        const selectedSession = normalizedSessions.find(
+          (session) => Number(session.lessonIndex) === safeRequestedIndex
+        );
+        const savedHistory = normalizeHistory(
+          selectedSession?.conversationHistory || stateData.session?.conversationHistory
+        );
 
         setCurrentLessonIndex(safeRequestedIndex);
+        setServerLessonIndex(safeIndex);
+        setViewingLessonIndex(safeRequestedIndex < safeIndex ? safeRequestedIndex : null);
         setCompletedLessonsCount(Math.max(0, Math.min(
           courseLessons.length,
           Number(stateData.courseProgress?.lessonsCompleted) || 0
         )));
         setLesson(activeLesson);
-        setPreviousLessonSummary(stateData.session?.summary || "");
-        setSavedLessonSessions(savedSessions);
+        setPreviousLessonSummary(selectedSession?.summary || stateData.session?.summary || "");
+        setSavedLessonSessions(normalizedSessions);
         setMessages(savedHistory);
-        setLessonCompletionReady(Boolean(serverLesson.completed || stateData.session?.completed));
+        setLessonCompletionReady(Boolean(
+          safeRequestedIndex < safeIndex
+            ? selectedSession?.completed
+            : serverLesson.completed || stateData.session?.completed
+        ));
         setCourseReadyForNext(Boolean(stateData.courseProgress?.readyForNextCourse || stateData.courseAccess?.activeCourse?.progress?.readyForNextCourse));
         setReadinessSummary(stateData.courseProgress?.readinessSummary || stateData.courseAccess?.activeCourse?.progress?.readinessSummary || "");
         if (stateData.courseAccess) onProgressChanged?.(stateData);
@@ -806,6 +826,7 @@ ${startMessage}
         )));
       }
       setCurrentLessonIndex(nextIndex);
+      setServerLessonIndex(nextIndex);
       setLesson(nextLesson);
       setMessages(
         Array.isArray(data.session?.conversationHistory)
@@ -846,6 +867,56 @@ ${startMessage}
     handleNextLesson();
   }, [pendingUiAction, lessonCompletionReady, isKaiTyping, isAdvancing]);
 
+  const isReviewingPastLesson = viewingLessonIndex !== null;
+  const handleLessonSelect = (targetIndex) => {
+    if (
+      targetIndex < 0 ||
+      targetIndex > serverLessonIndex ||
+      targetIndex >= allLessons.length ||
+      targetIndex === currentLessonIndex
+    ) {
+      setIsLessonMenuOpen(false);
+      return;
+    }
+
+    if (lesson) {
+      lessonViewCacheRef.current.set(currentLessonIndex, {
+        lesson,
+        messages,
+        completed: lessonCompletionReady,
+        summary: previousLessonSummary,
+      });
+    }
+
+    const targetLesson = allLessons[targetIndex];
+    const cachedLesson = lessonViewCacheRef.current.get(targetIndex);
+    const savedSession = savedLessonSessions.find(
+      (session) => Number(session.lessonIndex) === targetIndex
+    );
+    const targetHistory = cachedLesson?.messages
+      || savedSession?.conversationHistory
+      || [];
+
+    stopTyping();
+    setPendingUiAction(null);
+    setAnswer("");
+    setDisplayedKaiText("");
+    setCourseStateError("");
+    setCurrentLessonIndex(targetIndex);
+    setViewingLessonIndex(targetIndex < serverLessonIndex ? targetIndex : null);
+    setLesson(targetLesson);
+    setMessages(targetHistory);
+    setPreviousLessonSummary(cachedLesson?.summary || savedSession?.summary || "");
+    setLessonCompletionReady(
+      targetIndex < serverLessonIndex
+        ? true
+        : Boolean(cachedLesson?.completed)
+    );
+    setCourseReadyForNext(targetIndex === serverLessonIndex ? courseReadyForNext : false);
+    setIsLessonMenuOpen(false);
+    lessonStartKeyRef.current = `${course?.id}:${targetLesson.id}`;
+  };
+
   // ============================================
   // SEND LEARNER MESSAGE
   // ============================================
@@ -853,7 +924,7 @@ ${startMessage}
   const handleSend = async () => {
     const trimmedAnswer = answer.trim();
 
-    if (!trimmedAnswer || isKaiTyping) {
+    if (!trimmedAnswer || isKaiTyping || isReviewingPastLesson) {
       return;
     }
 
@@ -1433,9 +1504,50 @@ ${startMessage}
         </div>
 
         <div className="learn-progress">
-          <span className="progress-label">
-            Lesson {currentLessonIndex + 1} · {actualCompletedLessons}/{allLessons.length} complete
-          </span>
+          <div className="lesson-picker">
+            <button
+              type="button"
+              className="lesson-picker-trigger"
+              aria-expanded={isLessonMenuOpen}
+              aria-haspopup="listbox"
+              onClick={() => setIsLessonMenuOpen((open) => !open)}
+            >
+              <span className="lesson-picker-current">
+                Lesson {currentLessonIndex + 1}: {lesson?.title || "Loading lesson"}
+              </span>
+              <ChevronDown size={14} />
+            </button>
+            {isLessonMenuOpen && (
+              <div className="lesson-picker-menu" role="listbox" aria-label="Course lessons">
+                {allLessons.map((item, index) => {
+                  const isLocked = index > serverLessonIndex;
+                  const isSelected = index === currentLessonIndex;
+                  const isCurrent = index === serverLessonIndex;
+                  const isComplete = index < serverLessonIndex || (isSelected && lessonCompletionReady);
+                  return (
+                    <button
+                      type="button"
+                      key={item.id || index}
+                      className={`lesson-picker-option${isSelected ? " is-selected" : ""}${isLocked ? " is-locked" : ""}`}
+                      role="option"
+                      aria-selected={isSelected}
+                      disabled={isLocked}
+                      onClick={() => handleLessonSelect(index)}
+                    >
+                      <span className="lesson-picker-icon">
+                        {isLocked ? <Lock size={13} /> : isComplete ? <CheckCircle2 size={14} /> : <span className="lesson-picker-dot" />}
+                      </span>
+                      <span className="lesson-picker-copy">
+                        <strong>Lesson {index + 1}: {item.title}</strong>
+                        <small>{isLocked ? "Locked until Kai opens it" : isCurrent && isSelected && !isReviewingPastLesson ? "In progress" : isCurrent ? "Current lesson" : "Completed · Review"}</small>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          <span className="progress-label">{actualCompletedLessons}/{allLessons.length} complete</span>
 
           <div className="progress-track">
             <div
@@ -1494,6 +1606,7 @@ ${startMessage}
             onClick={handleNextLesson}
             disabled={
               isFinalLesson ||
+              isReviewingPastLesson ||
               !lessonCompletionReady ||
               isKaiTyping ||
               isAdvancing
@@ -1549,27 +1662,12 @@ ${startMessage}
             </div>
           )}
 
-          {savedLessonSessions.map((session) => {
-            const savedLesson = allLessons[Number(session.lessonIndex)] || {};
-            return (
-              <div className="saved-lesson-session" key={`saved-session-${session.lessonId || session.lessonIndex}`}>
-                <div className="saved-lesson-heading">
-                  <CheckCircle2 size={15} />
-                  <span>Lesson {Number(session.lessonIndex) + 1}: {savedLesson.title || "Completed lesson"}</span>
-                  <span className="saved-lesson-status">Completed</span>
-                </div>
-                {(session.conversationHistory || []).map((message, index) => {
-                  if (message.role === "assistant") {
-                    return renderKaiMessage(message.content, `saved-${session.lessonIndex}-${index}`, message.video, message.contentBlocks);
-                  }
-                  if (message.role === "user") {
-                    return renderLearnerMessage(message.content, `saved-${session.lessonIndex}-${index}`);
-                  }
-                  return null;
-                })}
-              </div>
-            );
-          })}
+          {isReviewingPastLesson && (
+            <div className="lesson-review-notice" role="status">
+              <CheckCircle2 size={15} />
+              <span>Reviewing a completed lesson. Select the current lesson from the menu to continue with Kai.</span>
+            </div>
+          )}
 
           {messages.map(
             (message, index) => {
@@ -1670,11 +1768,13 @@ ${startMessage}
               }
             }}
             placeholder={
-              isKaiTyping
+              isReviewingPastLesson
+                ? "Select the current lesson to continue with Kai..."
+                : isKaiTyping
                 ? "Kai is thinking..."
                 : "Answer Kai or ask a question..."
             }
-            disabled={isKaiTyping || (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) || isAdvancing}
+            disabled={isReviewingPastLesson || isKaiTyping || (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) || isAdvancing}
             autoComplete="off"
           />
 
@@ -1687,6 +1787,7 @@ ${startMessage}
             className="kai-composer-send"
             onClick={handleSend}
             disabled={
+              isReviewingPastLesson ||
               isKaiTyping ||
               (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) ||
               isAdvancing ||
