@@ -2814,3 +2814,27 @@ html[data-theme="dark"] .kai-message-actions button,
   .learn-page.kai-reading-mode .kai-rich-content li { color: #28251f !important; }
   .learn-page.kai-reading-mode .kai-message-text { font-size: 1.02rem; line-height: 1.8; }
 }
+
+/* Robust centering: anchor the outer teaching card to the viewport midpoint,
+   then let every Kai message fill that centered 1300px card. */
+@media (min-width: 641px) {
+  .learn-page > .conversation-container > .kai-teaching-card {
+    position: relative !important;
+    left: 50% !important;
+    width: min(91vw, 1300px) !important;
+    max-width: 1300px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    transform: translateX(-50%) !important;
+  }
+  .learn-page > .conversation-container > .kai-teaching-card .conversation-messages,
+  .learn-page > .conversation-container > .kai-teaching-card .chat-row,
+  .learn-page > .conversation-container > .kai-teaching-card .chat-content,
+  .learn-page > .conversation-container > .kai-teaching-card .kai-board-content,
+  .learn-page > .conversation-container > .kai-teaching-card .kai-message-text {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
