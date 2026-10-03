@@ -2965,3 +2965,30 @@ html[data-theme="dark"] .kai-message-actions button,
     margin-right: auto !important;
   }
 }
+
+/* Exact ChatGPT alignment: message surface and fixed composer use the same
+   viewport-relative width and centered edges. */
+@media (min-width: 641px) {
+  .learn-page.kai-chatgpt-mode .conversation-messages,
+  .learn-page.kai-chatgpt-mode .chat-content,
+  .learn-page.kai-chatgpt-mode .kai-board-content,
+  .learn-page.kai-chatgpt-mode .learner-board-content,
+  .learn-page.kai-chatgpt-mode .kai-rich-content,
+  .learn-page.kai-chatgpt-mode .kai-message-text,
+  .learn-page.kai-chatgpt-mode .learner-message-text {
+    width: min(91vw, 1300px) !important;
+    max-width: 1300px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box;
+  }
+  .learn-page.kai-chatgpt-mode .kai-input-dock {
+    left: 50% !important;
+    right: auto !important;
+    width: min(91vw, 1300px) !important;
+    max-width: 1300px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    transform: translateX(-50%) !important;
+  }
+}
