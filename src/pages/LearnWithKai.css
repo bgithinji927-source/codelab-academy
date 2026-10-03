@@ -437,3 +437,36 @@
     max-width: 100%;
   }
 }
+
+/* Readability pass for the standalone Kai chat. */
+.kai-message .message-bubble { max-width: min(100%, 78ch); overflow-wrap: anywhere; line-height: 1.72; }
+.kai-message .message-bubble > .kai-rich-content,
+.kai-message .message-bubble > div { max-width: 78ch; }
+.kai-message .message-bubble p { margin: 0 0 1rem; }
+.kai-message .message-bubble p:last-child { margin-bottom: 0; }
+.kai-message .message-bubble h2,
+.kai-message .message-bubble h3,
+.kai-message .message-bubble h4 { margin: 1.3rem 0 .65rem; line-height: 1.3; }
+.kai-message .message-bubble ul,
+.kai-message .message-bubble ol { margin: .35rem 0 1rem; padding-left: 1.45rem; }
+.kai-message .message-bubble li { margin-bottom: .45rem; }
+.kai-message .message-bubble pre,
+.kai-message .message-bubble code { max-width: 100%; overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .kai-main { padding: 12px; }
+  .kai-messages { padding: 18px 14px; gap: 18px; }
+  .message { width: 100%; }
+  .message > div:last-child { max-width: 100%; }
+  .kai-message .message-bubble,
+  .kai-message .message-bubble > .kai-rich-content,
+  .kai-message .message-bubble > div { max-width: 100%; }
+  .kai-message .message-bubble { font-size: .96rem; line-height: 1.7; padding: 13px 14px; }
+  .kai-message .message-bubble p { margin-bottom: .85rem; }
+  .kai-message .message-bubble h2 { font-size: 1.28rem; }
+  .kai-message .message-bubble h3 { font-size: 1.12rem; }
+  .kai-message .message-bubble pre { max-width: 100%; overflow-x: auto; white-space: pre; font-size: .8rem; line-height: 1.55; }
+}
+@media (max-width: 380px) {
+  .kai-messages { padding-inline: 10px; }
+  .kai-message .message-bubble { font-size: .92rem; }
+}

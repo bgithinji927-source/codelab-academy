@@ -2547,3 +2547,56 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
   .previous-lesson-suggestion { align-items: stretch; flex-direction: column; }
   .previous-lesson-suggestion button { justify-content: center; }
 }
+
+/* Readability pass: keep Kai's teaching prose comfortable instead of stretching
+   across the entire desktop viewport or becoming dense on phones. */
+.learn-page .kai-message-text,
+.learn-page .kai-board-content .kai-rich-content { max-width: 82ch !important; overflow-wrap: anywhere; }
+.learn-page .kai-message-text p,
+.learn-page .kai-message-text li,
+.learn-page .kai-board-content .kai-rich-text { max-width: 76ch !important; margin-block: 0 1rem; line-height: 1.78 !important; }
+.learn-page .kai-message-text p + p,
+.learn-page .kai-message-text p + ul,
+.learn-page .kai-message-text p + ol,
+.learn-page .kai-message-text ul + p,
+.learn-page .kai-message-text ol + p { margin-top: 1.05rem; }
+.learn-page .kai-message-text h2,
+.learn-page .kai-message-text h3,
+.learn-page .kai-message-text h4 { max-width: 76ch !important; margin-top: 1.6rem; margin-bottom: .75rem; line-height: 1.3; }
+.learn-page .kai-message-text ul,
+.learn-page .kai-message-text ol { max-width: 76ch !important; margin-block: .45rem 1.1rem; padding-left: 1.5rem; }
+.learn-page .kai-message-text li { margin-bottom: .5rem; }
+.learn-page .kai-board-content .kai-rich-content { gap: 1.2rem; }
+.learn-page .kai-board-content .kai-rich-content > * { max-width: 76ch; }
+.learn-page .kai-board-content .kai-rich-code,
+.learn-page .kai-board-content .kai-rich-table-wrap,
+.learn-page .kai-board-content .kai-rich-diagram,
+.learn-page .kai-board-content .kai-rich-video { max-width: 100%; }
+.learn-page .kai-board-content .kai-rich-code pre,
+.learn-page .kai-board-content .kai-rich-copyable pre { overflow-x: auto; white-space: pre; }
+@media (max-width: 700px) {
+  .learn-page .conversation-container { padding: 28px 12px 72px; }
+  .learn-page .chat-row { margin-bottom: 22px; }
+  .learn-page .chat-content { width: 100%; }
+  .learn-page .kai-message-text,
+  .learn-page .kai-board-content .kai-rich-content { max-width: 100% !important; }
+  .learn-page .kai-message-text p,
+  .learn-page .kai-message-text li,
+  .learn-page .kai-board-content .kai-rich-text,
+  .learn-page .kai-board-content .kai-rich-content > * { max-width: 100% !important; font-size: .98rem; line-height: 1.72 !important; }
+  .learn-page .kai-message-text p,
+  .learn-page .kai-board-content .kai-rich-text { margin-bottom: .9rem; }
+  .learn-page .kai-message-text h2 { font-size: 1.4rem; }
+  .learn-page .kai-message-text h3 { font-size: 1.18rem; }
+  .learn-page .kai-message-text h4 { font-size: 1.03rem; }
+  .learn-page .kai-board-content .kai-rich-content { gap: 1rem; }
+  .learn-page .kai-board-content .kai-rich-code,
+  .learn-page .kai-board-content .kai-rich-table-wrap { width: 100%; overflow-x: auto; }
+  .learn-page .kai-board-content .kai-rich-code pre { font-size: .8rem; line-height: 1.55; }
+}
+@media (max-width: 380px) {
+  .learn-page .conversation-container { padding-inline: 9px; }
+  .learn-page .kai-message-text p,
+  .learn-page .kai-message-text li,
+  .learn-page .kai-board-content .kai-rich-text { font-size: .94rem; }
+}

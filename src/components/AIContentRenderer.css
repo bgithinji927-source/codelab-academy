@@ -69,3 +69,34 @@
 .kai-quick-reply svg { color: #b9b1ff; flex: 0 0 auto; }
 .kai-quick-reply:hover, .kai-quick-reply:focus-visible { border-color: #a498ff; background: rgba(126, 112, 255, .24); outline: none; transform: translateY(-1px); }
 @media (max-width: 700px) { .kai-quick-reply-list { gap: .35rem; } .kai-quick-reply { justify-content: flex-start; font-size: .8rem; } }
+
+/* Keep structured teaching content scannable on every viewport. */
+.kai-rich-content { gap: 1.15rem; max-width: 100%; overflow-wrap: anywhere; }
+.kai-rich-text { max-width: 76ch; line-height: 1.78; }
+.kai-rich-content ul,
+.kai-rich-content ol { max-width: 76ch; line-height: 1.7; }
+.kai-rich-content li { margin-bottom: .45rem; }
+.kai-rich-content > h2,
+.kai-rich-content > h3,
+.kai-rich-content > h4 { max-width: 76ch; margin-top: 1.4rem; line-height: 1.3; }
+.kai-rich-code,
+.kai-rich-copyable,
+.kai-rich-table-wrap,
+.kai-rich-diagram,
+.kai-rich-video { max-width: 100%; min-width: 0; }
+.kai-rich-code pre,
+.kai-rich-copyable pre { max-width: 100%; overflow-x: auto; white-space: pre; overflow-wrap: normal; }
+@media (max-width: 700px) {
+  .kai-rich-content { gap: 1rem; }
+  .kai-rich-text,
+  .kai-rich-content ul,
+  .kai-rich-content ol,
+  .kai-rich-content > h2,
+  .kai-rich-content > h3,
+  .kai-rich-content > h4 { max-width: 100%; }
+  .kai-rich-text { font-size: .96rem; line-height: 1.72; }
+  .kai-rich-content ul,
+  .kai-rich-content ol { padding-left: 1.2rem; }
+  .kai-rich-code pre,
+  .kai-rich-copyable pre { font-size: .8rem; line-height: 1.55; }
+}
