@@ -34,9 +34,12 @@ function extractAssistantText(data) {
   const content = message.content ?? choice.text ?? "";
   if (Array.isArray(content)) {
     return content
-      .map((part) => typeof part === "string" ? part : part?.text || part?.content || "")
+      .map((part) => typeof part === "string"
+        ? part
+        : part?.text || part?.content || (part && typeof part === "object" ? JSON.stringify(part) : ""))
       .join(" ");
   }
+  if (content && typeof content === "object") return JSON.stringify(content);
   return String(content || "");
 }
 
@@ -150,6 +153,11 @@ ${systemPrompt}`,
 }
 
 function parseStructuredReply(value) {
+  if (Array.isArray(value)) return value;
+  if (value && typeof value === "object") {
+    if (Array.isArray(value.content)) return value.content;
+    if (value.content && typeof value.content === "object") return [value.content];
+  }
   const text = String(value || "")
     .replace(/```json\s*/gi, "")
     .replace(/```/g, "")
