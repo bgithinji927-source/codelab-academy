@@ -2878,3 +2878,34 @@ html[data-theme="dark"] .kai-message-actions button,
     margin-right: 0 !important;
   }
 }
+
+/* Plain Markdown responses use .kai-message-text rather than the rich
+   renderer. Center their readable blocks too; keep code and media wide. */
+@media (min-width: 641px) {
+  .learn-page .kai-board-content > .kai-message-text > p,
+  .learn-page .kai-board-content > .kai-message-text > h1,
+  .learn-page .kai-board-content > .kai-message-text > h2,
+  .learn-page .kai-board-content > .kai-message-text > h3,
+  .learn-page .kai-board-content > .kai-message-text > h4,
+  .learn-page .kai-board-content > .kai-message-text > ul,
+  .learn-page .kai-board-content > .kai-message-text > ol,
+  .learn-page .kai-board-content > .kai-message-text > blockquote,
+  .learn-page .kai-board-content > .kai-message-text > .kai-inline-list-group {
+    width: min(100%, 76ch) !important;
+    max-width: 76ch !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box;
+  }
+
+  .learn-page .kai-board-content > .kai-message-text > .kai-code-block,
+  .learn-page .kai-board-content > .kai-message-text > .kai-rich-code,
+  .learn-page .kai-board-content > .kai-message-text > .kai-rich-table-wrap,
+  .learn-page .kai-board-content > .kai-message-text > .kai-rich-diagram,
+  .learn-page .kai-board-content > .kai-message-text > .kai-rich-video {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
