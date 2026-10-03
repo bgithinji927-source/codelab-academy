@@ -22,6 +22,7 @@ import {
 
 import courses from "../data/course.mjs";
 import CourseLogo from "../components/CourseLogo";
+import LearnerAssessmentModal from "../components/LearnerAssessmentModal";
 import CourseLearn from "./CourseLearn";
 import ThemeToggle from "../components/ThemeToggle";
 import fetchWithAuth from "../utils/fetchWithAuth";
@@ -105,6 +106,8 @@ const categories = [
 
 function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [pendingAssessmentCourse, setPendingAssessmentCourse] = useState(null);
+  const [learningAssessments, setLearningAssessments] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [courseCatalog, setCourseCatalog] = useState(courses);
   const [courseAccess, setCourseAccess] = useState(() => user?.id ? buildFallbackCourseAccess(courses) : null);
@@ -133,6 +136,7 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
         if (!mounted) return;
         if (response.ok && data.success && data.user) {
           setCourseAccess(data.user.courseAccess || data.courseAccess || buildFallbackCourseAccess(courseCatalog));
+          setLearningAssessments(data.user.learningAssessments || []);
         } else {
           setCourseAccess(buildFallbackCourseAccess(courseCatalog));
         }
@@ -143,6 +147,23 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
 
     return () => { mounted = false; };
   }, [user?.id]);
+
+  if (pendingAssessmentCourse) {
+    return (
+      <LearnerAssessmentModal
+        course={pendingAssessmentCourse}
+        onClose={() => setPendingAssessmentCourse(null)}
+        onComplete={(assessment) => {
+          setLearningAssessments((current) => [
+            ...current.filter((item) => String(item.courseId) !== String(assessment.courseId)),
+            assessment,
+          ]);
+          setPendingAssessmentCourse(null);
+          setSelectedCourse(pendingAssessmentCourse);
+        }}
+      />
+    );
+  }
 
   if (selectedCourse) {
     const selectedAccess = findCourseAccess(courseAccess, selectedCourse.id);
@@ -365,7 +386,11 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
                               onRequireAuth?.();
                               return;
                             }
-                            setSelectedCourse(course);
+                            if (!learningAssessments.some((assessment) => String(assessment.courseId) === String(course.id))) {
+                              setPendingAssessmentCourse(course);
+                            } else {
+                              setSelectedCourse(course);
+                            }
                           }}
                         >
                           {label}

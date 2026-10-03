@@ -27,6 +27,7 @@ function serializeUser(user) {
     appearancePreset: user.appearancePreset || "default",
     designPreset: user.designPreset || "classic",
     kaiBackground: user.kaiBackground || null,
+    learningAssessments: user.learningAssessments || [],
     xp: user.xp,
     level: user.level,
     completedLessons: user.completedLessons,
@@ -115,6 +116,47 @@ router.patch("/profile", ensureAuth, async (req, res) => {
   } catch (error) {
     console.error("Profile update error:", error);
     return res.status(500).json({ success: false, message: "Could not save your profile" });
+  }
+});
+
+// ===============================
+// KAI LEARNING ASSESSMENT
+// ===============================
+router.patch("/learning-assessment", ensureAuth, async (req, res) => {
+  try {
+    const fields = [
+      "courseId",
+      "courseTitle",
+      "experience",
+      "programmingExperience",
+      "goal",
+      "learningPreference",
+      "studyTime",
+    ];
+    const values = Object.fromEntries(fields.map((field) => [field, String(req.body?.[field] || "").trim()]));
+    if (fields.some((field) => !values[field])) {
+      return res.status(400).json({ success: false, message: "All assessment answers are required" });
+    }
+
+    const assessment = { ...values, completedAt: new Date() };
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const existingIndex = (user.learningAssessments || []).findIndex(
+      (item) => String(item.courseId) === values.courseId
+    );
+    if (existingIndex >= 0) user.learningAssessments[existingIndex] = assessment;
+    else user.learningAssessments.push(assessment);
+    await user.save();
+
+    return res.json({
+      success: true,
+      assessment,
+      user: serializeUser(user),
+    });
+  } catch (error) {
+    console.error("Learning assessment error:", error);
+    return res.status(500).json({ success: false, message: "Could not save your learning assessment" });
   }
 });
 

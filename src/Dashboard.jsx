@@ -45,6 +45,7 @@ import LessonsPage from "./pages/LessonsPage";
 import fetchWithAuth from "./utils/fetchWithAuth";
 import { buildFallbackCourseAccess, findCourseAccess } from "./utils/courseAccess";
 import CourseLogo from "./components/CourseLogo";
+import LearnerAssessmentModal from "./components/LearnerAssessmentModal";
 import { getLessonsByCourse } from "./data/lessons.mjs";
 import { KAI_UI_EVENT, installKaiUiBridge } from "./utils/kaiUiBridge";
 
@@ -140,6 +141,8 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedLessonId, setSelectedLessonId] = useState(null);
+  const [pendingAssessmentCourse, setPendingAssessmentCourse] = useState(null);
+  const [learningAssessments, setLearningAssessments] = useState([]);
   const [courseCatalog, setCourseCatalog] = useState(courses);
   const [courseAccess, setCourseAccess] = useState(() => buildFallbackCourseAccess(courses));
 
@@ -193,6 +196,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
         if (res.ok && data.success && data.user) {
           const userProgressData = data.user;
           setCourseAccess(userProgressData.courseAccess || data.courseAccess || buildFallbackCourseAccess(courseCatalog));
+          setLearningAssessments(userProgressData.learningAssessments || []);
 
           // Build merged courses from the canonical catalog and apply server progress/access records.
           const catalogCourses = courseCatalog.length ? courseCatalog : baseline.courses;
@@ -335,6 +339,13 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
   const openCourseWithKai = (course) => {
     const access = findCourseAccess(courseAccess, course?.id);
     if (access?.locked) return;
+    const hasAssessment = learningAssessments.some((assessment) => String(assessment.courseId) === String(course?.id));
+    if (!hasAssessment) {
+      setPendingAssessmentCourse(course);
+      setActiveView("assessment");
+      setSelectedCategory(null);
+      return;
+    }
     setSelectedCourse(course);
     setSelectedLessonId(null);
     setActiveView("lessons");
@@ -344,6 +355,27 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
   const openLessonWithKai = () => {
     setActiveView("courseLearn");
   };
+
+  if (activeView === "assessment" && pendingAssessmentCourse) {
+    return (
+      <LearnerAssessmentModal
+        course={pendingAssessmentCourse}
+        onClose={() => {
+          setPendingAssessmentCourse(null);
+          setActiveView("dashboard");
+        }}
+        onComplete={(assessment) => {
+          setLearningAssessments((current) => [
+            ...current.filter((item) => String(item.courseId) !== String(assessment.courseId)),
+            assessment,
+          ]);
+          setSelectedCourse(pendingAssessmentCourse);
+          setPendingAssessmentCourse(null);
+          setActiveView("lessons");
+        }}
+      />
+    );
+  }
 
   // Open the selected course in the real Kai teaching screen
   if (activeView === "courseLearn" && selectedCourse) {

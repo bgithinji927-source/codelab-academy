@@ -46,6 +46,19 @@ const userSchema = new mongoose.Schema(
       default: "classic",
     },
 
+    learningAssessments: [
+      {
+        courseId: { type: String, required: true },
+        courseTitle: String,
+        experience: String,
+        programmingExperience: String,
+        goal: String,
+        learningPreference: String,
+        studyTime: String,
+        completedAt: { type: Date, default: Date.now },
+      },
+    ],
+
     kaiBackground: {
       type: String,
       enum: ["violet-aurora", "circuit-night", "neon-orbit", "terminal-green", "soft-study"],

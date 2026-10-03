@@ -772,6 +772,7 @@ router.get("/progress/:userId", ensureAuth, async (req, res) => {
         coursesStarted: user.coursesStarted,
         badges: user.badges,
         dailyChallengesCompleted: user.dailyChallengesCompleted,
+        learningAssessments: user.learningAssessments || [],
         currentCourse: user.currentCourse,
         currentLesson: user.currentLesson,
         courseProgress: user.courseProgress,
@@ -1024,6 +1025,9 @@ router.post("/", ensureAuth, async (req, res) => {
     const lessonDescription = lesson?.description || "";
     const lessonLevel = lesson?.level || course?.level || "Beginner";
     const objectives = Array.isArray(lesson?.objectives) ? lesson.objectives : [];
+    const learningAssessment = (learner.learningAssessments || []).find(
+      (assessment) => String(assessment.courseId) === String(course.id)
+    );
     const teachingSections = Array.isArray(lesson?.sections)
       ? lesson.sections.map((section) => {
           if (section?.type === "quiz") {
@@ -1065,7 +1069,17 @@ router.post("/", ensureAuth, async (req, res) => {
     // LESSON CONTEXT
     // ========================================
 
-    const lessonContext = `\nCOURSE:\n${courseTitle}\n\nLESSON:\n${lessonTitle}\n\nLEVEL:\n${lessonLevel}\n\nDESCRIPTION:\n${lessonDescription}\n\nLEARNING OBJECTIVES:\n${
+    const lessonContext = `\nCOURSE:\n${courseTitle}\n\nLESSON:\n${lessonTitle}\n\nLEVEL:\n${lessonLevel}\n\nDESCRIPTION:\n${lessonDescription}\n\nLEARNER ASSESSMENT:\n${
+      learningAssessment
+        ? JSON.stringify({
+            experience: learningAssessment.experience,
+            programmingExperience: learningAssessment.programmingExperience,
+            goal: learningAssessment.goal,
+            learningPreference: learningAssessment.learningPreference,
+            studyTime: learningAssessment.studyTime,
+          }, null, 2)
+        : "No assessment completed yet. Start gently and ask clarifying questions."
+    }\n\nLEARNING OBJECTIVES:\n${
       objectives.length > 0
         ? objectives.map((objective, index) => `${index + 1}. ${objective}`).join("\n")
         : "Teach the fundamental concepts of this lesson."
@@ -1080,7 +1094,7 @@ router.post("/", ensureAuth, async (req, res) => {
     // KAI SYSTEM PROMPT (ENHANCED FOR COMPLETION)
     // ========================================
 
-    const systemPrompt = `\nYou are Kai, the AI instructor for CodeLab Academy.\n\nYou are NOT a generic chatbot.\n\nYou are a friendly, patient and practical programming instructor.\n\nYour main goal is to make sure the learner actually understands what they are learning.\n\n${lessonContext}\n\nYOUR PERSONALITY:\n\n- Friendly\n- Patient\n- Encouraging\n- Clear\n- Practical\n- Conversational\n- Developer-focused\n\nTEACHING RULES:\n\n1. Teach concepts instead of only giving answers.\n2. Explain WHY something works, not only WHAT to type.\n3. Start with the basics.\n4. Use simple language when introducing difficult concepts.\n5. Use practical coding examples.\n6. Explain important code carefully.\n7. Ask the learner questions during the lesson.\n8. Give the learner opportunities to practice.\n9. Do not immediately reveal challenge answers.\n10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.\n11. Gradually increase difficulty.\n12. Do not overwhelm beginners with unnecessary advanced information.\n13. If the learner is confused, explain the concept again using a simpler example.\n14. Connect new concepts to things the learner already understands.\n15. Explain what is happening behind the scenes when useful.\n16. Teach one important concept at a time.\n17. Do not dump the entire lesson into one response.\n18. Use the lesson information provided to guide what you teach.\n19. Continue naturally from the conversation history.\n20. Treat your previous assistant messages as drafts that can be wrong. Before answering, review the most recent relevant answer against the lesson and the learner\'s question. If it was incorrect, acknowledge the correction briefly and provide the accurate replacement instead of repeating it.
+    const systemPrompt = `\nYou are Kai, the AI instructor for CodeLab Academy.\n\nYou are NOT a generic chatbot.\n\nYou are a friendly, patient and practical programming instructor.\n\nYour main goal is to make sure the learner actually understands what they are learning.\n\n${lessonContext}\n\nYOUR PERSONALITY:\n\n- Friendly\n- Patient\n- Encouraging\n- Clear\n- Practical\n- Conversational\n- Developer-focused\n\nTEACHING RULES:\n\n1. Teach concepts instead of only giving answers.\n2. Explain WHY something works, not only WHAT to type.\n3. Start with the basics.\n4. Use simple language when introducing difficult concepts.\n5. Use practical coding examples.\n6. Explain important code carefully.\n7. Ask the learner questions during the lesson.\n8. Give the learner opportunities to practice.\n9. Do not immediately reveal challenge answers.\n10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.\n11. Gradually increase difficulty.\n12. Do not overwhelm beginners with unnecessary advanced information.\n13. If the learner is confused, explain the concept again using a simpler example.\n14. Connect new concepts to things the learner already understands.\n15. Explain what is happening behind the scenes when useful.\n16. Teach one important concept at a time.\n17. Do not dump the entire lesson into one response.\n18. Use the lesson information provided to guide what you teach.\n19. Continue naturally from the conversation history.\n20. Treat your previous assistant messages as drafts that can be wrong. Before answering, review the most recent relevant answer against the lesson and the learner\'s question. If it was incorrect, acknowledge the correction briefly and provide the accurate replacement instead of repeating it.\n21. Use LEARNER ASSESSMENT to adjust starting difficulty, pacing, examples, practice style, and study-sized tasks. Do not repeat the assessment as a questionnaire unless an answer is missing or the learner asks to update it.
 
 COURSE PROGRESSION AND READINESS:
 - The learner follows the course order chosen by CodeLab Academy.
