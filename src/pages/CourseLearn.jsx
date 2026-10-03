@@ -12,6 +12,10 @@ import {
   ChevronDown,
   Lock,
   X,
+  Copy,
+  ThumbsUp,
+  ThumbsDown,
+  Check,
 } from "lucide-react";
 
 import fetchWithAuth from "../utils/fetchWithAuth";
@@ -63,6 +67,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [kaiUiMode, setKaiUiMode] = useState(() => (
     localStorage.getItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`) || "chatgpt"
   ));
+  const [messageFeedback, setMessageFeedback] = useState({});
+  const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
 
   const typingTimerRef = useRef(null);
   const kaiActivityTimerRef = useRef(null);
@@ -1437,6 +1443,23 @@ ${startMessage}
       else askKai({ learnerMessage: payload || `Please ${action}.`, conversation: messages });
     };
 
+    const messageKey = String(messageIndex);
+    const copyKaiMessage = async () => {
+      try {
+        await navigator.clipboard.writeText(String(content || ""));
+        setCopiedMessageIndex(messageKey);
+        window.setTimeout(() => setCopiedMessageIndex((current) => current === messageKey ? null : current), 1600);
+      } catch (error) {
+        console.warn("Could not copy Kai message:", error);
+      }
+    };
+    const setKaiFeedback = (value) => {
+      setMessageFeedback((current) => ({
+        ...current,
+        [messageKey]: current[messageKey] === value ? null : value,
+      }));
+    };
+
     return (
       <div
         className="chat-row kai-row"
@@ -1490,6 +1513,18 @@ ${startMessage}
             </div>
           )}
           {video?.playbackUrl && <KaiVideoPlayer video={video} aspectRatio={video.aspectRatio || "16 / 9"} />}
+
+          <div className="kai-message-actions" aria-label="Kai response actions">
+            <button type="button" onClick={copyKaiMessage} aria-label={copiedMessageIndex === messageKey ? "Copied Kai response" : "Copy Kai response"} title={copiedMessageIndex === messageKey ? "Copied" : "Copy response"}>
+              {copiedMessageIndex === messageKey ? <Check size={15} /> : <Copy size={15} />}
+            </button>
+            <button type="button" className={messageFeedback[messageKey] === "like" ? "is-active" : ""} onClick={() => setKaiFeedback("like")} aria-label="Like Kai response" aria-pressed={messageFeedback[messageKey] === "like"} title="Like response">
+              <ThumbsUp size={15} />
+            </button>
+            <button type="button" className={messageFeedback[messageKey] === "dislike" ? "is-active is-negative" : ""} onClick={() => setKaiFeedback("dislike")} aria-label="Dislike Kai response" aria-pressed={messageFeedback[messageKey] === "dislike"} title="Dislike response">
+              <ThumbsDown size={15} />
+            </button>
+          </div>
 
         </div>
       </div>

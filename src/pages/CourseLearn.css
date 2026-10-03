@@ -2628,3 +2628,58 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
   .learn-page:not(.kai-chatgpt-mode) .kai-readiness-panel,
   .learn-page:not(.kai-chatgpt-mode) .kai-board-status { width: 100% !important; max-width: 100% !important; }
 }
+
+/* Kai response actions: separate, independently clickable controls. */
+.kai-message-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+  padding-left: 2px;
+}
+.kai-message-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 30px;
+  padding: 0;
+  color: #918b9e;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.kai-message-actions button:hover,
+.kai-message-actions button:focus-visible {
+  color: #7c3aed;
+  background: #f4efff;
+  border-color: #ded2f6;
+  outline: none;
+  transform: translateY(-1px);
+}
+.kai-message-actions button.is-active {
+  color: #6d45db;
+  background: #eee8ff;
+  border-color: #cbb7f2;
+}
+.kai-message-actions button.is-active.is-negative {
+  color: #c24d69;
+  background: #fff0f3;
+  border-color: #f0bdc9;
+}
+html[data-theme="dark"] .kai-message-actions button:hover,
+html[data-theme="dark"] .kai-message-actions button:focus-visible,
+.learn-page.kai-chatgpt-mode .kai-message-actions button:hover,
+.learn-page.kai-chatgpt-mode .kai-message-actions button:focus-visible {
+  color: #d6ccff;
+  background: rgba(126, 97, 246, .18);
+  border-color: rgba(177, 158, 255, .4);
+}
+html[data-theme="dark"] .kai-message-actions button,
+.learn-page.kai-chatgpt-mode .kai-message-actions button { color: #aaa6b5; }
+@media (max-width: 640px) {
+  .kai-message-actions { gap: 10px; margin-top: 10px; }
+  .kai-message-actions button { width: 34px; height: 32px; }
+}
