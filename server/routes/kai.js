@@ -1378,9 +1378,15 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     // ========================================
 
     const structuredContent = parseStructuredReply(reply);
-    const friendlyReply = structuredContent
+    let friendlyReply = structuredContent
       ? structuredReplyToMarkdown(structuredContent)
       : reply;
+    // Never send provider JSON directly to the learner. If both structured
+    // formatting attempts fail, return a safe retry message instead.
+    if (!structuredContent && /^\s*[\[{]/.test(reply)) {
+      console.warn("Kai returned unparseable structured JSON; hiding raw payload");
+      friendlyReply = "Kai could not format that lesson response. Please ask the question again.";
+    }
     // Structured lesson responses can carry control markers inside text blocks.
     // Inspect both the provider JSON and the learner-facing Markdown projection.
     const controlText = `${reply}\n${friendlyReply}`;

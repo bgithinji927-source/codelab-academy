@@ -1530,7 +1530,7 @@ ${startMessage}
                 />
               ) : looksLikeJson ? (
                 <div className="kai-unstructured-response">
-                  {renderMarkdown(String(text).replace(/^\s*[\[{]\s*/, "").replace(/\s*[\]}]\s*$/, ""))}
+                  {renderMarkdown("Kai could not format that lesson response. Please ask the question again.")}
                 </div>
               ) : renderMarkdown(text)}
             </div>
