@@ -1444,6 +1444,21 @@ ${startMessage}
     const fallbackBlocks = parseStructuredContent(contentBlockSource) || parseStructuredContent(text);
     const looksLikeJson = /^\s*[\[{]/.test(String(text || ""));
     const handleKaiAction = (action, payload) => {
+      // Models sometimes label a progression suggestion as "prompt" even
+      // though its visible text clearly means "open the next lesson". Do not
+      // send that label back to Kai, or a completed lesson will repeat its
+      // completion response instead of advancing.
+      const actionText = String(payload || "").trim();
+      const isNextLessonSuggestion = /(?:start|open|go to|continue to)\s+(?:the\s+)?(?:next\s+lesson|.+\blesson\b)|\bnext\s+lesson\b/i.test(actionText);
+      if (
+        lessonCompletionReady
+        && !isReviewingPastLesson
+        && isNextLessonSuggestion
+        && !isKaiTyping
+      ) {
+        handleNextLesson();
+        return;
+      }
       if (["unlockNextLesson", "nextLesson", "next_lesson", "continue", "continue_lesson"].includes(action)) {
         if (isReviewingPastLesson) return;
         if (isKaiTyping) {
