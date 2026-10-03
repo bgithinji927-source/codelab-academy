@@ -2772,3 +2772,29 @@ html[data-theme="dark"] .kai-message-actions button,
     margin-right: 0 !important;
   }
 }
+
+/* Phone code layout: wrap long lines inside the code card instead of widening
+   the card or creating horizontal page overflow. */
+@media (max-width: 700px) {
+  .learn-page .kai-code-block,
+  .learn-page .kai-rich-code,
+  .learn-page .kai-rich-copyable,
+  .learn-page .kai-rich-filetree,
+  .learn-page .kai-rich-code pre,
+  .learn-page .kai-rich-copyable pre,
+  .learn-page .kai-rich-filetree pre {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+  .learn-page .kai-code-block,
+  .learn-page .kai-rich-code pre,
+  .learn-page .kai-rich-copyable pre,
+  .learn-page .kai-rich-filetree pre {
+    overflow-x: hidden !important;
+    white-space: pre-wrap !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+}
