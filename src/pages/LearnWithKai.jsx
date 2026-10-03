@@ -2,7 +2,36 @@ import { useEffect, useMemo, useState } from "react";
 import { Send, ArrowLeft, Bot, Lightbulb, Code, X } from "lucide-react";
 import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
+import AIContentRenderer from "../components/AIContentRenderer";
 import "./LearnWithKai.css";
+
+function parseStructuredContent(value) {
+  if (Array.isArray(value)) return value;
+  if (!value || typeof value !== "string") return null;
+
+  const text = value
+    .replace(/```json\s*/gi, "")
+    .replace(/```/g, "")
+    .trim();
+  const candidates = [text];
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    candidates.push(text.slice(firstBrace, lastBrace + 1));
+  }
+
+  for (const candidate of candidates) {
+    try {
+      let parsed = JSON.parse(candidate);
+      if (typeof parsed === "string") parsed = JSON.parse(parsed);
+      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed?.content)) return parsed.content;
+    } catch {
+      // Plain Markdown replies are rendered by the fallback below.
+    }
+  }
+  return null;
+}
 
 function LearnWithKai({ user, onBack }) {
   const course = useMemo(() => ({ id: "general", title: "Coding Fundamentals", level: "Beginner" }), []);
@@ -61,7 +90,10 @@ function LearnWithKai({ user, onBack }) {
       .then((response) => response.json())
       .then((data) => {
         if (mounted && data.success && data.session?.conversationHistory?.length) {
-          setMessages(data.session.conversationHistory);
+          setMessages(data.session.conversationHistory.map((message) => ({
+            ...message,
+            contentBlocks: message.contentBlocks || parseStructuredContent(message.content),
+          })));
         }
       })
       .catch(() => {});
@@ -85,7 +117,12 @@ function LearnWithKai({ user, onBack }) {
       });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Kai could not respond.");
-      setMessages((current) => [...current, { role: "assistant", content: data.reply, video: data.videoRecommendation || null }]);
+      setMessages((current) => [...current, {
+        role: "assistant",
+        content: data.reply,
+        contentBlocks: data.content || parseStructuredContent(data.reply),
+        video: data.videoRecommendation || null,
+      }]);
     } catch (err) {
       setError(err.message || "Unable to reach Kai right now.");
     } finally {
@@ -103,7 +140,17 @@ function LearnWithKai({ user, onBack }) {
         <div className="kai-container">
           <div className="kai-messages">
             {messages.length === 0 && <div className="sample-questions"><h3><Lightbulb size={18} /> Try asking about:</h3><div className="questions-grid">{sampleQuestions.map((question) => <button key={question} className="sample-btn" onClick={() => setInputValue(question)}><Code size={16} />{question}</button>)}</div></div>}
-            {messages.map((message, index) => <div key={`${message.role}-${index}`} className={`message ${message.role === "assistant" ? "kai-message" : "user-message"}`}>{message.role === "assistant" && <div className="kai-avatar"><Bot size={24} /></div>}<div><div className="message-bubble">{message.content || message.text}</div>{message.role === "assistant" && message.video?.playbackUrl && <div className="kai-video-recommendation"><div className="kai-video-recommendation-copy"><span className="kai-video-kicker">VISUAL SUPPLEMENT</span><strong>{message.video.title}</strong><span>{message.video.description}</span></div><button type="button" className="kai-watch-video" onClick={() => setActiveVideo(message.video)}><span className="kai-play-icon">▶</span>Watch Video</button></div>}</div></div>)}
+            {messages.map((message, index) => <div key={`${message.role}-${index}`} className={`message ${message.role === "assistant" ? "kai-message" : "user-message"}`}>
+              {message.role === "assistant" && <div className="kai-avatar"><Bot size={24} /></div>}
+              <div>
+                <div className="message-bubble">
+                  {message.role === "assistant" && message.contentBlocks?.length
+                    ? <AIContentRenderer content={message.contentBlocks} />
+                    : message.content || message.text}
+                </div>
+                {message.role === "assistant" && message.video?.playbackUrl && <div className="kai-video-recommendation"><div className="kai-video-recommendation-copy"><span className="kai-video-kicker">VISUAL SUPPLEMENT</span><strong>{message.video.title}</strong><span>{message.video.description}</span></div><button type="button" className="kai-watch-video" onClick={() => setActiveVideo(message.video)}><span className="kai-play-icon">▶</span>Watch Video</button></div>}
+              </div>
+            </div>)}
             {isLoading && <div className="message kai-message"><div className="kai-avatar"><Bot size={24} /></div><div className="message-bubble loading"><span></span><span></span><span></span></div></div>}
           </div>
           {error && <p className="kai-error">{error}</p>}
