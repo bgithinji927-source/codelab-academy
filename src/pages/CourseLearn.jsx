@@ -1432,7 +1432,15 @@ ${startMessage}
       displayedKaiText.length > 0
         ? displayedKaiText
         : content;
-    const fallbackBlocks = contentBlocks?.length ? contentBlocks : parseStructuredContent(text);
+    // Saved sessions and live responses can carry blocks as an array, object,
+    // or serialized JSON string. Normalize all three forms before deciding
+    // whether to show the raw-text fallback.
+    const contentBlockSource = Array.isArray(contentBlocks) && contentBlocks.length
+      ? contentBlocks
+      : contentBlocks && typeof contentBlocks === "object"
+        ? contentBlocks
+        : text;
+    const fallbackBlocks = parseStructuredContent(contentBlockSource) || parseStructuredContent(text);
     const looksLikeJson = /^\s*[\[{]/.test(String(text || ""));
     const handleKaiAction = (action, payload) => {
       if (["unlockNextLesson", "nextLesson", "next_lesson", "continue", "continue_lesson"].includes(action)) {
