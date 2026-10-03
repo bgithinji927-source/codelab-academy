@@ -246,6 +246,7 @@ function Choice({ block, onChoice }) {
 
 export function Suggestions({ block, onAction }) {
   const items = Array.isArray(block.items) ? block.items : [];
+  const progressionText = /(?:start|open|go to|continue to)\s+(?:the\s+)?(?:next\s+lesson|.+\blesson\b)|\bnext\s+lesson\b/i;
   const normalizedItems = items.flatMap((item) => {
     const value = typeof item === "string" ? { text: item, action: "prompt" } : item;
     return String(value?.text || value?.label || "")
@@ -258,7 +259,8 @@ export function Suggestions({ block, onAction }) {
     <div className="kai-suggestion-links">{normalizedItems.map((item, index) => {
       const text = item.text;
       if (!text) return null;
-      return <button type="button" className="kai-suggestion-link" key={`${text}-${index}`} onClick={() => onAction?.(item.action || "prompt", item.prompt || item.payload || text)}><span aria-hidden="true">→</span>{text}</button>;
+      const action = item.action === "prompt" && progressionText.test(text) ? "next_lesson" : (item.action || "prompt");
+      return <button type="button" className="kai-suggestion-link" key={`${text}-${index}`} onClick={() => onAction?.(action, item.prompt || item.payload || text)}><span aria-hidden="true">→</span>{text}</button>;
     })}</div>
   </section>;
 }
