@@ -2814,3 +2814,43 @@ html[data-theme="dark"] .kai-message-actions button,
   .learn-page.kai-reading-mode .kai-rich-content li { color: #28251f !important; }
   .learn-page.kai-reading-mode .kai-message-text { font-size: 1.02rem; line-height: 1.8; }
 }
+
+/* Shared teaching-page geometry: one centered column for every Kai mode. */
+@media (min-width: 641px) {
+  .learn-page > .conversation-container {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .learn-page > .conversation-container > .kai-teaching-card {
+    width: min(100%, 1300px) !important;
+    max-width: 1300px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box;
+  }
+
+  .learn-page > .conversation-container > .kai-teaching-card .conversation-messages,
+  .learn-page > .conversation-container > .kai-teaching-card .chat-row,
+  .learn-page > .conversation-container > .kai-teaching-card .chat-content,
+  .learn-page > .conversation-container > .kai-teaching-card .kai-board-content,
+  .learn-page > .conversation-container > .kai-teaching-card .learner-board-content {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .learn-page .kai-input-dock {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    width: min(calc(100vw - 28px), 1300px) !important;
+    max-width: 1300px !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+    box-sizing: border-box;
+  }
+}
