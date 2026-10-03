@@ -2909,3 +2909,31 @@ html[data-theme="dark"] .kai-message-actions button,
     margin-right: 0 !important;
   }
 }
+
+/* Kai messages and composer share the same visible column. The earlier
+   readable-width constraints caused ordinary paragraphs to sit inset while
+   full-width suggestions aligned correctly. */
+@media (min-width: 641px) {
+  .learn-page .kai-board-content > .kai-message-text,
+  .learn-page .kai-board-content > .kai-message-text > p,
+  .learn-page .kai-board-content > .kai-message-text > h1,
+  .learn-page .kai-board-content > .kai-message-text > h2,
+  .learn-page .kai-board-content > .kai-message-text > h3,
+  .learn-page .kai-board-content > .kai-message-text > h4,
+  .learn-page .kai-board-content > .kai-message-text > ul,
+  .learn-page .kai-board-content > .kai-message-text > ol,
+  .learn-page .kai-board-content > .kai-message-text > blockquote,
+  .learn-page .kai-board-content > .kai-message-text > .kai-inline-list-group,
+  .learn-page .kai-board-content .kai-rich-content,
+  .learn-page .kai-board-content .kai-rich-content > *,
+  .learn-page .kai-board-content .kai-rich-text,
+  .learn-page .kai-board-content .kai-rich-heading,
+  .learn-page .kai-board-content .kai-rich-subheading,
+  .learn-page .kai-board-content .kai-rich-bullet-list {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box;
+  }
+}
