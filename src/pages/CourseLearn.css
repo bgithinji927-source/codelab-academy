@@ -2600,3 +2600,31 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
   .learn-page .kai-message-text li,
   .learn-page .kai-board-content .kai-rich-text { font-size: .94rem; }
 }
+
+/* Edge-to-edge phone layout: remove viewport gutters in both Kai interfaces.
+   Internal padding remains on text and controls for readability. */
+@media (max-width: 640px) {
+  .learn-page .conversation-container { padding-left: 0 !important; padding-right: 0 !important; }
+  .learn-page .conversation-messages,
+  .learn-page .chat-content,
+  .learn-page .learner-content,
+  .learn-page .kai-board-content,
+  .learn-page .kai-rich-content,
+  .learn-page .kai-rich-content > div,
+  .learn-page .kai-message-text,
+  .learn-page .learner-message-text { width: 100% !important; max-width: 100% !important; }
+  .learn-page .chat-row { padding-left: 12px; padding-right: 12px; }
+  .learn-page .kai-input-dock,
+  .learn-page.kai-chatgpt-mode .kai-input-dock,
+  .learn-page:not(.kai-chatgpt-mode) .kai-input-dock {
+    left: 0 !important; right: 0 !important; width: 100% !important; max-width: 100% !important; border-radius: 0 !important;
+  }
+  .learn-page.kai-chatgpt-mode .kai-board-content,
+  .learn-page.kai-chatgpt-mode .learner-board-content,
+  .learn-page.kai-chatgpt-mode .kai-readiness-panel,
+  .learn-page.kai-chatgpt-mode .kai-board-status,
+  .learn-page:not(.kai-chatgpt-mode) .kai-board-content,
+  .learn-page:not(.kai-chatgpt-mode) .learner-board-content,
+  .learn-page:not(.kai-chatgpt-mode) .kai-readiness-panel,
+  .learn-page:not(.kai-chatgpt-mode) .kai-board-status { width: 100% !important; max-width: 100% !important; }
+}
