@@ -2746,3 +2746,29 @@ html[data-theme="dark"] .kai-message-actions button,
     margin-right: 0 !important;
   }
 }
+
+/* Remove the last inner prose constraints so visible Kai text aligns with the
+   composer edge instead of stopping inside a centered 78ch column. */
+@media (min-width: 641px) {
+  .learn-page .kai-row,
+  .learn-page .kai-row .chat-content,
+  .learn-page .kai-row .kai-board-content,
+  .learn-page .kai-row .kai-message-text,
+  .learn-page .kai-row .kai-rich-content,
+  .learn-page .kai-row .kai-rich-content > div,
+  .learn-page .kai-row .kai-message-text p,
+  .learn-page .kai-row .kai-message-text li,
+  .learn-page .kai-row .kai-message-text h2,
+  .learn-page .kai-row .kai-message-text h3,
+  .learn-page .kai-row .kai-message-text h4,
+  .learn-page .kai-row .kai-message-text ul,
+  .learn-page .kai-row .kai-message-text ol,
+  .learn-page .kai-row .kai-rich-text,
+  .learn-page .kai-row .kai-rich-heading,
+  .learn-page .kai-row .kai-rich-subheading {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
