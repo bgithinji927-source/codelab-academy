@@ -949,11 +949,15 @@ ${startMessage}
     const savedSession = savedLessonSessions.find(
       (session) => Number(session.lessonIndex) === targetIndex
     );
-    const targetHistory = cachedLesson?.messages
-      || savedSession?.conversationHistory
-      || [];
+    // Each lesson owns its transcript. Prefer the in-memory snapshot for that
+    // exact lesson, then the server session for that exact lesson. Do not use
+    // the current lesson's messages as a fallback.
+    const targetHistory = cachedLesson
+      ? cachedLesson.messages
+      : (savedSession?.conversationHistory || []);
+    const targetLessonKey = `${course?.id}:${targetLesson.id}`;
 
-    stopTyping();
+    forceStopKai();
     setPendingUiAction(null);
     setAnswer("");
     setDisplayedKaiText("");
@@ -970,7 +974,10 @@ ${startMessage}
     );
     setCourseReadyForNext(targetIndex === serverLessonIndex ? courseReadyForNext : false);
     setIsLessonMenuOpen(false);
-    lessonStartKeyRef.current = `${course?.id}:${targetLesson.id}`;
+    // A restored transcript must not trigger a duplicate intro. An empty
+    // transcript deliberately leaves the key blank so the lesson-start effect
+    // creates that lesson's first Kai message.
+    lessonStartKeyRef.current = targetHistory.length > 0 ? targetLessonKey : "";
   };
 
   // ============================================
