@@ -2942,3 +2942,26 @@ html[data-theme="dark"] .kai-message-actions button,
   .learn-page.kai-reading-mode .kai-rich-subheading,
   .learn-page.kai-reading-mode .kai-rich-content li { color: #28251f !important; }
 }
+
+/* ChatGPT keeps its original inset teaching surface. The other four modes
+   retain the full 1300px column; this restores the ChatGPT-specific breathing
+   room that was accidentally overridden by the shared width rule. */
+@media (min-width: 641px) {
+  .learn-page.kai-chatgpt-mode .kai-board-content,
+  .learn-page.kai-chatgpt-mode .learner-board-content,
+  .learn-page.kai-chatgpt-mode .kai-readiness-panel,
+  .learn-page.kai-chatgpt-mode .kai-board-status {
+    width: calc(100% - 40px) !important;
+    max-width: 1300px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .learn-page.kai-chatgpt-mode .kai-input-dock {
+    left: clamp(40px, 9vw, 140px) !important;
+    right: clamp(40px, 9vw, 140px) !important;
+    width: auto !important;
+    max-width: 1300px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
