@@ -2992,3 +2992,38 @@ html[data-theme="dark"] .kai-message-actions button,
     transform: translateX(-50%) !important;
   }
 }
+
+/* Non-ChatGPT interfaces use the same composer geometry as ChatGPT. The
+   :not selector is intentional: ChatGPT's own rules remain untouched. */
+@media (min-width: 641px) {
+  .learn-page:not(.kai-chatgpt-mode) .kai-input-dock {
+    position: fixed !important;
+    z-index: 100 !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: 30px !important;
+    width: min(91vw, 1300px) !important;
+    max-width: 1300px !important;
+    min-height: 126px !important;
+    transform: translateX(-50%) !important;
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr) 44px !important;
+    grid-template-rows: 36px 48px 40px !important;
+    align-items: center !important;
+    padding: 0 10px 4px !important;
+    box-sizing: border-box;
+  }
+  .learn-page:not(.kai-chatgpt-mode) .conversation-messages,
+  .learn-page:not(.kai-chatgpt-mode) .chat-content,
+  .learn-page:not(.kai-chatgpt-mode) .kai-board-content,
+  .learn-page:not(.kai-chatgpt-mode) .learner-board-content,
+  .learn-page:not(.kai-chatgpt-mode) .kai-rich-content,
+  .learn-page:not(.kai-chatgpt-mode) .kai-message-text,
+  .learn-page:not(.kai-chatgpt-mode) .learner-message-text {
+    width: min(91vw, 1300px) !important;
+    max-width: 1300px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box;
+  }
+}
