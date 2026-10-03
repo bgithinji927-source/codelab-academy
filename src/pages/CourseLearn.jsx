@@ -1657,7 +1657,7 @@ ${startMessage}
 
   return (
     <div
-      className={`learn-page${hasCustomKaiBackground ? " has-custom-kai-background" : ""}${kaiUiMode === "chatgpt" ? " kai-chatgpt-mode" : ""}`}
+      className={`learn-page kai-${kaiUiMode}-mode${hasCustomKaiBackground ? " has-custom-kai-background" : ""}${kaiUiMode === "chatgpt" ? " kai-chatgpt-mode" : ""}`}
       data-kai-background={kaiBackground}
     >
       <div className="kai-wallpaper-image" aria-hidden="true">
@@ -1754,8 +1754,11 @@ ${startMessage}
                 localStorage.setItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`, nextMode);
               }}
             >
-              <option value="normal">Normal UI</option>
-              <option value="chatgpt">ChatGPT UI</option>
+              <option value="normal">Classic</option>
+              <option value="chatgpt">ChatGPT</option>
+              <option value="compact">Compact</option>
+              <option value="focus">Focus</option>
+              <option value="reading">Reading</option>
             </select>
           </label>
           <div className="lesson-status">

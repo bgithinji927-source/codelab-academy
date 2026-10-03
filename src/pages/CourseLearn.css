@@ -2798,3 +2798,66 @@ html[data-theme="dark"] .kai-message-actions button,
     word-break: break-word !important;
   }
 }
+
+/* Five named Kai interfaces: Classic, ChatGPT, Compact, Focus, and Reading. */
+@media (min-width: 641px) {
+  .learn-page.kai-compact-mode .conversation-container,
+  .learn-page.kai-compact-mode .conversation-messages,
+  .learn-page.kai-compact-mode .chat-content,
+  .learn-page.kai-compact-mode .kai-board-content,
+  .learn-page.kai-compact-mode .kai-input-dock {
+    max-width: 980px !important;
+  }
+  .learn-page.kai-compact-mode .conversation-container { padding-top: 24px; padding-bottom: 56px; }
+  .learn-page.kai-compact-mode .chat-row { margin-bottom: 20px; }
+  .learn-page.kai-compact-mode .kai-board-content { font-size: .96rem; line-height: 1.58; }
+  .learn-page.kai-compact-mode .kai-message-header { margin-bottom: 8px; }
+  .learn-page.kai-compact-mode .kai-message-actions { margin-top: 7px; }
+
+  .learn-page.kai-focus-mode .kai-wallpaper-image { display: none !important; }
+  .learn-page.kai-focus-mode .conversation-container,
+  .learn-page.kai-focus-mode .conversation-messages,
+  .learn-page.kai-focus-mode .chat-content,
+  .learn-page.kai-focus-mode .kai-board-content,
+  .learn-page.kai-focus-mode .kai-input-dock {
+    max-width: 900px !important;
+  }
+  .learn-page.kai-focus-mode .conversation-container { background: #111 !important; padding-top: 34px; }
+  .learn-page.kai-focus-mode .learn-navbar { background: #111 !important; border-bottom-color: #292929 !important; }
+  .learn-page.kai-focus-mode .kai-teaching-card { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+  .learn-page.kai-focus-mode .kai-message-text { color: #f1f1f1 !important; }
+  .learn-page.kai-focus-mode .kai-input-dock { border-color: #3c3c3c !important; }
+
+  .learn-page.kai-reading-mode .kai-wallpaper-image { display: none !important; }
+  .learn-page.kai-reading-mode,
+  .learn-page.kai-reading-mode .learn-navbar,
+  .learn-page.kai-reading-mode > .conversation-container { background: #f5f1e8 !important; color: #28251f !important; }
+  .learn-page.kai-reading-mode .learn-navbar { border-bottom-color: #d8d0c2 !important; }
+  .learn-page.kai-reading-mode .conversation-container,
+  .learn-page.kai-reading-mode .conversation-messages,
+  .learn-page.kai-reading-mode .chat-content,
+  .learn-page.kai-reading-mode .kai-board-content,
+  .learn-page.kai-reading-mode .kai-input-dock { max-width: 960px !important; }
+  .learn-page.kai-reading-mode .kai-teaching-card { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+  .learn-page.kai-reading-mode .kai-message-text,
+  .learn-page.kai-reading-mode .kai-message-text p,
+  .learn-page.kai-reading-mode .kai-rich-text,
+  .learn-page.kai-reading-mode .kai-rich-content { color: #28251f !important; }
+  .learn-page.kai-reading-mode .kai-message-text { font-family: Georgia, "Times New Roman", serif; font-size: 1.08rem; line-height: 1.9; }
+  .learn-page.kai-reading-mode .kai-input-dock { background: rgba(255,255,255,.7) !important; border-color: #cfc5b4 !important; }
+  .learn-page.kai-reading-mode .kai-input-dock input,
+  .learn-page.kai-reading-mode .kai-input-dock textarea { color: #28251f !important; }
+}
+
+@media (max-width: 640px) {
+  .learn-page.kai-compact-mode .conversation-container { padding-top: 18px; }
+  .learn-page.kai-focus-mode .kai-wallpaper-image,
+  .learn-page.kai-reading-mode .kai-wallpaper-image { display: none !important; }
+  .learn-page.kai-reading-mode,
+  .learn-page.kai-reading-mode .learn-navbar,
+  .learn-page.kai-reading-mode > .conversation-container { background: #f5f1e8 !important; color: #28251f !important; }
+  .learn-page.kai-reading-mode .kai-message-text,
+  .learn-page.kai-reading-mode .kai-message-text p,
+  .learn-page.kai-reading-mode .kai-rich-text { color: #28251f !important; }
+  .learn-page.kai-reading-mode .kai-message-text { font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; line-height: 1.8; }
+}
