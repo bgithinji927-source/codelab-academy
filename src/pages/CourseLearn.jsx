@@ -46,6 +46,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [courseStateError, setCourseStateError] = useState("");
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [pendingUiAction, setPendingUiAction] = useState(null);
+  const [previousLessonSuggestion, setPreviousLessonSuggestion] = useState(null);
   const [savedLessonSessions, setSavedLessonSessions] = useState([]);
   const [isLessonMenuOpen, setIsLessonMenuOpen] = useState(false);
   const [viewingLessonIndex, setViewingLessonIndex] = useState(null);
@@ -334,6 +335,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       lessonViewCacheRef.current = new Map();
       setMessages([]);
       setSavedLessonSessions([]);
+      setPreviousLessonSuggestion(null);
       setIsLessonMenuOpen(false);
       setViewingLessonIndex(null);
       setLesson(null);
@@ -627,6 +629,16 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
           nextLessonTitle,
           isIntro,
           previousLessonSummary,
+          previousLessons: allLessons
+            .slice(0, currentLessonIndex)
+            .map((item, index) => {
+              const session = savedLessonSessions.find((saved) => Number(saved.lessonIndex) === index);
+              return {
+                index,
+                title: item.title,
+                summary: session?.summary || (index === currentLessonIndex - 1 ? previousLessonSummary : ""),
+              };
+            }),
           currentLessonIndex,
           totalLessons: allLessons.length,
         }),
@@ -677,6 +689,9 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       }
       if (kaiOpenedNextLesson) {
         setPendingUiAction(data.uiAction);
+      }
+      if (data.uiAction?.type === "review_previous_lesson") {
+        setPreviousLessonSuggestion(data.uiAction);
       }
       if (data.courseAccess) onProgressChanged?.(data);
 
@@ -961,6 +976,7 @@ ${startMessage}
     setPendingUiAction(null);
     setAnswer("");
     setDisplayedKaiText("");
+    setPreviousLessonSuggestion(null);
     setCourseStateError("");
     setCurrentLessonIndex(targetIndex);
     setViewingLessonIndex(targetIndex < serverLessonIndex ? targetIndex : null);
@@ -1737,6 +1753,26 @@ ${startMessage}
             <div className="lesson-review-notice" role="status">
               <CheckCircle2 size={15} />
               <span>Reviewing a completed lesson. Select the current lesson from the menu to continue with Kai.</span>
+            </div>
+          )}
+
+          {previousLessonSuggestion && !isReviewingPastLesson && (
+            <div className="previous-lesson-suggestion" role="status">
+              <div>
+                <strong>Kai recommends a quick review</strong>
+                <span>{previousLessonSuggestion.reason || "This lesson connects to an earlier concept."}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const targetIndex = Number(previousLessonSuggestion.lessonIndex);
+                  setPreviousLessonSuggestion(null);
+                  handleLessonSelect(targetIndex);
+                }}
+              >
+                <ArrowLeft size={15} />
+                Review Lesson {Number(previousLessonSuggestion.lessonIndex) + 1}
+              </button>
             </div>
           )}
 

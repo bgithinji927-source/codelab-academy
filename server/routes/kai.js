@@ -97,7 +97,7 @@ async function reviewAndCorrectReply({ reply, systemPrompt, learnerMessage, conv
 Do not rewrite an answer merely for style. Only mark needs_correction true when there is a clear factual error, unsafe or misleading instruction, contradiction with the lesson, or a missed direct answer.
 
 If the draft is correct, return exactly: {"needs_correction":false,"corrected_reply":""}
-If it is wrong, return a corrected learner-facing answer in corrected_reply. Preserve valid Markdown and any required control markers such as [LESSON_COMPLETE: ...], [COURSE_READY: ...], [UI_ACTION: CONTINUE_LESSON], or [VIDEO_RECOMMEND_ID: ...]. Do not include analysis, hidden reasoning, or Markdown fences around the JSON response.
+If it is wrong, return a corrected learner-facing answer in corrected_reply. Preserve valid Markdown and any required control markers such as [LESSON_COMPLETE: ...], [COURSE_READY: ...], [UI_ACTION: CONTINUE_LESSON], [UI_ACTION: REVIEW_PREVIOUS_LESSON], or [VIDEO_RECOMMEND_ID: ...]. Do not include analysis, hidden reasoning, or Markdown fences around the JSON response.
 
 The teaching instructions and lesson context are:
 ${systemPrompt}`,
@@ -865,6 +865,7 @@ router.post("/", ensureAuth, async (req, res) => {
       nextLessonId,
       nextLessonTitle,
       isIntro = false,
+      previousLessons = [],
     } = req.body;
 
     const userId = req.user?.id;
@@ -1028,6 +1029,13 @@ router.post("/", ensureAuth, async (req, res) => {
     const learningAssessment = (learner.learningAssessments || []).find(
       (assessment) => String(assessment.courseId) === String(course.id)
     );
+    const previousLessonContext = Array.isArray(previousLessons) && previousLessons.length
+      ? previousLessons
+          .filter((item) => Number.isInteger(Number(item?.index)) && Number(item.index) < Number(currentLessonIndex))
+          .slice(-8)
+          .map((item) => `Lesson ${Number(item.index) + 1}: ${String(item.title || "Untitled lesson")}\nSummary: ${String(item.summary || "No summary recorded yet.").slice(0, 600)}`)
+          .join("\n\n")
+      : "No previous lesson summaries are available.";
     const teachingSections = Array.isArray(lesson?.sections)
       ? lesson.sections.map((section) => {
           if (section?.type === "quiz") {
@@ -1069,7 +1077,7 @@ router.post("/", ensureAuth, async (req, res) => {
     // LESSON CONTEXT
     // ========================================
 
-    const lessonContext = `\nCOURSE:\n${courseTitle}\n\nLESSON:\n${lessonTitle}\n\nLEVEL:\n${lessonLevel}\n\nDESCRIPTION:\n${lessonDescription}\n\nLEARNER ASSESSMENT:\n${
+    const lessonContext = `\nCOURSE:\n${courseTitle}\n\nLESSON:\n${lessonTitle}\n\nLEVEL:\n${lessonLevel}\n\nDESCRIPTION:\n${lessonDescription}\n\nPREVIOUS LESSONS IN THIS COURSE:\n${previousLessonContext}\n\nLEARNER ASSESSMENT:\n${
       learningAssessment
         ? JSON.stringify({
             experience: learningAssessment.experience,
@@ -1094,7 +1102,7 @@ router.post("/", ensureAuth, async (req, res) => {
     // KAI SYSTEM PROMPT (ENHANCED FOR COMPLETION)
     // ========================================
 
-    const systemPrompt = `\nYou are Kai, the AI instructor for CodeLab Academy.\n\nYou are NOT a generic chatbot.\n\nYou are a friendly, patient and practical programming instructor.\n\nYour main goal is to make sure the learner actually understands what they are learning.\n\n${lessonContext}\n\nYOUR PERSONALITY:\n\n- Friendly\n- Patient\n- Encouraging\n- Clear\n- Practical\n- Conversational\n- Developer-focused\n\nTEACHING RULES:\n\n1. Teach concepts instead of only giving answers.\n2. Explain WHY something works, not only WHAT to type.\n3. Start with the basics.\n4. Use simple language when introducing difficult concepts.\n5. Use practical coding examples.\n6. Explain important code carefully.\n7. Ask the learner questions during the lesson.\n8. Give the learner opportunities to practice.\n9. Do not immediately reveal challenge answers.\n10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.\n11. Gradually increase difficulty.\n12. Do not overwhelm beginners with unnecessary advanced information.\n13. If the learner is confused, explain the concept again using a simpler example.\n14. Connect new concepts to things the learner already understands.\n15. Explain what is happening behind the scenes when useful.\n16. Teach one important concept at a time.\n17. Do not dump the entire lesson into one response.\n18. Use the lesson information provided to guide what you teach.\n19. Continue naturally from the conversation history.\n20. Treat your previous assistant messages as drafts that can be wrong. Before answering, review the most recent relevant answer against the lesson and the learner\'s question. If it was incorrect, acknowledge the correction briefly and provide the accurate replacement instead of repeating it.\n21. Use LEARNER ASSESSMENT to adjust starting difficulty, pacing, examples, practice style, and study-sized tasks. Do not repeat the assessment as a questionnaire unless an answer is missing or the learner asks to update it.
+    const systemPrompt = `\nYou are Kai, the AI instructor for CodeLab Academy.\n\nYou are NOT a generic chatbot.\n\nYou are a friendly, patient and practical programming instructor.\n\nYour main goal is to make sure the learner actually understands what they are learning.\n\n${lessonContext}\n\nYOUR PERSONALITY:\n\n- Friendly\n- Patient\n- Encouraging\n- Clear\n- Practical\n- Conversational\n- Developer-focused\n\nTEACHING RULES:\n\n1. Teach concepts instead of only giving answers.\n2. Explain WHY something works, not only WHAT to type.\n3. Start with the basics.\n4. Use simple language when introducing difficult concepts.\n5. Use practical coding examples.\n6. Explain important code carefully.\n7. Ask the learner questions during the lesson.\n8. Give the learner opportunities to practice.\n9. Do not immediately reveal challenge answers.\n10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.\n11. Gradually increase difficulty.\n12. Do not overwhelm beginners with unnecessary advanced information.\n13. If the learner is confused, explain the concept again using a simpler example.\n14. Connect new concepts to things the learner already understands.\n15. Explain what is happening behind the scenes when useful.\n16. Teach one important concept at a time.\n17. Do not dump the entire lesson into one response.\n18. Use the lesson information provided to guide what you teach.\n19. Continue naturally from the conversation history.\n20. Treat your previous assistant messages as drafts that can be wrong. Before answering, review the most recent relevant answer against the lesson and the learner\'s question. If it was incorrect, acknowledge the correction briefly and provide the accurate replacement instead of repeating it.\n21. Use LEARNER ASSESSMENT to adjust starting difficulty, pacing, examples, practice style, and study-sized tasks. Do not repeat the assessment as a questionnaire unless an answer is missing or the learner asks to update it.\n22. Use PREVIOUS LESSONS IN THIS COURSE as context. If the current concept depends on a previous lesson and the learner would benefit from reviewing it, recommend that review and end with [UI_ACTION: REVIEW_PREVIOUS_LESSON]. Use this only when a previous lesson exists and is genuinely related.
 
 COURSE PROGRESSION AND READINESS:
 - The learner follows the course order chosen by CodeLab Academy.
@@ -1108,6 +1116,7 @@ COURSE PROGRESSION AND READINESS:
 IN-APP CONTROLS:
 - Kai may request a CodeLab Academy interface action only when it is safe and clearly requested by the learner.
 - If the current lesson is complete, the learner explicitly asks to continue, and the next lesson is available, end your response with [UI_ACTION: CONTINUE_LESSON].
+- If the learner would benefit from a related earlier lesson, end your response with [UI_ACTION: REVIEW_PREVIOUS_LESSON]. Do not use this for unrelated or optional review.
 - Never emit UI_ACTION for an incomplete lesson, an unavailable lesson, or a request that is only informational.
 - The interface validates this action and will not execute arbitrary clicks or computer controls.
 
@@ -1314,9 +1323,22 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     const isCourseReady = Boolean(courseReadyMatch && isFinalCourseLesson && isLessonComplete);
     const shouldCompleteLesson = Boolean(isLessonComplete && (!isFinalCourseLesson || isCourseReady));
     const uiActionMatch = reply.match(/\[UI_ACTION:\s*(CONTINUE_LESSON)\]/i);
+    const reviewPreviousLessonMatch = reply.match(/\[UI_ACTION:\s*(REVIEW_PREVIOUS_LESSON)\]/i);
+    const previousLesson = Array.isArray(previousLessons)
+      ? previousLessons
+          .filter((item) => Number(item?.index) < Number(currentLessonIndex))
+          .sort((left, right) => Number(right.index) - Number(left.index))[0]
+      : null;
     const uiAction = uiActionMatch && shouldCompleteLesson && !isFinalCourseLesson
       ? { type: "continue_lesson" }
-      : null;
+      : reviewPreviousLessonMatch && previousLesson
+        ? {
+            type: "review_previous_lesson",
+            lessonIndex: Number(previousLesson.index),
+            lessonTitle: previousLesson.title || "Previous lesson",
+            reason: "This lesson builds on an earlier concept that Kai thinks is useful to revisit.",
+          }
+        : null;
     const videoIdMatch = reply.match(/\[VIDEO_RECOMMEND_ID\s*:\s*([a-f0-9]{24})\]/i);
     const videoRecommendation = videoIdMatch
       ? await findVerifiedVideoById({ course, lesson, videoId: videoIdMatch[1] })
@@ -1327,6 +1349,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       .replace(/\[LESSON_COMPLETE:.*?\]/gi, "")
       .replace(/\[COURSE_READY:.*?\]/gi, "")
       .replace(/\[UI_ACTION:\s*CONTINUE_LESSON\]/gi, "")
+      .replace(/\[UI_ACTION:\s*REVIEW_PREVIOUS_LESSON\]/gi, "")
       .replace(/\[VIDEO_RECOMMEND(?:_ID)?(?:\s*:\s*.*?)?\]/gi, "")
       .trim();
 

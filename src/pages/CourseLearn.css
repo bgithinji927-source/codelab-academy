@@ -2511,3 +2511,39 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
     max-width: 100% !important;
   }
 }
+
+.previous-lesson-suggestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  color: #e9e6ff;
+  background: linear-gradient(135deg, rgba(111, 82, 226, 0.2), rgba(56, 66, 139, 0.2));
+  border: 1px solid rgba(151, 132, 255, 0.38);
+  border-radius: 14px;
+}
+.previous-lesson-suggestion > div { display: grid; gap: 4px; }
+.previous-lesson-suggestion strong { font-size: 0.9rem; }
+.previous-lesson-suggestion span { color: #b8b5d3; font-size: 0.8rem; line-height: 1.4; }
+.previous-lesson-suggestion button {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 12px;
+  color: #fff;
+  background: rgba(126, 97, 246, 0.72);
+  border: 1px solid rgba(205, 194, 255, 0.38);
+  border-radius: 9px;
+  font-size: 0.78rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+.previous-lesson-suggestion button:hover { background: rgba(145, 115, 255, 0.9); }
+@media (max-width: 680px) {
+  .previous-lesson-suggestion { align-items: stretch; flex-direction: column; }
+  .previous-lesson-suggestion button { justify-content: center; }
+}
