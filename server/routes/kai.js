@@ -183,18 +183,30 @@ function parseStructuredReply(value) {
   return null;
 }
 
+function readableBlockValue(value) {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
+  if (Array.isArray(value)) return value.map(readableBlockValue).filter(Boolean).join("\n");
+  if (typeof value === "object") {
+    const preferred = value.text ?? value.content ?? value.label ?? value.title ?? value.description ?? value.code ?? value.name;
+    if (preferred !== undefined) return readableBlockValue(preferred);
+    return "";
+  }
+  return "";
+}
+
 function structuredReplyToMarkdown(blocks) {
   if (!Array.isArray(blocks)) return "";
   return blocks.map((block) => {
     if (!block || typeof block !== "object") return "";
-    if (block.type === "heading" || block.type === "subheading") return `## ${block.text || block.content || ""}`;
-    if (block.type === "text" || block.type === "quote" || block.type === "callout") return block.text || block.content || block.description || "";
-    if (block.type === "bullets") return (block.items || []).map((item) => `- ${typeof item === "string" ? item : item.text || item.content || ""}`).join("\n");
-    if (block.type === "numbered") return (block.items || []).map((item, index) => `${index + 1}. ${typeof item === "string" ? item : item.text || item.content || ""}`).join("\n");
-    if (["code", "terminal", "json", "xml"].includes(block.type)) return `\n\`\`\`${block.language || (block.type === "terminal" ? "sh" : block.type)}\n${block.code || block.content || ""}\n\`\`\``;
-    if (block.type === "quiz" || block.type === "choice") return `${block.question || ""}\n${(block.options || []).map((option, index) => `${index + 1}. ${option}`).join("\n")}`;
-    if (block.type === "suggestions" || ["quick_replies", "quickReplies"].includes(block.type)) return (block.items || []).map((item) => `- ${typeof item === "string" ? item : item.text || item.label || ""}`).join("\n");
-    return block.content || block.text || block.title || "";
+    if (block.type === "heading" || block.type === "subheading") return `## ${readableBlockValue(block.text ?? block.content)}`;
+    if (block.type === "text" || block.type === "quote" || block.type === "callout") return readableBlockValue(block.text ?? block.content ?? block.description);
+    if (block.type === "bullets") return (block.items || []).map((item) => `- ${readableBlockValue(item)}`).filter((item) => item !== "- ").join("\n");
+    if (block.type === "numbered") return (block.items || []).map((item, index) => `${index + 1}. ${readableBlockValue(item)}`).join("\n");
+    if (["code", "terminal", "json", "xml"].includes(block.type)) return `\n\`\`\`${readableBlockValue(block.language) || (block.type === "terminal" ? "sh" : block.type)}\n${readableBlockValue(block.code ?? block.content)}\n\`\`\``;
+    if (block.type === "quiz" || block.type === "choice") return `${readableBlockValue(block.question)}\n${(block.options || []).map((option, index) => `${index + 1}. ${readableBlockValue(option)}`).join("\n")}`;
+    if (block.type === "suggestions" || ["quick_replies", "quickReplies"].includes(block.type)) return (block.items || []).map((item) => `- ${readableBlockValue(item)}`).filter((item) => item !== "- ").join("\n");
+    return readableBlockValue(block.content ?? block.text ?? block.title);
   }).filter(Boolean).join("\n\n").trim();
 }
 
