@@ -26,6 +26,12 @@ import "./CourseLearn.css";
 
 const KAI_UI_MODE_KEY = "codelabKaiUiMode";
 
+function feedbackMapForLesson(records, courseId, lessonId) {
+  return (Array.isArray(records) ? records : [])
+    .filter((item) => String(item.courseId) === String(courseId) && String(item.lessonId) === String(lessonId))
+    .reduce((map, item) => ({ ...map, [String(item.messageId)]: item.rating }), {});
+}
+
 function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
   const [messages, setMessages] = useState([]);
   const [answer, setAnswer] = useState("");
@@ -68,6 +74,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     localStorage.getItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`) || "chatgpt"
   ));
   const [messageFeedback, setMessageFeedback] = useState({});
+  const [savedKaiFeedback, setSavedKaiFeedback] = useState([]);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
 
   const typingTimerRef = useRef(null);
@@ -340,6 +347,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       lessonStartKeyRef.current = "";
       lessonViewCacheRef.current = new Map();
       setMessages([]);
+      setMessageFeedback({});
+      setSavedKaiFeedback([]);
       setSavedLessonSessions([]);
       setPreviousLessonSuggestion(null);
       setIsLessonMenuOpen(false);
@@ -453,6 +462,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         setPreviousLessonSummary(selectedSession?.summary || stateData.session?.summary || "");
         setSavedLessonSessions(normalizedSessions);
         setMessages(savedHistory);
+        setSavedKaiFeedback(stateData.user?.kaiFeedback || []);
+        setMessageFeedback(feedbackMapForLesson(stateData.user?.kaiFeedback, course?.id, activeLesson?.id));
         setLessonCompletionReady(Boolean(
           safeRequestedIndex < safeIndex
             ? selectedSession?.completed
@@ -988,6 +999,7 @@ ${startMessage}
     setViewingLessonIndex(targetIndex < serverLessonIndex ? targetIndex : null);
     setLesson(targetLesson);
     setMessages(targetHistory);
+    setMessageFeedback(feedbackMapForLesson(savedKaiFeedback, course?.id, targetLesson?.id));
     setPreviousLessonSummary(cachedLesson?.summary || savedSession?.summary || "");
     setLessonCompletionReady(
       targetIndex < serverLessonIndex
@@ -1453,11 +1465,28 @@ ${startMessage}
         console.warn("Could not copy Kai message:", error);
       }
     };
-    const setKaiFeedback = (value) => {
-      setMessageFeedback((current) => ({
-        ...current,
-        [messageKey]: current[messageKey] === value ? null : value,
-      }));
+    const setKaiFeedback = async (value) => {
+      const previousRating = messageFeedback[messageKey] || null;
+      const nextRating = previousRating === value ? null : value;
+      setMessageFeedback((current) => ({ ...current, [messageKey]: nextRating }));
+      try {
+        const response = await fetchWithAuth("/api/kai/feedback", {
+          method: "POST",
+          body: JSON.stringify({
+            courseId: course?.id,
+            lessonId: lesson?.id,
+            messageId: messageKey,
+            rating: nextRating,
+            messagePreview: String(content || ""),
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) throw new Error(data.message || "Could not save feedback");
+        setSavedKaiFeedback(data.feedback || []);
+      } catch (error) {
+        setMessageFeedback((current) => ({ ...current, [messageKey]: previousRating }));
+        console.warn("Could not save Kai feedback:", error);
+      }
     };
 
     return (

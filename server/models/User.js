@@ -178,6 +178,22 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
+    kaiFeedback: [
+      {
+        courseId: { type: String, required: true },
+        lessonId: { type: String, required: true },
+        messageId: { type: String, required: true },
+        rating: {
+          type: String,
+          enum: ["like", "dislike"],
+          required: true,
+        },
+        messagePreview: String,
+        createdAt: { type: Date, default: Date.now },
+        updatedAt: { type: Date, default: Date.now },
+      },
+    ],
+
     // ============================================
     // DAILY CHALLENGE
     // - Stores the assigned challenge for a rolling 24-hour window

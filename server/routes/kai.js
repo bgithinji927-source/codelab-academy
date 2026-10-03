@@ -773,6 +773,7 @@ router.get("/progress/:userId", ensureAuth, async (req, res) => {
         badges: user.badges,
         dailyChallengesCompleted: user.dailyChallengesCompleted,
         learningAssessments: user.learningAssessments || [],
+        kaiFeedback: user.kaiFeedback || [],
         currentCourse: user.currentCourse,
         currentLesson: user.currentLesson,
         courseProgress: user.courseProgress,
@@ -845,6 +846,65 @@ router.get(
     }
   }
 );
+
+// ============================================
+// KAI MESSAGE FEEDBACK
+// POST /api/kai/feedback
+// Protected: saves one like/dislike per user and message
+// ============================================
+router.post("/feedback", ensureAuth, async (req, res) => {
+  try {
+    const { courseId, lessonId, messageId, rating, messagePreview = "" } = req.body || {};
+    const normalizedCourseId = String(courseId || "").trim();
+    const normalizedLessonId = String(lessonId || "").trim();
+    const normalizedMessageId = String(messageId || "").trim();
+    const normalizedRating = rating === null || rating === undefined || rating === ""
+      ? null
+      : String(rating).trim().toLowerCase();
+
+    if (!normalizedCourseId || !normalizedLessonId || !normalizedMessageId) {
+      return res.status(400).json({ success: false, message: "courseId, lessonId, and messageId are required" });
+    }
+    if (normalizedRating && !["like", "dislike"].includes(normalizedRating)) {
+      return res.status(400).json({ success: false, message: "Feedback must be like or dislike" });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    if (!Array.isArray(user.kaiFeedback)) user.kaiFeedback = [];
+
+    const existingIndex = user.kaiFeedback.findIndex((item) => (
+      String(item.courseId) === normalizedCourseId
+      && String(item.lessonId) === normalizedLessonId
+      && String(item.messageId) === normalizedMessageId
+    ));
+
+    if (!normalizedRating) {
+      if (existingIndex >= 0) user.kaiFeedback.splice(existingIndex, 1);
+    } else {
+      const feedback = {
+        courseId: normalizedCourseId,
+        lessonId: normalizedLessonId,
+        messageId: normalizedMessageId,
+        rating: normalizedRating,
+        messagePreview: String(messagePreview || "").slice(0, 500),
+        updatedAt: new Date(),
+      };
+      if (existingIndex >= 0) user.kaiFeedback[existingIndex] = feedback;
+      else user.kaiFeedback.push(feedback);
+    }
+
+    // Keep the profile compact while retaining enough recent signal for Kai.
+    if (user.kaiFeedback.length > 200) {
+      user.kaiFeedback = user.kaiFeedback.slice(-200);
+    }
+    await user.save();
+    return res.json({ success: true, rating: normalizedRating, feedback: user.kaiFeedback });
+  } catch (error) {
+    console.error("Kai feedback error:", error);
+    return res.status(500).json({ success: false, message: "Could not save Kai feedback" });
+  }
+});
 
 // ============================================
 // KAI TEACHING (UPDATED WITH SESSION PERSISTENCE)
@@ -1036,6 +1096,13 @@ router.post("/", ensureAuth, async (req, res) => {
           .map((item) => `Lesson ${Number(item.index) + 1}: ${String(item.title || "Untitled lesson")}\nSummary: ${String(item.summary || "No summary recorded yet.").slice(0, 600)}`)
           .join("\n\n")
       : "No previous lesson summaries are available.";
+    const feedbackContext = Array.isArray(learner.kaiFeedback) && learner.kaiFeedback.length
+      ? learner.kaiFeedback
+          .filter((item) => String(item.courseId) === String(course.id))
+          .slice(-12)
+          .map((item) => `${item.rating === "like" ? "LIKED" : "DISLIKED"}: ${String(item.messagePreview || "Kai response").slice(0, 240)}`)
+          .join("\n")
+      : "No response feedback recorded yet.";
     const teachingSections = Array.isArray(lesson?.sections)
       ? lesson.sections.map((section) => {
           if (section?.type === "quiz") {
@@ -1077,7 +1144,7 @@ router.post("/", ensureAuth, async (req, res) => {
     // LESSON CONTEXT
     // ========================================
 
-    const lessonContext = `\nCOURSE:\n${courseTitle}\n\nLESSON:\n${lessonTitle}\n\nLEVEL:\n${lessonLevel}\n\nDESCRIPTION:\n${lessonDescription}\n\nPREVIOUS LESSONS IN THIS COURSE:\n${previousLessonContext}\n\nLEARNER ASSESSMENT:\n${
+    const lessonContext = `\nCOURSE:\n${courseTitle}\n\nLESSON:\n${lessonTitle}\n\nLEVEL:\n${lessonLevel}\n\nDESCRIPTION:\n${lessonDescription}\n\nPREVIOUS LESSONS IN THIS COURSE:\n${previousLessonContext}\n\nRECENT LEARNER FEEDBACK ON KAI RESPONSES:\n${feedbackContext}\n\nLEARNER ASSESSMENT:\n${
       learningAssessment
         ? JSON.stringify({
             experience: learningAssessment.experience,
@@ -1102,7 +1169,7 @@ router.post("/", ensureAuth, async (req, res) => {
     // KAI SYSTEM PROMPT (ENHANCED FOR COMPLETION)
     // ========================================
 
-    const systemPrompt = `\nYou are Kai, the AI instructor for CodeLab Academy.\n\nYou are NOT a generic chatbot.\n\nYou are a friendly, patient and practical programming instructor.\n\nYour main goal is to make sure the learner actually understands what they are learning.\n\n${lessonContext}\n\nYOUR PERSONALITY:\n\n- Friendly\n- Patient\n- Encouraging\n- Clear\n- Practical\n- Conversational\n- Developer-focused\n\nTEACHING RULES:\n\n1. Teach concepts instead of only giving answers.\n2. Explain WHY something works, not only WHAT to type.\n3. Start with the basics.\n4. Use simple language when introducing difficult concepts.\n5. Use practical coding examples.\n6. Explain important code carefully.\n7. Ask the learner questions during the lesson.\n8. Give the learner opportunities to practice.\n9. Do not immediately reveal challenge answers.\n10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.\n11. Gradually increase difficulty.\n12. Do not overwhelm beginners with unnecessary advanced information.\n13. If the learner is confused, explain the concept again using a simpler example.\n14. Connect new concepts to things the learner already understands.\n15. Explain what is happening behind the scenes when useful.\n16. Teach one important concept at a time.\n17. Do not dump the entire lesson into one response.\n18. Use the lesson information provided to guide what you teach.\n19. Continue naturally from the conversation history.\n20. Treat your previous assistant messages as drafts that can be wrong. Before answering, review the most recent relevant answer against the lesson and the learner\'s question. If it was incorrect, acknowledge the correction briefly and provide the accurate replacement instead of repeating it.\n21. Use LEARNER ASSESSMENT to adjust starting difficulty, pacing, examples, practice style, and study-sized tasks. Do not repeat the assessment as a questionnaire unless an answer is missing or the learner asks to update it.\n22. Use PREVIOUS LESSONS IN THIS COURSE as context. If the current concept depends on a previous lesson and the learner would benefit from reviewing it, recommend that review and end with [UI_ACTION: REVIEW_PREVIOUS_LESSON]. Use this only when a previous lesson exists and is genuinely related.
+    const systemPrompt = `\nYou are Kai, the AI instructor for CodeLab Academy.\n\nYou are NOT a generic chatbot.\n\nYou are a friendly, patient and practical programming instructor.\n\nYour main goal is to make sure the learner actually understands what they are learning.\n\n${lessonContext}\n\nYOUR PERSONALITY:\n\n- Friendly\n- Patient\n- Encouraging\n- Clear\n- Practical\n- Conversational\n- Developer-focused\n\nTEACHING RULES:\n\n1. Teach concepts instead of only giving answers.\n2. Explain WHY something works, not only WHAT to type.\n3. Start with the basics.\n4. Use simple language when introducing difficult concepts.\n5. Use practical coding examples.\n6. Explain important code carefully.\n7. Ask the learner questions during the lesson.\n8. Give the learner opportunities to practice.\n9. Do not immediately reveal challenge answers.\n10. If the learner makes a mistake, explain why it is wrong and guide them toward the solution.\n11. Gradually increase difficulty.\n12. Do not overwhelm beginners with unnecessary advanced information.\n13. If the learner is confused, explain the concept again using a simpler example.\n14. Connect new concepts to things the learner already understands.\n15. Explain what is happening behind the scenes when useful.\n16. Teach one important concept at a time.\n17. Do not dump the entire lesson into one response.\n18. Use the lesson information provided to guide what you teach.\n19. Continue naturally from the conversation history.\n20. Treat your previous assistant messages as drafts that can be wrong. Before answering, review the most recent relevant answer against the lesson and the learner\'s question. If it was incorrect, acknowledge the correction briefly and provide the accurate replacement instead of repeating it.\n21. Use LEARNER ASSESSMENT to adjust starting difficulty, pacing, examples, practice style, and study-sized tasks. Do not repeat the assessment as a questionnaire unless an answer is missing or the learner asks to update it.\n23. Use RECENT LEARNER FEEDBACK as a style signal. Favor patterns in responses the learner liked and avoid repeating patterns they disliked. Do not mention internal feedback records or claim that a rating changed your answer.\n22. Use PREVIOUS LESSONS IN THIS COURSE as context. If the current concept depends on a previous lesson and the learner would benefit from reviewing it, recommend that review and end with [UI_ACTION: REVIEW_PREVIOUS_LESSON]. Use this only when a previous lesson exists and is genuinely related.
 
 COURSE PROGRESSION AND READINESS:
 - The learner follows the course order chosen by CodeLab Academy.
