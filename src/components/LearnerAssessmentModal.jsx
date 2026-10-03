@@ -46,13 +46,13 @@ function buildSummary(courseTitle, answers) {
 export default function LearnerAssessmentModal({ course, onComplete, onClose }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [messages, setMessages] = useState([]);
   const [displayedText, setDisplayedText] = useState("");
   const [isKaiTyping, setIsKaiTyping] = useState(true);
   const [showSummary, setShowSummary] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const question = QUESTIONS[step];
+  const selectedAnswer = answers[question.id];
   const progress = useMemo(() => `${Math.min(step + 1, QUESTIONS.length)}/${QUESTIONS.length}`, [step]);
   const kaiText = showSummary ? buildSummary(course.title, answers) : question.prompt(course.title);
 
@@ -77,16 +77,23 @@ export default function LearnerAssessmentModal({ course, onComplete, onClose }) 
 
   const choose = (value) => {
     if (isKaiTyping || isSaving) return;
-    const nextAnswers = { ...answers, [question.id]: value };
-    setAnswers(nextAnswers);
-    setMessages((current) => [...current, { role: "user", text: value }]);
+    setAnswers((current) => ({ ...current, [question.id]: value }));
     setError("");
+  };
 
+  const continueAssessment = () => {
+    if (!selectedAnswer || isKaiTyping || isSaving) {
+      setError("Select an answer to continue.");
+      return;
+    }
+    const nextAnswers = { ...answers, [question.id]: selectedAnswer };
     if (step === QUESTIONS.length - 1) {
+      setAnswers(nextAnswers);
       setShowSummary(true);
       return;
     }
-    window.setTimeout(() => setStep((current) => current + 1), 260);
+    setError("");
+    setStep((current) => current + 1);
   };
 
   const saveAssessment = async () => {
@@ -124,12 +131,7 @@ export default function LearnerAssessmentModal({ course, onComplete, onClose }) 
         <div className="assessment-progress" aria-label={`Question ${progress} of ${QUESTIONS.length}`}><span style={{ width: `${((showSummary ? QUESTIONS.length : step + 1) / QUESTIONS.length) * 100}%` }} /></div>
 
         <div className="assessment-chat" aria-live="polite">
-          {messages.map((message, index) => (
-            <div className="assessment-chat-row assessment-user-row" key={`${message.text}-${index}`}>
-              <div className="assessment-user-bubble">{message.text}</div>
-            </div>
-          ))}
-          <div className="assessment-chat-row assessment-kai-row">
+          <div className="assessment-chat-row assessment-kai-row assessment-page-swipe" key={`${step}-${showSummary}`}>
             <div className="assessment-kai-mini"><Bot size={15} /></div>
             <div className="assessment-kai-bubble">
               {isKaiTyping && <span className="assessment-typing-dots"><i /><i /><i /></span>}
@@ -140,12 +142,16 @@ export default function LearnerAssessmentModal({ course, onComplete, onClose }) 
 
         {!showSummary && !isKaiTyping && (
           <div className="assessment-suggestions" aria-label="Kai suggestions">
-            <div className="assessment-suggestions-label">Choose a suggestion</div>
+            <div className="assessment-suggestions-label">Choose one answer</div>
             {question.options.map((option) => (
-              <button type="button" className="assessment-suggestion" key={option} onClick={() => choose(option)}>
-                <span>{option}</span><ArrowRight size={15} />
+              <button type="button" className={`assessment-suggestion${selectedAnswer === option ? " is-selected" : ""}`} key={option} onClick={() => choose(option)} aria-pressed={selectedAnswer === option}>
+                <span className="assessment-checkbox" aria-hidden="true">{selectedAnswer === option && <Check size={14} />}</span>
+                <span>{option}</span>
               </button>
             ))}
+            <button type="button" className="assessment-primary assessment-continue-button" onClick={continueAssessment}>
+              Continue <ArrowRight size={16} />
+            </button>
           </div>
         )}
 
