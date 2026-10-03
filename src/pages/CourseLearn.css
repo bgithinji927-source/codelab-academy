@@ -3053,3 +3053,41 @@ html[data-theme="dark"] .kai-message-actions button,
     box-sizing: border-box;
   }
 }
+
+/* Final source-of-truth geometry for every Kai interface. The outer teaching
+   column is centered first; all message rows fill it, matching the fixed
+   composer exactly on both sides. */
+@media (min-width: 641px) {
+  .learn-page > .conversation-container > .kai-teaching-card {
+    align-self: center !important;
+    width: min(91vw, 1300px) !important;
+    max-width: 1300px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box;
+  }
+  .learn-page > .conversation-container > .kai-teaching-card > .conversation-messages,
+  .learn-page > .conversation-container > .kai-teaching-card .conversation-messages,
+  .learn-page > .conversation-container > .kai-teaching-card .chat-row,
+  .learn-page > .conversation-container > .kai-teaching-card .chat-content,
+  .learn-page > .conversation-container > .kai-teaching-card .kai-board-content,
+  .learn-page > .conversation-container > .kai-teaching-card .learner-board-content,
+  .learn-page > .conversation-container > .kai-teaching-card .kai-rich-content,
+  .learn-page > .conversation-container > .kai-teaching-card .kai-message-text,
+  .learn-page > .conversation-container > .kai-teaching-card .learner-message-text {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box;
+  }
+  .learn-page .kai-input-dock {
+    left: 50% !important;
+    right: auto !important;
+    width: min(91vw, 1300px) !important;
+    max-width: 1300px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    transform: translateX(-50%) !important;
+  }
+}
