@@ -1381,16 +1381,19 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     const friendlyReply = structuredContent
       ? structuredReplyToMarkdown(structuredContent)
       : reply;
+    // Structured lesson responses can carry control markers inside text blocks.
+    // Inspect both the provider JSON and the learner-facing Markdown projection.
+    const controlText = `${reply}\n${friendlyReply}`;
 
-    const isLessonComplete = /\[LESSON_COMPLETE:/i.test(reply) || /\[LESSON_COMPLETE:/i.test(friendlyReply);
-    const summaryMatch = reply.match(/\[LESSON_COMPLETE:\s*(.*?)\]/i);
+    const isLessonComplete = /\[LESSON_COMPLETE:/i.test(controlText);
+    const summaryMatch = controlText.match(/\[LESSON_COMPLETE:\s*(.*?)\]/i);
     const lessonSummary = summaryMatch ? summaryMatch[1].trim() : "";
-    const courseReadyMatch = reply.match(/\[COURSE_READY:\s*(.*?)\]/i);
+    const courseReadyMatch = controlText.match(/\[COURSE_READY:\s*(.*?)\]/i);
     const courseReadinessSummary = courseReadyMatch ? courseReadyMatch[1].trim() : "";
     const isCourseReady = Boolean(courseReadyMatch && isFinalCourseLesson && isLessonComplete);
     const shouldCompleteLesson = Boolean(isLessonComplete && (!isFinalCourseLesson || isCourseReady));
-    const uiActionMatch = reply.match(/\[UI_ACTION:\s*(CONTINUE_LESSON)\]/i);
-    const reviewPreviousLessonMatch = reply.match(/\[UI_ACTION:\s*(REVIEW_PREVIOUS_LESSON)\]/i);
+    const uiActionMatch = controlText.match(/\[UI_ACTION:\s*(CONTINUE_LESSON)\]/i);
+    const reviewPreviousLessonMatch = controlText.match(/\[UI_ACTION:\s*(REVIEW_PREVIOUS_LESSON)\]/i);
     const previousLesson = Array.isArray(previousLessons)
       ? previousLessons
           .filter((item) => Number(item?.index) < Number(currentLessonIndex))
@@ -1406,7 +1409,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
             reason: "This lesson builds on an earlier concept that Kai thinks is useful to revisit.",
           }
         : null;
-    const videoIdMatch = reply.match(/\[VIDEO_RECOMMEND_ID\s*:\s*([a-f0-9]{24})\]/i);
+    const videoIdMatch = controlText.match(/\[VIDEO_RECOMMEND_ID\s*:\s*([a-f0-9]{24})\]/i);
     const videoRecommendation = videoIdMatch
       ? await findVerifiedVideoById({ course, lesson, videoId: videoIdMatch[1] })
       : null;
