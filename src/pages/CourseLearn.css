@@ -2854,3 +2854,27 @@ html[data-theme="dark"] .kai-message-actions button,
     box-sizing: border-box;
   }
 }
+
+/* Center the readable prose inside the shared lesson column. Wide learning
+   blocks keep the full column so code and diagrams remain usable. */
+@media (min-width: 641px) {
+  .learn-page .kai-board-content .kai-rich-content,
+  .learn-page .kai-board-content .kai-rich-text,
+  .learn-page .kai-board-content .kai-rich-content > * {
+    width: min(100%, 76ch) !important;
+    max-width: 76ch !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .learn-page .kai-board-content .kai-rich-code,
+  .learn-page .kai-board-content .kai-rich-table-wrap,
+  .learn-page .kai-board-content .kai-rich-diagram,
+  .learn-page .kai-board-content .kai-rich-video,
+  .learn-page .kai-board-content .kai-rich-filetree {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
