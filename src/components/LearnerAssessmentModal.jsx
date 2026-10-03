@@ -1,22 +1,21 @@
-import { useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowRight, Bot, Check, Clock3, X } from "lucide-react";
 import fetchWithAuth from "../utils/fetchWithAuth";
 import "./LearnerAssessmentModal.css";
 
 const QUESTIONS = [
   {
     id: "experience",
-    title: "What's your experience with this topic?",
     options: ["Complete beginner", "I've tried it before", "Intermediate", "Advanced"],
+    prompt: (courseTitle) => `Before we start ${courseTitle}, how much experience do you have with it?`,
   },
   {
     id: "programmingExperience",
-    title: "Have you programmed before?",
     options: ["Never", "A little", "Yes, regularly"],
+    prompt: () => "Have you programmed before, in any language?",
   },
   {
     id: "goal",
-    title: "What do you want to achieve?",
     options: [
       "Learn programming fundamentals",
       "Build applications",
@@ -26,52 +25,77 @@ const QUESTIONS = [
       "Cybersecurity",
       "School/academic purposes",
     ],
+    prompt: (courseTitle) => `What would you most like to achieve with ${courseTitle}?`,
   },
   {
     id: "learningPreference",
-    title: "How do you prefer to learn?",
     options: ["Step-by-step explanations", "Practical exercises", "Projects", "A mixture"],
+    prompt: () => "How should I shape your lessons so they feel most useful?",
   },
   {
     id: "studyTime",
-    title: "How much time can you study?",
     options: ["15 minutes/day", "30 minutes/day", "1 hour/day", "More than 1 hour"],
+    prompt: () => "Finally, how much time can you study on a typical day?",
   },
 ];
+
+function buildSummary(courseTitle, answers) {
+  return `I have a plan for your ${courseTitle} path. I'll start at the ${String(answers.experience || "right").toLowerCase()} level, use ${String(answers.learningPreference || "a mixture").toLowerCase()}, focus on ${String(answers.goal || "your goals").toLowerCase()}, and keep sessions sized for ${String(answers.studyTime || "your schedule").toLowerCase()}. Ready to begin?`;
+}
 
 export default function LearnerAssessmentModal({ course, onComplete, onClose }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [messages, setMessages] = useState([]);
+  const [displayedText, setDisplayedText] = useState("");
+  const [isKaiTyping, setIsKaiTyping] = useState(true);
+  const [showSummary, setShowSummary] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const question = QUESTIONS[step];
-  const progress = useMemo(() => `${step + 1}/${QUESTIONS.length}`, [step]);
+  const progress = useMemo(() => `${Math.min(step + 1, QUESTIONS.length)}/${QUESTIONS.length}`, [step]);
+  const kaiText = showSummary ? buildSummary(course.title, answers) : question.prompt(course.title);
+
+  useEffect(() => {
+    setDisplayedText("");
+    setIsKaiTyping(true);
+    let interval;
+    const delay = window.setTimeout(() => {
+      setIsKaiTyping(false);
+      let index = 0;
+      interval = window.setInterval(() => {
+        index += 1;
+        setDisplayedText(kaiText.slice(0, index));
+        if (index >= kaiText.length) window.clearInterval(interval);
+      }, 24);
+    }, 620);
+    return () => {
+      window.clearTimeout(delay);
+      if (interval) window.clearInterval(interval);
+    };
+  }, [kaiText]);
 
   const choose = (value) => {
-    setAnswers((current) => ({ ...current, [question.id]: value }));
+    if (isKaiTyping || isSaving) return;
+    const nextAnswers = { ...answers, [question.id]: value };
+    setAnswers(nextAnswers);
+    setMessages((current) => [...current, { role: "user", text: value }]);
     setError("");
+
+    if (step === QUESTIONS.length - 1) {
+      setShowSummary(true);
+      return;
+    }
+    window.setTimeout(() => setStep((current) => current + 1), 260);
   };
 
-  const next = async () => {
-    if (!answers[question.id]) {
-      setError("Choose an answer to continue.");
-      return;
-    }
-    if (step < QUESTIONS.length - 1) {
-      setStep((current) => current + 1);
-      return;
-    }
-
+  const saveAssessment = async () => {
     setIsSaving(true);
     setError("");
     try {
       const response = await fetchWithAuth("/api/auth/learning-assessment", {
         method: "PATCH",
-        body: JSON.stringify({
-          courseId: course.id,
-          courseTitle: course.title,
-          ...answers,
-        }),
+        body: JSON.stringify({ courseId: course.id, courseTitle: course.title, ...answers }),
       });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Could not save your learning profile.");
@@ -85,44 +109,56 @@ export default function LearnerAssessmentModal({ course, onComplete, onClose }) 
 
   return (
     <div className="assessment-backdrop" role="presentation">
-      <section className="assessment-modal" role="dialog" aria-modal="true" aria-labelledby="assessment-title">
+      <section className="assessment-modal assessment-chat-modal" role="dialog" aria-modal="true" aria-labelledby="assessment-title">
         <div className="assessment-header">
-          <div>
-            <span className="assessment-eyebrow">KAI LEARNING PATH</span>
-            <h2 id="assessment-title">Let Kai personalize your path</h2>
-            <p>{course.title} · A quick assessment before your lessons begin.</p>
+          <div className="assessment-brand">
+            <div className="assessment-kai-avatar"><Bot size={20} /></div>
+            <div>
+              <span className="assessment-eyebrow">KAI · AI INSTRUCTOR</span>
+              <h2 id="assessment-title">Let’s build your learning path</h2>
+            </div>
           </div>
           {onClose && <button type="button" className="assessment-close" onClick={onClose} aria-label="Close assessment"><X size={18} /></button>}
         </div>
+        <div className="assessment-course-line"><span>{course.title}</span><span><Clock3 size={14} /> 2 min assessment</span></div>
+        <div className="assessment-progress" aria-label={`Question ${progress} of ${QUESTIONS.length}`}><span style={{ width: `${((showSummary ? QUESTIONS.length : step + 1) / QUESTIONS.length) * 100}%` }} /></div>
 
-        <div className="assessment-progress" aria-label={`Question ${progress} of ${QUESTIONS.length}`}>
-          <span style={{ width: `${((step + 1) / QUESTIONS.length) * 100}%` }} />
-        </div>
-        <div className="assessment-step-label">QUESTION {progress}</div>
-        <h3 className="assessment-question">{question.title}</h3>
-        <div className="assessment-options">
-          {question.options.map((option) => (
-            <button
-              type="button"
-              key={option}
-              className={`assessment-option${answers[question.id] === option ? " is-selected" : ""}`}
-              onClick={() => choose(option)}
-            >
-              <span>{option}</span>
-              {answers[question.id] === option && <Check size={17} />}
-            </button>
+        <div className="assessment-chat" aria-live="polite">
+          {messages.map((message, index) => (
+            <div className="assessment-chat-row assessment-user-row" key={`${message.text}-${index}`}>
+              <div className="assessment-user-bubble">{message.text}</div>
+            </div>
           ))}
+          <div className="assessment-chat-row assessment-kai-row">
+            <div className="assessment-kai-mini"><Bot size={15} /></div>
+            <div className="assessment-kai-bubble">
+              {isKaiTyping && <span className="assessment-typing-dots"><i /><i /><i /></span>}
+              {!isKaiTyping && <>{displayedText}<span className="assessment-caret" aria-hidden="true" /></>}
+            </div>
+          </div>
         </div>
+
+        {!showSummary && !isKaiTyping && (
+          <div className="assessment-suggestions" aria-label="Kai suggestions">
+            <div className="assessment-suggestions-label">Choose a suggestion</div>
+            {question.options.map((option) => (
+              <button type="button" className="assessment-suggestion" key={option} onClick={() => choose(option)}>
+                <span>{option}</span><ArrowRight size={15} />
+              </button>
+            ))}
+          </div>
+        )}
+
+        {showSummary && !isKaiTyping && (
+          <div className="assessment-summary-actions">
+            <div className="assessment-summary-note"><Check size={16} /> Your answers are ready for Kai.</div>
+            <button type="button" className="assessment-primary assessment-start-button" onClick={saveAssessment} disabled={isSaving}>
+              {isSaving ? "Saving your path..." : "Start my personalized lessons"}<ArrowRight size={16} />
+            </button>
+          </div>
+        )}
         {error && <p className="assessment-error" role="alert">{error}</p>}
-        <div className="assessment-actions">
-          <button type="button" className="assessment-secondary" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0 || isSaving}>
-            <ArrowLeft size={16} /> Back
-          </button>
-          <button type="button" className="assessment-primary" onClick={next} disabled={isSaving}>
-            {isSaving ? "Saving..." : step === QUESTIONS.length - 1 ? "Build my path" : "Continue"}
-            {!isSaving && <ArrowRight size={16} />}
-          </button>
-        </div>
+        <div className="assessment-footer"><span>Question {progress}</span><span>Your answers stay private to your learning profile.</span></div>
       </section>
     </div>
   );
