@@ -2861,3 +2861,84 @@ html[data-theme="dark"] .kai-message-actions button,
   .learn-page.kai-reading-mode .kai-rich-text { color: #28251f !important; }
   .learn-page.kai-reading-mode .kai-message-text { font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; line-height: 1.8; }
 }
+
+/* All five interfaces keep the same 1300px lesson geometry. Their visual
+   treatments may differ, but none of them narrows the message/composer column. */
+@media (min-width: 641px) {
+  .learn-page.kai-normal-mode .conversation-container,
+  .learn-page.kai-normal-mode .conversation-messages,
+  .learn-page.kai-normal-mode .chat-content,
+  .learn-page.kai-normal-mode .kai-board-content,
+  .learn-page.kai-normal-mode .kai-input-dock,
+  .learn-page.kai-chatgpt-mode .conversation-container,
+  .learn-page.kai-chatgpt-mode .conversation-messages,
+  .learn-page.kai-chatgpt-mode .chat-content,
+  .learn-page.kai-chatgpt-mode .kai-board-content,
+  .learn-page.kai-chatgpt-mode .kai-input-dock,
+  .learn-page.kai-compact-mode .conversation-container,
+  .learn-page.kai-compact-mode .conversation-messages,
+  .learn-page.kai-compact-mode .chat-content,
+  .learn-page.kai-compact-mode .kai-board-content,
+  .learn-page.kai-compact-mode .kai-input-dock,
+  .learn-page.kai-focus-mode .conversation-container,
+  .learn-page.kai-focus-mode .conversation-messages,
+  .learn-page.kai-focus-mode .chat-content,
+  .learn-page.kai-focus-mode .kai-board-content,
+  .learn-page.kai-focus-mode .kai-input-dock,
+  .learn-page.kai-reading-mode .conversation-container,
+  .learn-page.kai-reading-mode .conversation-messages,
+  .learn-page.kai-reading-mode .chat-content,
+  .learn-page.kai-reading-mode .kai-board-content,
+  .learn-page.kai-reading-mode .kai-input-dock {
+    width: 100% !important;
+    max-width: 1300px !important;
+  }
+}
+
+/* Focus and Compact use dark surfaces, so rich renderer defaults must stay
+   light enough to remain readable. */
+.learn-page.kai-focus-mode .kai-message-text,
+.learn-page.kai-focus-mode .kai-rich-content,
+.learn-page.kai-focus-mode .kai-rich-text,
+.learn-page.kai-focus-mode .kai-rich-heading,
+.learn-page.kai-focus-mode .kai-rich-subheading,
+.learn-page.kai-focus-mode .kai-rich-content li,
+.learn-page.kai-focus-mode .kai-rich-content strong,
+.learn-page.kai-compact-mode .kai-message-text,
+.learn-page.kai-compact-mode .kai-rich-content,
+.learn-page.kai-compact-mode .kai-rich-text,
+.learn-page.kai-compact-mode .kai-rich-heading,
+.learn-page.kai-compact-mode .kai-rich-subheading,
+.learn-page.kai-compact-mode .kai-rich-content li,
+.learn-page.kai-compact-mode .kai-rich-content strong {
+  color: #ececec !important;
+}
+
+/* Reading mode uses a light paper surface; override rich-content colors that
+   otherwise inherit the dark renderer palette. */
+.learn-page.kai-reading-mode .kai-message-text,
+.learn-page.kai-reading-mode .kai-message-text p,
+.learn-page.kai-reading-mode .kai-message-text li,
+.learn-page.kai-reading-mode .kai-rich-content,
+.learn-page.kai-reading-mode .kai-rich-text,
+.learn-page.kai-reading-mode .kai-rich-heading,
+.learn-page.kai-reading-mode .kai-rich-subheading,
+.learn-page.kai-reading-mode .kai-rich-content li,
+.learn-page.kai-reading-mode .kai-rich-content strong,
+.learn-page.kai-reading-mode .kai-rich-content a {
+  color: #28251f !important;
+}
+.learn-page.kai-reading-mode .kai-rich-content code,
+.learn-page.kai-reading-mode .kai-inline-code {
+  color: #28251f !important;
+  background: #e5ddcf !important;
+}
+
+@media (max-width: 640px) {
+  .learn-page.kai-reading-mode .kai-message-text,
+  .learn-page.kai-reading-mode .kai-rich-content,
+  .learn-page.kai-reading-mode .kai-rich-text,
+  .learn-page.kai-reading-mode .kai-rich-heading,
+  .learn-page.kai-reading-mode .kai-rich-subheading,
+  .learn-page.kai-reading-mode .kai-rich-content li { color: #28251f !important; }
+}
