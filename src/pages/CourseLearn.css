@@ -2684,97 +2684,106 @@ html[data-theme="dark"] .kai-message-actions button,
   .kai-message-actions button { width: 34px; height: 32px; }
 }
 
-/* Desktop lesson surface: restore the original full 1300px teaching column.
-   The narrow ch-based readability limits are retained only on phones. */
-@media (min-width: 641px) {
-  .learn-page .conversation-messages,
-  .learn-page .chat-content,
-  .learn-page .kai-board-content,
-  .learn-page .kai-message-text,
-  .learn-page .kai-rich-content,
-  .learn-page .kai-rich-content > div {
-    width: min(100%, 1300px) !important;
-    max-width: 1300px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-  .learn-page .kai-message-text p,
-  .learn-page .kai-message-text li,
-  .learn-page .kai-message-text h2,
-  .learn-page .kai-message-text h3,
-  .learn-page .kai-message-text h4,
-  .learn-page .kai-message-text ul,
-  .learn-page .kai-message-text ol,
-  .learn-page .kai-board-content .kai-rich-text,
-  .learn-page .kai-board-content .kai-rich-content > * {
-    width: 100% !important;
-    max-width: 1300px !important;
-  }
-}
 
-/* Final desktop alignment: Kai messages and the composer share one left edge. */
+/* Kai teaching modes: visual differences never change the shared column. */
 @media (min-width: 641px) {
-  .learn-page .conversation-container { align-items: stretch; }
-  .learn-page .conversation-messages,
-  .learn-page .chat-row,
-  .learn-page .chat-content,
-  .learn-page .kai-board-content,
-  .learn-page .kai-message-text,
-  .learn-page .kai-rich-content {
-    width: 100% !important;
+  /* One containing block controls both the visible messages and composer. */
+  .learn-page > .conversation-container > .kai-teaching-card {
+    align-self: center !important;
+    flex: 0 0 auto !important;
+    width: min(91vw, 1300px) !important;
     max-width: 1300px !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-inline: auto !important;
+    box-sizing: border-box;
   }
-  .learn-page .conversation-messages,
-  .learn-page .kai-input-dock {
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-  .learn-page .kai-message-text p,
-  .learn-page .kai-message-text li,
-  .learn-page .kai-message-text h2,
-  .learn-page .kai-message-text h3,
-  .learn-page .kai-message-text h4,
-  .learn-page .kai-message-text ul,
-  .learn-page .kai-message-text ol,
-  .learn-page .kai-board-content .kai-rich-text,
-  .learn-page .kai-board-content .kai-rich-content > * {
-    width: 100% !important;
-    max-width: 1300px !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-}
 
-/* Remove the last inner prose constraints so visible Kai text aligns with the
-   composer edge instead of stopping inside a centered 78ch column. */
-@media (min-width: 641px) {
-  .learn-page .kai-row,
-  .learn-page .kai-row .chat-content,
-  .learn-page .kai-row .kai-board-content,
-  .learn-page .kai-row .kai-message-text,
-  .learn-page .kai-row .kai-rich-content,
-  .learn-page .kai-row .kai-rich-content > div,
-  .learn-page .kai-row .kai-message-text p,
-  .learn-page .kai-row .kai-message-text li,
-  .learn-page .kai-row .kai-message-text h2,
-  .learn-page .kai-row .kai-message-text h3,
-  .learn-page .kai-row .kai-message-text h4,
-  .learn-page .kai-row .kai-message-text ul,
-  .learn-page .kai-row .kai-message-text ol,
-  .learn-page .kai-row .kai-rich-text,
-  .learn-page .kai-row .kai-rich-heading,
-  .learn-page .kai-row .kai-rich-subheading {
+  .learn-page > .conversation-container > .kai-teaching-card .conversation-messages,
+  .learn-page > .conversation-container > .kai-teaching-card .chat-row,
+  .learn-page > .conversation-container > .kai-teaching-card .chat-content,
+  .learn-page > .conversation-container > .kai-teaching-card .kai-board-content,
+  .learn-page > .conversation-container > .kai-teaching-card .learner-board-content,
+  .learn-page > .conversation-container > .kai-teaching-card .kai-rich-content,
+  .learn-page > .conversation-container > .kai-teaching-card .kai-message-text,
+  .learn-page > .conversation-container > .kai-teaching-card .learner-message-text {
     width: 100% !important;
     max-width: none !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-inline: 0 !important;
+    box-sizing: border-box;
+  }
+
+  /* Every mode, including ChatGPT, uses the exact same centered composer. */
+  .learn-page .kai-input-dock {
+    position: fixed !important;
+    z-index: 100 !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: 30px !important;
+    width: min(91vw, 1300px) !important;
+    max-width: 1300px !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+    box-sizing: border-box;
   }
 }
 
-/* Phone code layout: wrap long lines inside the code card instead of widening
-   the card or creating horizontal page overflow. */
+/* Compact mode changes density only; it does not change the shared width. */
+@media (min-width: 641px) {
+  .learn-page.kai-compact-mode .conversation-container { padding-top: 24px; padding-bottom: 56px; }
+  .learn-page.kai-compact-mode .chat-row { margin-bottom: 20px; }
+  .learn-page.kai-compact-mode .kai-board-content { font-size: .96rem; line-height: 1.58; }
+  .learn-page.kai-compact-mode .kai-message-header { margin-bottom: 8px; }
+  .learn-page.kai-compact-mode .kai-message-actions { margin-top: 7px; }
+}
+
+/* Focus mode is a distraction-free dark presentation. */
+.learn-page.kai-focus-mode .kai-wallpaper-image { display: none !important; }
+.learn-page.kai-focus-mode .conversation-container { background: #111 !important; }
+.learn-page.kai-focus-mode .learn-navbar { background: #111 !important; border-bottom-color: #292929 !important; }
+.learn-page.kai-focus-mode .kai-teaching-card { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.learn-page.kai-focus-mode .kai-message-text { color: #f1f1f1 !important; }
+.learn-page.kai-focus-mode .kai-input-dock { border-color: #3c3c3c !important; }
+
+/* Reading mode is a light paper presentation. */
+.learn-page.kai-reading-mode .kai-wallpaper-image { display: none !important; }
+.learn-page.kai-reading-mode,
+.learn-page.kai-reading-mode .learn-navbar,
+.learn-page.kai-reading-mode > .conversation-container { background: #f5f1e8 !important; color: #28251f !important; }
+.learn-page.kai-reading-mode .learn-navbar { border-bottom-color: #d8d0c2 !important; }
+.learn-page.kai-reading-mode .kai-teaching-card { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.learn-page.kai-reading-mode .kai-message-text,
+.learn-page.kai-reading-mode .kai-message-text p,
+.learn-page.kai-reading-mode .kai-message-text li,
+.learn-page.kai-reading-mode .kai-rich-content,
+.learn-page.kai-reading-mode .kai-rich-text,
+.learn-page.kai-reading-mode .kai-rich-heading,
+.learn-page.kai-reading-mode .kai-rich-subheading,
+.learn-page.kai-reading-mode .kai-rich-content li,
+.learn-page.kai-reading-mode .kai-rich-content strong,
+.learn-page.kai-reading-mode .kai-rich-content a { color: #28251f !important; }
+.learn-page.kai-reading-mode .kai-message-text { font-family: Georgia, "Times New Roman", serif; font-size: 1.08rem; line-height: 1.9; }
+.learn-page.kai-reading-mode .kai-input-dock { background: rgba(255,255,255,.7) !important; border-color: #cfc5b4 !important; }
+.learn-page.kai-reading-mode .kai-input-dock input,
+.learn-page.kai-reading-mode .kai-input-dock textarea { color: #28251f !important; }
+.learn-page.kai-reading-mode .kai-rich-content code,
+.learn-page.kai-reading-mode .kai-inline-code { color: #28251f !important; background: #e5ddcf !important; }
+
+/* Focus and Compact text stays visible on their dark surfaces. */
+.learn-page.kai-focus-mode .kai-message-text,
+.learn-page.kai-focus-mode .kai-rich-content,
+.learn-page.kai-focus-mode .kai-rich-text,
+.learn-page.kai-focus-mode .kai-rich-heading,
+.learn-page.kai-focus-mode .kai-rich-subheading,
+.learn-page.kai-focus-mode .kai-rich-content li,
+.learn-page.kai-focus-mode .kai-rich-content strong,
+.learn-page.kai-compact-mode .kai-message-text,
+.learn-page.kai-compact-mode .kai-rich-content,
+.learn-page.kai-compact-mode .kai-rich-text,
+.learn-page.kai-compact-mode .kai-rich-heading,
+.learn-page.kai-compact-mode .kai-rich-subheading,
+.learn-page.kai-compact-mode .kai-rich-content li,
+.learn-page.kai-compact-mode .kai-rich-content strong { color: #ececec !important; }
+
+/* Preserve wrapping for code blocks on phones without page-wide overflow. */
 @media (max-width: 700px) {
   .learn-page .kai-code-block,
   .learn-page .kai-rich-code,
@@ -2797,297 +2806,11 @@ html[data-theme="dark"] .kai-message-actions button,
     overflow-wrap: anywhere !important;
     word-break: break-word !important;
   }
-}
-
-/* Five named Kai interfaces: Classic, ChatGPT, Compact, Focus, and Reading. */
-@media (min-width: 641px) {
-  .learn-page.kai-compact-mode .conversation-container,
-  .learn-page.kai-compact-mode .conversation-messages,
-  .learn-page.kai-compact-mode .chat-content,
-  .learn-page.kai-compact-mode .kai-board-content,
-  .learn-page.kai-compact-mode .kai-input-dock {
-    max-width: 980px !important;
-  }
-  .learn-page.kai-compact-mode .conversation-container { padding-top: 24px; padding-bottom: 56px; }
-  .learn-page.kai-compact-mode .chat-row { margin-bottom: 20px; }
-  .learn-page.kai-compact-mode .kai-board-content { font-size: .96rem; line-height: 1.58; }
-  .learn-page.kai-compact-mode .kai-message-header { margin-bottom: 8px; }
-  .learn-page.kai-compact-mode .kai-message-actions { margin-top: 7px; }
-
-  .learn-page.kai-focus-mode .kai-wallpaper-image { display: none !important; }
-  .learn-page.kai-focus-mode .conversation-container,
-  .learn-page.kai-focus-mode .conversation-messages,
-  .learn-page.kai-focus-mode .chat-content,
-  .learn-page.kai-focus-mode .kai-board-content,
-  .learn-page.kai-focus-mode .kai-input-dock {
-    max-width: 900px !important;
-  }
-  .learn-page.kai-focus-mode .conversation-container { background: #111 !important; padding-top: 34px; }
-  .learn-page.kai-focus-mode .learn-navbar { background: #111 !important; border-bottom-color: #292929 !important; }
-  .learn-page.kai-focus-mode .kai-teaching-card { background: transparent !important; border: 0 !important; box-shadow: none !important; }
-  .learn-page.kai-focus-mode .kai-message-text { color: #f1f1f1 !important; }
-  .learn-page.kai-focus-mode .kai-input-dock { border-color: #3c3c3c !important; }
-
-  .learn-page.kai-reading-mode .kai-wallpaper-image { display: none !important; }
-  .learn-page.kai-reading-mode,
-  .learn-page.kai-reading-mode .learn-navbar,
-  .learn-page.kai-reading-mode > .conversation-container { background: #f5f1e8 !important; color: #28251f !important; }
-  .learn-page.kai-reading-mode .learn-navbar { border-bottom-color: #d8d0c2 !important; }
-  .learn-page.kai-reading-mode .conversation-container,
-  .learn-page.kai-reading-mode .conversation-messages,
-  .learn-page.kai-reading-mode .chat-content,
-  .learn-page.kai-reading-mode .kai-board-content,
-  .learn-page.kai-reading-mode .kai-input-dock { max-width: 960px !important; }
-  .learn-page.kai-reading-mode .kai-teaching-card { background: transparent !important; border: 0 !important; box-shadow: none !important; }
-  .learn-page.kai-reading-mode .kai-message-text,
-  .learn-page.kai-reading-mode .kai-message-text p,
-  .learn-page.kai-reading-mode .kai-rich-text,
-  .learn-page.kai-reading-mode .kai-rich-content { color: #28251f !important; }
-  .learn-page.kai-reading-mode .kai-message-text { font-family: Georgia, "Times New Roman", serif; font-size: 1.08rem; line-height: 1.9; }
-  .learn-page.kai-reading-mode .kai-input-dock { background: rgba(255,255,255,.7) !important; border-color: #cfc5b4 !important; }
-  .learn-page.kai-reading-mode .kai-input-dock input,
-  .learn-page.kai-reading-mode .kai-input-dock textarea { color: #28251f !important; }
-}
-
-@media (max-width: 640px) {
-  .learn-page.kai-compact-mode .conversation-container { padding-top: 18px; }
-  .learn-page.kai-focus-mode .kai-wallpaper-image,
-  .learn-page.kai-reading-mode .kai-wallpaper-image { display: none !important; }
-  .learn-page.kai-reading-mode,
-  .learn-page.kai-reading-mode .learn-navbar,
-  .learn-page.kai-reading-mode > .conversation-container { background: #f5f1e8 !important; color: #28251f !important; }
-  .learn-page.kai-reading-mode .kai-message-text,
-  .learn-page.kai-reading-mode .kai-message-text p,
-  .learn-page.kai-reading-mode .kai-rich-text { color: #28251f !important; }
-  .learn-page.kai-reading-mode .kai-message-text { font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; line-height: 1.8; }
-}
-
-/* All five interfaces keep the same 1300px lesson geometry. Their visual
-   treatments may differ, but none of them narrows the message/composer column. */
-@media (min-width: 641px) {
-  .learn-page.kai-normal-mode .conversation-container,
-  .learn-page.kai-normal-mode .conversation-messages,
-  .learn-page.kai-normal-mode .chat-content,
-  .learn-page.kai-normal-mode .kai-board-content,
-  .learn-page.kai-normal-mode .kai-input-dock,
-  .learn-page.kai-chatgpt-mode .conversation-container,
-  .learn-page.kai-chatgpt-mode .conversation-messages,
-  .learn-page.kai-chatgpt-mode .chat-content,
-  .learn-page.kai-chatgpt-mode .kai-board-content,
-  .learn-page.kai-chatgpt-mode .kai-input-dock,
-  .learn-page.kai-compact-mode .conversation-container,
-  .learn-page.kai-compact-mode .conversation-messages,
-  .learn-page.kai-compact-mode .chat-content,
-  .learn-page.kai-compact-mode .kai-board-content,
-  .learn-page.kai-compact-mode .kai-input-dock,
-  .learn-page.kai-focus-mode .conversation-container,
-  .learn-page.kai-focus-mode .conversation-messages,
-  .learn-page.kai-focus-mode .chat-content,
-  .learn-page.kai-focus-mode .kai-board-content,
-  .learn-page.kai-focus-mode .kai-input-dock,
-  .learn-page.kai-reading-mode .conversation-container,
-  .learn-page.kai-reading-mode .conversation-messages,
-  .learn-page.kai-reading-mode .chat-content,
-  .learn-page.kai-reading-mode .kai-board-content,
-  .learn-page.kai-reading-mode .kai-input-dock {
-    width: 100% !important;
-    max-width: 1300px !important;
-  }
-}
-
-/* Focus and Compact use dark surfaces, so rich renderer defaults must stay
-   light enough to remain readable. */
-.learn-page.kai-focus-mode .kai-message-text,
-.learn-page.kai-focus-mode .kai-rich-content,
-.learn-page.kai-focus-mode .kai-rich-text,
-.learn-page.kai-focus-mode .kai-rich-heading,
-.learn-page.kai-focus-mode .kai-rich-subheading,
-.learn-page.kai-focus-mode .kai-rich-content li,
-.learn-page.kai-focus-mode .kai-rich-content strong,
-.learn-page.kai-compact-mode .kai-message-text,
-.learn-page.kai-compact-mode .kai-rich-content,
-.learn-page.kai-compact-mode .kai-rich-text,
-.learn-page.kai-compact-mode .kai-rich-heading,
-.learn-page.kai-compact-mode .kai-rich-subheading,
-.learn-page.kai-compact-mode .kai-rich-content li,
-.learn-page.kai-compact-mode .kai-rich-content strong {
-  color: #ececec !important;
-}
-
-/* Reading mode uses a light paper surface; override rich-content colors that
-   otherwise inherit the dark renderer palette. */
-.learn-page.kai-reading-mode .kai-message-text,
-.learn-page.kai-reading-mode .kai-message-text p,
-.learn-page.kai-reading-mode .kai-message-text li,
-.learn-page.kai-reading-mode .kai-rich-content,
-.learn-page.kai-reading-mode .kai-rich-text,
-.learn-page.kai-reading-mode .kai-rich-heading,
-.learn-page.kai-reading-mode .kai-rich-subheading,
-.learn-page.kai-reading-mode .kai-rich-content li,
-.learn-page.kai-reading-mode .kai-rich-content strong,
-.learn-page.kai-reading-mode .kai-rich-content a {
-  color: #28251f !important;
-}
-.learn-page.kai-reading-mode .kai-rich-content code,
-.learn-page.kai-reading-mode .kai-inline-code {
-  color: #28251f !important;
-  background: #e5ddcf !important;
-}
-
-@media (max-width: 640px) {
   .learn-page.kai-reading-mode .kai-message-text,
   .learn-page.kai-reading-mode .kai-rich-content,
   .learn-page.kai-reading-mode .kai-rich-text,
   .learn-page.kai-reading-mode .kai-rich-heading,
   .learn-page.kai-reading-mode .kai-rich-subheading,
   .learn-page.kai-reading-mode .kai-rich-content li { color: #28251f !important; }
-}
-
-/* ChatGPT keeps its original inset teaching surface. The other four modes
-   retain the full 1300px column; this restores the ChatGPT-specific breathing
-   room that was accidentally overridden by the shared width rule. */
-@media (min-width: 641px) {
-  .learn-page.kai-chatgpt-mode .kai-board-content,
-  .learn-page.kai-chatgpt-mode .learner-board-content,
-  .learn-page.kai-chatgpt-mode .kai-readiness-panel,
-  .learn-page.kai-chatgpt-mode .kai-board-status {
-    width: calc(100% - 40px) !important;
-    max-width: 1300px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-  .learn-page.kai-chatgpt-mode .kai-input-dock {
-    left: clamp(40px, 9vw, 140px) !important;
-    right: clamp(40px, 9vw, 140px) !important;
-    width: auto !important;
-    max-width: 1300px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-}
-
-/* Exact ChatGPT alignment: message surface and fixed composer use the same
-   viewport-relative width and centered edges. */
-@media (min-width: 641px) {
-  .learn-page.kai-chatgpt-mode .conversation-messages,
-  .learn-page.kai-chatgpt-mode .chat-content,
-  .learn-page.kai-chatgpt-mode .kai-board-content,
-  .learn-page.kai-chatgpt-mode .learner-board-content,
-  .learn-page.kai-chatgpt-mode .kai-rich-content,
-  .learn-page.kai-chatgpt-mode .kai-message-text,
-  .learn-page.kai-chatgpt-mode .learner-message-text {
-    width: min(91vw, 1300px) !important;
-    max-width: 1300px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    box-sizing: border-box;
-  }
-  .learn-page.kai-chatgpt-mode .kai-input-dock {
-    left: 50% !important;
-    right: auto !important;
-    width: min(91vw, 1300px) !important;
-    max-width: 1300px !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    transform: translateX(-50%) !important;
-  }
-}
-
-/* Non-ChatGPT interfaces use the same composer geometry as ChatGPT. The
-   :not selector is intentional: ChatGPT's own rules remain untouched. */
-@media (min-width: 641px) {
-  .learn-page:not(.kai-chatgpt-mode) .kai-input-dock {
-    position: fixed !important;
-    z-index: 100 !important;
-    left: 50% !important;
-    right: auto !important;
-    bottom: 30px !important;
-    width: min(91vw, 1300px) !important;
-    max-width: 1300px !important;
-    min-height: 126px !important;
-    transform: translateX(-50%) !important;
-    display: grid !important;
-    grid-template-columns: 44px minmax(0, 1fr) 44px !important;
-    grid-template-rows: 36px 48px 40px !important;
-    align-items: center !important;
-    padding: 0 10px 4px !important;
-    box-sizing: border-box;
-  }
-  .learn-page:not(.kai-chatgpt-mode) .conversation-messages,
-  .learn-page:not(.kai-chatgpt-mode) .chat-content,
-  .learn-page:not(.kai-chatgpt-mode) .kai-board-content,
-  .learn-page:not(.kai-chatgpt-mode) .learner-board-content,
-  .learn-page:not(.kai-chatgpt-mode) .kai-rich-content,
-  .learn-page:not(.kai-chatgpt-mode) .kai-message-text,
-  .learn-page:not(.kai-chatgpt-mode) .learner-message-text {
-    width: min(91vw, 1300px) !important;
-    max-width: 1300px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    box-sizing: border-box;
-  }
-}
-
-/* Correct containing-block alignment for Classic, Compact, Focus, and Reading.
-   The outer teaching card—not each nested child—owns the shared 1300px width. */
-@media (min-width: 641px) {
-  .learn-page:not(.kai-chatgpt-mode) .kai-teaching-card {
-    width: min(91vw, 1300px) !important;
-    max-width: 1300px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    box-sizing: border-box;
-  }
-  .learn-page:not(.kai-chatgpt-mode) .conversation-messages,
-  .learn-page:not(.kai-chatgpt-mode) .chat-row,
-  .learn-page:not(.kai-chatgpt-mode) .chat-content,
-  .learn-page:not(.kai-chatgpt-mode) .kai-board-content,
-  .learn-page:not(.kai-chatgpt-mode) .learner-board-content,
-  .learn-page:not(.kai-chatgpt-mode) .kai-rich-content,
-  .learn-page:not(.kai-chatgpt-mode) .kai-message-text,
-  .learn-page:not(.kai-chatgpt-mode) .learner-message-text {
-    width: 100% !important;
-    max-width: none !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    box-sizing: border-box;
-  }
-}
-
-/* Final source-of-truth geometry for every Kai interface. The outer teaching
-   column is centered first; all message rows fill it, matching the fixed
-   composer exactly on both sides. */
-@media (min-width: 641px) {
-  .learn-page > .conversation-container > .kai-teaching-card {
-    align-self: center !important;
-    width: min(91vw, 1300px) !important;
-    max-width: 1300px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    box-sizing: border-box;
-  }
-  .learn-page > .conversation-container > .kai-teaching-card > .conversation-messages,
-  .learn-page > .conversation-container > .kai-teaching-card .conversation-messages,
-  .learn-page > .conversation-container > .kai-teaching-card .chat-row,
-  .learn-page > .conversation-container > .kai-teaching-card .chat-content,
-  .learn-page > .conversation-container > .kai-teaching-card .kai-board-content,
-  .learn-page > .conversation-container > .kai-teaching-card .learner-board-content,
-  .learn-page > .conversation-container > .kai-teaching-card .kai-rich-content,
-  .learn-page > .conversation-container > .kai-teaching-card .kai-message-text,
-  .learn-page > .conversation-container > .kai-teaching-card .learner-message-text {
-    width: 100% !important;
-    max-width: none !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    box-sizing: border-box;
-  }
-  .learn-page .kai-input-dock {
-    left: 50% !important;
-    right: auto !important;
-    width: min(91vw, 1300px) !important;
-    max-width: 1300px !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    transform: translateX(-50%) !important;
-  }
+  .learn-page.kai-reading-mode .kai-message-text { font-size: 1.02rem; line-height: 1.8; }
 }
