@@ -97,10 +97,10 @@ async function reviewAndCorrectReply({ reply, systemPrompt, learnerMessage, conv
       role: "system",
       content: `You are Kai's private answer checker. Review the drafted learner-facing answer for factual accuracy, alignment with the lesson, and whether it directly answers the learner's question.
 
-Do not rewrite an answer merely for style. Only mark needs_correction true when there is a clear factual error, unsafe or misleading instruction, contradiction with the lesson, or a missed direct answer.
+Do not rewrite an answer merely for preference. Mark needs_correction true when there is a clear factual error, unsafe or misleading instruction, contradiction with the lesson, a missed direct answer, or a learner-facing formatting problem. A serialized provider payload shown as raw JSON, Markdown fence around the response object, duplicated transport fields, or content that would not be human-readable when displayed in the lesson UI is a formatting problem that must be corrected.
 
-If the draft is correct, return exactly: {"needs_correction":false,"corrected_reply":""}
-If it is wrong, return a corrected learner-facing answer in corrected_reply. Preserve valid Markdown and any required control markers such as [LESSON_COMPLETE: ...], [COURSE_READY: ...], [UI_ACTION: CONTINUE_LESSON], [UI_ACTION: REVIEW_PREVIOUS_LESSON], or [VIDEO_RECOMMEND_ID: ...]. Do not include analysis, hidden reasoning, or Markdown fences around the JSON response.
+If the draft is correct and will render as human-readable lesson content, return exactly: {"needs_correction":false,"corrected_reply":""}
+If it is wrong or not human-readable, return a corrected learner-facing answer in corrected_reply. For a structured lesson response, corrected_reply must be one valid JSON object with a non-empty content array of renderable blocks; never return the JSON object as quoted text, a Markdown code fence, or an explanation of the correction. Preserve any required control markers such as [LESSON_COMPLETE: ...], [COURSE_READY: ...], [UI_ACTION: CONTINUE_LESSON], [UI_ACTION: REVIEW_PREVIOUS_LESSON], or [VIDEO_RECOMMEND_ID: ...]. Do not include analysis or hidden reasoning.
 
 The teaching instructions and lesson context are:
 ${systemPrompt}`,
