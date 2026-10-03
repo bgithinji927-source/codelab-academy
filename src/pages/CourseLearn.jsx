@@ -15,6 +15,7 @@ import {
   Copy,
   ThumbsUp,
   ThumbsDown,
+  Share2,
   Check,
 } from "lucide-react";
 
@@ -1473,6 +1474,24 @@ ${startMessage}
         console.warn("Could not copy Kai message:", error);
       }
     };
+    const shareKaiMessage = async () => {
+      const shareText = String(content || "").trim();
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: `Kai — ${lesson?.title || course?.title || "CodeLab Academy"}`,
+            text: shareText,
+            url: window.location.href,
+          });
+          return;
+        }
+        await navigator.clipboard.writeText(shareText);
+        setCopiedMessageIndex(messageKey);
+        window.setTimeout(() => setCopiedMessageIndex((current) => current === messageKey ? null : current), 1600);
+      } catch (error) {
+        if (error?.name !== "AbortError") console.warn("Could not share Kai message:", error);
+      }
+    };
     const setKaiFeedback = async (value) => {
       const previousRating = messageFeedback[messageKey] || null;
       const nextRating = previousRating === value ? null : value;
@@ -1560,6 +1579,9 @@ ${startMessage}
             </button>
             <button type="button" className={messageFeedback[messageKey] === "dislike" ? "is-active is-negative" : ""} onClick={() => setKaiFeedback("dislike")} aria-label="Dislike Kai response" aria-pressed={messageFeedback[messageKey] === "dislike"} title="Dislike response">
               <ThumbsDown size={15} />
+            </button>
+            <button type="button" onClick={shareKaiMessage} aria-label="Share Kai response" title="Share response">
+              <Share2 size={15} />
             </button>
           </div>
 
