@@ -2954,3 +2954,26 @@ html[data-theme="dark"] .kai-message-actions button,
     box-sizing: border-box;
   }
 }
+
+/* Give teaching messages room inside their thin side borders on narrower
+   desktop screens, and prevent long tokens from being clipped by the page. */
+@media (min-width: 701px) and (max-width: 1100px) {
+  html #root .learn-page .kai-board-content,
+  html #root .learn-page .learner-board-content {
+    min-width: 0 !important;
+    padding-right: 20px !important;
+    padding-left: 20px !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  html #root .learn-page .kai-message-text,
+  html #root .learn-page .kai-message-text *,
+  html #root .learn-page .learner-message-text,
+  html #root .learn-page .learner-message-text *,
+  html #root .learn-page .kai-rich-content,
+  html #root .learn-page .kai-rich-content * {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+  }
+}
