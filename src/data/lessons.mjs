@@ -881,6 +881,140 @@ const cyberCourseLessonPlans = {
     "CTF & Security Labs",
     ["Lab rules and safe methodology", "Web security lab workflow", "Crypto and analysis lab thinking", "Writeups, flags, and remediation"]
   ),
+  "advanced-web-exploitation": makeCyberCourseLessons(
+    "advanced-web-exploitation",
+    "Advanced Web Exploitation",
+    [
+      "Insecure deserialization in Java, PHP, and Python pickle; ysoserial gadget-chain lab",
+      "Server-Side Template Injection in Jinja2 and Freemarker; detection and safe escalation lab",
+      "Prototype pollution in JavaScript and Node.js; client-side and server-side chains",
+      "GraphQL and REST attacks: introspection, batching, IDOR, BOLA, and BOPLA",
+      "SSRF escalation: blind SSRF, AWS/GCP/Azure metadata, credentials, and internal pivots",
+      "Race conditions: HTTP/2 single-packet attacks and TOCTOU financial-logic lab",
+      "HTTP request smuggling: CL.TE, TE.CL, reverse-proxy desync, and client-side desync",
+      "Web cache poisoning and cache deception; persistent XSS impact and defenses",
+      "JWT abuse: alg none, RS256-to-HS256 key confusion, and kid injection",
+      "Advanced PortSwigger Academy and disclosed HackerOne report follow-up lab",
+    ]
+  ),
+  "active-directory-attacks": makeCyberCourseLessons(
+    "active-directory-attacks",
+    "Active Directory Attacks",
+    [
+      "AD domains, forests, Kerberos AS-REQ, TGS, TGS-REP, and delegation review",
+      "Kerberoasting: service-ticket requests, offline cracking, and service-account remediation",
+      "AS-REP roasting and accounts with pre-authentication disabled",
+      "Pass-the-Hash, Pass-the-Ticket, and Overpass-the-Hash credential mechanics",
+      "Golden and Silver Tickets, KRBTGT protection, and detection boundaries",
+      "NTLM relay with Responder and ntlmrelayx; LDAP/SMB relay and coercion risks",
+      "Active Directory ACL abuse: GenericAll, WriteDACL, DCSync, and BloodHound paths",
+      "Domain escalation endgame: gMSA abuse and AD Certificate Services ESC1 through ESC8",
+      "Lateral movement with WinRM, scheduled tasks, WMI, and safer alternatives to PsExec",
+      "GOAD or multi-domain-controller lab: foothold, Kerberoast, ACL abuse, DCSync, and reporting",
+    ]
+  ),
+  "privilege-escalation-mastery": makeCyberCourseLessons(
+    "privilege-escalation-mastery",
+    "Privilege Escalation Mastery",
+    [
+      "Linux SUID, GTFOBins, sudo misconfigurations, and manual enumeration",
+      "Linux cron hijacking, PATH manipulation, capabilities, and cap_setuid",
+      "Linux NFS no_root_squash, kernel exposure, Docker/LXD groups, and remediation",
+      "Windows unquoted service paths, weak service permissions, and AlwaysInstallElevated",
+      "Windows token impersonation: PrintSpoofer, GodPotato, UAC bypass, and safe lab limits",
+      "Windows DLL hijacking, Autoruns abuse, and service hardening",
+      "Methodology over tools: use PowerUp and linPEAS as accelerators, not crutches",
+      "Locked-down VM lab: identify three distinct escalation paths and submit written evidence",
+    ]
+  ),
+  "post-exploitation-c2": makeCyberCourseLessons(
+    "post-exploitation-c2",
+    "Post-Exploitation, Persistence & C2",
+    [
+      "Command-and-control concepts: beaconing, sleep timers, jitter, and encrypted channels",
+      "Lab-only Mythic or Sliver workflows with scope, consent, cleanup, and defender visibility",
+      "Build a benign Python C2 teaching model with raw sockets, AES, polling, and safe shutdown",
+      "Staged versus stageless payloads, shellcode concepts, execve, and obfuscation trade-offs",
+      "In-memory techniques and why fileless behavior challenges disk-based AV; benign Nishang lab",
+      "Credential-looting concepts: LSASS, SAM, NTDS.dit, browser credentials, and token theft defenses",
+      "Pivoting with SSH tunnels, chisel, ligolo-ng, and SOCKS proxies in an isolated network",
+      "Detection awareness: Windows Event Logs and Sysmon indicators for every technique",
+    ]
+  ),
+  "malware-analysis-reverse-engineering": makeCyberCourseLessons(
+    "malware-analysis-reverse-engineering",
+    "Malware Analysis & Reverse Engineering",
+    [
+      "x86-64 assembly essentials, stack frames, calling conventions, and binary safety",
+      "PE and ELF structure, imports, strings, Detect It Easy, and Ghidra disassembly",
+      "Dynamic analysis in isolated snapshots: processes, network capture, registry, and file changes",
+      "Deobfuscation, simple packers, UPX, and JavaScript dropper analysis",
+      "Anti-debugging and anti-VM concepts with safe analyst countermeasures",
+      "Malware-training-set pipeline: hash, triage, strings, Ghidra configuration analysis, and detonation",
+      "IOC extraction and a complete malware analysis report with containment recommendations",
+    ]
+  ),
+  "vulnerability-research-exploit-development": makeCyberCourseLessons(
+    "vulnerability-research-exploit-development",
+    "Vulnerability Research & Exploit Development",
+    [
+      "AFL++ fuzzing: mutation, coverage guidance, and a file-parser harness",
+      "Linux stack buffer overflows and why ret2libc is a safer modern starting point",
+      "ASLR, DEP/NX, stack canaries, PIE, and CFI with one defensive bypass concept each",
+      "Return-Oriented Programming: locate gadgets and build a bounded ROP chain in a toy binary",
+      "Heap layout and use-after-free exploitation concepts with mitigations and cleanup",
+      "CVE analysis: read an advisory and public patch, identify the root cause, and reproduce safely",
+      "Professional one-day reproduction methodology using advisory, patch, PoC, evidence, and remediation",
+      "Practice pathways: pwn.college, Hack The Box binary challenges, and CTF pwn writeups",
+    ]
+  ),
+  "advanced-cloud-security": makeCyberCourseLessons(
+    "advanced-cloud-security",
+    "Advanced Cloud Security",
+    [
+      "AWS, Azure, and GCP architecture, shared responsibility, IAM, federation, and metadata services",
+      "AWS IAM privilege-escalation policy chains, role assumption, and Pacu lab boundaries",
+      "SSRF to 169.254.169.254 metadata credential theft and cloud-specific mitigations",
+      "Cloud misconfigurations: public S3, permissive security groups, Lambda secrets, and broad roles",
+      "Azure Entra ID: lab-only password spray, OAuth consent phishing, token theft, and managed identity risks",
+      "Docker and Kubernetes security: privileged containers, socket mounts, RBAC, kubelet, and API exposure",
+      "CloudGoat and deliberately misconfigured k3s lab: identify, fix, verify, and document each finding",
+    ]
+  ),
+  "detection-engineering-threat-hunting": makeCyberCourseLessons(
+    "detection-engineering-threat-hunting",
+    "Detection Engineering & Threat Hunting",
+    [
+      "Sysmon, ETW, Windows Event IDs 4625, 4688, 4698, and 7045, plus MITRE ATT&CK mapping",
+      "Write Sigma rules for Kerberoasting, DCSync, Pass-the-Hash, and other red-team techniques",
+      "Hypothesis-driven threat hunting with Sigma and Atomic Red Team as a hunt catalogue",
+      "Volatility 3 memory forensics, injected-code review, disk triage, Prefetch, SRUM, and event logs",
+      "Network forensics with Brim and Zeek; PCAP review and statistical C2 jitter analysis",
+      "Atomic Red Team simulation and detection validation in an owned lab",
+      "Red-team/blue-team capstone: reconstruct a staged intrusion and map the complete kill chain",
+    ]
+  ),
+  "social-engineering-physical-security": makeCyberCourseLessons(
+    "social-engineering-physical-security",
+    "Social Engineering & Physical Security",
+    [
+      "Education-first phishing simulation design: lookalike domains, homoglyphs, and safe measurement",
+      "Evilginx-style reverse-proxy MFA phishing concepts, indicators, and defensive awareness",
+      "Vishing and OSINT-driven pretexts using authorized scenarios and privacy-respecting collection",
+      "USB drops, badge-cloning basics, tailgating awareness, and physical-security training design",
+    ]
+  ),
+  "emerging-specialized-security": makeCyberCourseLessons(
+    "emerging-specialized-security",
+    "Emerging & Specialized Security Topics",
+    [
+      "AI and ML security: direct and indirect prompt injection, adversarial ML, model theft, and agent tool access",
+      "Mobile security: Android APK analysis with MobSF, Frida hooking, and iOS security basics",
+      "Wireless security: WPA2/WPA3, evil-twin awareness, radio fundamentals, and authorized testing",
+      "IoT and embedded security: firmware with binwalk, UART/JTAG basics, and MQTT attack surfaces",
+      "Blockchain security: smart-contract reentrancy, integer overflow, and Ethernaut practice",
+    ]
+  ),
 };
 
 const cloudCourseLessonPlans = {
