@@ -9,6 +9,7 @@ const CourseOverride = require("../models/CourseOverride");
 const LessonOverride = require("../models/LessonOverride");
 const PlatformSettings = require("../models/PlatformSettings");
 const Video = require("../models/Video");
+const TeachingMaterial = require("../models/TeachingMaterial");
 const ensureAuth = require("../middleware/ensureAuth");
 const ensureAdmin = require("../middleware/ensureAdmin");
 const { ensureChallengeBank, getPlatformSettings } = require("../lib/challenges");
@@ -23,6 +24,7 @@ const {
   deleteKaiBackgroundFile,
 } = require("../lib/videoStorage");
 const { serializeVideo, parseTopics } = require("../lib/videoCatalog");
+const { extractDocumentText } = require("../lib/teachingMaterials");
 
 const router = express.Router();
 router.use(ensureAuth, ensureAdmin);
@@ -77,6 +79,25 @@ function parseVideoUpload(req, res, next) {
     if (error) {
       return res.status(400).json({ success: false, message: error.message || "Video upload failed" });
     }
+    return next();
+  });
+}
+
+const teachingMaterialUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 25 * 1024 * 1024 },
+  fileFilter: (req, file, callback) => {
+    const type = String(file.mimetype || "").toLowerCase();
+    const extension = path.extname(file.originalname || "").toLowerCase();
+    if (["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "text/markdown"].includes(type)
+      || [".pdf", ".docx", ".txt", ".md", ".markdown"].includes(extension)) return callback(null, true);
+    return callback(new Error("Only PDF, DOCX, TXT, and Markdown files can be uploaded"));
+  },
+});
+
+function parseTeachingMaterialUpload(req, res, next) {
+  teachingMaterialUpload.single("materialFile")(req, res, (error) => {
+    if (error) return res.status(400).json({ success: false, message: error.message || "Teaching material upload failed" });
     return next();
   });
 }
@@ -254,6 +275,71 @@ router.get("/courses", async (req, res) => {
   } catch (error) {
     console.error("Admin courses error:", error);
     return res.status(500).json({ success: false, message: "Could not load course content" });
+  }
+});
+
+router.get("/teaching-materials", async (req, res) => {
+  try {
+    const materials = await TeachingMaterial.find({}).sort({ createdAt: -1 }).select("-extractedText").lean();
+    return res.json({ success: true, materials: materials.map((material) => ({ ...material, id: String(material._id) })) });
+  } catch (error) {
+    console.error("Admin teaching materials error:", error);
+    return res.status(500).json({ success: false, message: "Could not load teaching materials" });
+  }
+});
+
+router.post("/teaching-materials", parseTeachingMaterialUpload, async (req, res) => {
+  try {
+    const { courseId, courseTitle, lessonId = "", lessonTitle = "", title } = req.body || {};
+    if (!req.file) return res.status(400).json({ success: false, message: "Choose a PDF, DOCX, TXT, or Markdown file" });
+    if (!String(courseId || "").trim()) return res.status(400).json({ success: false, message: "A course is required" });
+    const extractedText = await extractDocumentText(req.file.buffer, req.file.mimetype, req.file.originalname);
+    if (!extractedText) return res.status(400).json({ success: false, message: "No readable text was found in this document" });
+    const material = await TeachingMaterial.create({
+      courseId: String(courseId).trim(),
+      courseTitle: String(courseTitle || "").trim(),
+      lessonId: String(lessonId || "").trim(),
+      lessonTitle: String(lessonTitle || "").trim(),
+      title: String(title || path.basename(req.file.originalname, path.extname(req.file.originalname))).trim(),
+      originalFilename: req.file.originalname,
+      mimeType: req.file.mimetype,
+      fileSize: req.file.size,
+      extractedText,
+      uploadedBy: String(req.admin._id),
+      status: "ready",
+      enabled: true,
+    });
+    const savedMaterial = material.toObject();
+    delete savedMaterial.extractedText;
+    return res.status(201).json({ success: true, material: { ...savedMaterial, id: String(material._id), extractedCharacters: extractedText.length } });
+  } catch (error) {
+    console.error("Admin teaching material upload error:", error);
+    return res.status(400).json({ success: false, message: error.message || "Could not process teaching material" });
+  }
+});
+
+router.patch("/teaching-materials/:materialId", async (req, res) => {
+  try {
+    const updates = pickFields(req.body || {}, ["title", "courseId", "courseTitle", "lessonId", "lessonTitle", "enabled"]);
+    if (updates.title !== undefined && !String(updates.title).trim()) return res.status(400).json({ success: false, message: "Material title cannot be empty" });
+    if (updates.enabled !== undefined) updates.enabled = Boolean(updates.enabled);
+    const material = await TeachingMaterial.findByIdAndUpdate(req.params.materialId, { $set: updates }, { new: true, runValidators: true }).select("-extractedText").lean();
+    if (!material) return res.status(404).json({ success: false, message: "Teaching material not found" });
+    return res.json({ success: true, material: { ...material, id: String(material._id) } });
+  } catch (error) {
+    console.error("Admin teaching material update error:", error);
+    return res.status(500).json({ success: false, message: "Could not update teaching material" });
+  }
+});
+
+router.delete("/teaching-materials/:materialId", async (req, res) => {
+  try {
+    const material = await TeachingMaterial.findByIdAndDelete(req.params.materialId);
+    if (!material) return res.status(404).json({ success: false, message: "Teaching material not found" });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("Admin teaching material delete error:", error);
+    return res.status(500).json({ success: false, message: "Could not delete teaching material" });
   }
 });
 

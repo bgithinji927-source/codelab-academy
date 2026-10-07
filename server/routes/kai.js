@@ -12,6 +12,7 @@ const {
 } = require("../lib/progression");
 const { getPlatformSettings } = require("../lib/challenges");
 const { getKaiBackgroundFile, streamKaiBackground } = require("../lib/videoStorage");
+const { retrieveTeachingContext } = require("../lib/teachingMaterials");
 
 const router = express.Router();
 
@@ -1145,6 +1146,13 @@ router.post("/", ensureAuth, async (req, res) => {
         })
       : [];
 
+    const teachingMaterialContext = await retrieveTeachingContext({
+      courseId: course.id,
+      lessonId: lesson.id,
+      query: `${lessonTitle}\n${learnerMessage || "Start teaching this lesson"}`,
+      limit: 6,
+    });
+
     let verifiedVideoLibrary = [];
     try {
       verifiedVideoLibrary = (await Video.find({
@@ -1183,7 +1191,7 @@ router.post("/", ensureAuth, async (req, res) => {
         ? JSON.stringify(teachingSections, null, 2)
         : "Use your own practical examples that match the lesson objectives."
     }
-\nVERIFIED VIDEO LIBRARY (select by ID only; never invent IDs or URLs):\n${verifiedVideoLibrary.length ? JSON.stringify(verifiedVideoLibrary, null, 2) : "No verified videos are available for this lesson."}\n`;
+\n\nUPLOADED TEACHING MATERIALS (supporting reference; combine with your own knowledge, but do not contradict these materials):\n${teachingMaterialContext.text || "No uploaded teaching materials were found for this course or lesson."}\nVERIFIED VIDEO LIBRARY (select by ID only; never invent IDs or URLs):\n${verifiedVideoLibrary.length ? JSON.stringify(verifiedVideoLibrary, null, 2) : "No verified videos are available for this lesson."}\n`;
 
     // ========================================
     // KAI SYSTEM PROMPT (ENHANCED FOR COMPLETION)
@@ -1505,6 +1513,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
             answerWasCorrected,
             uiAction,
             videoRecommendation,
+            sources: teachingMaterialContext.sources,
             courseProgress,
             courseAccess,
             userProgress: {
@@ -1537,6 +1546,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       answerWasCorrected,
       uiAction,
       videoRecommendation,
+      sources: teachingMaterialContext.sources,
     });
   } catch (error) {
     console.error("Kai teaching error:", error);
