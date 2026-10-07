@@ -145,6 +145,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
   const [learningAssessments, setLearningAssessments] = useState([]);
   const [courseCatalog, setCourseCatalog] = useState(courses);
   const [courseAccess, setCourseAccess] = useState(() => buildFallbackCourseAccess(courses));
+  const isAdmin = Boolean(user?.isAdmin || user?.role === "admin");
 
   // Initialize store and load current state into local component state
   const baseStore = createStore();
@@ -324,7 +325,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
         const requested = lessons.find((item) => String(item.id) === String(action.lessonId));
         const completedLessons = Math.max(0, Number(findCourseAccess(courseAccess, course.id)?.progress?.lessonsCompleted) || 0);
         const requestedIndex = requested ? lessons.findIndex((item) => String(item.id) === String(requested.id)) : completedLessons;
-        if (requestedIndex > completedLessons) return;
+        if (!isAdmin && requestedIndex > completedLessons) return;
         setSelectedCourse(course);
         setSelectedLessonId(requested?.id || null);
         setSelectedCategory(null);
@@ -340,7 +341,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
     const access = findCourseAccess(courseAccess, course?.id);
     if (access?.locked) return;
     const hasAssessment = learningAssessments.some((assessment) => String(assessment.courseId) === String(course?.id));
-    if (!hasAssessment) {
+    if (!hasAssessment && !isAdmin) {
       setPendingAssessmentCourse(course);
       setActiveView("assessment");
       setSelectedCategory(null);
@@ -424,6 +425,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
       <LessonsPage
         course={selectedCourse}
         courseAccess={findCourseAccess(courseAccess, selectedCourse.id)}
+        user={user}
         onOpenLesson={(lesson) => {
           setSelectedLessonId(lesson?.id || null);
           openLessonWithKai();

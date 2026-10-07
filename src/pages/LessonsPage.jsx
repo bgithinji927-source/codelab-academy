@@ -3,8 +3,9 @@ import { getLessonsByCourse } from "../data/lessons.mjs";
 import CourseLogo from "../components/CourseLogo";
 import "./LessonsPage.css";
 
-function LessonsPage({ course, courseAccess, onOpenLesson, onBack }) {
+function LessonsPage({ course, courseAccess, user, onOpenLesson, onBack }) {
   const lessons = getLessonsByCourse(course?.id);
+  const isAdmin = Boolean(user?.isAdmin || user?.role === "admin");
   const completedLessons = Math.max(0, Number(courseAccess?.progress?.lessonsCompleted) || 0);
   const nextLessonIndex = Math.min(completedLessons, Math.max(lessons.length - 1, 0));
 
@@ -36,7 +37,7 @@ function LessonsPage({ course, courseAccess, onOpenLesson, onBack }) {
         <div className="lessons-grid">
           {lessons.map((lesson, index) => {
             const completed = index < completedLessons;
-            const unlocked = index <= nextLessonIndex;
+            const unlocked = isAdmin || index <= nextLessonIndex;
             return (
               <article className={`lesson-library-card ${completed ? "is-complete" : ""} ${!unlocked ? "is-locked" : ""}`} key={lesson.id}>
                 <div className="lesson-number">{String(index + 1).padStart(2, "0")}</div>
