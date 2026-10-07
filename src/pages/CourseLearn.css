@@ -2962,3 +2962,37 @@ html[data-theme="dark"] .kai-message-actions button,
     word-break: normal !important;
   }
 }
+
+/* Safe local laboratory MVP */
+.kai-lab-panel {
+  width: min(100%, 1300px);
+  margin: 0 auto 2rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid color-mix(in srgb, #8b7cf6 28%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, #2f2f2f 92%, #8b7cf6 8%);
+  color: #ececec;
+}
+.kai-lab-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
+.kai-lab-kicker { display:inline-flex; align-items:center; gap:.35rem; color:#b9adff; font-size:.72rem; font-weight:800; letter-spacing:.08em; }
+.kai-lab-heading h2 { margin:.35rem 0 .25rem; font-size:1.05rem; }
+.kai-lab-heading p, .kai-lab-card span, .kai-lab-workspace-copy span, .kai-lab-workspace-copy small { display:block; margin:0; color:#aaa; font-size:.82rem; line-height:1.5; }
+.kai-lab-count { padding:.3rem .55rem; border-radius:999px; background:#444; color:#d8d1ff; font-size:.75rem; white-space:nowrap; }
+.kai-lab-list { display:grid; gap:.65rem; margin-top:1rem; }
+.kai-lab-card { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.8rem .9rem; border:1px solid #484848; border-radius:10px; background:#353535; }
+.kai-lab-card strong { display:block; margin-bottom:.2rem; font-size:.9rem; }
+.kai-lab-card button, .kai-lab-actions button { border:0; border-radius:8px; padding:.55rem .8rem; background:#8b7cf6; color:#fff; font:inherit; font-size:.8rem; font-weight:700; cursor:pointer; white-space:nowrap; }
+.kai-lab-card button:disabled, .kai-lab-actions button:disabled { opacity:.5; cursor:not-allowed; }
+.kai-lab-workspace { margin-top:1rem; display:grid; gap:.8rem; }
+.kai-lab-workspace-copy strong { display:block; margin-bottom:.3rem; font-size:1rem; }
+.kai-lab-workspace-copy p { margin:.7rem 0; color:#ddd; line-height:1.55; }
+.kai-lab-workspace-copy pre { margin:.7rem 0; padding:.8rem; overflow:auto; border-radius:8px; background:#202020; color:#d8d1ff; font: .78rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space:pre-wrap; }
+.kai-lab-workspace textarea { width:100%; box-sizing:border-box; resize:vertical; padding:.8rem; border:1px solid #505050; border-radius:9px; background:#212121; color:#f1f1f1; font:inherit; line-height:1.5; }
+.kai-lab-actions { display:flex; justify-content:flex-end; gap:.6rem; }
+.kai-lab-actions .kai-lab-secondary { background:#454545; }
+.kai-lab-result { display:flex; align-items:center; gap:.7rem; padding:.65rem .8rem; border-radius:8px; font-size:.82rem; }
+.kai-lab-result span { flex:1; color:inherit; }
+.kai-lab-result em { font-style:normal; font-weight:800; }
+.kai-lab-result.is-passed { background:rgba(34,197,94,.14); color:#8be6a7; }
+.kai-lab-result.is-needs-work { background:rgba(234,179,8,.13); color:#f3d477; }
+@media (max-width:640px) { .kai-lab-card { align-items:flex-start; flex-direction:column; } .kai-lab-card button { width:100%; } .kai-lab-heading { flex-direction:column; } }

@@ -17,6 +17,7 @@ import {
   ThumbsDown,
   Share2,
   Check,
+  FlaskConical,
 } from "lucide-react";
 
 import fetchWithAuth from "../utils/fetchWithAuth";
@@ -77,6 +78,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [messageFeedback, setMessageFeedback] = useState({});
   const [savedKaiFeedback, setSavedKaiFeedback] = useState([]);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
+  const [availableLabs, setAvailableLabs] = useState([]);
+  const [activeLab, setActiveLab] = useState(null);
+  const [labAnswer, setLabAnswer] = useState("");
+  const [labResult, setLabResult] = useState(null);
+  const [labLoading, setLabLoading] = useState(false);
 
   const typingTimerRef = useRef(null);
   const kaiActivityTimerRef = useRef(null);
@@ -114,6 +120,52 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
   const courseTitle = course?.title || "Programming";
   const isAdmin = Boolean(user?.isAdmin || user?.role === "admin");
+
+  useEffect(() => {
+    let cancelled = false;
+    setAvailableLabs([]);
+    setActiveLab(null);
+    setLabAnswer("");
+    setLabResult(null);
+    if (!course?.id || !user?.id) return undefined;
+    fetchWithAuth(`/api/labs/course/${encodeURIComponent(course.id)}`)
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!cancelled && data?.success) setAvailableLabs(Array.isArray(data.labs) ? data.labs : []);
+      })
+      .catch(() => { if (!cancelled) setAvailableLabs([]); });
+    return () => { cancelled = true; };
+  }, [course?.id, user?.id]);
+
+  const startLab = async (lab) => {
+    setLabLoading(true);
+    setLabResult(null);
+    try {
+      const response = await fetchWithAuth(`/api/labs/${encodeURIComponent(lab.id)}/start`, { method: "POST" });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || "Could not start lab");
+      setActiveLab({ ...data.lab, attemptId: data.attemptId });
+      setLabAnswer("");
+    } catch (error) {
+      setLabResult({ passed: false, feedback: error.message || "Could not start lab" });
+    } finally { setLabLoading(false); }
+  };
+
+  const submitLab = async () => {
+    if (!activeLab?.attemptId || !labAnswer.trim()) return;
+    setLabLoading(true);
+    try {
+      const response = await fetchWithAuth(`/api/labs/attempt/${encodeURIComponent(activeLab.attemptId)}/submit`, {
+        method: "POST",
+        body: JSON.stringify({ answer: labAnswer }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || "Could not submit lab");
+      setLabResult(data);
+    } catch (error) {
+      setLabResult({ passed: false, feedback: error.message || "Could not submit lab" });
+    } finally { setLabLoading(false); }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -1845,6 +1897,44 @@ ${startMessage}
             CHAT
         ====================================== */}
 
+        {availableLabs.length > 0 && (
+          <section className="kai-lab-panel" aria-labelledby="kai-lab-title">
+            <div className="kai-lab-heading">
+              <div>
+                <span className="kai-lab-kicker"><FlaskConical size={14} /> SAFE PRACTICE LAB</span>
+                <h2 id="kai-lab-title">Hands-on lab for this course</h2>
+                <p>Synthetic fixtures only. No public targets, real credentials, or unrestricted network access.</p>
+              </div>
+              {!activeLab && <span className="kai-lab-count">{availableLabs.length} lab{availableLabs.length === 1 ? "" : "s"}</span>}
+            </div>
+            {!activeLab ? (
+              <div className="kai-lab-list">
+                {availableLabs.map((lab) => (
+                  <article className="kai-lab-card" key={lab.id}>
+                    <div><strong>{lab.title}</strong><span>{lab.summary}</span></div>
+                    <button type="button" onClick={() => startLab(lab)} disabled={labLoading}>Launch lab</button>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="kai-lab-workspace">
+                <div className="kai-lab-workspace-copy">
+                  <strong>{activeLab.title}</strong>
+                  <span>{activeLab.objective}</span>
+                  <p>{activeLab.task}</p>
+                  <pre>{activeLab.fixture}</pre>
+                  <small>Hint: {activeLab.hint}</small>
+                </div>
+                <textarea value={labAnswer} onChange={(event) => setLabAnswer(event.target.value)} placeholder="Write your finding, remediation, and verification steps..." rows={6} />
+                <div className="kai-lab-actions">
+                  <button type="button" className="kai-lab-secondary" onClick={() => { setActiveLab(null); setLabResult(null); }} disabled={labLoading}>Back to labs</button>
+                  <button type="button" onClick={submitLab} disabled={labLoading || !labAnswer.trim()}>{labLoading ? "Checking..." : "Submit lab"}</button>
+                </div>
+                {labResult && <div className={`kai-lab-result ${labResult.passed ? "is-passed" : "is-needs-work"}`} role="status"><strong>{labResult.passed ? "Lab passed" : "Keep working"}</strong><span>{labResult.feedback}</span>{labResult.score !== undefined && <em>{labResult.score}%</em>}</div>}
+              </div>
+            )}
+          </section>
+        )}
         <section className="conversation-messages">
 
           {courseStateError && (

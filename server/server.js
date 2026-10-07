@@ -11,6 +11,7 @@ const challengeRoutes = require("./routes/challenges");
 const catalogRoutes = require("./routes/catalog");
 const adminRoutes = require("./routes/admin");
 const videoRoutes = require("./routes/videos");
+const labRoutes = require("./routes/labs");
 
 const app = express();
 
@@ -49,6 +50,9 @@ app.use("/api/admin", adminRoutes);
 
 // Uploaded learner videos are streamed only to authenticated users.
 app.use("/api/videos", videoRoutes);
+
+// Safe MVP labs use synthetic fixtures and server-side validation.
+app.use("/api/labs", labRoutes);
 
 // ============================================
 // DEBUG AUTH ROUTES
