@@ -13,6 +13,7 @@ const {
 const { getPlatformSettings } = require("../lib/challenges");
 const { getKaiBackgroundFile, streamKaiBackground } = require("../lib/videoStorage");
 const { retrieveTeachingContext } = require("../lib/teachingMaterials");
+const { isAdministrator } = require("../lib/admin");
 
 const router = express.Router();
 
@@ -559,6 +560,7 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
       totalLessons = 0,
       firstLessonId,
       firstLessonTitle,
+      initialLessonId,
     } = req.body;
 
     const userId = req.user?.id;
@@ -579,6 +581,7 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
+    const isAdmin = isAdministrator(user);
 
     // Normalize records created before progress/session fields were added.
     // Mongoose normally applies array defaults, but older documents can still
@@ -639,9 +642,14 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
       ? Number(user.currentLesson.index)
       : Number(cp.lastLessonIndex) || 0;
     const progressIndex = Math.min(Math.max(Number(cp.lastLessonIndex) || 0, 0), Math.max(actualTotalLessons - 1, 0));
-    const activeIndex = sameCourseIsActive && user.currentLesson?.id
-      ? Math.min(Math.max(storedIndex, 0), Math.max(actualTotalLessons - 1, 0))
-      : progressIndex;
+    const requestedLessonIndex = isAdmin && initialLessonId
+      ? catalogLessons.findIndex((item) => String(item.id) === String(initialLessonId))
+      : -1;
+    const activeIndex = requestedLessonIndex >= 0
+      ? requestedLessonIndex
+      : sameCourseIsActive && user.currentLesson?.id
+        ? Math.min(Math.max(storedIndex, 0), Math.max(actualTotalLessons - 1, 0))
+        : progressIndex;
     const activeCatalogLesson = catalogLessons[activeIndex] || firstCatalogLesson;
     const storedLessonIsValid = activeCatalogLesson
       && String(user.currentLesson?.id || "") === String(activeCatalogLesson.id)
@@ -687,6 +695,7 @@ router.post("/courses/:courseId/start", ensureAuth, async (req, res) => {
       session: sessionPayload(session),
       sessions,
       courseAccess: buildLearnerCourseAccess(user, catalogCourses),
+      adminAccess: isAdmin,
       user: { id: user._id, xp: user.xp, level: user.level, coursesStarted: user.coursesStarted },
       courseStarted: isNewCourseEnrollment,
     });
@@ -723,7 +732,8 @@ router.post("/lesson/complete", ensureAuth, async (req, res) => {
     const isActiveLesson = learner
       && String(learner.currentCourse?.id || "") === String(courseId)
       && String(learner.currentLesson?.id || "") === String(lessonId);
-    if (isCatalogCourse && !isActiveLesson) {
+    const isAdmin = isAdministrator(learner);
+    if (isCatalogCourse && !isActiveLesson && !isAdmin) {
       return res.status(409).json({ success: false, message: "Only the server-owned active lesson can be completed" });
     }
 
@@ -975,11 +985,12 @@ router.post("/", ensureAuth, async (req, res) => {
         && serverCurrentIndex === Number(currentLessonIndex);
       const currentLessonComplete = Boolean(currentSession?.completed || progress?.completedLessonIds?.includes(lesson.id));
 
-      if (!currentLessonIsActive) {
+      const isAdmin = isAdministrator(learner);
+      if (!currentLessonIsActive && !isAdmin) {
         return res.status(409).json({ success: false, message: "This is not the learner's active lesson", readyForNextLesson: false });
       }
 
-      if (!currentLessonComplete) {
+      if (!currentLessonComplete && !isAdmin) {
         return res.status(409).json({ success: false, message: "Kai has not completed this lesson yet", readyForNextLesson: false });
       }
 
@@ -992,7 +1003,7 @@ router.post("/", ensureAuth, async (req, res) => {
 
       const requestedNextIndex = Number(nextLessonIndex);
       const expectedNextIndex = serverCurrentIndex + 1;
-      if (requestedNextIndex !== expectedNextIndex) {
+      if (!isAdmin && requestedNextIndex !== expectedNextIndex) {
         return res.status(409).json({ success: false, message: "Lessons must be completed in order", readyForNextLesson: false });
       }
 
@@ -1091,7 +1102,7 @@ router.post("/", ensureAuth, async (req, res) => {
         || activeIndex !== Number(currentLessonIndex)) {
         return res.status(409).json({ success: false, message: "This lesson is not the learner's active lesson" });
       }
-      if (learner.currentLesson?.completed && !(isFinalCourseLesson && !learner.courseProgress.find((item) => String(item.courseId) === String(course.id))?.readyForNextCourse)) {
+      if (!isAdministrator(learner) && learner.currentLesson?.completed && !(isFinalCourseLesson && !learner.courseProgress.find((item) => String(item.courseId) === String(course.id))?.readyForNextCourse)) {
         return res.status(409).json({ success: false, message: "Kai has completed this lesson. Use the available progression action." });
       }
     }

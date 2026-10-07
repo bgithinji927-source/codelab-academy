@@ -3,19 +3,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const ensureAuth = require("../middleware/ensureAuth");
+const { isAdministrator } = require("../lib/admin");
 
 const router = express.Router();
 
-function configuredAdminEmails() {
-  return String(process.env.ADMIN_EMAILS || "")
-    .split(",")
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-}
-
 function serializeUser(user) {
   const email = String(user.email || "").toLowerCase();
-  const isAdmin = user.role === "admin" || configuredAdminEmails().includes(email);
+  const isAdmin = isAdministrator({ ...user, email });
 
   return {
     id: user._id,

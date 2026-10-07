@@ -113,6 +113,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   }, [user?.id, user?.kaiBackground]);
 
   const courseTitle = course?.title || "Programming";
+  const isAdmin = Boolean(user?.isAdmin || user?.role === "admin");
 
   useEffect(() => {
     let cancelled = false;
@@ -402,6 +403,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             totalLessons: courseLessons.length,
             firstLessonId: firstLesson.id,
             firstLessonTitle: firstLesson.title,
+            initialLessonId: isAdmin ? initialLessonId : undefined,
           }),
         });
         const stateData = await stateResponse.json();
@@ -420,9 +422,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
           ? courseLessons.findIndex((item) => String(item.id) === String(initialLessonId))
           : -1;
         const completedCount = Math.max(0, Number(stateData.courseProgress?.lessonsCompleted) || 0);
-        const safeRequestedIndex = requestedIndex >= 0 && requestedIndex <= completedCount
+        const safeRequestedIndex = isAdmin && requestedIndex >= 0
           ? requestedIndex
-          : safeIndex;
+          : requestedIndex >= 0 && requestedIndex <= completedCount
+            ? requestedIndex
+            : safeIndex;
         const activeLesson = courseLessons[safeRequestedIndex];
         const normalizeHistory = (history) => Array.isArray(history)
           ? history
@@ -453,8 +457,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         );
 
         setCurrentLessonIndex(safeRequestedIndex);
-        setServerLessonIndex(safeIndex);
-        setViewingLessonIndex(safeRequestedIndex < safeIndex ? safeRequestedIndex : null);
+        setServerLessonIndex(isAdmin ? courseLessons.length - 1 : safeIndex);
+        setViewingLessonIndex(isAdmin ? null : (safeRequestedIndex < safeIndex ? safeRequestedIndex : null));
         setCompletedLessonsCount(Math.max(0, Math.min(
           courseLessons.length,
           Number(stateData.courseProgress?.lessonsCompleted) || 0
@@ -960,7 +964,7 @@ ${startMessage}
   const handleLessonSelect = (targetIndex) => {
     if (
       targetIndex < 0 ||
-      targetIndex > serverLessonIndex ||
+      !isAdmin && targetIndex > serverLessonIndex ||
       targetIndex >= allLessons.length ||
       targetIndex === currentLessonIndex
     ) {
@@ -997,7 +1001,7 @@ ${startMessage}
     setPreviousLessonSuggestion(null);
     setCourseStateError("");
     setCurrentLessonIndex(targetIndex);
-    setViewingLessonIndex(targetIndex < serverLessonIndex ? targetIndex : null);
+    setViewingLessonIndex(!isAdmin && targetIndex < serverLessonIndex ? targetIndex : null);
     setLesson(targetLesson);
     setMessages(targetHistory);
     setMessageFeedback(feedbackMapForLesson(savedKaiFeedback, course?.id, targetLesson?.id));
@@ -1716,7 +1720,7 @@ ${startMessage}
             {isLessonMenuOpen && (
               <div className="lesson-picker-menu" role="listbox" aria-label="Course lessons">
                 {allLessons.map((item, index) => {
-                  const isLocked = index > serverLessonIndex;
+                  const isLocked = !isAdmin && index > serverLessonIndex;
                   const isSelected = index === currentLessonIndex;
                   const isCurrent = index === serverLessonIndex;
                   const isComplete = index < serverLessonIndex || (isSelected && lessonCompletionReady);

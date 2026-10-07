@@ -1,11 +1,5 @@
 const User = require("../models/User");
-
-function configuredAdminEmails() {
-  return String(process.env.ADMIN_EMAILS || "")
-    .split(",")
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-}
+const { isAdministrator } = require("../lib/admin");
 
 module.exports = async function ensureAdmin(req, res, next) {
   try {
@@ -18,8 +12,7 @@ module.exports = async function ensureAdmin(req, res, next) {
       return res.status(403).json({ success: false, message: "Active administrator account required" });
     }
 
-    const isAdmin = user.role === "admin" || configuredAdminEmails().includes(String(user.email || "").toLowerCase());
-    if (!isAdmin) {
+    if (!isAdministrator(user)) {
       return res.status(403).json({ success: false, message: "Administrator access required" });
     }
 
