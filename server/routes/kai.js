@@ -1097,9 +1097,10 @@ router.post("/", ensureAuth, async (req, res) => {
     // The general Ask Kai page remains a free-form chat and has no course state.
     if (course.id !== "general") {
       const activeIndex = Number(learner.currentLesson?.index ?? 0);
-      if (String(learner.currentCourse?.id || "") !== String(course.id)
+      if (!isAdministrator(learner)
+        && (String(learner.currentCourse?.id || "") !== String(course.id)
         || String(learner.currentLesson?.id || "") !== String(lesson.id)
-        || activeIndex !== Number(currentLessonIndex)) {
+        || activeIndex !== Number(currentLessonIndex))) {
         return res.status(409).json({ success: false, message: "This lesson is not the learner's active lesson" });
       }
       if (!isAdministrator(learner) && learner.currentLesson?.completed && !(isFinalCourseLesson && !learner.courseProgress.find((item) => String(item.courseId) === String(course.id))?.readyForNextCourse)) {
