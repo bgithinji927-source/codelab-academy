@@ -90,6 +90,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [assessmentMarked, setAssessmentMarked] = useState(false);
   const [assessmentSubmitting, setAssessmentSubmitting] = useState(false);
   const [expandedStoredSections, setExpandedStoredSections] = useState([0]);
+  const [kaiGeneratedTeaching, setKaiGeneratedTeaching] = useState(null);
+  const [kaiTeachingLoading, setKaiTeachingLoading] = useState(false);
 
   const typingTimerRef = useRef(null);
   const kaiActivityTimerRef = useRef(null);
@@ -124,6 +126,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     setAssessmentResult(null);
     setAssessmentMarked(false);
     setExpandedStoredSections([0]);
+    setKaiGeneratedTeaching(null);
   }, [lesson?.id]);
   const submitAssessment = async () => {
     if (!assessmentQuestions.length || assessmentSubmitting) return;
@@ -692,6 +695,36 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   // ASK KAI (WITH PROGRESSION SUPPORT)
   // ============================================
 
+  const teachLessonWithKai = async () => {
+    if (!lesson || kaiTeachingLoading) return;
+    setKaiTeachingLoading(true);
+    setKaiGeneratedTeaching(null);
+    try {
+      const response = await fetchWithAuth("/api/kai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user?.id,
+          course: { ...course, title: courseTitle },
+          lesson,
+          learnerMessage: `Teach the learner the lesson titled "${lesson.title}" before the assessment. Return a structured lesson_response with these blocks in this order: a short direct explanation of the concept, a bullet list of the core rules, one practical code example, a line-by-line explanation of what the example does, one edge-case example, and a final why-this-is-correct explanation. Use clear learner-facing language. Do not say that you will teach later, do not ask the learner a question, and do not discuss assessment grading.`,
+          messages: [],
+          currentLessonIndex,
+          totalLessons: allLessons.length,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || "Kai could not prepare the teaching layer.");
+      const contentBlocks = parseStructuredContent(data.content) || parseStructuredContent(data.reply);
+      const generatedText = cleanKaiResponse(data.reply);
+      if (!contentBlocks?.length && !generatedText) throw new Error("Kai returned an empty teaching layer.");
+      setKaiGeneratedTeaching({ contentBlocks, text: generatedText });
+    } catch (error) {
+      setKaiGeneratedTeaching({ error: error.message || "Kai could not prepare the teaching layer. Please try again." });
+    } finally {
+      setKaiTeachingLoading(false);
+    }
+  };
   const askKai = async ({
     learnerMessage = "",
     conversation = [],
@@ -2030,6 +2063,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               )}
               <div className="stored-lesson-sections">{(lesson.sections || []).map(renderStoredLessonSection)}</div>
               <div className="stored-lesson-ai-note"><Bot size={16} /><span><strong>Official lesson material comes first.</strong> Study the explanations and worked examples, complete the assessment, and wait for Kai to mark it. Kai unlocks follow-up questions only after your assessment is graded.</span></div>
+              <section className="kai-generated-teaching" aria-labelledby="kai-generated-teaching-title">
+                <div className="kai-generated-teaching-heading"><div><span className="stored-lesson-badge"><Bot size={14} /> KAI TEACHING LAYER</span><h3 id="kai-generated-teaching-title">Need another explanation before the assessment?</h3><p>Kai can teach this lesson again using the same format: explanation, bullet points, worked example, and why the answer is correct.</p></div><button type="button" onClick={teachLessonWithKai} disabled={kaiTeachingLoading}>{kaiTeachingLoading ? "Kai is teaching..." : kaiGeneratedTeaching ? "Teach it again" : "Teach me with Kai"}<Bot size={16} /></button></div>
+                {kaiGeneratedTeaching?.error && <div className="kai-assessment-result is-error" role="alert">{kaiGeneratedTeaching.error}</div>}
+                {kaiGeneratedTeaching && !kaiGeneratedTeaching.error && <div className="kai-generated-teaching-content">{kaiGeneratedTeaching.contentBlocks?.length ? <AIContentRenderer content={kaiGeneratedTeaching.contentBlocks} /> : renderMarkdown(kaiGeneratedTeaching.text)}</div>}
+              </section>
               {assessmentQuestions.length > 0 && (
                 <section className="kai-assessment-panel" aria-labelledby="kai-assessment-title">
                   <div className="kai-assessment-heading"><div><span className="stored-lesson-badge"><CheckCircle2 size={14} /> FINAL KNOWLEDGE CHECK</span><h3 id="kai-assessment-title">Assessment {assessmentRound}</h3><p>Answer all 10 questions. Kai reads your selections and written reasoning, gives a mark out of 100, and decides whether you are ready for the next lesson.</p></div><strong>10 questions</strong></div>
