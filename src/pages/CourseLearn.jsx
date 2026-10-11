@@ -83,6 +83,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [labAnswer, setLabAnswer] = useState("");
   const [labResult, setLabResult] = useState(null);
   const [labLoading, setLabLoading] = useState(false);
+  const [assessmentRound, setAssessmentRound] = useState(1);
+  const [assessmentAnswers, setAssessmentAnswers] = useState({});
+  const [assessmentResult, setAssessmentResult] = useState(null);
+  const [assessmentSubmitting, setAssessmentSubmitting] = useState(false);
 
   const typingTimerRef = useRef(null);
   const kaiActivityTimerRef = useRef(null);
@@ -91,6 +95,49 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const lessonViewCacheRef = useRef(new Map());
   const conversationEndRef = useRef(null);
   const scrollFrameRef = useRef(null);
+  const buildAssessment = (activeLesson, round = 1) => {
+    if (!activeLesson) return [];
+    const focus = activeLesson.focus || activeLesson.title || "this lesson";
+    const quizOptions = Array.isArray(activeLesson.quizOptions) && activeLesson.quizOptions.length >= 2 ? activeLesson.quizOptions : [`Apply ${focus} with a tested example`, "Skip the concept", "Ignore the result", "Avoid verification"];
+    const correct = activeLesson.quizAnswer || quizOptions[0];
+    return [
+      { id: "q1", type: "choice", question: activeLesson.quizQuestion || `Which statement best describes ${focus}?`, options: quizOptions, answerKey: correct },
+      { id: "q2", type: "choice", question: `Which action best demonstrates understanding of ${focus}?`, options: [`Explain it and apply it in a small tested example`, "Copy code without tracing it", "Avoid edge cases", "Use it without knowing the goal"], answerKey: "Explain it and apply it in a small tested example" },
+      { id: "q3", type: "choice", question: `What should a professional learner check first when using ${focus}?`, options: ["The goal, inputs, outputs, and failure cases", "Only the color of the interface", "Nothing beyond the happy path", "Whether the code is the longest"], answerKey: "The goal, inputs, outputs, and failure cases" },
+      { id: "q4", type: "choice", question: `Which is a useful verification step for ${focus}?`, options: ["Test a normal case and a boundary case", "Delete the test after it passes", "Assume a demo proves everything", "Hide errors from the user"], answerKey: "Test a normal case and a boundary case" },
+      { id: "q5", type: "choice", question: `True or false: a solution for ${focus} should explain its trade-offs and limitations.`, options: ["True", "False"], answerKey: "True" },
+      { id: "q6", type: "text", question: `In your own words, explain the main idea of ${focus}.`, answerKey: `A clear explanation of ${focus}, what it solves, and how it is applied.` },
+      { id: "q7", type: "text", question: `Describe one edge case or failure case for ${focus} and how you would handle it.`, answerKey: "A relevant boundary or failure case with a safe handling strategy." },
+      { id: "q8", type: "text", question: `Describe a small practical example you could build using ${focus}.`, answerKey: "A concrete example with inputs, behavior, and an expected result." },
+      { id: "q9", type: "choice", question: `What should you do if your first implementation of ${focus} fails?`, options: ["Inspect the evidence, isolate the cause, fix it, and test again", "Guess randomly", "Remove all validation", "Move on without learning"], answerKey: "Inspect the evidence, isolate the cause, fix it, and test again" },
+      { id: "q10", type: "text", question: `Write a short plan for reviewing ${focus} again if your first attempt is not correct.`, answerKey: "A focused review plan followed by a fresh attempt and verification." },
+    ].map((question) => ({ ...question, question: round > 1 && question.type === "text" ? `${question.question} (Replacement exercise ${round})` : question.question }));
+  };
+  const assessmentQuestions = buildAssessment(lesson, assessmentRound);
+  useEffect(() => {
+    setAssessmentRound(1);
+    setAssessmentAnswers({});
+    setAssessmentResult(null);
+  }, [lesson?.id]);
+  const submitAssessment = async () => {
+    if (!assessmentQuestions.length || assessmentSubmitting) return;
+    if (assessmentQuestions.some((question) => !String(assessmentAnswers[question.id] || "").trim())) {
+      setAssessmentResult({ localError: `Please answer all ${assessmentQuestions.length} questions before sending.` });
+      return;
+    }
+    setAssessmentSubmitting(true); setAssessmentResult(null);
+    try {
+      const response = await fetchWithAuth("/api/kai/assessment", { method: "POST", body: JSON.stringify({ course: { ...course, title: courseTitle }, lesson, questions: assessmentQuestions, answers: assessmentAnswers, attempt: assessmentRound, currentLessonIndex }) });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || "Kai could not grade this exercise.");
+      setAssessmentResult(data);
+      if (data.courseProgress?.lessonsCompleted !== undefined) setCompletedLessonsCount(Number(data.courseProgress.lessonsCompleted) || 0);
+      if (data.courseAccess) onProgressChanged?.(data);
+      if (data.passed) { setLessonCompletionReady(true); setPreviousLessonSummary(data.feedback || `Assessment passed with ${data.score}%.`); }
+      else { setAssessmentRound((round) => round + 1); setAssessmentAnswers({}); }
+    } catch (error) { setAssessmentResult({ localError: error.message || "Kai could not grade this exercise." }); }
+    finally { setAssessmentSubmitting(false); }
+  };
 
   useEffect(() => {
     const savedLearnerBackground = localStorage.getItem(kaiBackgroundStorageKey(user?.id))
@@ -1944,6 +1991,26 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               )}
               <div className="stored-lesson-sections">{(lesson.sections || []).map(renderStoredLessonSection)}</div>
               <div className="stored-lesson-ai-note"><Bot size={16} /><span><strong>Kai is your interactive tutor.</strong> Ask a question below for clarification, examples, practice, or related explanations. Kai will distinguish additional guidance from this official material.</span></div>
+              {assessmentQuestions.length > 0 && (
+                <section className="kai-assessment-panel" aria-labelledby="kai-assessment-title">
+                  <div className="kai-assessment-heading"><div><span className="stored-lesson-badge"><CheckCircle2 size={14} /> FINAL KNOWLEDGE CHECK</span><h3 id="kai-assessment-title">Assessment {assessmentRound}</h3><p>Answer all 10 questions. Kai reads your selections and written reasoning, gives a mark out of 100, and decides whether you are ready for the next lesson.</p></div><strong>10 questions</strong></div>
+                  <div className="kai-assessment-questions">
+                    {assessmentQuestions.map((question, questionIndex) => (
+                      <fieldset className="kai-assessment-question" key={question.id}>
+                        <legend><span>{questionIndex + 1}</span>{question.question}</legend>
+                        {question.type === "choice" ? (
+                          <div className="kai-assessment-options">{question.options.map((option) => <label key={option}><input type="radio" name={question.id} value={option} checked={assessmentAnswers[question.id] === option} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} /><span>{option}</span></label>)}</div>
+                        ) : (
+                          <textarea rows={5} value={assessmentAnswers[question.id] || ""} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} placeholder="Write a clear answer with an example or explanation..." />
+                        )}
+                      </fieldset>
+                    ))}
+                  </div>
+                  <button type="button" className="kai-assessment-submit" onClick={submitAssessment} disabled={assessmentSubmitting || lessonCompletionReady}>{assessmentSubmitting ? "Kai is marking your answers..." : lessonCompletionReady ? "Assessment passed" : "Send answers to Kai"}<Send size={16} /></button>
+                  {assessmentResult?.localError && <div className="kai-assessment-result is-error" role="alert">{assessmentResult.localError}</div>}
+                  {assessmentResult && !assessmentResult.localError && <div className={`kai-assessment-result ${assessmentResult.passed ? "is-passed" : "is-review"}`} role="status"><strong>{assessmentResult.passed ? `Passed — ${assessmentResult.score}/100` : `Keep learning — ${assessmentResult.score}/100`}</strong><p>{assessmentResult.feedback}</p>{!assessmentResult.passed && <small>Kai created replacement exercise {assessmentRound}. Review the lesson, then answer the new questions above.</small>}{assessmentResult.corrections?.length > 0 && <ul>{assessmentResult.corrections.map((item, index) => <li key={item.questionId || index}>{item.note}</li>)}</ul>}</div>}
+                </section>
+              )}
             </section>
           )}
 

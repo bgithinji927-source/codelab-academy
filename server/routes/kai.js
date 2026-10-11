@@ -938,6 +938,63 @@ router.post("/feedback", ensureAuth, async (req, res) => {
 });
 
 // ============================================
+// KAI LESSON ASSESSMENT
+// ============================================
+router.post("/assessment", ensureAuth, async (req, res) => {
+  try {
+    const { course, lesson, questions = [], answers = {}, attempt = 1, currentLessonIndex = 0 } = req.body;
+    const userId = req.user?.id;
+    if (!userId || !course?.id || !lesson?.id || !Array.isArray(questions) || questions.length === 0) {
+      return res.status(400).json({ success: false, message: "Assessment details are required" });
+    }
+    const safeQuestions = questions.slice(0, 10).map((question, index) => ({
+      id: String(question.id || `q${index + 1}`),
+      type: question.type === "text" ? "text" : "choice",
+      question: String(question.question || "").slice(0, 800),
+      options: Array.isArray(question.options) ? question.options.slice(0, 6).map((value) => String(value).slice(0, 300)) : [],
+      answerKey: String(question.answerKey || "").slice(0, 800),
+      learnerAnswer: String(answers?.[question.id] || "").slice(0, 1500),
+    }));
+    const prompt = `You are Kai, grading a learner's ${course.title || course.id} lesson assessment. Grade fairly from the official lesson context. Choice answers must match the answer key. Text answers earn credit when they demonstrate the core idea, even if wording differs. Return ONLY JSON: {"score":0,"passed":false,"feedback":"short useful feedback","corrections":[{"questionId":"q1","note":"..."}],"nextExerciseFocus":"..."}. Passing requires score >= 70. If the learner fails, recommend a focused replacement exercise rather than repeating the exact same questions.\n\nOFFICIAL LESSON: ${lesson.title}\n${JSON.stringify(safeQuestions)}`;
+    let result = null;
+    try {
+      const response = await fetch(GROQ_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.GROQ_API_KEY}` },
+        body: JSON.stringify({ model: GROQ_MODEL, messages: [{ role: "system", content: prompt }], temperature: 0, max_completion_tokens: 1600, response_format: { type: "json_object" }, ...(/gpt-oss/i.test(GROQ_MODEL) ? { reasoning_effort: "low", include_reasoning: false } : {}) }),
+      });
+      if (response.ok) {
+        const payload = await response.json();
+        const text = extractAssistantText(payload).replace(/```json|```/gi, "").trim();
+        result = JSON.parse(text);
+      }
+    } catch (gradingError) {
+      console.warn("Kai assessment AI grading fallback:", gradingError.message);
+    }
+    if (!result) {
+      const earned = safeQuestions.reduce((total, question) => total + (question.learnerAnswer.trim() && (question.type === "text" || question.learnerAnswer.trim().toLowerCase() === question.answerKey.trim().toLowerCase()) ? 1 : 0), 0);
+      result = { score: Math.round((earned / safeQuestions.length) * 100), passed: earned / safeQuestions.length >= 0.7, feedback: "Kai used the lesson answer key to check this attempt. Review the highlighted ideas and try again.", corrections: [], nextExerciseFocus: "Review the lesson objectives and apply them in a fresh example." };
+    }
+    const score = Math.max(0, Math.min(100, Number(result.score) || 0));
+    const passed = Boolean(result.passed) && score >= 70;
+    let courseProgress = null;
+    let courseAccess = null;
+    if (passed) {
+      const updatedUser = await markLessonComplete(userId, course.id, lesson.id, `Assessment passed with ${score}%. ${String(result.feedback || "").slice(0, 300)}`, Number(process.env.LESSON_XP_DEFAULT) || 5, Number(currentLessonIndex) || 0);
+      if (updatedUser) {
+        await markCurrentLessonComplete(userId, course.id, lesson.id);
+        courseProgress = updatedUser.courseProgress.find((item) => String(item.courseId) === String(course.id)) || null;
+        courseAccess = buildLearnerCourseAccess(updatedUser, await getCatalogCourses());
+      }
+    }
+    return res.json({ success: true, score, passed, feedback: String(result.feedback || "Kai finished grading this attempt."), corrections: Array.isArray(result.corrections) ? result.corrections.slice(0, 10) : [], nextExerciseFocus: String(result.nextExerciseFocus || "Apply the concept in a fresh example."), attempt: Number(attempt) || 1, lessonComplete: passed, readyForNextLesson: passed, courseProgress, courseAccess });
+  } catch (error) {
+    console.error("Kai assessment error:", error);
+    return res.status(500).json({ success: false, message: "Kai could not grade this assessment" });
+  }
+});
+
+// ============================================
 // KAI TEACHING (UPDATED WITH SESSION PERSISTENCE)
 // POST /api/kai
 // ============================================

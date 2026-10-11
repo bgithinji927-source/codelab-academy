@@ -3282,3 +3282,32 @@ html #root .learn-page.kai-firebox-mode svg { color: #fff !important; }
 html #root .learn-page.kai-firebox-mode .firebox-brand-mark { background: #252525 !important; color: #fff !important; border: 1px solid #fff; }
 html #root .learn-page.kai-firebox-mode .kai-composer-send { background: #252525 !important; color: #fff !important; border: 1px solid #fff !important; }
 html #root .learn-page.kai-firebox-mode .kai-composer-send:hover:not(:disabled) { background: #3a3a3a !important; }
+
+/* Detailed lesson assessment */
+.kai-assessment-panel { margin-top: 30px; padding: 24px; border: 1px solid #33383d; border-radius: 14px; background: #131619; }
+.kai-assessment-heading { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin-bottom: 20px; }
+.kai-assessment-heading h3 { margin: 8px 0 7px; color: #fff; font-size: 1.5rem; }
+.kai-assessment-heading p { max-width: 680px; margin: 0; color: #fff; line-height: 1.65; opacity: .86; }
+.kai-assessment-heading > strong { white-space: nowrap; color: #fff; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+.kai-assessment-question { min-width: 0; margin: 0 0 14px; padding: 17px; border: 1px solid #30363b; border-radius: 10px; color: #fff; }
+.kai-assessment-question legend { width: 100%; padding: 0 0 11px; color: #fff; font-weight: 750; line-height: 1.5; }
+.kai-assessment-question legend > span { display: inline-grid; place-items: center; width: 25px; height: 25px; margin-right: 9px; border: 1px solid #fff; border-radius: 50%; color: #fff; font-size: .75rem; }
+.kai-assessment-options { display: grid; gap: 8px; }
+.kai-assessment-options label { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #30363b; border-radius: 8px; color: #fff; cursor: pointer; line-height: 1.45; }
+.kai-assessment-options label:has(input:checked) { border-color: #fff; background: #24272a; }
+.kai-assessment-options input { margin-top: 3px; accent-color: #fff; }
+.kai-assessment-question textarea { display: block; width: 100%; min-height: 120px; box-sizing: border-box; resize: vertical; padding: 12px; border: 1px solid #444b51; border-radius: 8px; outline: none; background: #0d0f11; color: #fff; font: inherit; line-height: 1.55; }
+.kai-assessment-question textarea:focus { border-color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,.12); }
+.kai-assessment-question textarea::placeholder { color: #fff; opacity: .7; }
+.kai-assessment-submit { display: inline-flex; align-items: center; justify-content: center; gap: 9px; width: 100%; margin-top: 5px; padding: 13px 18px; border: 1px solid #fff; border-radius: 9px; background: #24272a; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+.kai-assessment-submit:hover:not(:disabled) { background: #363a3e; }
+.kai-assessment-submit:disabled { cursor: not-allowed; opacity: .55; }
+.kai-assessment-result { margin-top: 16px; padding: 16px; border: 1px solid #fff; border-radius: 9px; color: #fff; line-height: 1.6; }
+.kai-assessment-result strong { display: block; color: #fff; font-size: 1.15rem; }
+.kai-assessment-result p { margin: 7px 0; color: #fff; }
+.kai-assessment-result ul { margin: 10px 0 0; padding-left: 20px; color: #fff; }
+.kai-assessment-result small { color: #fff; }
+.kai-assessment-result.is-error { border-color: #fff; }
+@media (max-width: 650px) { .kai-assessment-panel { padding: 16px; } .kai-assessment-heading { flex-direction: column; gap: 8px; } .kai-assessment-question { padding: 13px; } }
+html #root .learn-page.kai-firebox-mode .kai-assessment-panel,
+html #root .learn-page.kai-firebox-mode .kai-assessment-panel * { color: #fff !important; }

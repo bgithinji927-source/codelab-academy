@@ -1882,6 +1882,18 @@ Object.values(lessons).forEach((courseLessons) => {
     const level = getProgressiveLevel(index, totalLessons);
     lesson.level = level;
 
+    const topic = lesson.title || lesson.id || "this concept";
+    const focus = lesson.focus || topic;
+    const primaryCode = lesson.code || lesson.exampleCode || `// Practice ${topic}\n`;
+    lesson.sections = [
+      ...(lesson.sections || []),
+      { type: "deepDive", title: "What this lesson teaches", content: `${topic} is a building block for professional ${focus}. Identify the problem it solves, the vocabulary used by experienced developers, and the smallest useful example. A strong understanding means you can explain the idea in your own words, recognize it in an existing codebase, and choose when it is appropriate rather than applying it mechanically.\n\nSeparate the input, transformation, and result. Ask what must always be true, what can fail, and which part of the design handles that failure. This turns a memorized syntax rule into a transferable engineering skill.` },
+      { type: "deepDive", title: "Step-by-step mental model", content: `Define the goal and the data or events involved in ${focus}. Trace one normal example from start to finish and name the state at each step. Then test a boundary case: empty input, invalid input, repeated input, a slow dependency, or an unexpected user action. Finally, decide how the result should be verified and documented.\n\nPrefer the clearest correct approach first. Add abstraction or optimization only when requirements justify it. Record what becomes easier, what becomes harder, and what evidence would justify changing the design.` },
+      { type: "example", title: "Guided example", content: `Predict what should happen before running this example. Change one value and predict again. Explain each important line, its assumptions, and one way it could fail.`, code: primaryCode, language: lesson.language || "javascript" },
+      { type: "deepDive", title: "Common mistakes and professional checks", content: `Common mistakes with ${topic.toLowerCase()} include copying a pattern without understanding its boundary, ignoring validation, mixing unrelated responsibilities, and testing only the happy path. A successful demo is not proof that the design is correct. Check naming, predictable behavior, safe failure handling, and a focused regression test.\n\nBefore finishing, explain what you would log or measure in production, how you would protect sensitive data, and how you would safely change or roll back the implementation.` },
+      { type: "challenge", title: "Applied practice", instructions: lesson.challenge || `Create a small example that applies ${focus}. Include a normal case, an edge case, a verification step, and a short explanation of your design decision.`, starterCode: lesson.starterCode || `${primaryCode}\n\n// Extend this example and add a verification step` }
+    ];
+    lesson.objectives = [...new Set([...(lesson.objectives || []), `Explain ${focus} clearly`, `Apply ${focus} in a tested example`, "Identify an edge case and a professional-quality improvement"])];
     // Depth increases with the learner's progress. Beginners get the core
     // idea; intermediate learners examine boundaries and trade-offs; advanced
     // learners must reason about production-quality design and failure.
