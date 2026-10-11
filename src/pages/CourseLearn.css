@@ -3217,3 +3217,33 @@ html #root .learn-page.kai-firebox-mode .input-hint {
   html #root .learn-page.kai-firebox-mode .kai-input-dock { flex-basis: 112px !important; height: 112px !important; width: calc(100% - 4px) !important; margin-top: 8px !important; }
   html #root .learn-page.kai-firebox-mode .input-hint { display: none !important; }
 }
+
+/* Keep the Firebox composer close to the viewport bottom. */
+html #root .learn-page.kai-firebox-mode .kai-input-dock {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: 25px !important;
+  z-index: 100 !important;
+  flex: none !important;
+  width: min(980px, calc(100vw - 48px)) !important;
+  height: 96px !important;
+  margin: 0 !important;
+  transform: translateX(-50%) !important;
+}
+html #root .learn-page.kai-firebox-mode .input-hint {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 7px !important;
+  z-index: 101 !important;
+  width: min(980px, calc(100vw - 48px)) !important;
+  margin: 0 !important;
+  transform: translateX(-50%) !important;
+}
+html #root .learn-page.kai-firebox-mode .conversation-messages {
+  padding-bottom: 140px !important;
+}
+@media (max-width: 700px) {
+  html #root .learn-page.kai-firebox-mode .kai-input-dock { bottom: 24px !important; width: calc(100vw - 24px) !important; }
+  html #root .learn-page.kai-firebox-mode .input-hint { width: calc(100vw - 24px) !important; }
+}
