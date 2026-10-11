@@ -3320,3 +3320,6 @@ html #root .learn-page.kai-firebox-mode .kai-assessment-panel * { color: #fff !i
 .stored-lesson-bullets li { position: relative; padding: 11px 13px 11px 34px; border-left: 2px solid #fff; border-radius: 0 7px 7px 0; background: rgba(255,255,255,.045); color: #fff; line-height: 1.62; }
 .stored-lesson-bullets li::before { content: "✓"; position: absolute; left: 12px; top: 10px; color: #fff; font-weight: 800; }
 .learn-page.kai-firebox-mode .stored-lesson-bullets li { border-left-color: #fff; background: #1d2024; color: #fff !important; }
+
+.kai-input-dock:has(textarea:disabled) { opacity: .72; }
+.learn-page.kai-firebox-mode .input-hint { color: #fff !important; }

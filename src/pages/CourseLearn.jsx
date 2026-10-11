@@ -87,6 +87,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [assessmentQuestionsOverride, setAssessmentQuestionsOverride] = useState(null);
   const [assessmentAnswers, setAssessmentAnswers] = useState({});
   const [assessmentResult, setAssessmentResult] = useState(null);
+  const [assessmentMarked, setAssessmentMarked] = useState(false);
   const [assessmentSubmitting, setAssessmentSubmitting] = useState(false);
 
   const typingTimerRef = useRef(null);
@@ -120,6 +121,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     setAssessmentQuestionsOverride(null);
     setAssessmentAnswers({});
     setAssessmentResult(null);
+    setAssessmentMarked(false);
   }, [lesson?.id]);
   const submitAssessment = async () => {
     if (!assessmentQuestions.length || assessmentSubmitting) return;
@@ -127,12 +129,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       setAssessmentResult({ localError: `Please answer all ${assessmentQuestions.length} questions before sending.` });
       return;
     }
-    setAssessmentSubmitting(true); setAssessmentResult(null);
+    setAssessmentSubmitting(true); setAssessmentMarked(false); setAssessmentResult(null);
     try {
       const response = await fetchWithAuth("/api/kai/assessment", { method: "POST", body: JSON.stringify({ course: { ...course, title: courseTitle }, lesson, questions: assessmentQuestions, answers: assessmentAnswers, attempt: assessmentRound, currentLessonIndex }) });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Kai could not grade this exercise.");
       setAssessmentResult(data);
+      setAssessmentMarked(Boolean(data.passed));
       if (data.courseProgress?.lessonsCompleted !== undefined) setCompletedLessonsCount(Number(data.courseProgress.lessonsCompleted) || 0);
       if (data.courseAccess) onProgressChanged?.(data);
       if (data.passed) { setLessonCompletionReady(true); setPreviousLessonSummary(data.feedback || `Assessment passed with ${data.score}%.`); }
@@ -696,6 +699,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     nextLessonTitle,
     isIntro = false,
   } = {}) => {
+    if (learnerMessage && !assessmentMarked) {
+      setAssessmentResult((current) => current || { localError: "Complete and submit the assessment before asking Kai a question." });
+      return;
+    }
     const controller = new AbortController();
     kaiRequestRef.current?.abort();
     kaiRequestRef.current = controller;
@@ -1064,7 +1071,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const handleSend = async () => {
     const trimmedAnswer = answer.trim();
 
-    if (!trimmedAnswer || isKaiTyping || isReviewingPastLesson) {
+    if (!trimmedAnswer || isKaiTyping || isReviewingPastLesson || !assessmentMarked) {
       return;
     }
 
@@ -1915,7 +1922,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
         <div className="firebox-header-actions">
           <span className="firebox-ready"><span /> Ready</span>
-          <button type="button" className="firebox-new-chat" onClick={() => { setMessages([]); setAnswer(""); setLessonCompletionReady(false); }}>New chat</button>
+          <button type="button" className="firebox-new-chat" onClick={() => { setMessages([]); setAnswer(""); }}>New chat</button>
         </div>
 
       </header>
@@ -2147,13 +2154,15 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               }
             }}
             placeholder={
-              isReviewingPastLesson
+              !assessmentMarked
+                ? "Complete and submit the assessment before asking Kai..."
+                : isReviewingPastLesson
                 ? "Select the current lesson to continue with Kai..."
                 : isKaiTyping
                 ? "Kai is thinking..."
                 : "Answer Kai or ask a question..."
             }
-            disabled={isReviewingPastLesson || isKaiTyping || (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) || isAdvancing}
+            disabled={!assessmentMarked || isReviewingPastLesson || isKaiTyping || (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) || isAdvancing}
             autoComplete="off"
           />
 
@@ -2166,6 +2175,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             className="kai-composer-send"
             onClick={handleSend}
             disabled={
+              !assessmentMarked ||
               isReviewingPastLesson ||
               isKaiTyping ||
               (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) ||
@@ -2180,7 +2190,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         </div>
 
         <div className="input-hint">
-          Press <kbd>Enter</kbd> to send
+          {assessmentMarked ? <>Press <kbd>Enter</kbd> to send</> : "Kai questions unlock after your assessment is marked."}
         </div>
 
         </div>
