@@ -3323,3 +3323,29 @@ html #root .learn-page.kai-firebox-mode .kai-assessment-panel * { color: #fff !i
 
 .kai-input-dock:has(textarea:disabled) { opacity: .72; }
 .learn-page.kai-firebox-mode .input-hint { color: #fff !important; }
+
+/* Firebox top-bar navigation */
+html #root .learn-page.kai-firebox-mode .learn-back {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  margin-left: 2px;
+  padding: 9px 12px;
+  border: 1px solid #4b5359;
+  border-radius: 9px;
+  background: #191d21;
+  color: #fff !important;
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+  transform: none;
+}
+html #root .learn-page.kai-firebox-mode .learn-back:hover {
+  border-color: #fff;
+  background: #252a2f;
+  transform: translateX(-1px);
+}
+@media (max-width: 700px) {
+  html #root .learn-page.kai-firebox-mode .learn-back { padding: 8px 9px; font-size: 10px; }
+}
