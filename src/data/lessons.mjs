@@ -19,7 +19,7 @@ function makeLesson({
   return {
     id,
     title,
-    description: `Learn ${focus.toLowerCase()} through a clear explanation, a practical example, and guided practice.`,
+    description: `Learn ${focus.toLowerCase()} by understanding its purpose, tracing a concrete example, testing an edge case, and applying it in a small project task.`,
     level: "Beginner",
     estimatedTime: "25 min",
     objectives: [
@@ -33,18 +33,27 @@ function makeLesson({
         type: "explanation",
         title: `What is ${focus}?`,
         content: `
-${focus} is an important building block for developers who want to create reliable, useful software.
+${focus} is a practical technique for solving a specific programming problem. The important idea is the relationship between the input, the operation, and the result.
 
-Start with the problem it solves. Kai will explain the idea in simple language, connect it to a real development workflow, and point out the decisions that matter when you use it.
+Core idea:
+- Identify the problem that ${focus} solves before choosing a syntax or tool.
+- Give the concept clear inputs, apply its rule, and check the resulting output.
+- Keep the behavior small enough to test, explain, and change safely.
 
-You do not need to memorize every detail at once. Focus on what the concept does, when to use it, and what can go wrong.
+How to apply it:
+1. Define the goal in one sentence and list the data or conditions the solution receives.
+2. Apply ${focus} to the normal case and trace the important step from input to output.
+3. Test an empty, invalid, repeated, or boundary case so you know what happens when reality differs from the example.
+4. Explain the trade-off: what this approach makes easier, what it costs, and when another approach would be better.
+
+In this lesson's example, the intended result is: ${quizAnswer || `a correct, tested use of ${focus}`}. That answer is correct because it demonstrates the concept's purpose rather than merely repeating its syntax.
         `,
       },
       {
         type: "example",
         title: `A ${focus} Example`,
         code,
-        explanation: `Read this example line by line. Notice how ${focus.toLowerCase()} solves a small, realistic problem. Then change one value or step and observe how the behavior changes.`,
+        explanation: `This example demonstrates ${focus.toLowerCase()} by turning an input or condition into an observable result. Read each line in order: name the value it introduces, describe the operation it performs, and predict the output before running it. Then change one value, predict the new result, and add a check for the most likely failure case. The goal is to understand why the code works, not to copy it unchanged.`,
       },
       {
         type: "challenge",
@@ -1132,8 +1141,16 @@ function makePythonRoadmapLesson([id, title, description, code, challenge], inde
     estimatedTime: advanced ? "40 min" : "30 min",
     objectives: [description, "Explain the trade-offs behind the approach", "Apply the concept in a practical exercise"],
     sections: [
-      { type: "explanation", title: "Core Idea", content: `${description} Start with the problem it solves, then connect the concept to a realistic Python workflow. Pay attention to inputs, failure modes, and when a simpler approach is better.` },
-      { type: "example", title: "Practical Python Example", code, explanation: "Read the example line by line, then adapt it rather than copying it blindly." },
+      { type: "explanation", title: "Core Idea", content: `${description}
+
+What this teaches: ${description} The concept turns a defined input into a predictable result, so first name the input, the rule being applied, and the output you expect.
+
+How to use it:
+- Start with a small normal case and trace each important operation.
+- Check an empty, invalid, or boundary case before trusting the result.
+- Keep the code readable enough that another developer can explain why it works.
+- Choose a simpler approach when it gives the same result with fewer failure points.` },
+      { type: "example", title: "Practical Python Example", code, explanation: `This code demonstrates the lesson directly. Read it from top to bottom, identify each value and operation, predict the result, then change one input and test the new behavior. The goal is to understand the rule behind ${description.toLowerCase()}, not to copy the snippet without explanation.` },
       { type: "challenge", title: "Practice Project", instructions: challenge, starterCode: `${code}\n\n# Extend this example to complete the challenge` },
     ],
   };
@@ -1170,8 +1187,10 @@ function makePythonMasteryLesson([id, title, description, code, challenge]) {
     estimatedTime: "30 min",
     objectives: [description, "Explain the trade-offs behind the approach", "Apply the concept in a practical exercise"],
     sections: [
-      { type: "explanation", title: "Core Idea", content: `${description} Study the example, explain why it works, and consider how it behaves when inputs or requirements change.` },
-      { type: "example", title: "Practical Example", code, explanation: "Read the example carefully, then adapt it rather than copying it blindly." },
+      { type: "explanation", title: "Core Idea", content: `${description}
+
+The working rule is to define the input and expected result first, apply the concept in a small example, and then verify the result with a normal and boundary case. Pay attention to what the approach makes easier, what it costs, and how it behaves when requirements change.` },
+      { type: "example", title: "Practical Example", code, explanation: `This example is the lesson in action. Trace every line, explain what changes in memory or output, predict the result before running it, and modify one value to test whether your understanding is correct.` },
       { type: "challenge", title: "Practice Project", instructions: challenge, starterCode: `${code}\n\n# Extend this example to complete the challenge` },
     ],
   };
@@ -1716,8 +1735,10 @@ function makeJavaScriptRoadmapLesson([title, focus], index) {
     estimatedTime: advanced ? "40 min" : "30 min",
     objectives: [focus, "Explain the trade-offs behind the approach", "Apply the concept in a practical JavaScript exercise"],
     sections: [
-      { type: "explanation", title: "Core Idea", content: `${focus} Start with the problem it solves, connect it to a realistic JavaScript workflow, and consider inputs, failure modes, browser or server boundaries, and maintainability.` },
-      { type: "example", title: "Practical JavaScript Example", code, explanation: "Read the example line by line, then replace the placeholder with a small feature from your own project." },
+      { type: "explanation", title: "Core Idea", content: `${focus}
+
+What this teaches: the concept solves a concrete JavaScript problem by transforming an input or condition into an observable result. Identify the input, trace the operation, predict the output, and then test an invalid or boundary case. Also decide whether the code runs in the browser, on the server, or in both environments, because that boundary affects available APIs, security, and performance.` },
+      { type: "example", title: "Practical JavaScript Example", code, explanation: `This example demonstrates ${focus.toLowerCase()} directly. Read it line by line, predict the output, run or trace it, and replace one value with a realistic feature from your project. Explain why the new result is correct and what could fail.` },
       { type: "challenge", title: "Practice Project", instructions: `Create a focused exercise about ${title}. Include a normal case, an edge case, a test or verification step, and a short explanation of what could go wrong.`, starterCode: `${code}\n\n// Extend this example to complete the challenge` },
     ],
   };

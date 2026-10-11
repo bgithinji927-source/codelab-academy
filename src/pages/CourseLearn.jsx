@@ -2029,7 +2029,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
                 <div className="stored-lesson-objectives"><strong>By the end of this lesson, you can:</strong><ul>{lesson.objectives.map((objective) => <li key={objective}>{objective}</li>)}</ul></div>
               )}
               <div className="stored-lesson-sections">{(lesson.sections || []).map(renderStoredLessonSection)}</div>
-              <div className="stored-lesson-ai-note"><Bot size={16} /><span><strong>Kai is your interactive tutor.</strong> Ask a question below for clarification, examples, practice, or related explanations. Kai will distinguish additional guidance from this official material.</span></div>
+              <div className="stored-lesson-ai-note"><Bot size={16} /><span><strong>Official lesson material comes first.</strong> Study the explanations and worked examples, complete the assessment, and wait for Kai to mark it. Kai unlocks follow-up questions only after your assessment is graded.</span></div>
               {assessmentQuestions.length > 0 && (
                 <section className="kai-assessment-panel" aria-labelledby="kai-assessment-title">
                   <div className="kai-assessment-heading"><div><span className="stored-lesson-badge"><CheckCircle2 size={14} /> FINAL KNOWLEDGE CHECK</span><h3 id="kai-assessment-title">Assessment {assessmentRound}</h3><p>Answer all 10 questions. Kai reads your selections and written reasoning, gives a mark out of 100, and decides whether you are ready for the next lesson.</p></div><strong>10 questions</strong></div>
