@@ -3311,3 +3311,12 @@ html #root .learn-page.kai-firebox-mode .kai-composer-send:hover:not(:disabled) 
 @media (max-width: 650px) { .kai-assessment-panel { padding: 16px; } .kai-assessment-heading { flex-direction: column; gap: 8px; } .kai-assessment-question { padding: 13px; } }
 html #root .learn-page.kai-firebox-mode .kai-assessment-panel,
 html #root .learn-page.kai-firebox-mode .kai-assessment-panel * { color: #fff !important; }
+
+/* Lesson notes: sentence-level explanations and readable teaching bullets */
+.stored-lesson-content-block { margin: 0 0 13px; }
+.stored-lesson-content-block:last-child { margin-bottom: 0; }
+.stored-lesson-content-block p { margin-bottom: 10px; }
+.stored-lesson-bullets { display: grid; gap: 9px; margin: 10px 0 0; padding: 0; list-style: none; }
+.stored-lesson-bullets li { position: relative; padding: 11px 13px 11px 34px; border-left: 2px solid #fff; border-radius: 0 7px 7px 0; background: rgba(255,255,255,.045); color: #fff; line-height: 1.62; }
+.stored-lesson-bullets li::before { content: "✓"; position: absolute; left: 12px; top: 10px; color: #fff; font-weight: 800; }
+.learn-page.kai-firebox-mode .stored-lesson-bullets li { border-left-color: #fff; background: #1d2024; color: #fff !important; }

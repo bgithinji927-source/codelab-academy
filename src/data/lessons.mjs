@@ -1887,11 +1887,75 @@ Object.values(lessons).forEach((courseLessons) => {
     const primaryCode = lesson.code || lesson.exampleCode || `// Practice ${topic}\n`;
     lesson.sections = [
       ...(lesson.sections || []),
-      { type: "deepDive", title: "What this lesson teaches", content: `${topic} is a building block for professional ${focus}. Identify the problem it solves, the vocabulary used by experienced developers, and the smallest useful example. A strong understanding means you can explain the idea in your own words, recognize it in an existing codebase, and choose when it is appropriate rather than applying it mechanically.\n\nSeparate the input, transformation, and result. Ask what must always be true, what can fail, and which part of the design handles that failure. This turns a memorized syntax rule into a transferable engineering skill.` },
-      { type: "deepDive", title: "Step-by-step mental model", content: `Define the goal and the data or events involved in ${focus}. Trace one normal example from start to finish and name the state at each step. Then test a boundary case: empty input, invalid input, repeated input, a slow dependency, or an unexpected user action. Finally, decide how the result should be verified and documented.\n\nPrefer the clearest correct approach first. Add abstraction or optimization only when requirements justify it. Record what becomes easier, what becomes harder, and what evidence would justify changing the design.` },
-      { type: "example", title: "Guided example", content: `Predict what should happen before running this example. Change one value and predict again. Explain each important line, its assumptions, and one way it could fail.`, code: primaryCode, language: lesson.language || "javascript" },
-      { type: "deepDive", title: "Common mistakes and professional checks", content: `Common mistakes with ${topic.toLowerCase()} include copying a pattern without understanding its boundary, ignoring validation, mixing unrelated responsibilities, and testing only the happy path. A successful demo is not proof that the design is correct. Check naming, predictable behavior, safe failure handling, and a focused regression test.\n\nBefore finishing, explain what you would log or measure in production, how you would protect sensitive data, and how you would safely change or roll back the implementation.` },
-      { type: "challenge", title: "Applied practice", instructions: lesson.challenge || `Create a small example that applies ${focus}. Include a normal case, an edge case, a verification step, and a short explanation of your design decision.`, starterCode: lesson.starterCode || `${primaryCode}\n\n// Extend this example and add a verification step` }
+      {
+        type: "deepDive",
+        title: "What this lesson teaches",
+        content: `${topic} is a practical building block for professional ${focus}. The goal is not to memorize a definition; the goal is to understand what problem the idea solves and when it is the right tool.
+
+A learner who understands this topic can describe the input, explain the transformation, predict the result, and identify a safe response when something goes wrong.
+
+Key ideas to remember:
+- Problem: ${focus} gives you a structured way to solve a specific kind of programming problem.
+- Input: Start by naming the values, events, or user actions that the solution receives.
+- Process: Trace the important steps in order instead of jumping straight to the final code.
+- Output: State what the program should produce and how you will verify that result.
+- Professional habit: Explain the reason behind each decision so another developer can maintain it.`
+      },
+      {
+        type: "deepDive",
+        title: "Step-by-step mental model",
+        content: `Use this sequence whenever you study ${focus}. Each step has a purpose, so do not skip directly to implementation.
+
+- First, define the goal: write one sentence describing what the solution must accomplish.
+- Second, identify the state: list the data that can change while the solution is running.
+- Third, trace a normal case: follow one realistic example from input to output.
+- Fourth, test a boundary case: try empty input, invalid input, repeated input, or an unusually large value.
+- Fifth, explain the trade-off: say what becomes easier, what becomes harder, and why your choice is reasonable.
+- Sixth, verify the result: choose a test, example output, or observable check that proves the behavior is correct.
+
+This method makes ${focus} easier to transfer to new projects because you learn the reasoning process, not only one copied example.`
+      },
+      {
+        type: "example",
+        title: "Guided example: read, predict, run, improve",
+        content: `Study the example below as if you were reviewing a teammate's code. Do not only read the syntax; explain what each part contributes to the final behavior.
+
+Example walkthrough:
+- Read the first statement and identify the value or responsibility it introduces.
+- Follow the next operation and explain how it changes, checks, or uses that value.
+- Predict the output before running the code, then compare your prediction with the real result.
+- Change one input and predict the new result; this reveals whether you understand the rule or are only repeating the original example.
+- Add one validation or test that would catch an incorrect result.
+
+Why this example matters: a small example is valuable when it makes the rule visible, gives you something concrete to change, and provides evidence that your explanation is correct.`,
+        code: primaryCode,
+        language: lesson.language || "javascript"
+      },
+      {
+        type: "deepDive",
+        title: "Common mistakes and professional checks",
+        content: `Beginners often get ${topic.toLowerCase()} working once, but professional developers also consider what happens when the environment or the input changes.
+
+Watch for these mistakes:
+- Copying a pattern without being able to explain what each important line does.
+- Testing only the happy path and never checking empty, invalid, repeated, or unexpected input.
+- Mixing several responsibilities together, which makes the code harder to read and change.
+- Hiding errors instead of giving the learner or user a useful next step.
+- Adding complexity before a simple, readable solution has been measured and understood.
+
+Professional review questions:
+- Is the behavior clear from the names and structure?
+- What should be logged or measured if this fails in production?
+- Does the solution protect private data and reject unsafe input?
+- What focused test would catch the most likely regression?
+- How could the change be rolled back safely?`
+      },
+      {
+        type: "challenge",
+        title: "Applied practice: build and explain",
+        instructions: lesson.challenge || `Create a small example that applies ${focus}. Explain the input, the important steps, the expected output, one edge case, and the test that proves your solution works.`,
+        starterCode: lesson.starterCode || `${primaryCode}\n\n// Extend this example and add a verification step`
+      }
     ];
     lesson.objectives = [...new Set([...(lesson.objectives || []), `Explain ${focus} clearly`, `Apply ${focus} in a tested example`, "Identify an edge case and a professional-quality improvement"])];
     // Depth increases with the learner's progress. Beginners get the core

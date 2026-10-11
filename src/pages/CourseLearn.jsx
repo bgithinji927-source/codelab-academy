@@ -1696,7 +1696,17 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     return (
       <article className={`stored-lesson-section stored-lesson-${sectionType}`} key={`${sectionType}-${index}`}>
         {section.title && <h3>{section.title}</h3>}
-        {paragraphs.map((paragraph, paragraphIndex) => <p key={paragraphIndex}>{paragraph}</p>)}
+        {paragraphs.map((paragraph, paragraphIndex) => {
+          const lines = paragraph.split("\n").map((line) => line.trim()).filter(Boolean);
+          const bulletLines = lines.filter((line) => /^[-*]\s+/.test(line));
+          const proseLines = lines.filter((line) => !/^[-*]\s+/.test(line));
+          return (
+            <div className="stored-lesson-content-block" key={paragraphIndex}>
+              {proseLines.length > 0 && <p>{proseLines.join(" ")}</p>}
+              {bulletLines.length > 0 && <ul className="stored-lesson-bullets">{bulletLines.map((line, bulletIndex) => <li key={bulletIndex}>{line.replace(/^[-*]\s+/, "")}</li>)}</ul>}
+            </div>
+          );
+        })}
         {sectionType === "example" && section.code && <CodeBlock block={{ code: section.code, language: section.language || "javascript", filename: section.title || "example.js" }} />}
         {section.explanation && <p className="stored-lesson-explanation">{section.explanation}</p>}
         {sectionType === "challenge" && section.instructions && <p className="stored-lesson-instructions"><strong>Practice:</strong> {section.instructions}</p>}
