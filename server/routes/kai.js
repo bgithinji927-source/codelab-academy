@@ -976,7 +976,53 @@ router.post("/assessment", ensureAuth, async (req, res) => {
       result = { score: Math.round((earned / safeQuestions.length) * 100), passed: earned / safeQuestions.length >= 0.7, feedback: "Kai used the lesson answer key to check this attempt. Review the highlighted ideas and try again.", corrections: [], nextExerciseFocus: "Review the lesson objectives and apply them in a fresh example." };
     }
     const score = Math.max(0, Math.min(100, Number(result.score) || 0));
-    const passed = Boolean(result.passed) && score >= 70;
+    // The numeric threshold is authoritative. Kai may explain the result, but
+    // a score of 70 or higher is the only condition that passes the lesson.
+    const passed = score >= 70;
+    let nextAssessment = null;
+    if (!passed) {
+      const retryPrompt = `You are Kai creating Assessment 2 for the same lesson after a learner scored ${score}%. Return ONLY JSON with exactly ten questions in this format: {"questions":[{"id":"q1","type":"choice","question":"...","options":["..."],"answerKey":"..."}]}. Preserve the exact question format and order from Assessment 1: choice, choice, choice, choice, choice, text, text, text, choice, text. The fifth choice question must be true/false with two options; every other choice question must have four options; every text question must have an empty options array. Keep the same mix and difficulty, but test different wording and examples. Every answerKey must be correct. Lesson: ${lesson.title}. Focus: ${lesson.focus || lesson.title}. Previous assessment: ${JSON.stringify(safeQuestions)}`;
+      try {
+        const retryResponse = await fetch(GROQ_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.GROQ_API_KEY}` },
+          body: JSON.stringify({ model: GROQ_MODEL, messages: [{ role: "system", content: retryPrompt }], temperature: 0.4, max_completion_tokens: 2200, response_format: { type: "json_object" }, ...(/gpt-oss/i.test(GROQ_MODEL) ? { reasoning_effort: "low", include_reasoning: false } : {}) }),
+        });
+        if (retryResponse.ok) {
+          const retryPayload = await retryResponse.json();
+          const retryText = extractAssistantText(retryPayload).replace(/```json|```/gi, "").trim();
+          const generated = JSON.parse(retryText)?.questions;
+          if (Array.isArray(generated) && generated.length === 10) {
+            nextAssessment = generated.slice(0, 10).map((question, index) => {
+              const expectedType = safeQuestions[index]?.type === "text" ? "text" : "choice";
+              const fallbackQuestion = safeQuestions[index] || safeQuestions[0];
+              const generatedOptions = Array.isArray(question.options) ? question.options.map((option) => String(option).slice(0, 300)).filter(Boolean) : [];
+              const options = expectedType === "text"
+                ? []
+                : index === 4
+                  ? ["True", "False"]
+                  : (generatedOptions.length >= 4 ? generatedOptions.slice(0, 4) : (fallbackQuestion.options || []).slice(0, 4));
+              return {
+                id: `q${index + 1}`,
+                type: expectedType,
+                question: String(question.question || fallbackQuestion.question || `Explain ${lesson.title}.`).slice(0, 800),
+                options,
+                answerKey: String(question.answerKey || fallbackQuestion.answerKey || "").slice(0, 800),
+              };
+            });
+          }
+        }
+      } catch (retryError) {
+        console.warn("Kai Assessment 2 generation fallback:", retryError.message);
+      }
+      if (!nextAssessment) {
+        nextAssessment = safeQuestions.map((question, index) => ({
+          ...question,
+          id: `q${index + 1}`,
+          question: `Assessment 2 — ${question.question} Apply the idea to a different example.`,
+        }));
+      }
+    }
     let courseProgress = null;
     let courseAccess = null;
     if (passed) {
@@ -987,7 +1033,7 @@ router.post("/assessment", ensureAuth, async (req, res) => {
         courseAccess = buildLearnerCourseAccess(updatedUser, await getCatalogCourses());
       }
     }
-    return res.json({ success: true, score, passed, feedback: String(result.feedback || "Kai finished grading this attempt."), corrections: Array.isArray(result.corrections) ? result.corrections.slice(0, 10) : [], nextExerciseFocus: String(result.nextExerciseFocus || "Apply the concept in a fresh example."), attempt: Number(attempt) || 1, lessonComplete: passed, readyForNextLesson: passed, courseProgress, courseAccess });
+    return res.json({ success: true, score, passed, feedback: String(result.feedback || "Kai finished grading this attempt."), corrections: Array.isArray(result.corrections) ? result.corrections.slice(0, 10) : [], nextExerciseFocus: String(result.nextExerciseFocus || "Apply the concept in a fresh example."), attempt: Number(attempt) || 1, lessonComplete: passed, readyForNextLesson: passed, nextAssessment, courseProgress, courseAccess });
   } catch (error) {
     console.error("Kai assessment error:", error);
     return res.status(500).json({ success: false, message: "Kai could not grade this assessment" });

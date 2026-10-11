@@ -84,6 +84,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [labResult, setLabResult] = useState(null);
   const [labLoading, setLabLoading] = useState(false);
   const [assessmentRound, setAssessmentRound] = useState(1);
+  const [assessmentQuestionsOverride, setAssessmentQuestionsOverride] = useState(null);
   const [assessmentAnswers, setAssessmentAnswers] = useState({});
   const [assessmentResult, setAssessmentResult] = useState(null);
   const [assessmentSubmitting, setAssessmentSubmitting] = useState(false);
@@ -113,9 +114,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       { id: "q10", type: "text", question: `Write a short plan for reviewing ${focus} again if your first attempt is not correct.`, answerKey: "A focused review plan followed by a fresh attempt and verification." },
     ].map((question) => ({ ...question, question: round > 1 && question.type === "text" ? `${question.question} (Replacement exercise ${round})` : question.question }));
   };
-  const assessmentQuestions = buildAssessment(lesson, assessmentRound);
+  const assessmentQuestions = assessmentQuestionsOverride || buildAssessment(lesson, assessmentRound);
   useEffect(() => {
     setAssessmentRound(1);
+    setAssessmentQuestionsOverride(null);
     setAssessmentAnswers({});
     setAssessmentResult(null);
   }, [lesson?.id]);
@@ -134,7 +136,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       if (data.courseProgress?.lessonsCompleted !== undefined) setCompletedLessonsCount(Number(data.courseProgress.lessonsCompleted) || 0);
       if (data.courseAccess) onProgressChanged?.(data);
       if (data.passed) { setLessonCompletionReady(true); setPreviousLessonSummary(data.feedback || `Assessment passed with ${data.score}%.`); }
-      else { setAssessmentRound((round) => round + 1); setAssessmentAnswers({}); }
+      else {
+        setAssessmentRound((round) => round + 1);
+        setAssessmentQuestionsOverride(Array.isArray(data.nextAssessment) && data.nextAssessment.length === 10 ? data.nextAssessment : null);
+        setAssessmentAnswers({});
+      }
     } catch (error) { setAssessmentResult({ localError: error.message || "Kai could not grade this exercise." }); }
     finally { setAssessmentSubmitting(false); }
   };
