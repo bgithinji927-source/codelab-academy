@@ -824,81 +824,14 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     const lessonKey = `${course?.id}:${lesson.id}`;
     if (lessonStartKeyRef.current === lessonKey) return;
 
-    // A restored session already contains the intro and teaching. Do not
-    // clear it or ask Kai to start a duplicate conversation on refresh.
-    if (messages.length > 0 || lessonCompletionReady) {
-      lessonStartKeyRef.current = lessonKey;
-      return;
-    }
-
+    // Lesson content is delivered from the catalog before the learner asks
+    // Kai anything. Opening a lesson must never require an AI call.
     lessonStartKeyRef.current = lessonKey;
-    let cancelled = false;
-
-    async function startKai() {
-      setAnswer("");
-      setDisplayedKaiText("");
-      setLessonCompletionReady(false);
-
-      if (cancelled) return;
-
-      const lessonNumber = currentLessonIndex + 1;
-      const totalLessons = allLessons.length;
-      
-      let startMessage = `
-Start teaching me this lesson.
-
-You are Kai, my personal AI instructor.
-
-Teach me this lesson step by step instead of giving me the whole lesson at once.
-
-Start by:
-1. Introducing yourself briefly.
-2. Explaining the first important concept.
-3. Giving a practical example.
-4. Showing code when useful using proper Markdown code fences.
-5. Explaining the code clearly.
-6. Checking my understanding with one simple question.
-
-Teach deeply but do not overwhelm me.
-
-Do not simply dump the lesson content.
-
-Adapt your explanation to my answers.
-
-Never output the word "undefined" unless you are specifically explaining what the JavaScript value undefined means.
-
-Keep the conversation natural and focused on learning.
-      `.trim();
-
-      // Add context if continuing from previous lesson
-      if (currentLessonIndex > 0 && previousLessonSummary) {
-        startMessage = `
-In the previous lesson, we covered: ${previousLessonSummary}
-
-Now let's move to lesson ${lessonNumber} of ${totalLessons}.
-
-${startMessage}
-        `.trim();
-      }
-
-      await askKai({
-        learnerMessage: startMessage,
-        conversation: [],
-        isIntro: true,
-      });
-    }
-
-    startKai();
-
-    return () => {
-      cancelled = true;
-      stopTyping();
-    };
-
-    // The ref prevents React StrictMode and state hydration from sending
-    // duplicate automatic intros for the same persisted lesson.
+    setAnswer("");
+    setDisplayedKaiText("");
+    stopTyping();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseStateLoaded, lesson, messages.length, lessonCompletionReady]);
+  }, [courseStateLoaded, lesson, allLessons.length]);
 
   // ============================================
   // ADVANCE ONLY AFTER SERVER-SAVED COMPLETION
@@ -1704,6 +1637,34 @@ ${startMessage}
     );
   };
 
+  const renderStoredLessonSection = (section, index) => {
+    if (!section) return null;
+    const sectionType = String(section.type || "explanation");
+    const paragraphs = String(section.content || "")
+      .trim()
+      .split(/\n\s*\n/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean);
+
+    return (
+      <article className={`stored-lesson-section stored-lesson-${sectionType}`} key={`${sectionType}-${index}`}>
+        {section.title && <h3>{section.title}</h3>}
+        {paragraphs.map((paragraph, paragraphIndex) => <p key={paragraphIndex}>{paragraph}</p>)}
+        {sectionType === "example" && section.code && <CodeBlock block={{ code: section.code, language: section.language || "javascript", filename: section.title || "example.js" }} />}
+        {section.explanation && <p className="stored-lesson-explanation">{section.explanation}</p>}
+        {sectionType === "challenge" && section.instructions && <p className="stored-lesson-instructions"><strong>Practice:</strong> {section.instructions}</p>}
+        {sectionType === "challenge" && section.starterCode && <CodeBlock block={{ code: section.starterCode, language: section.language || "javascript", filename: "starter.js" }} />}
+        {sectionType === "quiz" && (
+          <div className="stored-lesson-quiz">
+            <p><strong>{section.question}</strong></p>
+            <ol>{(section.options || []).map((option) => <li key={option}>{option}</li>)}</ol>
+            <small>Ask Kai to check your answer when you are ready.</small>
+          </div>
+        )}
+      </article>
+    );
+  };
+
   // ============================================
   // CALCULATE PROGRESS PERCENTAGE
   // ============================================
@@ -1960,6 +1921,19 @@ ${startMessage}
               <CheckCircle2 size={15} />
               <span>Reviewing a completed lesson. Select the current lesson from the menu to continue with Kai.</span>
             </div>
+          )}
+
+          {lesson && (
+            <section className="stored-lesson-panel" aria-labelledby="stored-lesson-title">
+              <div className="stored-lesson-badge"><BookOpen size={14} /> OFFICIAL COURSE MATERIAL</div>
+              <h2 id="stored-lesson-title">{lesson.title}</h2>
+              {lesson.description && <p className="stored-lesson-description">{lesson.description}</p>}
+              {Array.isArray(lesson.objectives) && lesson.objectives.length > 0 && (
+                <div className="stored-lesson-objectives"><strong>By the end of this lesson, you can:</strong><ul>{lesson.objectives.map((objective) => <li key={objective}>{objective}</li>)}</ul></div>
+              )}
+              <div className="stored-lesson-sections">{(lesson.sections || []).map(renderStoredLessonSection)}</div>
+              <div className="stored-lesson-ai-note"><Bot size={16} /><span><strong>Kai is your interactive tutor.</strong> Ask a question below for clarification, examples, practice, or related explanations. Kai will distinguish additional guidance from this official material.</span></div>
+            </section>
           )}
 
           {previousLessonSuggestion && !isReviewingPastLesson && (

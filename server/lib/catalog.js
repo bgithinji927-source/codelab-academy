@@ -73,7 +73,10 @@ async function getCatalogLessons(courseId, { includeInactive = false } = {}) {
   const overrideMap = new Map(overrides.map((override) => [override.lessonId, override]));
 
   const merged = baseLessons.map((lesson) => {
-    const override = overrideMap.get(lesson.id);
+    const storedOverride = overrideMap.get(lesson.id);
+    // A draft never replaces the last published/bundled teaching content for
+    // learners. Administrators can request inactive records to edit and publish it.
+    const override = storedOverride?.status === "draft" && !includeInactive ? null : storedOverride;
     return {
       ...lesson,
       ...(override
@@ -97,10 +100,11 @@ async function getCatalogLessons(courseId, { includeInactive = false } = {}) {
                   })),
                 }
               : {}),
-            active: override.active !== false,
+            active: override.active !== false && override.status !== "archived",
+            contentStatus: override.status || "published",
             overrideId: String(override._id),
           }
-        : { active: true }),
+        : { active: true, contentStatus: "published" }),
     };
   });
 

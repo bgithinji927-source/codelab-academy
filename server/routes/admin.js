@@ -364,14 +364,23 @@ router.patch("/courses/:courseId", async (req, res) => {
 
 router.patch("/courses/:courseId/lessons/:lessonId", async (req, res) => {
   try {
-    const updates = pickFields(req.body || {}, ["title", "description", "level", "estimatedTime", "objectives", "exampleCode", "challengeInstructions", "starterCode", "quizQuestion", "quizOptions", "quizAnswer", "sections", "active"]);
+    const updates = pickFields(req.body || {}, ["title", "description", "level", "estimatedTime", "objectives", "exampleCode", "challengeInstructions", "starterCode", "quizQuestion", "quizOptions", "quizAnswer", "sections", "status", "active"]);
     if (updates.title !== undefined && !String(updates.title).trim()) {
       return res.status(400).json({ success: false, message: "Lesson title cannot be empty" });
+    }
+    if (updates.status !== undefined && !["draft", "published", "archived"].includes(updates.status)) {
+      return res.status(400).json({ success: false, message: "Invalid lesson publication status" });
     }
 
     const override = await LessonOverride.findOneAndUpdate(
       { courseId: req.params.courseId, lessonId: req.params.lessonId },
-      { $set: { ...updates, updatedBy: String(req.admin._id) } },
+      {
+        $set: {
+          ...updates,
+          ...(updates.status === "published" ? { publishedAt: new Date(), publishedBy: String(req.admin._id) } : {}),
+          updatedBy: String(req.admin._id),
+        },
+      },
       { upsert: true, new: true, setDefaultsOnInsert: true, runValidators: true }
     ).lean();
     return res.json({ success: true, override });
