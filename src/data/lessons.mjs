@@ -1080,6 +1080,64 @@ const cloudCourseLessonPlans = {
   ),
 };
 
+const pythonProfessionalRoadmap = [
+  ["python-introduction", "Introduction to Python", "Understand Python's syntax, interpreter, scripts, and common uses.", "print(\"Hello, Python!\")\n\nfor use_case in [\"web\", \"automation\", \"data\"]:\n    print(use_case)", "Write and run a small Python script that introduces a project and prints three things Python can help build."],
+  ["python-variables-data-types", "Variables and Data Types", "Store values and choose suitable Python data types.", "name = \"Ada\"\nage = 36\nis_learning = True\ntopics = [\"Python\", \"Testing\"]", "Create a learner profile using strings, integers, booleans, floats, and a list."],
+  ["python-operators", "Operators", "Use arithmetic, comparison, logical, assignment, and membership operators.", "completed = 8\ntotal = 10\nprogress = completed / total\nprint(progress >= 0.8 and completed in range(total + 1))", "Build a progress calculation that reports whether a learner has reached an 80% target."],
+  ["python-input-output", "Input and Output", "Read user input, format output, and validate simple values.", "name = input(\"Your name: \")\nprint(f\"Welcome, {name}!\")", "Ask for a learner's name and course, then print a clear welcome message."],
+  ["python-conditional-statements", "Conditional Statements (if, elif, else)", "Make decisions with if, elif, and else branches.", "score = 78\nif score >= 90:\n    grade = \"A\"\nelif score >= 60:\n    grade = \"Pass\"\nelse:\n    grade = \"Try again\"", "Classify a score as excellent, pass, or needing more practice."],
+  ["python-loops-roadmap", "Loops (for, while)", "Repeat work safely with for and while loops.", "for lesson in [\"variables\", \"loops\", \"functions\"]:\n    print(f\"Completed: {lesson}\")", "Use a for loop to process a list and a while loop to repeat input until it is valid."],
+  ["python-data-structures", "Data Structures (Lists, Tuples, Sets, Dictionaries)", "Choose and manipulate Python's core collection types.", "topics = [\"Python\", \"SQL\"]\ncoordinates = (10, 20)\nunique_tags = {\"beginner\", \"python\"}\nprofile = {\"name\": \"Ada\", \"level\": \"beginner\"}", "Create a contact book using a dictionary, a tuple for coordinates, a set of tags, and a list of contacts."],
+  ["python-strings", "Strings and String Manipulation", "Search, format, split, and transform text safely.", "title = \"  Python Foundations  \"\nclean = title.strip().lower()\nprint(clean.replace(\" \", \"-\"))", "Normalize a lesson title into a URL-friendly slug and explain how empty input should be handled."],
+  ["python-functions-roadmap", "Functions", "Design reusable functions with parameters, return values, and docstrings.", "def average(scores):\n    \"\"\"Return the mean score.\"\"\"\n    return sum(scores) / len(scores)", "Write a function that calculates a learner's average and returns a useful result for an empty list."],
+  ["python-list-comprehensions", "List Comprehensions", "Transform and filter collections with readable comprehensions.", "squares = [number * number for number in range(1, 6)]\npassed = [score for score in [45, 72, 88] if score >= 60]", "Build a filtered list of completed lesson titles and compare it with a normal loop."],
+  ["python-modules-packages-roadmap", "Modules and Packages", "Organize reusable Python code into modules and packages.", "# progress.py\ndef complete(current, lesson_id):\n    return {**current, lesson_id: True}\n\n# app.py\nfrom progress import complete", "Design a small package with a calculator module and a public function."],
+  ["python-exception-handling", "Exception Handling", "Handle expected failures without hiding programming errors.", "try:\n    score = int(\"not a number\")\nexcept ValueError:\n    score = 0\n    print(\"Please enter a whole number\")", "Validate score input with a focused except clause and decide which errors should be allowed to propagate."],
+  ["python-file-handling", "File Handling", "Read, write, and manage files using safe context managers and paths.", "from pathlib import Path\npath = Path(\"progress.txt\")\npath.write_text(\"lesson-1: complete\\n\", encoding=\"utf-8\")\nprint(path.read_text(encoding=\"utf-8\"))", "Save and reload a text-based list of course tasks without losing existing data."],
+  ["python-object-oriented-programming", "Object-Oriented Programming (OOP)", "Model state and behavior with classes, methods, and composition.", "class Student:\n    def __init__(self, name):\n        self.name = name\n        self.completed = set()\n\n    def complete(self, lesson_id):\n        self.completed.add(lesson_id)", "Create Student and Course classes that track enrollment and completed lessons."],
+  ["python-iterators", "Iterators and Generators", "Process sequences lazily with iterators and generators.", "def count_up_to(limit):\n    for value in range(limit):\n        yield value\n\nfor value in count_up_to(3):\n    print(value)", "Write a generator that reads large records one at a time and explain why it saves memory."],
+  ["python-decorators", "Decorators and Context Managers", "Reuse cross-cutting behavior and manage resources safely.", "from contextlib import contextmanager\n\n@contextmanager\ndef lesson_session(name):\n    print(f\"start {name}\")\n    yield\n    print(f\"end {name}\")", "Add a timing decorator and a context manager that safely opens and closes a resource."],
+  ["python-lambda-functional", "Lambda Functions and Functional Programming", "Use lambda functions and functional patterns when they improve clarity.", "scores = [42, 91, 67]\nranked = sorted(scores, key=lambda score: -score)\nprint(ranked)", "Transform and sort learner records using a clear combination of map, filter, or sorted."],
+  ["python-type-hints", "Type Hints and Annotations", "Use annotations to communicate contracts and catch mistakes earlier.", "def completion_rate(done: int, total: int) -> float:\n    return done / total", "Add type hints to a course-progress service and identify an invalid call a type checker should catch."],
+  ["python-regular-expressions", "Regular Expressions", "Search and validate structured text with regular expressions.", "import re\nemail = \"learner@example.com\"\nmatch = re.fullmatch(r\"[^@\\s]+@[^@\\s]+\\.[^@\\s]+\", email)\nprint(bool(match))", "Extract lesson identifiers from a log line and explain when a parser is safer than a regex."],
+  ["python-json-csv", "Working with JSON and CSV", "Exchange structured data with JSON and CSV files.", "import json\nrecord = {\"lesson\": \"python\", \"complete\": True}\nencoded = json.dumps(record)\nprint(json.loads(encoded)[\"lesson\"])", "Export course progress to JSON and CSV while preserving headers and handling missing values."],
+  ["python-virtual-environments", "Virtual Environments and Package Management", "Create reproducible Python environments and manage dependencies.", "python -m venv .venv\npython -m pip install requests\npython -m pip freeze > requirements.txt", "Write setup instructions that let another developer reproduce a clean project environment."],
+  ["python-debugging", "Debugging and Logging", "Diagnose failures with tracebacks, debuggers, and structured logs.", "import logging\nlogging.basicConfig(level=logging.INFO)\nlogging.info(\"Starting progress sync\")", "Replace print-based debugging with useful log levels, context, and an actionable error message."],
+  ["python-testing-pytest", "Testing with Pytest", "Design focused tests and use assertions to prevent regressions.", "def add(a, b):\n    return a + b\n\ndef test_add():\n    assert add(2, 3) == 5", "Add unit tests for a score calculator, including an edge case and a meaningful failure message."],
+  ["python-algorithms-data-structures", "Algorithms and Data Structures", "Choose algorithms and data structures based on correctness and complexity.", "def contains(items, target):\n    return target in items\n\nprint(contains([1, 3, 5], 3))", "Compare a linear search with a set lookup and explain their time and space trade-offs."],
+  ["python-git-github", "Git and GitHub", "Track Python projects with commits, branches, pull requests, and reviews.", "git status\ngit add .\ngit commit -m \"Add progress tracker\"\ngit push origin feature/progress", "Create a branch workflow for a Python feature, including a focused commit and a pull request checklist."],
+  ["python-apis-http", "Working with APIs and HTTP", "Call web APIs, validate responses, and handle timeouts and errors.", "import requests\nresponse = requests.get(\"https://example.com\", timeout=5)\nresponse.raise_for_status()", "Design a function that fetches JSON with a timeout, status validation, and a safe error path."],
+  ["python-sql-databases", "SQL and Database Integration", "Use parameterized queries, transactions, and repository boundaries.", "import sqlite3\nwith sqlite3.connect(\"app.db\") as db:\n    db.execute(\"CREATE TABLE IF NOT EXISTS tasks (title TEXT)\")\n    db.execute(\"INSERT INTO tasks VALUES (?)\", (\"Practice SQL\",))", "Build a small CRUD repository for learning tasks without constructing SQL from user input."],
+  ["python-backend-development", "Backend Development with FastAPI or Django", "Expose Python business logic through reliable web endpoints.", "from fastapi import FastAPI\napp = FastAPI()\n\n@app.get(\"/health\")\ndef health():\n    return {\"ok\": True}", "Design endpoints for listing courses, recording progress, validation, and health checks."],
+  ["python-auth-cybersecurity", "Authentication and Cybersecurity", "Protect identities, secrets, data, and application boundaries.", "import os\nsecret = os.environ[\"APP_SECRET\"]\n\n# Hash passwords with a dedicated password-hashing library.", "Review a Python service for hard-coded secrets, weak password handling, unsafe input, and missing authorization."],
+  ["python-async-await", "Asynchronous Programming (async and await)", "Use async and await for concurrent I/O-bound work.", "import asyncio\n\nasync def load_lesson():\n    await asyncio.sleep(0.1)\n    return \"ready\"\n\nprint(asyncio.run(load_lesson()))", "Run independent API calls concurrently and explain when async improves throughput."],
+  ["python-concurrency", "Multithreading and Multiprocessing", "Choose threads, processes, or async execution for different workloads.", "from concurrent.futures import ThreadPoolExecutor\n\ndef load(url):\n    return f\"loaded {url}\"\n\nwith ThreadPoolExecutor(max_workers=2) as pool:\n    print(list(pool.map(load, [\"a\", \"b\"])))", "Choose a concurrency model for I/O-bound and CPU-bound tasks, including how to measure the result."],
+  ["python-numpy-pandas", "Data Science with NumPy and Pandas", "Use arrays and data frames to inspect, transform, and summarize data.", "import pandas as pd\nprogress = pd.DataFrame({\"score\": [72, 88, 54]})\nprint(progress[progress[\"score\"] >= 60].mean())", "Clean a small progress dataset, handle missing values, and calculate a useful summary."],
+  ["python-scikit-learn", "Machine Learning with Scikit-learn", "Build, evaluate, and interpret a basic machine-learning pipeline.", "from sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LogisticRegression\n\n# Split data, train a model, and evaluate on held-out data.", "Design a reproducible classification experiment with a train/test split and an appropriate metric."],
+  ["python-pytorch", "Deep Learning with PyTorch", "Understand tensors, models, training loops, and validation in PyTorch.", "import torch\nweights = torch.tensor([0.5, 0.2], requires_grad=True)\nloss = (weights ** 2).sum()\nloss.backward()", "Outline a small training loop with a model, loss function, optimizer, validation step, and checkpoint."],
+  ["python-llm-apis", "AI Integration and LLM APIs", "Integrate language models with controlled prompts, validation, and safe boundaries.", "from openai import OpenAI\nclient = OpenAI()\n# Send a narrowly scoped request and validate the returned content.", "Design an LLM-powered lesson helper with input limits, structured output, retries, and human review."],
+  ["python-rag", "Embeddings and Retrieval-Augmented Generation (RAG)", "Retrieve relevant knowledge before generating grounded responses.", "documents = [\"Python variables guide\", \"SQL safety guide\"]\nquery = \"How do I store a value?\"\n# Embed, retrieve, then answer using the selected context.", "Plan a RAG pipeline that chunks documents, retrieves citations, and refuses unsupported answers."],
+  ["python-docker-deployment", "Docker and Deployment", "Package, configure, observe, and deploy Python applications reliably.", "FROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY . .\nCMD [\"python\", \"app.py\"]", "Create a deployment checklist covering image builds, environment variables, health checks, logs, and rollback."],
+  ["python-performance", "Performance Optimization and Profiling", "Measure Python programs and optimize the real bottleneck.", "import cProfile\n\ndef work():\n    return sum(number * number for number in range(10000))\n\ncProfile.run(\"work()\")", "Profile a slow function, identify its bottleneck, and compare an optimization with a benchmark."],
+  ["python-architecture", "Software Architecture and Design Patterns", "Design maintainable Python systems with boundaries and appropriate patterns.", "class ProgressService:\n    def __init__(self, repository):\n        self.repository = repository\n\n    def complete(self, lesson_id):\n        return self.repository.save(lesson_id)", "Separate a learning API into domain, service, repository, and transport layers and justify one design pattern."],
+  ["python-production-applications", "Building Production-Ready Applications", "Combine testing, persistence, security, observability, and deployment habits.", "def readiness(checks):\n    required = {\"tests\", \"security\", \"health\", \"rollback\"}\n    return required.issubset(checks)", "Plan and implement a tested learning-progress application with documentation, monitoring, error handling, and a rollback strategy."],
+];
+function makePythonRoadmapLesson([id, title, description, code, challenge], index) {
+  const advanced = index >= 24;
+  return {
+    id,
+    title,
+    description,
+    level: index < 12 ? "Beginner" : advanced ? "Advanced" : "Intermediate",
+    estimatedTime: advanced ? "40 min" : "30 min",
+    objectives: [description, "Explain the trade-offs behind the approach", "Apply the concept in a practical exercise"],
+    sections: [
+      { type: "explanation", title: "Core Idea", content: `${description} Start with the problem it solves, then connect the concept to a realistic Python workflow. Pay attention to inputs, failure modes, and when a simpler approach is better.` },
+      { type: "example", title: "Practical Python Example", code, explanation: "Read the example line by line, then adapt it rather than copying it blindly." },
+      { type: "challenge", title: "Practice Project", instructions: challenge, starterCode: `${code}\n\n# Extend this example to complete the challenge` },
+    ],
+  };
+}
 const pythonMasteryLessonPlans = [
   ["python-collections", "Lists, Tuples, Sets, and Dictionaries", "Work confidently with Python's core collection types.", "const", "Create a contact book using a dictionary and a list of tags."],
   ["python-comprehensions", "Comprehensions and Iteration Patterns", "Write clear list, set, and dictionary comprehensions.", "squares = [n * n for n in range(1, 6)]", "Build a filtered dictionary of learners who passed."],
@@ -1579,6 +1637,7 @@ print(language)`,
         { type: "challenge", title: "Build a Score Tracker", instructions: "Create a small program that stores scores, calculates the average, and prints whether the learner passed.", starterCode: `def average(scores):\n    pass\n\nscores = []\n# Add scores, calculate the average, and check the result` },
       ],
     },
+    ...pythonProfessionalRoadmap.map(makePythonRoadmapLesson),
     ...pythonMasteryLessonPlans.map(makePythonMasteryLesson),
   ],
 
@@ -1590,9 +1649,83 @@ print(language)`,
   ...databaseCourseLessonPlans,
 };
 
+const javascriptProfessionalRoadmap = [
+  ["Introduction to JavaScript", "JavaScript syntax, runtimes, and the role of scripts in web applications."],
+  ["Variables (`let`, `const`, `var`)", "Declare values safely and understand reassignment and hoisting trade-offs."],
+  ["Data Types", "Work with primitive values, objects, null, undefined, and type conversion."],
+  ["Operators", "Use arithmetic, comparison, logical, assignment, and ternary operators."],
+  ["Input and Output", "Read browser input and produce clear output with the console and the DOM."],
+  ["Conditional Statements (`if`, `else`, `switch`)", "Choose behavior with readable conditional branches."],
+  ["Loops (`for`, `while`, `for...of`, `for...in`)", "Repeat work while choosing the correct iteration construct."],
+  ["Functions", "Create reusable functions with parameters, return values, and clear contracts."],
+  ["Strings and String Methods", "Search, format, split, and transform text safely."],
+  ["Arrays and Array Methods", "Store ordered data and transform arrays with built-in methods."],
+  ["Objects and Object Methods", "Model related data and behavior with JavaScript objects."],
+  ["Scope and Closures", "Understand lexical scope and use closures to protect state."],
+  ["Arrow Functions", "Use concise functions while understanding lexical `this`."],
+  ["Destructuring and Spread/Rest Operators", "Extract values and compose arrays and objects without unintended mutation."],
+  ["Array Methods (`map`, `filter`, `reduce`, `find`)", "Build readable data-transformation pipelines."],
+  ["Error Handling (`try`, `catch`, `finally`)", "Handle expected failures and clean up resources safely."],
+  ["DOM Manipulation", "Read and update the document tree to create interactive interfaces."],
+  ["Events and Event Handling", "Respond to user actions and understand propagation and delegation."],
+  ["Forms and Input Validation", "Build accessible forms and validate input without treating the client as a security boundary."],
+  ["JavaScript Modules (`import`, `export`)", "Split code into maintainable modules with explicit boundaries."],
+  ["Asynchronous JavaScript", "Reason about non-blocking work, callbacks, and completion order."],
+  ["Promises", "Represent eventual results and compose asynchronous operations."],
+  ["`async` and `await`", "Write readable asynchronous code with explicit error handling."],
+  ["Fetch API and HTTP Requests", "Call APIs with request configuration, timeouts, status checks, and safe errors."],
+  ["JSON and Data Handling", "Serialize, parse, validate, and transform structured data."],
+  ["Browser Storage (LocalStorage, SessionStorage)", "Persist appropriate client-side state while considering privacy and staleness."],
+  ["Object-Oriented Programming", "Model state and behavior with objects, composition, and reusable abstractions."],
+  ["Prototypes and Inheritance", "Understand prototype lookup and choose inheritance deliberately."],
+  ["Classes and Constructors", "Define class contracts, constructors, methods, and instances."],
+  ["Regular Expressions", "Search and validate structured text while knowing when a parser is safer."],
+  ["Debugging and Browser Developer Tools", "Use breakpoints, network inspection, console tools, and profilers to find root causes."],
+  ["Testing with Jest or Vitest", "Write focused unit tests, regression tests, and useful assertions."],
+  ["Node.js Fundamentals", "Run JavaScript outside the browser and work with the Node.js runtime."],
+  ["npm and Package Management", "Manage dependencies, scripts, lockfiles, and reproducible installs."],
+  ["Backend Development with Express.js", "Build server routes, middleware, validation, and error handling with Express."],
+  ["REST APIs and CRUD Operations", "Design predictable HTTP resources and implement create, read, update, and delete flows."],
+  ["Databases and SQL Integration", "Persist application data with queries, transactions, migrations, and repository boundaries."],
+  ["Authentication and Web Security", "Protect identities, sessions, data, and browser applications from common threats."],
+  ["TypeScript", "Add static types to JavaScript boundaries and understand runtime limitations."],
+  ["Frontend Frameworks (React)", "Build component-based interfaces with props, state, effects, and accessibility."],
+  ["State Management", "Choose local, server, URL, and shared state boundaries for predictable applications."],
+  ["Web Performance Optimization", "Measure rendering and network bottlenecks and improve performance with evidence."],
+  ["Git and GitHub", "Collaborate with branches, commits, pull requests, reviews, and release history."],
+  ["Build Tools and Bundlers", "Understand modules, bundling, code splitting, source maps, and production builds."],
+  ["WebSockets and Real-Time Applications", "Design authenticated live updates with reconnection and duplicate-event handling."],
+  ["Design Patterns and Software Architecture", "Choose maintainable boundaries and patterns based on product constraints."],
+  ["Deployment and Production Workflows", "Configure, deploy, observe, and roll back JavaScript applications safely."],
+  ["Building Production-Ready Applications", "Combine testing, security, persistence, performance, observability, and operations in a complete product."],
+];
+function slugifyJavaScriptRoadmap(title) {
+  return title.toLowerCase().replace(/[`'()]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+function makeJavaScriptRoadmapLesson([title, focus], index) {
+  const slug = slugifyJavaScriptRoadmap(title);
+  const advanced = index >= 31;
+  const code = index < 20
+    ? `const topic = ${JSON.stringify(title)};\nconst practice = { topic, completed: false };\nconsole.log(practice);`
+    : `const workflow = {\n  topic: ${JSON.stringify(title)},\n  validated: true,\n  tested: false,\n  productionReady: false\n};\nconsole.log(workflow);`;
+  return {
+    id: `javascript-roadmap-${slug}`,
+    title,
+    description: focus,
+    level: index < 20 ? "Beginner" : advanced ? "Advanced" : "Intermediate",
+    estimatedTime: advanced ? "40 min" : "30 min",
+    objectives: [focus, "Explain the trade-offs behind the approach", "Apply the concept in a practical JavaScript exercise"],
+    sections: [
+      { type: "explanation", title: "Core Idea", content: `${focus} Start with the problem it solves, connect it to a realistic JavaScript workflow, and consider inputs, failure modes, browser or server boundaries, and maintainability.` },
+      { type: "example", title: "Practical JavaScript Example", code, explanation: "Read the example line by line, then replace the placeholder with a small feature from your own project." },
+      { type: "challenge", title: "Practice Project", instructions: `Create a focused exercise about ${title}. Include a normal case, an edge case, a test or verification step, and a short explanation of what could go wrong.`, starterCode: `${code}\n\n// Extend this example to complete the challenge` },
+    ],
+  };
+}
 // JavaScript has two hand-written beginner lessons; extend it with the same
 // complete path used by the other programming languages.
 lessons.javascript = [
+  ...javascriptProfessionalRoadmap.map(makeJavaScriptRoadmapLesson),
   ...lessons.javascript,
   ...makeGeneratedCourseLessons("javascript", [
     "Control Flow and Functions",
