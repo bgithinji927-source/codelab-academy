@@ -89,6 +89,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [assessmentResult, setAssessmentResult] = useState(null);
   const [assessmentMarked, setAssessmentMarked] = useState(false);
   const [assessmentSubmitting, setAssessmentSubmitting] = useState(false);
+  const [expandedStoredSections, setExpandedStoredSections] = useState([0]);
 
   const typingTimerRef = useRef(null);
   const kaiActivityTimerRef = useRef(null);
@@ -122,6 +123,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     setAssessmentAnswers({});
     setAssessmentResult(null);
     setAssessmentMarked(false);
+    setExpandedStoredSections([0]);
   }, [lesson?.id]);
   const submitAssessment = async () => {
     if (!assessmentQuestions.length || assessmentSubmitting) return;
@@ -1705,36 +1707,40 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       .split(/\n\s*\n/)
       .map((paragraph) => paragraph.trim())
       .filter(Boolean);
-
+    const isExpanded = expandedStoredSections.includes(index);
+    const toggleSection = () => setExpandedStoredSections((current) => current.includes(index) ? current.filter((item) => item !== index) : [...current, index]);
     return (
-      <article className={`stored-lesson-section stored-lesson-${sectionType}`} key={`${sectionType}-${index}`}>
-        {section.title && <h3>{section.title}</h3>}
-        {paragraphs.map((paragraph, paragraphIndex) => {
-          const lines = paragraph.split("\n").map((line) => line.trim()).filter(Boolean);
-          const bulletLines = lines.filter((line) => /^[-*]\s+/.test(line));
-          const proseLines = lines.filter((line) => !/^[-*]\s+/.test(line));
-          return (
-            <div className="stored-lesson-content-block" key={paragraphIndex}>
-              {proseLines.length > 0 && <p>{proseLines.join(" ")}</p>}
-              {bulletLines.length > 0 && <ul className="stored-lesson-bullets">{bulletLines.map((line, bulletIndex) => <li key={bulletIndex}>{line.replace(/^[-*]\s+/, "")}</li>)}</ul>}
+      <article className={`stored-lesson-section stored-lesson-${sectionType}${isExpanded ? " is-expanded" : ""}`} key={`${sectionType}-${index}`}>
+        {section.title && <button type="button" className="stored-lesson-section-toggle" onClick={toggleSection} aria-expanded={isExpanded}>
+          <h3>{section.title}</h3><ChevronDown size={18} aria-hidden="true" />
+        </button>}
+        <div className="stored-lesson-section-body">
+          {paragraphs.map((paragraph, paragraphIndex) => {
+            const lines = paragraph.split("\n").map((line) => line.trim()).filter(Boolean);
+            const bulletLines = lines.filter((line) => /^[-*]\s+/.test(line));
+            const proseLines = lines.filter((line) => !/^[-*]\s+/.test(line));
+            return (
+              <div className="stored-lesson-content-block" key={paragraphIndex}>
+                {proseLines.length > 0 && <p>{proseLines.join(" ")}</p>}
+                {bulletLines.length > 0 && <ul className="stored-lesson-bullets">{bulletLines.map((line, bulletIndex) => <li key={bulletIndex}>{line.replace(/^[-*]\s+/, "")}</li>)}</ul>}
+              </div>
+            );
+          })}
+          {sectionType === "example" && section.code && <CodeBlock block={{ code: section.code, language: section.language || "javascript", filename: section.title || "example.js" }} />}
+          {section.explanation && <p className="stored-lesson-explanation">{section.explanation}</p>}
+          {sectionType === "challenge" && section.instructions && <p className="stored-lesson-instructions"><strong>Practice:</strong> {section.instructions}</p>}
+          {sectionType === "challenge" && section.starterCode && <CodeBlock block={{ code: section.starterCode, language: section.language || "javascript", filename: "starter.js" }} />}
+          {sectionType === "quiz" && (
+            <div className="stored-lesson-quiz">
+              <p><strong>{section.question}</strong></p>
+              <ol>{(section.options || []).map((option) => <li key={option}>{option}</li>)}</ol>
+              <small>Ask Kai to check your answer when you are ready.</small>
             </div>
-          );
-        })}
-        {sectionType === "example" && section.code && <CodeBlock block={{ code: section.code, language: section.language || "javascript", filename: section.title || "example.js" }} />}
-        {section.explanation && <p className="stored-lesson-explanation">{section.explanation}</p>}
-        {sectionType === "challenge" && section.instructions && <p className="stored-lesson-instructions"><strong>Practice:</strong> {section.instructions}</p>}
-        {sectionType === "challenge" && section.starterCode && <CodeBlock block={{ code: section.starterCode, language: section.language || "javascript", filename: "starter.js" }} />}
-        {sectionType === "quiz" && (
-          <div className="stored-lesson-quiz">
-            <p><strong>{section.question}</strong></p>
-            <ol>{(section.options || []).map((option) => <li key={option}>{option}</li>)}</ol>
-            <small>Ask Kai to check your answer when you are ready.</small>
-          </div>
-        )}
+          )}
+        </div>
       </article>
     );
   };
-
   // ============================================
   // CALCULATE PROGRESS PERCENTAGE
   // ============================================

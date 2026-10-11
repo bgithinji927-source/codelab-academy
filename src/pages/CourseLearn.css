@@ -3349,3 +3349,16 @@ html #root .learn-page.kai-firebox-mode .learn-back:hover {
 @media (max-width: 700px) {
   html #root .learn-page.kai-firebox-mode .learn-back { padding: 8px 9px; font-size: 10px; }
 }
+
+/* Mobile lesson accordion: reduce cognitive load without hiding content on desktop. */
+.stored-lesson-section-toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.stored-lesson-section-toggle h3 { flex: 1; }
+.stored-lesson-section-toggle svg { flex: none; transition: transform .2s ease; color: #fff; }
+.stored-lesson-section.is-expanded .stored-lesson-section-toggle svg { transform: rotate(180deg); }
+.stored-lesson-section-body { display: block; }
+@media (max-width: 600px) {
+  .stored-lesson-section:not(.is-expanded) .stored-lesson-section-body { display: none; }
+  .stored-lesson-section-toggle { min-height: 34px; }
+  .stored-lesson-section-toggle h3 { margin: 0; font-size: 1rem; }
+  .stored-lesson-section:not(.is-expanded) { padding-block: 15px; }
+}
