@@ -3362,3 +3362,17 @@ html #root .learn-page.kai-firebox-mode .learn-back:hover {
   .stored-lesson-section-toggle h3 { margin: 0; font-size: 1rem; }
   .stored-lesson-section:not(.is-expanded) { padding-block: 15px; }
 }
+
+/* Worked knowledge examples */
+.stored-knowledge-examples { display: grid; gap: 10px; margin-top: 15px; }
+.stored-knowledge-example { overflow: hidden; border: 1px solid #30363b; border-radius: 9px; background: rgba(255,255,255,.025); }
+.stored-knowledge-example summary { display: flex; align-items: center; gap: 10px; padding: 13px 14px; color: #fff; cursor: pointer; list-style: none; font-weight: 700; line-height: 1.45; }
+.stored-knowledge-example summary::-webkit-details-marker { display: none; }
+.stored-knowledge-example summary > svg { margin-left: auto; flex: none; transition: transform .2s ease; }
+.stored-knowledge-example[open] summary > svg { transform: rotate(180deg); }
+.stored-knowledge-number { display: grid; place-items: center; flex: none; width: 25px; height: 25px; border: 1px solid #fff; border-radius: 50%; color: #fff; font-size: .75rem; }
+.stored-knowledge-answer { padding: 14px 17px 16px 49px; border-top: 1px solid #30363b; color: #fff; line-height: 1.6; }
+.stored-knowledge-answer strong { display: block; margin-top: 4px; color: #fff; font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; }
+.stored-knowledge-answer p { margin: 5px 0 14px; color: #fff !important; }
+.stored-knowledge-answer p:last-child { margin-bottom: 0; }
+@media (max-width: 600px) { .stored-knowledge-example summary { padding: 12px 10px; font-size: .88rem; } .stored-knowledge-answer { padding: 13px 12px 15px 45px; font-size: .88rem; } }

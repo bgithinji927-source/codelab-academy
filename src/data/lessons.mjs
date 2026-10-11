@@ -1932,6 +1932,23 @@ Why this example matters: a small example is valuable when it makes the rule vis
         language: lesson.language || "javascript"
       },
       {
+        type: "knowledgeExamples",
+        title: "10 questions you should be able to answer",
+        content: `Use these worked examples as a self-check before starting the assessment. Read the question first, answer it yourself, and then reveal the explanation. Every answer is connected to the lesson's main idea.`,
+        questions: [
+          { question: lesson.quizQuestion || `What is the most important idea in ${focus}?`, answer: lesson.quizAnswer || `Apply ${focus} with a tested example.`, explanation: `This is correct because it connects the lesson to its intended outcome: understanding ${focus} well enough to use it, test it, and explain the result.` },
+          { question: `What problem does ${focus} help a developer solve?`, answer: `It provides a structured approach to working with ${focus}.`, explanation: `This is correct because a programming concept is useful when it reduces confusion around a specific problem and gives the developer predictable steps.` },
+          { question: `What should you identify before writing code for ${focus}?`, answer: "The goal, inputs, expected output, and important constraints.", explanation: "This is correct because clear boundaries prevent a solution from solving the wrong problem or ignoring important requirements." },
+          { question: `What is the best way to understand an example of ${focus}?`, answer: "Predict the result, run or trace the example, and explain each important step.", explanation: "This is correct because prediction exposes what you understand, while tracing and checking the result gives you evidence instead of relying on memorization." },
+          { question: `Which case should you test in addition to the normal case?`, answer: "A boundary or failure case such as empty, invalid, repeated, or unusually large input.", explanation: "This is correct because real programs receive unexpected inputs, and boundary testing reveals weaknesses that a happy-path demo can hide." },
+          { question: `How can you tell whether your ${focus} solution is correct?`, answer: "Compare its observable result with a clearly defined expected result.", explanation: "This is correct because correctness must be checked against evidence, such as an assertion, expected output, validation rule, or user-visible behavior." },
+          { question: `Why should responsibilities be kept clear when using ${focus}?`, answer: "Clear responsibilities make code easier to read, test, change, and debug.", explanation: "This is correct because a focused component has fewer hidden side effects and makes it easier to locate the cause of a problem." },
+          { question: `What is a common beginner mistake with ${focus}?`, answer: "Copying the pattern without understanding its assumptions or limitations.", explanation: "This is correct because copied code may work for one example while failing when the input, environment, or requirement changes." },
+          { question: `What should a professional developer consider before shipping ${focus}?`, answer: "Validation, security, performance, observability, maintainability, and rollback.", explanation: "This is correct because production quality includes safe operation over time, not only a successful first run on a developer's machine." },
+          { question: `How can you transfer this lesson to a new project?`, answer: `Explain the goal, adapt the pattern to the new inputs, test an edge case, and document the trade-off.`, explanation: `This is correct because transfer means applying the reasoning behind ${focus}, rather than copying the exact example without understanding it.` }
+        ]
+      },
+      {
         type: "deepDive",
         title: "Common mistakes and professional checks",
         content: `Beginners often get ${topic.toLowerCase()} working once, but professional developers also consider what happens when the environment or the input changes.

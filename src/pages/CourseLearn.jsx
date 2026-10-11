@@ -1726,6 +1726,16 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               </div>
             );
           })}
+          {sectionType === "knowledgeExamples" && Array.isArray(section.questions) && (
+            <div className="stored-knowledge-examples">
+              {section.questions.map((example, exampleIndex) => (
+                <details className="stored-knowledge-example" key={`${exampleIndex}-${example.question}`}>
+                  <summary><span className="stored-knowledge-number">{exampleIndex + 1}</span><span>{example.question}</span><ChevronDown size={16} aria-hidden="true" /></summary>
+                  <div className="stored-knowledge-answer"><strong>Correct answer</strong><p>{example.answer}</p><strong>Why this is correct</strong><p>{example.explanation}</p></div>
+                </details>
+              ))}
+            </div>
+          )}
           {sectionType === "example" && section.code && <CodeBlock block={{ code: section.code, language: section.language || "javascript", filename: section.title || "example.js" }} />}
           {section.explanation && <p className="stored-lesson-explanation">{section.explanation}</p>}
           {sectionType === "challenge" && section.instructions && <p className="stored-lesson-instructions"><strong>Practice:</strong> {section.instructions}</p>}
