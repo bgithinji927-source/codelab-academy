@@ -1702,6 +1702,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
       <header className="learn-navbar">
 
+        <div className="firebox-brand" aria-label="Kai teaching assistant">
+          <div className="firebox-brand-mark"><Bot size={19} /></div>
+          <div><strong>KAI ACADEMY</strong><span>GENERATIVE LEARNING ASSISTANT</span></div>
+        </div>
+
         <button
           type="button"
           className="learn-back"
@@ -1791,6 +1796,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               <option value="compact">Compact</option>
               <option value="focus">Focus</option>
               <option value="reading">Reading</option>
+              <option value="firebox">Firebox</option>
             </select>
           </label>
           <div className="lesson-status">
@@ -1842,6 +1848,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               <ArrowRight size={17} />
             </button>
           )}
+        </div>
+
+        <div className="firebox-header-actions">
+          <span className="firebox-ready"><span /> Ready</span>
+          <button type="button" className="firebox-new-chat" onClick={() => { setMessages([]); setAnswer(""); setLessonCompletionReady(false); }}>New chat</button>
         </div>
 
       </header>

@@ -3018,3 +3018,64 @@ html[data-theme="dark"] .kai-message-actions button,
 .stored-lesson-ai-note svg { flex: none; color: #75c9ff; margin-top: 2px; }
 .stored-lesson-ai-note strong { color: #e0f4ff; }
 @media (max-width: 600px) { .stored-lesson-panel { margin-inline: 0; padding: 18px 14px; } .stored-lesson-section { padding: 14px; } .stored-lesson-ai-note { font-size: .82rem; } }
+
+/* Firebox-inspired Kai workspace. The mode is opt-in from the Interface menu. */
+.learn-page.kai-firebox-mode { min-height: 100vh; background: #0e1013 !important; color: #eef1ed !important; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.learn-page.kai-firebox-mode .kai-wallpaper-image { display: none !important; }
+.learn-page.kai-firebox-mode .learn-navbar { position: sticky; display: flex; align-items: center; gap: 18px; height: 78px; padding: 0 34px; background: rgba(14,16,19,.96) !important; border-bottom: 1px solid #2b2f33 !important; color: #eef1ed !important; backdrop-filter: blur(18px); }
+.firebox-brand { display: none; align-items: center; gap: 11px; min-width: 230px; }
+.firebox-brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: #f3f6f0; color: #111418; }
+.firebox-brand strong, .firebox-brand span { display: block; }
+.firebox-brand strong { color: #f4f7f2; font-size: 14px; letter-spacing: .16em; }
+.firebox-brand span { margin-top: 3px; color: #8f9891; font-size: 8px; letter-spacing: .14em; }
+.learn-page.kai-firebox-mode .firebox-brand { display: flex; }
+.learn-page.kai-firebox-mode .learn-back, .learn-page.kai-firebox-mode .learn-course-title, .learn-page.kai-firebox-mode .learn-progress, .learn-page.kai-firebox-mode .learn-top-actions { display: none; }
+.firebox-header-actions { display: none; align-items: center; gap: 25px; margin-left: auto; }
+.learn-page.kai-firebox-mode .firebox-header-actions { display: flex; }
+.firebox-ready { display: inline-flex; align-items: center; gap: 7px; color: #d9ded9; font-size: 12px; }
+.firebox-ready > span { width: 8px; height: 8px; border-radius: 50%; background: #b6ff52; box-shadow: 0 0 10px rgba(182,255,82,.75); }
+.firebox-new-chat { padding: 10px 16px; border: 1px solid #3b4249; border-radius: 9px; background: #191d21; color: #edf2ed; font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; }
+.firebox-new-chat:hover { border-color: #8d9890; background: #23282d; }
+.learn-page.kai-firebox-mode .conversation-container { max-width: 980px; min-height: calc(100vh - 78px); margin: 0 auto; padding: 36px 28px 178px; background: #0e1013 !important; }
+.learn-page.kai-firebox-mode .kai-teaching-card { width: 100%; max-width: none; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.learn-page.kai-firebox-mode .conversation-messages { max-width: 820px; margin: 0 auto; }
+.learn-page.kai-firebox-mode .stored-lesson-panel { margin: 0 0 30px; padding: 0 0 26px; border: 0; border-bottom: 1px solid #2b2f33; background: transparent; box-shadow: none; }
+.learn-page.kai-firebox-mode .stored-lesson-panel h2 { color: #f3f6f2; font-size: clamp(1.5rem,3vw,2.2rem); letter-spacing: -.02em; }
+.learn-page.kai-firebox-mode .stored-lesson-badge { color: #b7ff51; }
+.learn-page.kai-firebox-mode .stored-lesson-description, .learn-page.kai-firebox-mode .stored-lesson-section p, .learn-page.kai-firebox-mode .stored-lesson-objectives ul { color: #c2c9c3; }
+.learn-page.kai-firebox-mode .stored-lesson-objectives { border-left-color: #b7ff51; background: rgba(183,255,81,.055); }
+.learn-page.kai-firebox-mode .stored-lesson-section { border-color: #30353a; background: #15181c; border-radius: 8px; }
+.learn-page.kai-firebox-mode .stored-lesson-section h3 { color: #d9ff9d; }
+.learn-page.kai-firebox-mode .stored-lesson-ai-note { border-color: rgba(183,255,81,.24); background: rgba(183,255,81,.055); color: #cbd8c2; }
+.learn-page.kai-firebox-mode .chat-row { margin-bottom: 30px; }
+.learn-page.kai-firebox-mode .kai-bubble, .learn-page.kai-firebox-mode .learner-bubble { background: transparent !important; border: 0 !important; box-shadow: none !important; border-radius: 0; color: #e5e9e5 !important; }
+.learn-page.kai-firebox-mode .kai-board-content, .learn-page.kai-firebox-mode .learner-board-content { padding: 0; background: transparent !important; border: 0 !important; color: #e5e9e5 !important; }
+.learn-page.kai-firebox-mode .kai-message-header, .learn-page.kai-firebox-mode .learner-message-header { margin-bottom: 10px; }
+.learn-page.kai-firebox-mode .kai-avatar-small { background: #f3f6f0; color: #111418; }
+.learn-page.kai-firebox-mode .kai-message-text, .learn-page.kai-firebox-mode .kai-message-text p, .learn-page.kai-firebox-mode .learner-message-text, .learn-page.kai-firebox-mode .learner-message-text p { color: #e5e9e5 !important; line-height: 1.75; }
+.learn-page.kai-firebox-mode .chat-name, .learn-page.kai-firebox-mode .chat-name strong { color: #f2f5f1 !important; }
+.learn-page.kai-firebox-mode .chat-name span, .learn-page.kai-firebox-mode .kai-online { color: #869089 !important; }
+.learn-page.kai-firebox-mode .kai-online span { background: #b7ff51; box-shadow: 0 0 8px rgba(183,255,81,.7); }
+.learn-page.kai-firebox-mode .kai-input-dock { position: fixed; left: 50%; bottom: 18px; z-index: 100; width: min(980px,calc(100vw - 48px)); max-width: none; margin: 0; padding: 0; transform: translateX(-50%); border: 1px solid #4b5359; border-radius: 16px; background: rgba(16,17,18,.97); box-shadow: 0 14px 42px rgba(0,0,0,.45); }
+.learn-page.kai-firebox-mode .kai-input-dock:focus-within { border-color: #7c8a81; box-shadow: 0 14px 42px rgba(0,0,0,.52); }
+.learn-page.kai-firebox-mode .kai-input-dock textarea { min-height: 78px; padding: 17px 17px 45px; color: #f0f4ef; background: transparent; font-size: 14px; }
+.learn-page.kai-firebox-mode .kai-input-dock textarea::placeholder { color: #929b95; }
+.learn-page.kai-firebox-mode .kai-composer-icon { left: 13px; bottom: 10px; border: 1px solid #3b4248; border-radius: 8px; background: #1d2226; color: #d3dad4; }
+.learn-page.kai-firebox-mode .kai-composer-send { right: 13px; bottom: 10px; width: 37px; height: 37px; border-radius: 10px; background: #b7ff51; color: #11160f; }
+.learn-page.kai-firebox-mode .kai-composer-send:hover:not(:disabled) { background: #d0ff91; }
+.learn-page.kai-firebox-mode .input-hint { display: block; position: absolute; right: 58px; bottom: 17px; color: #747d77; }
+.learn-page.kai-firebox-mode .kai-readiness-panel, .learn-page.kai-firebox-mode .kai-board-status { background: #15181c; border-color: #30353a; color: #d9e0da; }
+@media (max-width:700px) {
+  .learn-page.kai-firebox-mode .learn-navbar { height: 66px; padding: 0 15px; }
+  .firebox-brand { min-width: 0; }
+  .firebox-brand strong { font-size: 11px; }
+  .firebox-brand span { font-size: 6px; }
+  .firebox-brand-mark { width: 30px; height: 30px; }
+  .firebox-header-actions { gap: 10px; }
+  .firebox-ready { font-size: 10px; }
+  .firebox-new-chat { padding: 8px 10px; font-size: 10px; }
+  .learn-page.kai-firebox-mode .conversation-container { padding: 24px 15px 168px; }
+  .learn-page.kai-firebox-mode .kai-input-dock { bottom: 10px; width: calc(100vw - 24px); border-radius: 14px; }
+  .learn-page.kai-firebox-mode .kai-input-dock textarea { min-height: 86px; }
+  .learn-page.kai-firebox-mode .input-hint { display: none; }
+}
