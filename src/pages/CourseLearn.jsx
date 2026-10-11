@@ -26,7 +26,7 @@ import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_IMAGE_URLS, kaiBackgroundStorage
 import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
 import "./CourseLearn.css";
 
-const KAI_UI_MODE_KEY = "codelabKaiUiMode";
+const KAI_UI_MODE_KEY = "codelabKaiUiMode:v2";
 
 function feedbackMapForLesson(records, courseId, lessonId) {
   return (Array.isArray(records) ? records : [])
@@ -73,7 +73,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   ));
   const [kaiBackgroundImageUrl, setKaiBackgroundImageUrl] = useState("");
   const [kaiUiMode, setKaiUiMode] = useState(() => (
-    localStorage.getItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`) || "chatgpt"
+    localStorage.getItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`) || "firebox"
   ));
   const [messageFeedback, setMessageFeedback] = useState({});
   const [savedKaiFeedback, setSavedKaiFeedback] = useState([]);
