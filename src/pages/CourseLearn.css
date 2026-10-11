@@ -3247,3 +3247,38 @@ html #root .learn-page.kai-firebox-mode .conversation-messages {
   html #root .learn-page.kai-firebox-mode .kai-input-dock { bottom: 24px !important; width: calc(100vw - 24px) !important; }
   html #root .learn-page.kai-firebox-mode .input-hint { width: calc(100vw - 24px) !important; }
 }
+
+/* Firebox monochrome typography: all visible fonts are white. */
+html #root .learn-page.kai-firebox-mode,
+html #root .learn-page.kai-firebox-mode *,
+html #root .learn-page.kai-firebox-mode .stored-lesson-panel,
+html #root .learn-page.kai-firebox-mode .stored-lesson-panel h2,
+html #root .learn-page.kai-firebox-mode .stored-lesson-panel p,
+html #root .learn-page.kai-firebox-mode .stored-lesson-panel li,
+html #root .learn-page.kai-firebox-mode .stored-lesson-section h3,
+html #root .learn-page.kai-firebox-mode .kai-message-text,
+html #root .learn-page.kai-firebox-mode .kai-message-text *,
+html #root .learn-page.kai-firebox-mode .learner-message-text,
+html #root .learn-page.kai-firebox-mode .learner-message-text *,
+html #root .learn-page.kai-firebox-mode .chat-name,
+html #root .learn-page.kai-firebox-mode .chat-name *,
+html #root .learn-page.kai-firebox-mode .firebox-brand,
+html #root .learn-page.kai-firebox-mode .firebox-brand *,
+html #root .learn-page.kai-firebox-mode .firebox-ready,
+html #root .learn-page.kai-firebox-mode .firebox-new-chat,
+html #root .learn-page.kai-firebox-mode .kai-input-dock textarea,
+html #root .learn-page.kai-firebox-mode .input-hint {
+  color: #fff !important;
+}
+html #root .learn-page.kai-firebox-mode .kai-input-dock textarea::placeholder { color: #fff !important; opacity: .82; }
+html #root .learn-page.kai-firebox-mode .stored-lesson-badge,
+html #root .learn-page.kai-firebox-mode .stored-lesson-section h3 { color: #fff !important; }
+html #root .learn-page.kai-firebox-mode .kai-inline-code,
+html #root .learn-page.kai-firebox-mode .kai-rich-content code { color: #fff !important; }
+html #root .learn-page.kai-firebox-mode .kai-composer-icon,
+html #root .learn-page.kai-firebox-mode .kai-composer-send,
+html #root .learn-page.kai-firebox-mode svg { color: #fff !important; }
+
+html #root .learn-page.kai-firebox-mode .firebox-brand-mark { background: #252525 !important; color: #fff !important; border: 1px solid #fff; }
+html #root .learn-page.kai-firebox-mode .kai-composer-send { background: #252525 !important; color: #fff !important; border: 1px solid #fff !important; }
+html #root .learn-page.kai-firebox-mode .kai-composer-send:hover:not(:disabled) { background: #3a3a3a !important; }
