@@ -470,3 +470,172 @@
   .kai-messages { padding-inline: 10px; }
   .kai-message .message-bubble { font-size: .92rem; }
 }
+
+/* FIREBOX-INSPIRED FOCUS INTERFACE */
+.kai-focus-mode {
+  --focus-bg: #0b0e14;
+  --focus-panel: #111720;
+  --focus-panel-soft: #171e29;
+  --focus-line: rgba(185, 199, 221, .18);
+  --focus-text: #f2f5fb;
+  --focus-muted: #9ca8ba;
+  --focus-lime: #b6ff57;
+  background: var(--focus-bg);
+  color: var(--focus-text);
+}
+
+.kai-focus-mode .kai-header {
+  background: rgba(15, 20, 28, .96);
+  border-bottom: 1px solid var(--focus-line);
+  box-shadow: none;
+  padding: 18px clamp(20px, 5vw, 72px) 16px;
+}
+
+.kai-focus-mode .kai-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto 15px;
+}
+
+.kai-focus-mode .kai-back-btn {
+  color: var(--focus-muted);
+  margin: 0;
+}
+
+.kai-focus-mode .kai-back-btn:hover { color: var(--focus-lime); }
+
+.kai-interface-switch {
+  display: inline-flex;
+  padding: 3px;
+  gap: 3px;
+  border: 1px solid var(--focus-line);
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+}
+
+.kai-interface-switch button {
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 13px;
+  color: var(--focus-muted);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+
+.kai-interface-switch button.is-active { color: #071007; background: var(--focus-lime); font-weight: 700; }
+
+.kai-focus-mode .kai-header-title {
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 12px;
+}
+
+.kai-focus-mode .kai-brand-mark {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  color: #061008;
+  background: var(--focus-lime);
+  box-shadow: 0 0 28px rgba(182,255,87,.18);
+}
+
+.kai-focus-mode .kai-header-title h1 { color: var(--focus-text); font-size: 18px; letter-spacing: .15em; }
+.kai-focus-mode .kai-header-title p { color: var(--focus-muted); letter-spacing: .14em; font-size: 10px; }
+.kai-focus-mode .kai-header-tool { color: var(--focus-muted); margin-left: auto; }
+.kai-focus-mode .kai-header-tool + .kai-header-tool { margin-left: 4px; }
+
+.kai-focus-mode .kai-main {
+  max-width: 1400px;
+  padding: 0 clamp(16px, 5vw, 72px) 32px;
+  gap: 24px;
+}
+
+.kai-focus-mode .kai-container {
+  background: var(--focus-bg);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: calc(100vh - 137px);
+}
+
+.kai-focus-mode .kai-messages { padding: clamp(36px, 7vw, 84px) clamp(12px, 9vw, 148px) 180px; gap: 28px; }
+.kai-focus-mode .sample-questions { border: 0; background: transparent; padding: 0 0 12px; }
+.kai-focus-mode .sample-questions h3 { color: var(--focus-lime); text-transform: uppercase; letter-spacing: .14em; font-size: 11px; }
+.kai-focus-mode .sample-btn { color: var(--focus-text); background: var(--focus-panel); border-color: var(--focus-line); border-radius: 10px; }
+.kai-focus-mode .sample-btn:hover { background: var(--focus-panel-soft); border-color: var(--focus-lime); transform: none; }
+
+.kai-focus-mode .message { gap: 13px; }
+.kai-focus-mode .kai-avatar { width: 34px; height: 34px; background: var(--focus-lime); color: #071007; border-radius: 10px; }
+.kai-focus-mode .message-bubble,
+.kai-focus-mode .kai-message .message-bubble { background: transparent; color: var(--focus-text); border: 0; padding: 0; font-size: clamp(16px, 1.6vw, 21px); line-height: 1.8; max-width: 860px; }
+.kai-focus-mode .user-message { justify-content: flex-start; padding-left: 47px; }
+.kai-focus-mode .user-message .message-bubble { color: var(--focus-text); font-size: clamp(17px, 1.7vw, 23px); font-weight: 600; }
+.kai-focus-mode .kai-response-label { display: block; color: var(--focus-lime); font-size: 11px; letter-spacing: .16em; font-weight: 800; margin-bottom: 14px; }
+.kai-focus-mode .kai-message .message-bubble p { margin-bottom: 1.1rem; }
+.kai-focus-mode .kai-message .message-bubble h2,
+.kai-focus-mode .kai-message .message-bubble h3,
+.kai-focus-mode .kai-message .message-bubble h4 { color: var(--focus-text); }
+.kai-focus-mode .kai-message .message-bubble code { color: var(--focus-lime); background: rgba(182,255,87,.08); }
+.kai-focus-mode .kai-response-actions { display: flex; gap: 10px; margin-top: 18px; }
+.kai-focus-mode .kai-response-actions button { border: 0; padding: 5px; color: var(--focus-muted); background: transparent; cursor: pointer; }
+.kai-focus-mode .kai-response-actions button:hover { color: var(--focus-lime); }
+.kai-focus-mode .kai-error { color: #ff9d9d; padding: 0 clamp(12px, 9vw, 148px); }
+
+.kai-focus-mode .kai-input-area {
+  position: fixed;
+  z-index: 4;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  width: min(calc(100% - 32px), 940px);
+  padding: 16px 18px 12px;
+  border: 1px solid rgba(190, 204, 228, .3);
+  border-radius: 18px;
+  background: rgba(12, 14, 18, .95);
+  box-shadow: 0 18px 60px rgba(0,0,0,.45);
+  backdrop-filter: blur(18px);
+}
+
+.kai-focus-mode .input-wrapper { align-items: flex-end; margin: 0; gap: 12px; }
+.kai-focus-mode .kai-input { min-height: 56px; resize: none; border: 0; outline: 0; padding: 8px 6px; color: var(--focus-text); background: transparent; font-size: 16px; line-height: 1.45; }
+.kai-focus-mode .kai-input::placeholder { color: #929bab; }
+.kai-focus-mode .kai-input:focus { box-shadow: none; }
+.kai-focus-mode .send-btn { width: 48px; height: 48px; border-radius: 13px; color: #071007; background: var(--focus-lime); }
+.kai-focus-mode .send-btn:hover:not(:disabled) { box-shadow: 0 0 24px rgba(182,255,87,.22); transform: none; }
+.kai-focus-mode .kai-composer-tools { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+.kai-focus-mode .kai-composer-tools button { display: inline-flex; align-items: center; gap: 5px; color: var(--focus-text); background: var(--focus-panel-soft); border: 1px solid var(--focus-line); border-radius: 9px; padding: 7px 10px; cursor: pointer; font: inherit; font-size: 12px; }
+.kai-focus-mode .kai-composer-tools button:hover { border-color: var(--focus-lime); }
+.kai-focus-mode .kai-composer-tools span { color: #737e90; font-size: 11px; margin-left: auto; }
+.kai-focus-mode .input-hint { display: none; }
+.kai-focus-mode .kai-sidebar { display: none; }
+
+@media (max-width: 760px) {
+  .kai-focus-mode .kai-header { padding: 14px 16px 13px; }
+  .kai-focus-mode .kai-topbar { margin-bottom: 13px; }
+  .kai-focus-mode .kai-back-btn { font-size: 0; gap: 0; }
+  .kai-focus-mode .kai-back-btn svg { width: 21px; height: 21px; }
+  .kai-focus-mode .kai-interface-switch button { padding: 6px 10px; }
+  .kai-focus-mode .kai-header-title h1 { font-size: 15px; }
+  .kai-focus-mode .kai-header-title p { font-size: 8px; }
+  .kai-focus-mode .kai-brand-mark { width: 34px; height: 34px; border-radius: 9px; }
+  .kai-focus-mode .kai-header-tool { display: none; }
+  .kai-focus-mode .kai-main { padding: 0 0 20px; }
+  .kai-focus-mode .kai-container { min-height: calc(100vh - 111px); }
+  .kai-focus-mode .kai-messages { padding: 34px 18px 190px; gap: 25px; }
+  .kai-focus-mode .message-bubble,
+  .kai-focus-mode .kai-message .message-bubble { font-size: 16px; line-height: 1.8; }
+  .kai-focus-mode .user-message { padding-left: 0; }
+  .kai-focus-mode .user-message .message-bubble { font-size: 17px; }
+  .kai-focus-mode .kai-response-label { font-size: 10px; margin-bottom: 10px; }
+  .kai-focus-mode .kai-input-area { bottom: 14px; width: calc(100% - 30px); padding: 14px 14px 11px; border-radius: 16px; }
+  .kai-focus-mode .kai-input { min-height: 60px; font-size: 15px; }
+  .kai-focus-mode .kai-composer-tools { flex-wrap: wrap; }
+  .kai-focus-mode .kai-composer-tools span { width: 100%; margin-left: 0; font-size: 10px; }
+}
