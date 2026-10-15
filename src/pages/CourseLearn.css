@@ -275,7 +275,7 @@ html[data-theme="dark"] .lesson-picker-trigger[aria-expanded="true"] { border-co
 
 .conversation-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1300px;
 
   margin: 0 auto;
 
@@ -426,7 +426,7 @@ html[data-theme="dark"] .lesson-picker-trigger[aria-expanded="true"] { border-co
 }
 
 .chat-content {
-  width: min(100%, 1200px);
+  width: min(100%, 1300px);
   min-width: 0;
 }
 
