@@ -119,12 +119,14 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     ].map((question) => ({ ...question, question: round > 1 && question.type === "text" ? `${question.question} (Replacement exercise ${round})` : question.question }));
   };
   const assessmentQuestions = assessmentQuestionsOverride || buildAssessment(lesson, assessmentRound);
+  const [assessmentPassed, setAssessmentPassed] = useState(false);
   useEffect(() => {
     setAssessmentRound(1);
     setAssessmentQuestionsOverride(null);
     setAssessmentAnswers({});
     setAssessmentResult(null);
     setAssessmentMarked(false);
+    setAssessmentPassed(false);
     setExpandedStoredSections([0]);
     setKaiGeneratedTeaching(null);
   }, [lesson?.id]);
@@ -141,6 +143,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       if (!response.ok || !data.success) throw new Error(data.message || "Kai could not grade this exercise.");
       setAssessmentResult(data);
       setAssessmentMarked(Boolean(data.passed));
+      setAssessmentPassed(Boolean(data.passed));
       if (data.courseProgress?.lessonsCompleted !== undefined) setCompletedLessonsCount(Number(data.courseProgress.lessonsCompleted) || 0);
       if (data.courseAccess) onProgressChanged?.(data);
       if (data.passed) { setLessonCompletionReady(true); setPreviousLessonSummary(data.feedback || `Assessment passed with ${data.score}%.`); }
@@ -564,7 +567,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
           : [];
         const selectedSession = normalizedSessions.find(
           (session) => Number(session.lessonIndex) === safeRequestedIndex
-        );
+        ) || stateData.session;
         const savedHistory = normalizeHistory(
           selectedSession?.conversationHistory || stateData.session?.conversationHistory
         );
@@ -590,6 +593,14 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             ? selectedSession?.completed
             : serverLesson.completed || stateData.session?.completed
         ));
+        setAssessmentPassed(Boolean(selectedSession?.assessmentPassed));
+        if (selectedSession?.assessmentPassed) {
+          setAssessmentResult({
+            passed: true,
+            score: selectedSession.assessmentScore,
+            feedback: selectedSession.assessmentFeedback || "Kai previously approved your readiness for this lesson.",
+          });
+        }
         setCourseReadyForNext(Boolean(stateData.courseProgress?.readyForNextCourse || stateData.courseAccess?.activeCourse?.progress?.readyForNextCourse));
         setReadinessSummary(stateData.courseProgress?.readinessSummary || stateData.courseAccess?.activeCourse?.progress?.readinessSummary || "");
         if (stateData.courseAccess) onProgressChanged?.(stateData);
@@ -1925,6 +1936,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
                 ? "Kai approved next course"
                 : isFinalLesson && lessonCompletionReady
                   ? "Kai is reviewing readiness"
+                  : lessonCompletionReady && !assessmentPassed
+                    ? "Complete assessment to continue"
                   : lessonCompletionReady
                     ? "Ready for next lesson!"
                     : "Lesson in progress"}
@@ -1945,12 +1958,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             type="button"
             className="next-lesson"
             onClick={handleNextLesson}
-            disabled={
-              isFinalLesson ||
-              isReviewingPastLesson ||
-              !lessonCompletionReady ||
-              isKaiTyping ||
-              isAdvancing
+              disabled={
+                isFinalLesson ||
+                isReviewingPastLesson ||
+                !lessonCompletionReady ||
+                !assessmentPassed ||
+                isKaiTyping ||
+                isAdvancing
             }
           >
             Continue to Next Lesson
@@ -1961,7 +1975,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               type="button"
               className="next-course-button"
               onClick={() => onNextCourse?.(nextCourse)}
-              disabled={isKaiTyping || isAdvancing || !onNextCourse}
+              disabled={isKaiTyping || isAdvancing || !onNextCourse || !assessmentPassed}
             >
               Start Next Course
               <ArrowRight size={17} />
@@ -2144,6 +2158,70 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             className="conversation-end-anchor"
             aria-hidden="true"
           />
+
+        </section>
+
+        <section className={`kai-assessment-panel${assessmentPassed ? " is-passed" : ""}`} aria-labelledby="kai-assessment-title">
+          <div className="kai-assessment-heading">
+            <div>
+              <span className="kai-assessment-kicker"><CheckCircle2 size={14} /> KAI READINESS CHECK</span>
+              <h2 id="kai-assessment-title">Complete your 10-question assessment</h2>
+              <p>Kai will mark every answer. You must pass before the next lesson opens. If you need more practice, Kai will explain what to review and create a fresh assessment.</p>
+            </div>
+            <strong>Attempt {assessmentRound} · {assessmentQuestions.length} questions</strong>
+          </div>
+
+          <div className="kai-assessment-scroll" aria-label="Scrollable assessment questions">
+            <div className="kai-assessment-question-track">
+              {assessmentQuestions.map((question, index) => {
+                const answerValue = String(assessmentAnswers[question.id] || "");
+                return <fieldset className="kai-assessment-question" key={question.id}>
+                  <legend><span>{index + 1}</span>{question.question}</legend>
+                  {question.type === "text" ? (
+                    <label className="kai-assessment-answer-area">
+                      <span>Write your answer clearly</span>
+                      <textarea
+                        value={answerValue}
+                        onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))}
+                        placeholder="Explain your thinking, example, or review plan here..."
+                        rows={7}
+                        aria-label={`Written answer for question ${index + 1}`}
+                        disabled={assessmentSubmitting || assessmentPassed}
+                      />
+                    </label>
+                  ) : (
+                    <div className="kai-assessment-options">
+                      {question.options.map((option) => <label key={option}>
+                        <input
+                          type="radio"
+                          name={`assessment-${question.id}`}
+                          value={option}
+                          checked={answerValue === option}
+                          onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))}
+                          disabled={assessmentSubmitting || assessmentPassed}
+                        />
+                        <span>{option}</span>
+                      </label>)}
+                    </div>
+                  )}
+                </fieldset>;
+              })}
+            </div>
+          </div>
+
+          {!assessmentPassed && <button type="button" className="kai-assessment-submit" onClick={submitAssessment} disabled={assessmentSubmitting}>
+            {assessmentSubmitting ? "Kai is marking your answers..." : "Submit all answers to Kai"}
+            {!assessmentSubmitting && <ArrowRight size={17} />}
+          </button>}
+
+          {assessmentResult?.localError && <div className="kai-assessment-result is-error" role="alert"><strong>Finish the assessment</strong><p>{assessmentResult.localError}</p></div>}
+          {assessmentResult && !assessmentResult.localError && <div className={`kai-assessment-result ${assessmentResult.passed ? "is-passed" : "is-reviewing"}`} role="status">
+            <strong>{assessmentResult.passed ? "Kai approved your readiness" : "Kai recommends a focused review"}</strong>
+            <p>{assessmentResult.feedback}</p>
+            {assessmentResult.score !== undefined && <span className="kai-assessment-score">Score: {assessmentResult.score}%</span>}
+            {!assessmentResult.passed && <p className="kai-assessment-next-focus"><b>Review focus:</b> {assessmentResult.nextExerciseFocus}</p>}
+            {assessmentResult.corrections?.length > 0 && <ul>{assessmentResult.corrections.map((correction, index) => <li key={`${correction.questionId || "q"}-${index}`}>{correction.note}</li>)}</ul>}
+          </div>}
 
         </section>
 

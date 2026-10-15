@@ -175,6 +175,14 @@ const userSchema = new mongoose.Schema(
         },
         completedAt: Date,
         summary: String,
+        assessmentPassed: {
+          type: Boolean,
+          default: false,
+        },
+        assessmentScore: Number,
+        assessmentAttempt: Number,
+        assessmentFeedback: String,
+        assessmentCompletedAt: Date,
       },
     ],
 

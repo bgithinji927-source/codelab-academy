@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Editor from "@monaco-editor/react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Play, RotateCcw, Copy, Check, Lightbulb, AlertTriangle, Info, ArrowRight, Quote, CheckSquare, Clock, ExternalLink, MessageCircle, Code2, HelpCircle, Dumbbell, Sparkles, ListChecks } from "lucide-react";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import "./AIContentRenderer.css";
@@ -30,63 +32,25 @@ function InlineText({ children }) {
 
 function TextBlock({ value }) {
   const text = String(value || "").trim();
-  const normalizedText = text
-    .replace(/\s+(?=(?:\d+[.)]|[1-9]\uFE0F?\u20E3)\s+)/g, "\n")
-    .replace(/\s+(?=[•*-]\s+)/g, "\n");
-  const lines = normalizedText.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  const hasHeadings = lines.some((line) => /^#{1,4}\s+/.test(line));
-  if (hasHeadings) {
-    return <>{lines.map((line, index) => {
-      const heading = line.match(/^(#{1,4})\s+(.+)$/);
-      if (!heading) return <p className="kai-rich-text" key={`text-${index}`}><InlineText>{line}</InlineText></p>;
-      const Heading = heading[1].length === 1 ? "h2" : heading[1].length === 2 ? "h3" : "h4";
-      return <Heading className="kai-rich-heading" key={`heading-${index}`}><InlineText>{heading[2]}</InlineText></Heading>;
-    })}</>;
-  }
-  const hasListMarkers = lines.some((line) => /^(?:[-*•]|\d+[.)]|[1-9]\uFE0F?\u20E3)\s+/.test(line));
-  if (hasListMarkers && lines.length > 1) {
-    const parts = [];
-    let paragraphLines = [];
-    let list = null;
-    const flushParagraph = () => {
-      if (!paragraphLines.length) return;
-      parts.push(<p className="kai-rich-text" key={`text-${parts.length}`}><InlineText>{paragraphLines.join(" ")}</InlineText></p>);
-      paragraphLines = [];
-    };
-    const flushList = () => {
-      if (!list?.items.length) return;
-      const ListTag = list.type === "numbered" ? "ol" : "ul";
-      parts.push(<ListTag className="kai-rich-bullet-list" key={`list-${parts.length}`}>{list.items.map((item, index) => <li key={`${index}-${item}`}><InlineText>{item}</InlineText></li>)}</ListTag>);
-      list = null;
-    };
-    lines.forEach((line) => {
-      const numbered = line.match(/^(?:\d+[.)]|[1-9]\uFE0F?\u20E3)\s+(.+)$/);
-      const bullet = line.match(/^[-*•]\s+(.+)$/);
-      if (numbered || bullet) {
-        const type = numbered ? "numbered" : "bullets";
-        if (!list || list.type !== type) {
-          flushParagraph();
-          flushList();
-          list = { type, items: [] };
-        }
-        list.items.push((numbered || bullet)[1].trim());
-      } else {
-        flushList();
-        paragraphLines.push(line);
-      }
-    });
-    flushParagraph();
-    flushList();
-    return <>{parts}</>;
-  }
-  const inlineBullets = text.match(/^(.*?:)\s+-\s+(.+)$/);
-  if (!inlineBullets) return <p className="kai-rich-text"><InlineText>{text}</InlineText></p>;
-  const items = inlineBullets[2].split(/\s+-\s+/).map((item) => item.trim()).filter(Boolean);
-  if (!items.length) return <p className="kai-rich-text"><InlineText>{text}</InlineText></p>;
-  return <div className="kai-rich-note-list">
-    <p className="kai-rich-text kai-rich-note-heading"><InlineText>{inlineBullets[1]}</InlineText></p>
-    <ul className="kai-rich-bullet-list">{items.map((item, index) => <li key={`${index}-${item}`}><InlineText>{item}</InlineText></li>)}</ul>
-  </div>;
+  if (!text) return null;
+  return <ReactMarkdown
+    remarkPlugins={[remarkGfm]}
+    components={{
+      h1: ({ children }) => <h2 className="kai-rich-heading">{children}</h2>,
+      h2: ({ children }) => <h3 className="kai-rich-heading">{children}</h3>,
+      h3: ({ children }) => <h4 className="kai-rich-heading">{children}</h4>,
+      h4: ({ children }) => <h4 className="kai-rich-heading">{children}</h4>,
+      p: ({ children }) => <p className="kai-rich-text">{children}</p>,
+      blockquote: ({ children }) => <blockquote className="kai-rich-quote">{children}</blockquote>,
+      ul: ({ children }) => <ul className="kai-rich-bullet-list">{children}</ul>,
+      ol: ({ children }) => <ol className="kai-rich-bullet-list">{children}</ol>,
+      hr: () => <hr className="kai-rich-divider" />,
+      a: ({ href, children }) => /^https?:\/\//i.test(href || "")
+        ? <a href={href} target="_blank" rel="noreferrer">{children}</a>
+        : <span>{children}</span>,
+      code: ({ className, children }) => <code className={className}>{children}</code>,
+    }}
+  >{text}</ReactMarkdown>;
 }
 
 function Copyable({ block }) {

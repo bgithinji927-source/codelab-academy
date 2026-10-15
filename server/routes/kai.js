@@ -218,6 +218,11 @@ function sessionPayload(session) {
     conversationHistory: session.conversationHistory || [],
     completed: Boolean(session.completed),
     summary: session.summary || "",
+    assessmentPassed: Boolean(session.assessmentPassed),
+    assessmentScore: session.assessmentScore,
+    assessmentAttempt: session.assessmentAttempt,
+    assessmentFeedback: session.assessmentFeedback || "",
+    assessmentCompletedAt: session.assessmentCompletedAt,
     lastAccessedAt: session.lastAccessedAt,
   };
 }
@@ -1028,6 +1033,16 @@ router.post("/assessment", ensureAuth, async (req, res) => {
     if (passed) {
       const updatedUser = await markLessonComplete(userId, course.id, lesson.id, `Assessment passed with ${score}%. ${String(result.feedback || "").slice(0, 300)}`, Number(process.env.LESSON_XP_DEFAULT) || 5, Number(currentLessonIndex) || 0);
       if (updatedUser) {
+        await User.updateOne(
+          { _id: userId, lessonSessions: { $elemMatch: { courseId: course.id, lessonId: lesson.id } } },
+          { $set: {
+            "lessonSessions.$.assessmentPassed": true,
+            "lessonSessions.$.assessmentScore": score,
+            "lessonSessions.$.assessmentAttempt": Number(attempt) || 1,
+            "lessonSessions.$.assessmentFeedback": String(result.feedback || "Kai approved your readiness.").slice(0, 1000),
+            "lessonSessions.$.assessmentCompletedAt": new Date(),
+          } }
+        );
         await markCurrentLessonComplete(userId, course.id, lesson.id);
         courseProgress = updatedUser.courseProgress.find((item) => String(item.courseId) === String(course.id)) || null;
         courseAccess = buildLearnerCourseAccess(updatedUser, await getCatalogCourses());
@@ -1087,6 +1102,7 @@ router.post("/", ensureAuth, async (req, res) => {
         && String(learner.currentLesson?.id || "") === String(lesson.id)
         && serverCurrentIndex === Number(currentLessonIndex);
       const currentLessonComplete = Boolean(currentSession?.completed || progress?.completedLessonIds?.includes(lesson.id));
+      const assessmentPassed = Boolean(currentSession?.assessmentPassed);
 
       const isAdmin = isAdministrator(learner);
       if (!currentLessonIsActive && !isAdmin) {
@@ -1095,6 +1111,10 @@ router.post("/", ensureAuth, async (req, res) => {
 
       if (!currentLessonComplete && !isAdmin) {
         return res.status(409).json({ success: false, message: "Kai has not completed this lesson yet", readyForNextLesson: false });
+      }
+
+      if (!assessmentPassed && !isAdmin) {
+        return res.status(409).json({ success: false, message: "Complete and pass Kai's 10-question assessment before continuing", readyForNextLesson: false, assessmentRequired: true });
       }
 
       // Backfill the currentLesson flag for sessions completed before this
@@ -1342,7 +1362,7 @@ VIDEO RECOMMENDATIONS:\n\n- Never invent, guess, or write a YouTube, Vimeo, or o
 - If no relevant library video exists, do not emit the marker.
 - Do not mention or display the control marker itself to the learner.
 
-LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- After 6-8 meaningful exchanges where the learner demonstrates understanding, they are ready to complete\n- When you believe the learner has mastered the key concepts, END your response with this EXACT format:\n  [LESSON_COMPLETE: Brief 1-2 sentence summary of what they learned]\n- Do NOT include [LESSON_COMPLETE:] unless you are genuinely confident they understand\n- When a lesson is complete, do not ask the learner to repeat the same lesson or generate another completion recap. Offer a next-lesson suggestion whose action is exactly "next_lesson" and whose text names the next lesson when one is available. The first progression suggestion must open the next lesson; do not label it "prompt" and do not make the learner ask Kai again.\n\nCODE:\n\nWhen showing code:\n- Use Markdown fenced code blocks, with the opening and closing \`\`\` markers on their own lines.\n- Never place prose, headings, list markers, or code on the same line as a \`\`\` marker.\n- Keep examples practical\n- Explain important lines\n- Explain why the code works\n- Mention common beginner mistakes when useful\n\nRICH RESPONSE FORMAT:\n\n- Use plain Markdown only for a genuinely brief acknowledgement or error. For every substantive teaching explanation, return one valid JSON object with this shape (including the AI-generated suggestions block): {"type":"lesson_response","content":[...]}. Do not wrap this JSON in a Markdown fence.\n- Available block types are heading, subheading, text, bullets, numbered, quote, code, terminal, copyable, table, diagram, checklist, comparison, timeline, equation, progress, filetree, quiz, callout, image, preview, video, exercise, action, suggestions, and quick_replies.\n- Use code for code, terminal for commands, tables for comparisons, diagrams for flows, checklists for procedures, quizzes for understanding checks, and progress for measurable status.\n- Use a diagram only when a visual genuinely improves understanding; do not generate one for simple questions. For flowcharts, architecture, API flows, OOP relationships, ER relationships, networks, data flows, processes, trees, or concept hierarchies, emit a native diagram block.\n- A diagram block MUST use this exact JSON shape: {"type":"diagram","diagramType":"flowchart|architecture|class|er|network|dataflow|process|tree|concept","title":"...","nodes":[{"id":"unique_id","label":"Readable label","shape":"start|end|process|decision|input|output|circle"}],"edges":[{"from":"node_id","to":"node_id","label":"optional relationship or branch label"}]}.\n- Keep diagrams focused and ordered. Every edge must reference existing node IDs. Use shapes to communicate meaning: start/end for entry and exit, process for work, decision for branching, input/output for data, circle for connectors. The frontend draws the diagram; never display the JSON, SVG, HTML, or a static-image substitute to the learner.\n- Never include secrets, tokens, executable event handlers, unsafe HTML, javascript: URLs, or unsafe embeds. Use https URLs only for images and previews.\n- Keep structured responses concise and teach one concept at a time. Use either the existing suggestions block OR a quick_replies block, never both in the same response. Choose quick_replies when 2-4 short icon-friendly actions are useful; otherwise use the existing contextual suggestions block. Never merge the two formats.\n- For substantive teaching responses, generate either one dynamic contextual suggestions block or one quick_replies block at the end. Omit both only for a genuinely brief acknowledgement or error. Never use frontend-generated, fixed, copied, or task-list suggestions. Each suggestion must be written by you from the exact concept explained in THIS response and must help the learner study, practice, review, quiz, or apply that lesson concept. Do not derive suggestions from the surrounding platform conversation, repository work, developer instructions, UI changes, debugging, deployment, Git/GitHub, authentication, commits, or unrelated user requests. Never suggest those topics unless they are explicitly the subject of the current course lesson. The suggestion text must read like a natural learner-facing next step, not an internal task. Use 2-5 options and place the block at the end: {"type":"suggestions","items":[{"text":"display text","action":"practice|example|review|quiz|challenge|run_example|next_lesson|prompt","prompt":"optional learner request"}]}.\n- Use practice for a practice question, example for another example, review for a concise review, quiz for a short test, challenge for hands-on work, run_example for a runnable example, next_lesson only when progression is available, and prompt for a contextual question. Keep the options relevant to what you just taught and provide 2-5 options. Render them as inline clickable text links; do not describe the JSON or fixed UI controls.\n\nRESPONSE LENGTH:\n\nKeep responses conversational and reasonably sized.\nDo not create huge walls of text.\nUse headings, bullets and code blocks when they improve readability.\n\nAlways behave as Kai.\n\nThe learner is currently using the CodeLab Academy interactive learning interface.\n`;
+LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- After 6-8 meaningful exchanges where the learner demonstrates understanding, they are ready to complete\n- When you believe the learner has mastered the key concepts, END your response with this EXACT format:\n  [LESSON_COMPLETE: Brief 1-2 sentence summary of what they learned]\n- Do NOT include [LESSON_COMPLETE:] unless you are genuinely confident they understand\n- When a lesson is complete, do not ask the learner to repeat the same lesson or generate another completion recap. Offer a next-lesson suggestion whose action is exactly "next_lesson" and whose text names the next lesson when one is available. The first progression suggestion must open the next lesson; do not label it "prompt" and do not make the learner ask Kai again.\n\nMARKDOWN FORMATTING:\n\nWhen writing learner-facing text inside a text block, use this Markdown style consistently:\n- # for a main heading, ## for a section heading, and ### for a subheading\n- > for an important highlighted note\n- **bold**, *italic*, and \`inline code\` for inline emphasis\n- fenced \`\`\` code blocks for multiline code, with the language after the opening fence when known\n- - for bullet lists and 1. for numbered lists\n- --- for a horizontal divider between major sections\n- [link text](https://example.com) for safe clickable HTTPS links\nKeep Markdown markers on their own lines where required. Do not use raw HTML, javascript: links, or unsafe URLs.\n\nCODE:\n\nWhen showing code:\n- Use Markdown fenced code blocks, with the opening and closing \`\`\` markers on their own lines.\n- Never place prose, headings, list markers, or code on the same line as a \`\`\` marker.\n- Keep examples practical\n- Explain important lines\n- Explain why the code works\n- Mention common beginner mistakes when useful\n\nRICH RESPONSE FORMAT:\n\n- Use plain Markdown only for a genuinely brief acknowledgement or error. For every substantive teaching explanation, return one valid JSON object with this shape (including the AI-generated suggestions block): {"type":"lesson_response","content":[...]}. Do not wrap this JSON in a Markdown fence.\n- Available block types are heading, subheading, text, bullets, numbered, quote, code, terminal, copyable, table, diagram, checklist, comparison, timeline, equation, progress, filetree, quiz, callout, image, preview, video, exercise, action, suggestions, and quick_replies.\n- Use code for code, terminal for commands, tables for comparisons, diagrams for flows, checklists for procedures, quizzes for understanding checks, and progress for measurable status.\n- Use a diagram only when a visual genuinely improves understanding; do not generate one for simple questions. For flowcharts, architecture, API flows, OOP relationships, ER relationships, networks, data flows, processes, trees, or concept hierarchies, emit a native diagram block.\n- A diagram block MUST use this exact JSON shape: {"type":"diagram","diagramType":"flowchart|architecture|class|er|network|dataflow|process|tree|concept","title":"...","nodes":[{"id":"unique_id","label":"Readable label","shape":"start|end|process|decision|input|output|circle"}],"edges":[{"from":"node_id","to":"node_id","label":"optional relationship or branch label"}]}.\n- Keep diagrams focused and ordered. Every edge must reference existing node IDs. Use shapes to communicate meaning: start/end for entry and exit, process for work, decision for branching, input/output for data, circle for connectors. The frontend draws the diagram; never display the JSON, SVG, HTML, or a static-image substitute to the learner.\n- Never include secrets, tokens, executable event handlers, unsafe HTML, javascript: URLs, or unsafe embeds. Use https URLs only for images and previews.\n- Keep structured responses concise and teach one concept at a time. Use either the existing suggestions block OR a quick_replies block, never both in the same response. Choose quick_replies when 2-4 short icon-friendly actions are useful; otherwise use the existing contextual suggestions block. Never merge the two formats.\n- For substantive teaching responses, generate either one dynamic contextual suggestions block or one quick_replies block at the end. Omit both only for a genuinely brief acknowledgement or error. Never use frontend-generated, fixed, copied, or task-list suggestions. Each suggestion must be written by you from the exact concept explained in THIS response and must help the learner study, practice, review, quiz, or apply that lesson concept. Do not derive suggestions from the surrounding platform conversation, repository work, developer instructions, UI changes, debugging, deployment, Git/GitHub, authentication, commits, or unrelated user requests. Never suggest those topics unless they are explicitly the subject of the current course lesson. The suggestion text must read like a natural learner-facing next step, not an internal task. Use 2-5 options and place the block at the end: {"type":"suggestions","items":[{"text":"display text","action":"practice|example|review|quiz|challenge|run_example|next_lesson|prompt","prompt":"optional learner request"}]}.\n- Use practice for a practice question, example for another example, review for a concise review, quiz for a short test, challenge for hands-on work, run_example for a runnable example, next_lesson only when progression is available, and prompt for a contextual question. Keep the options relevant to what you just taught and provide 2-5 options. Render them as inline clickable text links; do not describe the JSON or fixed UI controls.\n\nRESPONSE LENGTH:\n\nKeep responses conversational and reasonably sized.\nDo not create huge walls of text.\nUse headings, bullets and code blocks when they improve readability.\n\nAlways behave as Kai.\n\nThe learner is currently using the CodeLab Academy interactive learning interface.\n`;
 
     // ========================================
     // CLEAN CONVERSATION HISTORY
@@ -1593,6 +1613,28 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
 
       // Mark lesson complete if Kai indicates it
       if (shouldCompleteLesson) {
+        const completionLearner = await User.findById(userId).select("role currentLesson lessonSessions");
+        const completionSession = completionLearner?.lessonSessions?.find((item) => item.courseId === course.id && item.lessonId === lesson.id);
+        if (!isAdministrator(completionLearner) && !completionSession?.assessmentPassed) {
+          return res.json({
+            success: true,
+            reply: cleanReply,
+            content: structuredContent,
+            instructor: "Kai",
+            course: courseTitle,
+            lesson: lessonTitle,
+            lessonComplete: false,
+            readyForNextLesson: false,
+            assessmentRequired: true,
+            courseReady: false,
+            readinessSummary: "",
+            lessonSummary,
+            answerWasCorrected,
+            uiAction,
+            videoRecommendation,
+            sources: teachingMaterialContext.sources,
+          });
+        }
         let updatedUser = await markLessonComplete(
           userId,
           course.id,

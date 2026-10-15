@@ -100,3 +100,39 @@
   .kai-rich-code pre,
   .kai-rich-copyable pre { font-size: .8rem; line-height: 1.55; }
 }
+
+/* Markdown text blocks use the same visual language as structured Kai blocks. */
+.kai-rich-divider {
+  width: 100%;
+  max-width: 76ch;
+  margin: .4rem 0;
+  border: 0;
+  border-top: 1px solid rgba(173, 172, 211, .3);
+}
+
+.kai-rich-content > pre {
+  width: 100%;
+  max-width: 76ch;
+  margin: 0;
+  overflow-x: auto;
+  padding: .9rem 1rem;
+  border: 1px solid rgba(151, 142, 255, .3);
+  border-radius: 10px;
+  background: #111225;
+  color: #d8d2ff;
+  white-space: pre;
+  font: .86rem/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.kai-rich-content > pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.kai-rich-text a,
+.kai-rich-quote a {
+  color: #b9b1ff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
