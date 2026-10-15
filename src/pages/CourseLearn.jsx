@@ -580,6 +580,9 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         setPreviousLessonSummary(selectedSession?.summary || stateData.session?.summary || "");
         setSavedLessonSessions(normalizedSessions);
         setMessages(savedHistory);
+        lessonStartKeyRef.current = savedHistory.length > 0
+          ? `${course?.id}:${activeLesson.id}`
+          : "";
         setSavedKaiFeedback(stateData.user?.kaiFeedback || []);
         setMessageFeedback(feedbackMapForLesson(stateData.user?.kaiFeedback, course?.id, activeLesson?.id));
         setLessonCompletionReady(Boolean(
@@ -919,12 +922,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     const lessonKey = `${course?.id}:${lesson.id}`;
     if (lessonStartKeyRef.current === lessonKey) return;
 
-    // Lesson content is delivered from the catalog before the learner asks
-    // Kai anything. Opening a lesson must never require an AI call.
+    // Keep the catalog notes as the stable official material, then restore
+    // Kai's interactive teaching conversation underneath them.
     lessonStartKeyRef.current = lessonKey;
     setAnswer("");
     setDisplayedKaiText("");
     stopTyping();
+    askKai({ learnerMessage: "", conversation: [], isIntro: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseStateLoaded, lesson, allLessons.length]);
 
