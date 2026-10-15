@@ -2111,6 +2111,18 @@ Professional review questions:
         starterCode: "// Document the design, tests, failure handling, security, performance, and operations plan here\n",
       });
     }
+    if (courseId === "python" && index < 12) {
+      const genericTeachingSections = new Set([
+        "What this lesson teaches",
+        "Step-by-step mental model",
+        "Guided example: read, predict, run, improve",
+        "10 questions you should be able to answer",
+        "Common mistakes and professional checks",
+        "Applied practice: build and explain",
+        "Practice Project",
+      ]);
+      lesson.sections = lesson.sections.filter((section) => !genericTeachingSections.has(section.title));
+    }
   });
 });
 
