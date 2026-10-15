@@ -737,10 +737,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     nextLessonTitle,
     isIntro = false,
   } = {}) => {
-    if (learnerMessage && !assessmentMarked) {
-      setAssessmentResult((current) => current || { localError: "Complete and submit the assessment before asking Kai a question." });
-      return;
-    }
     const controller = new AbortController();
     kaiRequestRef.current?.abort();
     kaiRequestRef.current = controller;
@@ -1110,7 +1106,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const handleSend = async () => {
     const trimmedAnswer = answer.trim();
 
-    if (!trimmedAnswer || isKaiTyping || isReviewingPastLesson || !assessmentMarked) {
+    if (!trimmedAnswer || isKaiTyping || isReviewingPastLesson) {
       return;
     }
 
@@ -2057,44 +2053,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             </div>
           )}
 
-          {lesson && (
-            <section className="stored-lesson-panel" aria-labelledby="stored-lesson-title">
-              <div className="stored-lesson-badge"><BookOpen size={14} /> OFFICIAL COURSE MATERIAL</div>
-              <h2 id="stored-lesson-title">{lesson.title}</h2>
-              {lesson.description && <p className="stored-lesson-description">{lesson.description}</p>}
-              {Array.isArray(lesson.objectives) && lesson.objectives.length > 0 && (
-                <div className="stored-lesson-objectives"><strong>By the end of this lesson, you can:</strong><ul>{lesson.objectives.map((objective) => <li key={objective}>{objective}</li>)}</ul></div>
-              )}
-              <div className="stored-lesson-sections">{(lesson.sections || []).map(renderStoredLessonSection)}</div>
-              <div className="stored-lesson-ai-note"><Bot size={16} /><span><strong>Official lesson material comes first.</strong> Study the explanations and worked examples, complete the assessment, and wait for Kai to mark it. Kai unlocks follow-up questions only after your assessment is graded.</span></div>
-              <section className="kai-generated-teaching" aria-labelledby="kai-generated-teaching-title">
-                <div className="kai-generated-teaching-heading"><div><span className="stored-lesson-badge"><Bot size={14} /> KAI TEACHING LAYER</span><h3 id="kai-generated-teaching-title">Need another explanation before the assessment?</h3><p>Kai can teach this lesson again using the same format: explanation, bullet points, worked example, and why the answer is correct.</p></div><button type="button" onClick={teachLessonWithKai} disabled={kaiTeachingLoading}>{kaiTeachingLoading ? "Kai is teaching..." : kaiGeneratedTeaching ? "Teach it again" : "Teach me with Kai"}<Bot size={16} /></button></div>
-                {kaiGeneratedTeaching?.error && <div className="kai-assessment-result is-error" role="alert">{kaiGeneratedTeaching.error}</div>}
-                {kaiGeneratedTeaching && !kaiGeneratedTeaching.error && <div className="kai-generated-teaching-content">{kaiGeneratedTeaching.contentBlocks?.length ? <AIContentRenderer content={kaiGeneratedTeaching.contentBlocks} /> : renderMarkdown(kaiGeneratedTeaching.text)}</div>}
-              </section>
-              {assessmentQuestions.length > 0 && (
-                <section className="kai-assessment-panel" aria-labelledby="kai-assessment-title">
-                  <div className="kai-assessment-heading"><div><span className="stored-lesson-badge"><CheckCircle2 size={14} /> FINAL KNOWLEDGE CHECK</span><h3 id="kai-assessment-title">Assessment {assessmentRound}</h3><p>Answer all 10 questions. Kai reads your selections and written reasoning, gives a mark out of 100, and decides whether you are ready for the next lesson.</p></div><strong>10 questions</strong></div>
-                  <div className="kai-assessment-questions">
-                    {assessmentQuestions.map((question, questionIndex) => (
-                      <fieldset className="kai-assessment-question" key={question.id}>
-                        <legend><span>{questionIndex + 1}</span>{question.question}</legend>
-                        {question.type === "choice" ? (
-                          <div className="kai-assessment-options">{question.options.map((option) => <label key={option}><input type="radio" name={question.id} value={option} checked={assessmentAnswers[question.id] === option} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} /><span>{option}</span></label>)}</div>
-                        ) : (
-                          <textarea rows={5} value={assessmentAnswers[question.id] || ""} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} placeholder="Write a clear answer with an example or explanation..." />
-                        )}
-                      </fieldset>
-                    ))}
-                  </div>
-                  <button type="button" className="kai-assessment-submit" onClick={submitAssessment} disabled={assessmentSubmitting || lessonCompletionReady}>{assessmentSubmitting ? "Kai is marking your answers..." : lessonCompletionReady ? "Assessment passed" : "Send answers to Kai"}<Send size={16} /></button>
-                  {assessmentResult?.localError && <div className="kai-assessment-result is-error" role="alert">{assessmentResult.localError}</div>}
-                  {assessmentResult && !assessmentResult.localError && <div className={`kai-assessment-result ${assessmentResult.passed ? "is-passed" : "is-review"}`} role="status"><strong>{assessmentResult.passed ? `Passed — ${assessmentResult.score}/100` : `Keep learning — ${assessmentResult.score}/100`}</strong><p>{assessmentResult.feedback}</p>{!assessmentResult.passed && <small>Kai created replacement exercise {assessmentRound}. Review the lesson, then answer the new questions above.</small>}{assessmentResult.corrections?.length > 0 && <ul>{assessmentResult.corrections.map((item, index) => <li key={item.questionId || index}>{item.note}</li>)}</ul>}</div>}
-                </section>
-              )}
-            </section>
-          )}
-
           {previousLessonSuggestion && !isReviewingPastLesson && (
             <div className="previous-lesson-suggestion" role="status">
               <div>
@@ -2212,15 +2170,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               }
             }}
             placeholder={
-              !assessmentMarked
-                ? "Complete and submit the assessment before asking Kai..."
-                : isReviewingPastLesson
+              isReviewingPastLesson
                 ? "Select the current lesson to continue with Kai..."
                 : isKaiTyping
                 ? "Kai is thinking..."
                 : "Answer Kai or ask a question..."
             }
-            disabled={!assessmentMarked || isReviewingPastLesson || isKaiTyping || (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) || isAdvancing}
+            disabled={isReviewingPastLesson || isKaiTyping || (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) || isAdvancing}
             autoComplete="off"
           />
 
@@ -2233,7 +2189,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             className="kai-composer-send"
             onClick={handleSend}
             disabled={
-              !assessmentMarked ||
               isReviewingPastLesson ||
               isKaiTyping ||
               (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) ||
@@ -2248,7 +2203,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         </div>
 
         <div className="input-hint">
-          {assessmentMarked ? <>Press <kbd>Enter</kbd> to send</> : "Kai questions unlock after your assessment is marked."}
+          <>Press <kbd>Enter</kbd> to send</>
         </div>
 
         </div>
