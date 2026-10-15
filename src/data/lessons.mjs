@@ -5,6 +5,52 @@
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
 
+function buildLessonNotes({ title, focus, code, quizAnswer }) {
+  const topic = String(focus || title).trim();
+  const normalized = topic.toLowerCase();
+  const notesByTopic = [
+    {
+      matches: ["shell navigation", "linux shell"],
+      definition: "The Linux shell is a text-based interface for finding files, running programs, and inspecting system state. Each command reads inputs, performs one operation, and writes output that can be used by the next command.",
+      rules: ["Use pwd to confirm where you are before changing files.", "Use ls to inspect a directory and cd to move through the filesystem.", "Prefer small, reversible commands and inspect output before acting on a production system."],
+      mistake: "A common mistake is running a command from the wrong directory. Confirm the path first, then use an explicit path when an action could affect important files.",
+    },
+    {
+      matches: ["permissions", "least privilege", "authorization", "authentication"],
+      definition: "Access control answers two different questions: authentication verifies who an identity is, while authorization decides what that identity may do. Least privilege keeps the allowed actions as small as possible.",
+      rules: ["Authenticate before trusting an identity.", "Check authorization for every protected action, not only at login.", "Grant the minimum read, write, or administrative access required for the task."],
+      mistake: "Do not confuse a valid login with permission to perform every action. A user may be authenticated but still unauthorized to edit a lesson or read private progress.",
+    },
+    {
+      matches: ["observability", "monitoring", "metrics", "logs"],
+      definition: "Observability is the ability to understand what a running system is doing from its outputs. Logs describe events, metrics measure trends, and traces connect work across services.",
+      rules: ["Choose signals that reflect user impact, such as error rate, latency, and availability.", "Include enough context in logs to investigate without exposing secrets.", "Set alerts around meaningful thresholds and provide a runbook for the response."],
+      mistake: "Collecting data is not the same as being observable. An alert that fires constantly or has no owner creates noise instead of useful feedback.",
+    },
+    {
+      matches: ["api", "service boundary", "rest resource"],
+      definition: "An API is a documented agreement between a caller and a service. It defines the request shape, response shape, errors, authentication rules, and compatibility expectations.",
+      rules: ["Give resources stable identifiers and predictable representations.", "Validate inputs at the boundary and return useful status codes.", "Document failure cases as carefully as successful responses."],
+      mistake: "Changing a response field or meaning without considering existing clients can break applications that still depend on the old contract.",
+    },
+    {
+      matches: ["testing", "debugging", "verification"],
+      definition: "Testing compares a program's actual behavior with an expected result. Good tests make a claim about behavior, provide controlled inputs, and fail with evidence when the implementation changes.",
+      rules: ["Test the normal path and at least one boundary or failure path.", "Keep each test focused on one behavior.", "Use a failing test or a reproducible example to guide debugging instead of guessing."],
+      mistake: "A single successful demo does not prove correctness. Empty input, invalid data, repeated actions, and slow dependencies often reveal the real bug.",
+    },
+  ];
+  const matched = notesByTopic.find((entry) => entry.matches.some((term) => normalized.includes(term)));
+  const definition = matched?.definition || `${topic} is the main idea in this lesson. It helps a developer make a specific behavior understandable, repeatable, and safe to change. Learn it by connecting the goal, the inputs, the steps performed, and the observable result.`;
+  const rules = matched?.rules || [
+    `Start with the problem that ${topic} is meant to solve, not with memorizing syntax.`,
+    "Trace the data or state from input to operation to result.",
+    "Keep the first implementation small enough to explain and test.",
+  ];
+  const mistake = matched?.mistake || `A common mistake is using ${topic} without checking its assumptions. Test an empty, invalid, repeated, or boundary case and document what should happen.`;
+  return `${definition}\n\nWhat to remember:\n${rules.map((rule) => `- ${rule}`).join("\n")}\n\nRead the example:\nThe worked example that follows shows ${topic.toLowerCase()} in a small, observable situation. First identify the values or conditions introduced by each line. Then follow the operation that changes or checks them and predict the result before running the code.\n\nCheck your understanding:\n- Expected result: ${quizAnswer || `the program demonstrates ${topic.toLowerCase()} correctly`}\n- Change one input or condition and predict how the result will change.\n- Test one boundary or failure case and explain how the program should respond.\n\nCommon mistake:\n${mistake}\n\nThe goal is not to copy the example. It is to explain why it works, identify its assumptions, and adapt the same idea to a small problem of your own.`;
+}
+
 function makeLesson({
   id,
   title,
@@ -16,10 +62,11 @@ function makeLesson({
   quizOptions,
   quizAnswer,
 }) {
+  const notes = buildLessonNotes({ title, focus, code, quizAnswer });
   return {
     id,
     title,
-    description: `Learn ${focus.toLowerCase()} by understanding its purpose, tracing a concrete example, testing an edge case, and applying it in a small project task.`,
+    description: `Read these notes to understand ${focus.toLowerCase()}, then trace the example and apply the idea in the practice task.`,
     level: "Beginner",
     estimatedTime: "25 min",
     objectives: [
@@ -31,23 +78,8 @@ function makeLesson({
     sections: [
       {
         type: "explanation",
-        title: `What is ${focus}?`,
-        content: `
-${focus} is a practical technique for solving a specific programming problem. The important idea is the relationship between the input, the operation, and the result.
-
-Core idea:
-- Identify the problem that ${focus} solves before choosing a syntax or tool.
-- Give the concept clear inputs, apply its rule, and check the resulting output.
-- Keep the behavior small enough to test, explain, and change safely.
-
-How to apply it:
-1. Define the goal in one sentence and list the data or conditions the solution receives.
-2. Apply ${focus} to the normal case and trace the important step from input to output.
-3. Test an empty, invalid, repeated, or boundary case so you know what happens when reality differs from the example.
-4. Explain the trade-off: what this approach makes easier, what it costs, and when another approach would be better.
-
-In this lesson's example, the intended result is: ${quizAnswer || `a correct, tested use of ${focus}`}. That answer is correct because it demonstrates the concept's purpose rather than merely repeating its syntax.
-        `,
+        title: `${focus}: reading notes`,
+        content: notes,
       },
       {
         type: "example",
@@ -1090,15 +1122,18 @@ const cloudCourseLessonPlans = {
 };
 
 const pythonProfessionalRoadmap = [
-  ["python-introduction", "Introduction to Python", "Understand Python's syntax, interpreter, scripts, and common uses.", "print(\"Hello, Python!\")\n\nfor use_case in [\"web\", \"automation\", \"data\"]:\n    print(use_case)", "Write and run a small Python script that introduces a project and prints three things Python can help build."],
-  ["python-variables-data-types", "Variables and Data Types", "Store values and choose suitable Python data types.", "name = \"Ada\"\nage = 36\nis_learning = True\ntopics = [\"Python\", \"Testing\"]", "Create a learner profile using strings, integers, booleans, floats, and a list."],
-  ["python-operators", "Operators", "Use arithmetic, comparison, logical, assignment, and membership operators.", "completed = 8\ntotal = 10\nprogress = completed / total\nprint(progress >= 0.8 and completed in range(total + 1))", "Build a progress calculation that reports whether a learner has reached an 80% target."],
-  ["python-input-output", "Input and Output", "Read user input, format output, and validate simple values.", "name = input(\"Your name: \")\nprint(f\"Welcome, {name}!\")", "Ask for a learner's name and course, then print a clear welcome message."],
-  ["python-conditional-statements", "Conditional Statements (if, elif, else)", "Make decisions with if, elif, and else branches.", "score = 78\nif score >= 90:\n    grade = \"A\"\nelif score >= 60:\n    grade = \"Pass\"\nelse:\n    grade = \"Try again\"", "Classify a score as excellent, pass, or needing more practice."],
-  ["python-loops-roadmap", "Loops (for, while)", "Repeat work safely with for and while loops.", "for lesson in [\"variables\", \"loops\", \"functions\"]:\n    print(f\"Completed: {lesson}\")", "Use a for loop to process a list and a while loop to repeat input until it is valid."],
-  ["python-data-structures", "Data Structures (Lists, Tuples, Sets, Dictionaries)", "Choose and manipulate Python's core collection types.", "topics = [\"Python\", \"SQL\"]\ncoordinates = (10, 20)\nunique_tags = {\"beginner\", \"python\"}\nprofile = {\"name\": \"Ada\", \"level\": \"beginner\"}", "Create a contact book using a dictionary, a tuple for coordinates, a set of tags, and a list of contacts."],
-  ["python-strings", "Strings and String Manipulation", "Search, format, split, and transform text safely.", "title = \"  Python Foundations  \"\nclean = title.strip().lower()\nprint(clean.replace(\" \", \"-\"))", "Normalize a lesson title into a URL-friendly slug and explain how empty input should be handled."],
-  ["python-functions-roadmap", "Functions", "Design reusable functions with parameters, return values, and docstrings.", "def average(scores):\n    \"\"\"Return the mean score.\"\"\"\n    return sum(scores) / len(scores)", "Write a function that calculates a learner's average and returns a useful result for an empty list."],
+  ["python-introduction", "What Python Is and How to Run It", "Understand what Python is used for, how to install it, how to run code in a terminal or editor, and how to write a first program.", "print(\"Hello, Python!\")", "Install Python, run this file from a terminal and an editor, then change the message and run it again."],
+  ["python-variables-data-types", "Variables and Data Types", "Store values in variables, recognize strings, integers, floats, and booleans, use valid names, and convert between types.", "name = \"Amina\"\nage = 20\nis_student = True\nheight = 1.68\nprint(name, age, is_student, height)", "Create a learner profile using a string, integer, float, boolean, and one converted input value."],
+  ["python-strings", "Strings and Text", "Create and combine strings, use f-strings, apply methods such as upper and strip, and read text with input.", "name = input(\"What is your name? \")\nprint(f\"Hello, {name.strip()}!\")", "Ask for a learner's name and course, clean the input, and print a clear welcome message."],
+  ["python-operators", "Numbers and Operators", "Use addition, subtraction, multiplication, division, comparisons, remainders, and operator precedence.", "completed = 8\ntotal = 10\nprogress = completed / total\nprint(progress * 100)\nprint(completed % 3)", "Build a progress calculation that reports a percentage and uses a remainder to group lessons."],
+  ["python-conditional-statements", "Conditional Statements", "Make decisions with if, elif, and else, compare values, and combine conditions with and, or, and not.", "score = 70\n\nif score >= 50:\n    print(\"Pass\")\nelse:\n    print(\"Try again\")", "Classify a score as excellent, pass, or needing more practice using clear conditions."],
+  ["python-lists-collections", "Lists and Collections", "Create lists, add and remove items, access values by index, slice sequences, and understand tuples and sets.", "topics = [\"Python\", \"Testing\"]\ntopics.append(\"APIs\")\nprint(topics[0])\nprint(topics[1:])", "Create a list of course topics, update it, access one item, and produce a slice."],
+  ["python-dictionaries", "Dictionaries", "Store data as key-value pairs, read and update values, and loop through dictionary data.", "learner = {\n    \"name\": \"Amina\",\n    \"course\": \"Python\",\n    \"progress\": 40\n}\nlearner[\"progress\"] += 10\nfor key, value in learner.items():\n    print(key, value)", "Create and update a learner dictionary, then print each key and value clearly."],
+  ["python-loops-roadmap", "Loops", "Repeat work with for and while, use range, and control loops with break and continue.", "for lesson_number in range(1, 4):\n    if lesson_number == 2:\n        continue\n    print(f\"Lesson {lesson_number}\")", "Use a for loop to process lessons and a while loop that stops when a valid value is entered."],
+  ["python-functions-roadmap", "Functions", "Define reusable blocks of code, pass parameters and arguments, return values, and understand local variables.", "def calculate_total(price, quantity):\n    return price * quantity\n\nprint(calculate_total(12.5, 3))", "Write a function that calculates a learner's average and handles an empty list safely."],
+  ["python-errors-debugging", "Errors and Debugging", "Recognize syntax and runtime errors, use try and except for expected failures, read error messages, and debug with focused output.", "try:\n    score = int(\"not a number\")\nexcept ValueError as error:\n    print(f\"Invalid score: {error}\")", "Debug a score input program and handle invalid input without hiding unexpected errors."],
+  ["python-files-modules", "Files and Modules", "Read and write text files, import built-in modules, create a simple module, and understand packages.", "from pathlib import Path\n\npath = Path(\"progress.txt\")\npath.write_text(\"Python: started\\n\", encoding=\"utf-8\")\nprint(path.read_text(encoding=\"utf-8\"))", "Save a learner's progress to a text file and move the save logic into a reusable module."],
+  ["python-basics-project", "Python Basics Project", "Combine variables, strings, collections, conditions, loops, functions, errors, files, and modules in a small useful program.", "def add_expense(expenses, name, amount):\n    expenses.append({\"name\": name, \"amount\": amount})\n\nexpenses = []\nadd_expense(expenses, \"Notebook\", 4.50)\nprint(expenses)", "Build a calculator, student-grade tracker, to-do list, quiz game, or personal expense tracker and explain your design."],
   ["python-list-comprehensions", "List Comprehensions", "Transform and filter collections with readable comprehensions.", "squares = [number * number for number in range(1, 6)]\npassed = [score for score in [45, 72, 88] if score >= 60]", "Build a filtered list of completed lesson titles and compare it with a normal loop."],
   ["python-modules-packages-roadmap", "Modules and Packages", "Organize reusable Python code into modules and packages.", "# progress.py\ndef complete(current, lesson_id):\n    return {**current, lesson_id: True}\n\n# app.py\nfrom progress import complete", "Design a small package with a calculator module and a public function."],
   ["python-exception-handling", "Exception Handling", "Handle expected failures without hiding programming errors.", "try:\n    score = int(\"not a number\")\nexcept ValueError:\n    score = 0\n    print(\"Please enter a whole number\")", "Validate score input with a focused except clause and decide which errors should be allowed to propagate."],
@@ -1131,8 +1166,55 @@ const pythonProfessionalRoadmap = [
   ["python-architecture", "Software Architecture and Design Patterns", "Design maintainable Python systems with boundaries and appropriate patterns.", "class ProgressService:\n    def __init__(self, repository):\n        self.repository = repository\n\n    def complete(self, lesson_id):\n        return self.repository.save(lesson_id)", "Separate a learning API into domain, service, repository, and transport layers and justify one design pattern."],
   ["python-production-applications", "Building Production-Ready Applications", "Combine testing, persistence, security, observability, and deployment habits.", "def readiness(checks):\n    required = {\"tests\", \"security\", \"health\", \"rollback\"}\n    return required.issubset(checks)", "Plan and implement a tested learning-progress application with documentation, monitoring, error handling, and a rollback strategy."],
 ];
+const pythonBasicsNotes = {
+  "python-introduction": `Python is a readable, high-level programming language used for web applications, automation, data analysis, machine learning, testing, and scripting.
+
+Install Python from python.org or your operating system's package manager. Confirm it with python --version or python3 --version. Save Python code in a file ending in .py.
+
+You can run code in the terminal with python hello.py, in an editor such as VS Code with its Run button, or one line at a time in the interactive interpreter. The first program uses print("Hello, Python!") to send text to the screen. This proves that Python is installed and that your file can run.
+
+Common mistakes are running the command from the wrong folder and naming a file python.py, which can hide the real Python module.`,
+  "python-variables-data-types": `A variable is a name that refers to a value. Python creates it with assignment, so name = "Amina" stores text and age = 20 stores a whole number. The common beginner types are str for text, int for whole numbers, float for decimals, and bool for True or False.
+
+Use descriptive lowercase_with_underscores names. Do not use spaces, start with a number, or use names such as list and str that hide useful built-ins. The value must be the number 20, not the word twenty, when arithmetic is required.
+
+input() returns text. Convert it at the program boundary with int() or float(), and use str() when you need a value as text.`,
+  "python-strings": `A string is a sequence of characters in quotes. Join text with +, repeat it with *, and prefer f-strings such as f"Hello, {name}!" when inserting values into a sentence.
+
+input() reads text from the learner. strip() removes accidental spaces, upper() and lower() change case, replace() substitutes text, and split() creates a list of pieces. String methods return a new string because strings are immutable.
+
+Clean the name before greeting the learner, and check for an empty result after strip().`,
+  "python-operators": `Operators calculate results and compare values. Arithmetic includes +, -, *, /, //, %, and **. Comparisons such as ==, !=, >, and <= produce booleans. and, or, and not combine conditions.
+
+The example divides completed lessons by the total, multiplies by 100 for a percentage, and uses % to find a remainder. Parentheses make operator precedence clear. Remember that = assigns while == compares, and test division by zero.`,
+  "python-conditional-statements": `Conditional statements let a program choose behavior. Python checks if, then each elif in order, and runs else when no condition matched. The indented block belongs to its decision.
+
+With score = 70, score >= 50 is True and the program prints Pass. Use and when both conditions must be true, or when either condition is enough, and not to reverse a boolean. Test values below, equal to, and above every threshold.`,
+  "python-lists-collections": `A list is an ordered, changeable collection. Indexes start at zero, append() adds an item, remove() removes a matching item, and a slice such as topics[1:] returns part of a list.
+
+Tuples are fixed groups of values, while sets store unique values. Choose a collection based on whether you need order, changeability, uniqueness, or lookup. Check that a list is not empty before accessing an index.`,
+  "python-dictionaries": `A dictionary stores key-value pairs, which makes it useful for a learner profile. Read a value with learner["name"], update it with assignment, and loop through learner.items() to receive each key and value.
+
+The example increases progress from 40 to 50, then prints the record. Use get() when a key may be missing and keep each field's meaning and type consistent.`,
+  "python-loops-roadmap": `Loops repeat work. A for loop visits each item or each number from range(); a while loop continues while its condition is True. range(1, 4) produces 1, 2, and 3 because its upper bound is excluded.
+
+continue skips the current iteration and break stops the loop. Use for for a known collection and while for condition-driven input. Always update a while-loop value so the loop can finish.`,
+  "python-functions-roadmap": `A function is a reusable block of code. Define it with def, pass inputs through parameters, and send a result back with return. The values supplied at the call site are arguments.
+
+calculate_total(12.5, 3) binds price and quantity, then returns 37.5. Give each function one clear job and decide what it should do with empty or invalid input.`,
+  "python-errors-debugging": `A syntax error means Python cannot understand the code. A runtime error occurs while code runs, such as converting invalid text to an integer. A traceback names the exception and points to the failing line.
+
+Use try and except around an expected failure you understand. The example catches ValueError because the text cannot become an integer. Debug by reproducing the issue, reading the traceback, inspecting values, making one focused change, and testing again.`,
+  "python-files-modules": `Files persist data after a program stops. pathlib.Path gives clear path operations, and a context manager closes file resources safely. Decide whether to replace or append, use an explicit encoding, and handle missing files.
+
+The example writes progress.txt and reads it back. A module is a .py file whose functions and values can be imported; a package organizes related modules. Keep file access separate from business logic and never store secrets in ordinary text files.`,
+  "python-basics-project": `A Python Basics project combines variables, strings, collections, conditions, loops, functions, errors, files, and modules. Choose a small useful program: a calculator, student-grade tracker, to-do list, quiz game, or personal expense tracker.
+
+Build in steps: define the data, implement one operation, test it, add the next operation, and move repeated logic into functions. Validate user input and display clear output. Your final explanation should describe the data model, functions, normal and invalid cases, and how to run the program.`,
+};
 function makePythonRoadmapLesson([id, title, description, code, challenge], index) {
   const advanced = index >= 24;
+  const detailedNotes = pythonBasicsNotes[id];
   return {
     id,
     title,
@@ -1141,7 +1223,7 @@ function makePythonRoadmapLesson([id, title, description, code, challenge], inde
     estimatedTime: advanced ? "40 min" : "30 min",
     objectives: [description, "Explain the trade-offs behind the approach", "Apply the concept in a practical exercise"],
     sections: [
-      { type: "explanation", title: "Core Idea", content: `${description}
+      { type: "explanation", title: detailedNotes ? "Detailed Python Notes" : "Core Idea", content: detailedNotes || `${description}
 
 What this teaches: ${description} The concept turns a defined input into a predictable result, so first name the input, the rule being applied, and the output you expect.
 
@@ -1526,6 +1608,7 @@ The typeof operator can help you inspect a value's type.
   ],
 
   python: [
+    ...pythonProfessionalRoadmap.map(makePythonRoadmapLesson),
     {
       id: "python-variables",
       title: "Python Variables",
