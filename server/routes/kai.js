@@ -943,11 +943,49 @@ router.post("/feedback", ensureAuth, async (req, res) => {
 });
 
 // ============================================
+// KAI-GENERATED LESSON QUESTIONS
+// ============================================
+router.post("/assessment/questions", ensureAuth, async (req, res) => {
+  try {
+    const { course, lesson, teachingContext = "" } = req.body || {};
+    const source = String(teachingContext || "").trim().slice(0, 24000);
+    if (!lesson?.id || !source || source.length < 200) {
+      return res.status(400).json({ success: false, message: "Kai needs the lesson teaching before writing questions." });
+    }
+    const prompt = `You are Kai, the instructor who just taught this lesson. Create exactly ten fair assessment questions using ONLY the teaching transcript below. Do not test facts, terminology, tools, code, or concepts that do not appear in the transcript. Cover distinct ideas and examples from the actual teaching, and do not ask generic questions about studying or professionalism. Use exactly six choice questions and four text questions, mixed in a sensible order. Each choice question must include four concise options and an answerKey exactly matching one option. Text questions must have an empty options array and a specific concise answerKey describing what a correct answer should contain. Return ONLY JSON in this exact shape: {"questions":[{"id":"q1","type":"choice","question":"...","options":["...","...","...","..."],"answerKey":"..."}]}. Keep wording clear for a learner. Course: ${String(course?.title || "").slice(0, 160)}. Lesson: ${String(lesson.title || "").slice(0, 200)}.
+
+ACTUAL KAI TEACHING TRANSCRIPT:
+${source}`;
+    const response = await fetch(GROQ_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.GROQ_API_KEY}` },
+      body: JSON.stringify({ model: GROQ_MODEL, messages: [{ role: "system", content: prompt }], temperature: 0.35, max_completion_tokens: 2600, response_format: { type: "json_object" }, ...(/gpt-oss/i.test(GROQ_MODEL) ? { reasoning_effort: "low", include_reasoning: false } : {}) }),
+    });
+    if (!response.ok) throw new Error(`Question generation request failed (${response.status})`);
+    const payload = await response.json();
+    const parsed = JSON.parse(extractAssistantText(payload).replace(/```json|```/gi, "").trim());
+    if (!Array.isArray(parsed.questions) || parsed.questions.length !== 10) throw new Error("Kai did not return ten usable questions.");
+    const questions = parsed.questions.map((item, index) => {
+      const type = item.type === "text" ? "text" : "choice";
+      const question = String(item.question || "").trim().slice(0, 800);
+      const options = type === "choice" && Array.isArray(item.options) ? item.options.slice(0, 4).map((option) => String(option).trim().slice(0, 300)) : [];
+      const answerKey = String(item.answerKey || "").trim().slice(0, 800);
+      if (!question || !answerKey || (type === "choice" && (options.length !== 4 || !options.includes(answerKey)))) throw new Error(`Kai returned an invalid question at position ${index + 1}.`);
+      return { id: `q${index + 1}`, type, question, options, answerKey };
+    });
+    if (questions.filter((item) => item.type === "choice").length !== 6) throw new Error("Kai returned an invalid question mix.");
+    return res.json({ success: true, questions });
+  } catch (error) {
+    console.error("Kai question generation error:", error);
+    return res.status(502).json({ success: false, message: "Kai could not generate questions from the lesson teaching. Please try again." });
+  }
+});
+// ============================================
 // KAI LESSON ASSESSMENT
 // ============================================
 router.post("/assessment", ensureAuth, async (req, res) => {
   try {
-    const { course, lesson, questions = [], answers = {}, attempt = 1, currentLessonIndex = 0 } = req.body;
+    const { course, lesson, questions = [], answers = {}, attempt = 1, currentLessonIndex = 0, teachingContext = "" } = req.body;
     const userId = req.user?.id;
     if (!userId || !course?.id || !lesson?.id || !Array.isArray(questions) || questions.length === 0) {
       return res.status(400).json({ success: false, message: "Assessment details are required" });
@@ -960,7 +998,7 @@ router.post("/assessment", ensureAuth, async (req, res) => {
       answerKey: String(question.answerKey || "").slice(0, 800),
       learnerAnswer: String(answers?.[question.id] || "").slice(0, 1500),
     }));
-    const prompt = `You are Kai, grading a learner's ${course.title || course.id} lesson assessment. Grade fairly from the official lesson context. Choice answers must match the answer key. Text answers earn credit when they demonstrate the core idea, even if wording differs. Return ONLY JSON: {"score":0,"passed":false,"feedback":"short useful feedback","corrections":[{"questionId":"q1","note":"..."}],"nextExerciseFocus":"..."}. Passing requires score >= 70. If the learner fails, recommend a focused replacement exercise rather than repeating the exact same questions.\n\nOFFICIAL LESSON: ${lesson.title}\n${JSON.stringify(safeQuestions)}`;
+    const prompt = `You are Kai, grading a learner's ${course.title || course.id} lesson assessment. Grade only against what was taught in the transcript and the answer keys. Choice answers must match the answer key. Text answers earn credit when they demonstrate the taught idea, even if wording differs. Return ONLY JSON: {"score":0,"passed":false,"feedback":"short useful feedback","corrections":[{"questionId":"q1","note":"..."}],"nextExerciseFocus":"..."}. Passing requires score >= 70. If the learner fails, recommend a focused replacement exercise rather than repeating the exact same questions.\n\nOFFICIAL LESSON: ${lesson.title}\nACTUAL TEACHING: ${String(teachingContext || "").slice(0, 24000)}\nQUESTIONS AND ANSWERS: ${JSON.stringify(safeQuestions)}`;
     let result = null;
     try {
       const response = await fetch(GROQ_API_URL, {
@@ -986,7 +1024,7 @@ router.post("/assessment", ensureAuth, async (req, res) => {
     const passed = score >= 70;
     let nextAssessment = null;
     if (!passed) {
-      const retryPrompt = `You are Kai creating Assessment 2 for the same lesson after a learner scored ${score}%. Return ONLY JSON with exactly ten questions in this format: {"questions":[{"id":"q1","type":"choice","question":"...","options":["..."],"answerKey":"..."}]}. Preserve the exact question format and order from Assessment 1: choice, choice, choice, choice, choice, text, text, text, choice, text. The fifth choice question must be true/false with two options; every other choice question must have four options; every text question must have an empty options array. Keep the same mix and difficulty, but test different wording and examples. Every answerKey must be correct. Lesson: ${lesson.title}. Focus: ${lesson.focus || lesson.title}. Previous assessment: ${JSON.stringify(safeQuestions)}`;
+      const retryPrompt = `You are Kai creating Assessment 2 for the same lesson after a learner scored ${score}%. Generate every replacement question only from the actual teaching transcript below; do not add generic questions or outside concepts. Return ONLY JSON with exactly ten questions in this format: {"questions":[{"id":"q1","type":"choice","question":"...","options":["..."],"answerKey":"..."}]}. Preserve the exact question types and order from Assessment 1: ${safeQuestions.map((question) => question.type).join(", ")}. Every choice question must have four options; every text question must have an empty options array. Keep the same mix and difficulty, but test different wording and examples. Every answerKey must be correct. Lesson: ${lesson.title}. ACTUAL KAI TEACHING: ${String(teachingContext || "").slice(0, 24000)}. Previous assessment: ${JSON.stringify(safeQuestions)}`;
       try {
         const retryResponse = await fetch(GROQ_API_URL, {
           method: "POST",
@@ -1004,9 +1042,7 @@ router.post("/assessment", ensureAuth, async (req, res) => {
               const generatedOptions = Array.isArray(question.options) ? question.options.map((option) => String(option).slice(0, 300)).filter(Boolean) : [];
               const options = expectedType === "text"
                 ? []
-                : index === 4
-                  ? ["True", "False"]
-                  : (generatedOptions.length >= 4 ? generatedOptions.slice(0, 4) : (fallbackQuestion.options || []).slice(0, 4));
+                : (generatedOptions.length >= 4 ? generatedOptions.slice(0, 4) : (fallbackQuestion.options || []).slice(0, 4));
               return {
                 id: `q${index + 1}`,
                 type: expectedType,

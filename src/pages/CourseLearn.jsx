@@ -85,6 +85,9 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [labLoading, setLabLoading] = useState(false);
   const [assessmentRound, setAssessmentRound] = useState(1);
   const [assessmentQuestionsOverride, setAssessmentQuestionsOverride] = useState(null);
+  const [generatedAssessmentQuestions, setGeneratedAssessmentQuestions] = useState(null);
+  const [assessmentQuestionsLoading, setAssessmentQuestionsLoading] = useState(false);
+  const [assessmentQuestionsError, setAssessmentQuestionsError] = useState("");
   const [assessmentAnswers, setAssessmentAnswers] = useState({});
   const [assessmentQuestionIndex, setAssessmentQuestionIndex] = useState(0);
   const [assessmentResult, setAssessmentResult] = useState(null);
@@ -101,29 +104,49 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const lessonViewCacheRef = useRef(new Map());
   const conversationEndRef = useRef(null);
   const scrollFrameRef = useRef(null);
-  const buildAssessment = (activeLesson, round = 1) => {
-    if (!activeLesson) return [];
-    const focus = activeLesson.focus || activeLesson.title || "this lesson";
-    const quizOptions = Array.isArray(activeLesson.quizOptions) && activeLesson.quizOptions.length >= 2 ? activeLesson.quizOptions : [`Apply ${focus} with a tested example`, "Skip the concept", "Ignore the result", "Avoid verification"];
-    const correct = activeLesson.quizAnswer || quizOptions[0];
-    return [
-      { id: "q1", type: "choice", question: activeLesson.quizQuestion || `Which statement best describes ${focus}?`, options: quizOptions, answerKey: correct },
-      { id: "q2", type: "choice", question: `Which action best demonstrates understanding of ${focus}?`, options: [`Explain it and apply it in a small tested example`, "Copy code without tracing it", "Avoid edge cases", "Use it without knowing the goal"], answerKey: "Explain it and apply it in a small tested example" },
-      { id: "q3", type: "choice", question: `What should a professional learner check first when using ${focus}?`, options: ["The goal, inputs, outputs, and failure cases", "Only the color of the interface", "Nothing beyond the happy path", "Whether the code is the longest"], answerKey: "The goal, inputs, outputs, and failure cases" },
-      { id: "q4", type: "choice", question: `Which is a useful verification step for ${focus}?`, options: ["Test a normal case and a boundary case", "Delete the test after it passes", "Assume a demo proves everything", "Hide errors from the user"], answerKey: "Test a normal case and a boundary case" },
-      { id: "q5", type: "choice", question: `True or false: a solution for ${focus} should explain its trade-offs and limitations.`, options: ["True", "False"], answerKey: "True" },
-      { id: "q6", type: "text", question: `In your own words, explain the main idea of ${focus}.`, answerKey: `A clear explanation of ${focus}, what it solves, and how it is applied.` },
-      { id: "q7", type: "text", question: `Describe one edge case or failure case for ${focus} and how you would handle it.`, answerKey: "A relevant boundary or failure case with a safe handling strategy." },
-      { id: "q8", type: "text", question: `Describe a small practical example you could build using ${focus}.`, answerKey: "A concrete example with inputs, behavior, and an expected result." },
-      { id: "q9", type: "choice", question: `What should you do if your first implementation of ${focus} fails?`, options: ["Inspect the evidence, isolate the cause, fix it, and test again", "Guess randomly", "Remove all validation", "Move on without learning"], answerKey: "Inspect the evidence, isolate the cause, fix it, and test again" },
-      { id: "q10", type: "text", question: `Write a short plan for reviewing ${focus} again if your first attempt is not correct.`, answerKey: "A focused review plan followed by a fresh attempt and verification." },
-    ].map((question) => ({ ...question, question: round > 1 && question.type === "text" ? `${question.question} (Replacement exercise ${round})` : question.question }));
+  const assessmentTeachingContext = messages
+    .filter((message) => message.role === "assistant")
+    .map((message) => `${message.content || ""}${message.contentBlocks ? `\n${JSON.stringify(message.contentBlocks)}` : ""}`)
+    .join("\n\n")
+    .slice(0, 24000);
+  const assessmentQuestions = assessmentQuestionsOverride || generatedAssessmentQuestions || [];
+  const generateAssessmentQuestions = async () => {
+    if (!lesson || !assessmentTeachingContext.trim() || assessmentQuestionsLoading) return;
+    setAssessmentQuestionsLoading(true);
+    setAssessmentQuestionsError("");
+    try {
+      const response = await fetchWithAuth("/api/kai/assessment/questions", {
+        method: "POST",
+        body: JSON.stringify({
+          course: { ...course, title: courseTitle },
+          lesson: { id: lesson.id, title: lesson.title },
+          teachingContext: assessmentTeachingContext,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success || !Array.isArray(data.questions) || data.questions.length !== 10) {
+        throw new Error(data.message || "Kai could not make questions from the teaching yet.");
+      }
+      setGeneratedAssessmentQuestions(data.questions);
+      setAssessmentQuestionIndex(0);
+    } catch (error) {
+      setAssessmentQuestionsError(error.message || "Kai could not prepare questions from the teaching.");
+    } finally {
+      setAssessmentQuestionsLoading(false);
+    }
   };
-  const assessmentQuestions = assessmentQuestionsOverride || buildAssessment(lesson, assessmentRound);
+  useEffect(() => {
+    if (!assessmentQuestions.length && !assessmentQuestionsLoading && !assessmentQuestionsError && assessmentTeachingContext.trim().length >= 200) {
+      generateAssessmentQuestions();
+    }
+  }, [assessmentTeachingContext, assessmentQuestions.length, assessmentQuestionsLoading, assessmentQuestionsError, lesson?.id]);
   const [assessmentPassed, setAssessmentPassed] = useState(false);
   useEffect(() => {
     setAssessmentRound(1);
     setAssessmentQuestionsOverride(null);
+    setGeneratedAssessmentQuestions(null);
+    setAssessmentQuestionsLoading(false);
+    setAssessmentQuestionsError("");
     setAssessmentAnswers({});
     setAssessmentQuestionIndex(0);
     setAssessmentResult(null);
@@ -146,7 +169,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     }
     setAssessmentSubmitting(true); setAssessmentMarked(false); setAssessmentResult(null);
     try {
-      const response = await fetchWithAuth("/api/kai/assessment", { method: "POST", body: JSON.stringify({ course: { ...course, title: courseTitle }, lesson, questions: assessmentQuestions, answers: assessmentAnswers, attempt: assessmentRound, currentLessonIndex }) });
+      const response = await fetchWithAuth("/api/kai/assessment", { method: "POST", body: JSON.stringify({ course: { ...course, title: courseTitle }, lesson, questions: assessmentQuestions, answers: assessmentAnswers, attempt: assessmentRound, currentLessonIndex, teachingContext: assessmentTeachingContext }) });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Kai could not grade this exercise.");
       setAssessmentResult(data);
@@ -2162,6 +2185,17 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               </div>
             )}
 
+        {!assessmentPassed && !assessmentQuestions.length && assessmentTeachingContext.trim().length >= 200 && (
+          <div className="chat-row kai-row kai-assessment-message">
+            <div className="chat-content">
+              <div className="kai-message-header"><div className="chat-avatar kai-avatar-small"><Bot size={18} /></div><div className="chat-name"><strong>Kai</strong><span>AI Instructor</span></div></div>
+              <div className="kai-board-content"><div className="kai-message-text">
+                <p>{assessmentQuestionsError ? `I couldn’t prepare questions from what I taught: ${assessmentQuestionsError}` : "I’m putting together questions from the ideas and examples we just covered…"}</p>
+                {assessmentQuestionsError && <button type="button" className="kai-assessment-submit" onClick={generateAssessmentQuestions} disabled={assessmentQuestionsLoading}>{assessmentQuestionsLoading ? "Preparing questions…" : "Try again"}</button>}
+              </div></div>
+            </div>
+          </div>
+        )}
         {!assessmentPassed && assessmentQuestions.length > 0 && (
           <div className="chat-row kai-row kai-assessment-message">
             <div className="chat-content">
