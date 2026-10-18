@@ -430,7 +430,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       "heading", "subheading", "text", "bullets", "numbered", "code", "terminal", "json", "xml",
       "copy", "copyable", "command", "config", "diagram", "table", "choice", "quiz", "suggestions",
       "callout", "quote", "checklist", "comparison", "compare", "timeline", "equation", "math", "quick_replies", "quickReplies",
-      "progress", "filetree", "file-tree", "image", "preview", "embed", "video", "exercise", "action",
+      "progress", "filetree", "file-tree", "image", "preview", "embed", "video", "exercise", "action", "learning_path", "tutorial",
     ]);
     const normalizeBlock = (block) => (
       block && typeof block === "object" && block.diagramType && Array.isArray(block.nodes) && Array.isArray(block.edges)

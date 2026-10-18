@@ -208,6 +208,86 @@ function Choice({ block, onChoice }) {
   return <section className="kai-rich-choice"><h3>{block.question}</h3><div className="kai-choice-options">{(block.options || []).map((option) => <button type="button" key={option} className={selected === option ? "selected" : ""} onClick={() => { setSelected(option); onChoice?.(option); }}>{option}</button>)}</div></section>;
 }
 
+function InteractiveQuiz({ block, onChoice }) {
+  const [selected, setSelected] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const options = Array.isArray(block.options) ? block.options.map((option) => typeof option === "string" ? option : String(option.text || option.label || "")) : [];
+  const answerKey = String(block.correctAnswer ?? block.answerKey ?? block.answer ?? "").trim();
+  const isCorrect = answerKey && selected.trim().toLowerCase() === answerKey.toLowerCase();
+  return <section className="kai-rich-quiz" aria-live="polite">
+    <div className="kai-rich-quiz-kicker">QUICK CHECK</div>
+    <h3>{block.question || block.title || "Check your understanding"}</h3>
+    <div className="kai-choice-options">{options.map((option) => <button type="button" key={option} disabled={submitted} className={`${selected === option ? "selected" : ""}${submitted && selected === option ? (isCorrect ? " is-correct" : " is-incorrect") : ""}`} onClick={() => setSelected(option)}>{option}</button>)}</div>
+    {!submitted ? <button type="button" className="kai-rich-quiz-submit" disabled={!selected} onClick={() => { setSubmitted(true); onChoice?.(`For the question “${block.question || block.title || "Check your understanding"}”, I chose “${selected}”. Please respond to my answer and continue teaching from here.`); }}>{block.submitLabel || "Check my answer"}</button> : <div className={`kai-rich-quiz-feedback ${answerKey ? (isCorrect ? "is-correct" : "is-incorrect") : ""}`}>
+      <strong>{answerKey ? (isCorrect ? "Correct" : `Not quite — the answer is ${answerKey}`) : "Answer sent to Kai"}</strong>
+      {block.explanation && <p>{block.explanation}</p>}
+      {!answerKey && <p>Kai will use your choice to guide the next explanation.</p>}
+    </div>}
+  </section>;
+}
+
+function LearningPath({ block, onAction }) {
+  const [activeStep, setActiveStep] = useState(0);
+  const steps = Array.isArray(block.steps) ? block.steps : Array.isArray(block.items) ? block.items : [];
+  const active = steps[activeStep];
+  if (!steps.length) return null;
+  return <section className="kai-rich-learning-path">
+    <div className="kai-rich-learning-path-heading"><span>LEARNING PATH</span><h3>{block.title || "Choose a path to continue"}</h3>{block.description && <p>{block.description}</p>}</div>
+    <div className="kai-learning-path-cards">{steps.map((step, index) => <button type="button" key={`${step.title || step.name || "step"}-${index}`} className={activeStep === index ? "is-active" : ""} onClick={() => setActiveStep(index)}><span>STEP {index + 1}</span><strong>{step.title || step.name || `Step ${index + 1}`}</strong>{step.summary && <small>{step.summary}</small>}</button>)}</div>
+    {active && <div className="kai-learning-path-detail"><strong>{active.title || active.name || `Step ${activeStep + 1}`}</strong><p>{active.description || active.content || active.summary}</p>{(active.prompt || active.askKai) && <button type="button" onClick={() => onAction?.("prompt", active.prompt || active.askKai)}>Explore this step with Kai <ArrowRight size={14} /></button>}</div>}
+  </section>;
+}
+
+function StepTutorial({ block, onAction }) {
+  const [stepIndex, setStepIndex] = useState(0);
+  const steps = Array.isArray(block.steps) ? block.steps : [];
+  const step = steps[stepIndex];
+  if (!step) return null;
+  return <section className="kai-rich-tutorial">
+    <header><span>STEP-BY-STEP</span><small>{stepIndex + 1} / {steps.length}</small></header>
+    <div className="kai-tutorial-progress"><span style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }} /></div>
+    <h3>{step.title || `Step ${stepIndex + 1}`}</h3>
+    <p>{step.description || step.content || ""}</p>
+    {step.code && <CodeBlock key={`tutorial-code-${stepIndex}`} block={{ code: step.code, language: step.language || "javascript", filename: step.filename || `step-${stepIndex + 1}` }} />}
+    {step.prompt && <button type="button" onClick={() => onAction?.("prompt", step.prompt)}>Ask Kai about this step <ArrowRight size={14} /></button>}
+    <footer><button type="button" disabled={stepIndex === 0} onClick={() => setStepIndex((index) => index - 1)}>Back</button><button type="button" disabled={stepIndex === steps.length - 1} onClick={() => setStepIndex((index) => index + 1)}>{stepIndex === steps.length - 1 ? "Tutorial complete" : "Next step"} <ArrowRight size={14} /></button></footer>
+  </section>;
+}
+
+function SimulatedTerminal({ block, onAction }) {
+  const [command, setCommand] = useState("");
+  const [history, setHistory] = useState([]);
+  const files = block.files && typeof block.files === "object" ? block.files : {};
+  const simulated = block.simulatedCommands && typeof block.simulatedCommands === "object" ? block.simulatedCommands : {};
+  const run = (event) => {
+    event.preventDefault();
+    const entered = command.trim();
+    if (!entered) return;
+    if (entered.toLowerCase() === "clear") { setHistory([]); setCommand(""); return; }
+    let output = "";
+    const [base, ...args] = entered.split(/\s+/);
+    if (Object.prototype.hasOwnProperty.call(simulated, entered)) output = String(simulated[entered]);
+    else if (base === "help") output = `Safe simulated commands: help, pwd, whoami, ls, cat <fixture-file>, clear${Object.keys(simulated).length ? `, ${Object.keys(simulated).join(", ")}` : ""}. Nothing runs on a real machine.`;
+    else if (base === "pwd") output = String(block.workingDirectory || "/home/learner/workspace");
+    else if (base === "whoami") output = "learner (simulated account)";
+    else if (base === "ls") output = Object.keys(files).length ? Object.keys(files).join("  ") : "No fixture files are configured.";
+    else if (base === "cat") output = args.length && Object.prototype.hasOwnProperty.call(files, args.join(" ")) ? String(files[args.join(" ")]) : `No such fixture file: ${args.join(" ") || "(missing path)"}`;
+    else output = "Command not simulated. This terminal never executes real commands; use help or ask Kai about a safe simulation.";
+    setHistory((previous) => [...previous, { command: entered, output }]);
+    setCommand("");
+  };
+  return <section className="kai-sim-terminal">
+    <header><span className="kai-sim-terminal-lights"><i /><i /><i /></span><strong>{block.title || "Simulated terminal"}</strong><span>ISOLATED MOCK</span></header>
+    {block.scenario && <p className="kai-sim-terminal-scenario">{block.scenario}</p>}
+    <div className="kai-sim-terminal-screen" aria-live="polite">
+      <p>{block.welcome || "Kai training shell — fixture data only. Type help to see supported commands."}</p>
+      {history.map((item, index) => <div key={`${item.command}-${index}`}><p><b>$ {item.command}</b></p><pre>{item.output}</pre></div>)}
+    </div>
+    <form onSubmit={run}><label htmlFor={`sim-terminal-${String(block.title || "kai").replace(/[^a-z0-9]/gi, "")}`}>$</label><input id={`sim-terminal-${String(block.title || "kai").replace(/[^a-z0-9]/gi, "")}`} value={command} onChange={(event) => setCommand(event.target.value)} placeholder="Try help" autoComplete="off" /><button type="submit">Run in simulation</button></form>
+    <button className="kai-sim-terminal-ask" type="button" disabled={!history.length} onClick={() => { const last = history[history.length - 1]; onAction?.("prompt", `In the simulated terminal for ${block.title || "this lesson"}, I ran “${last.command}” and got: ${last.output}. Explain what it means and what I should check next.`); }}>Discuss last result with Kai</button>
+  </section>;
+}
+
 export function Suggestions({ block, onAction }) {
   const items = Array.isArray(block.items) ? block.items : [];
   const progressionText = /(?:start|open|go to|continue to)\s+(?:the\s+)?(?:next\s+lesson|.+\blesson\b)|\bnext\s+lesson\b/i;
@@ -297,12 +377,13 @@ export default function AIContentRenderer({ content, onAction, onChoice }) {
     if (block.type === "text") return <div key={key}><TextBlock value={block.text || block.content} /></div>;
     if (block.type === "bullets") return <ul className="kai-rich-bullet-list" key={key}>{(block.items || []).flatMap((item) => String(item).split(/\s+-\s+/).map((part) => part.trim()).filter(Boolean)).map((item, itemIndex) => <li key={`${itemIndex}-${item}`}><InlineText>{item}</InlineText></li>)}</ul>;
     if (block.type === "numbered") return <ol key={key}>{(block.items || []).map((item) => <li key={item}><InlineText>{item}</InlineText></li>)}</ol>;
-    if (["code", "terminal", "json", "xml"].includes(block.type)) return <CodeBlock block={{ ...block, language: block.language || (block.type === "terminal" ? "shell" : block.type) }} key={key} />;
+    if (block.type === "terminal") return <SimulatedTerminal block={block} onAction={onAction} key={key} />;
+    if (["code", "json", "xml"].includes(block.type)) return <CodeBlock block={{ ...block, language: block.language || block.type }} key={key} />;
     if (["copy", "copyable", "command", "config"].includes(block.type)) return <Copyable block={block} key={key} />;
     if (block.type === "diagram") return <Diagram block={block} key={key} />;
     if (block.type === "table") return <Table block={block} key={key} />;
     if (block.type === "choice") return <Choice block={block} onChoice={onChoice} key={key} />;
-    if (block.type === "quiz") return <Choice block={block} onChoice={onChoice} key={key} />;
+    if (block.type === "quiz") return <InteractiveQuiz block={block} onChoice={onChoice} key={key} />;
     if (block.type === "suggestions") return <Suggestions block={block} onAction={onAction} key={key} />;
     if (["quick_replies", "quickReplies"].includes(block.type)) return <QuickReplies block={block} onAction={onAction} key={key} />;
     if (block.type === "callout") return <Callout block={block} key={key} />;
@@ -310,6 +391,8 @@ export default function AIContentRenderer({ content, onAction, onChoice }) {
     if (block.type === "checklist") return <Checklist block={block} key={key} />;
     if (["comparison", "compare"].includes(block.type)) return <Comparison block={block} key={key} />;
     if (block.type === "timeline") return <Timeline block={block} key={key} />;
+    if (block.type === "learning_path") return <LearningPath block={block} onAction={onAction} key={key} />;
+    if (block.type === "tutorial") return <StepTutorial block={block} onAction={onAction} key={key} />;
     if (["equation", "math"].includes(block.type)) return <div className="kai-rich-equation" key={key}>{block.label && <span>{block.label}</span>}<code>{block.latex || block.expression || block.text}</code></div>;
     if (block.type === "progress") return <Progress block={block} key={key} />;
     if (["filetree", "file-tree"].includes(block.type)) return <FileTree block={block} key={key} />;

@@ -136,3 +136,40 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+.kai-rich-quiz,.kai-rich-learning-path,.kai-rich-tutorial,.kai-sim-terminal{border:1px solid rgba(151,142,255,.28);border-radius:14px;background:linear-gradient(145deg,rgba(27,29,50,.94),rgba(16,18,30,.98));padding:1rem 1.1rem;color:#eef0ff}
+.kai-rich-quiz-kicker,.kai-rich-learning-path-heading>span,.kai-rich-tutorial>header>span{font-size:.68rem;font-weight:800;letter-spacing:.12em;color:#b7afff}
+.kai-rich-quiz h3,.kai-rich-learning-path h3,.kai-rich-tutorial h3{margin:.35rem 0 .8rem;color:#fff}
+.kai-rich-quiz-submit,.kai-learning-path-detail button,.kai-rich-tutorial>button,.kai-rich-tutorial footer button,.kai-sim-terminal form button,.kai-sim-terminal-ask{display:inline-flex;align-items:center;gap:.4rem;border:1px solid rgba(170,160,255,.4);border-radius:8px;padding:.55rem .8rem;background:rgba(126,112,255,.16);color:#f2f0ff;cursor:pointer;font:inherit;font-weight:700}
+.kai-rich-quiz-submit:disabled,.kai-rich-tutorial footer button:disabled,.kai-sim-terminal-ask:disabled{opacity:.45;cursor:not-allowed}
+.kai-rich-quiz-submit{margin-top:.8rem}
+.kai-rich-quiz-feedback{margin-top:.85rem;padding:.7rem .8rem;border-left:3px solid #a498ff;background:rgba(132,116,255,.09)}
+.kai-rich-quiz-feedback p{margin:.3rem 0 0;color:#d5d7eb}
+.kai-rich-quiz-feedback.is-correct{border-color:#8be29b;background:rgba(50,180,90,.1)}
+.kai-rich-quiz-feedback.is-incorrect{border-color:#f0b35c;background:rgba(240,179,92,.09)}
+.kai-choice-options button.is-correct{border-color:#77d990;background:rgba(46,170,85,.22)}
+.kai-choice-options button.is-incorrect{border-color:#e59b67;background:rgba(210,120,60,.18)}
+.kai-rich-learning-path-heading p,.kai-rich-tutorial>p{margin:.25rem 0 .8rem;color:#d5d7eb}
+.kai-learning-path-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.65rem;margin:.8rem 0}
+.kai-learning-path-cards button{display:flex;flex-direction:column;align-items:flex-start;gap:.32rem;min-height:95px;text-align:left;border:1px solid rgba(160,151,255,.28);border-radius:10px;padding:.75rem;background:rgba(9,10,19,.6);color:#ecedff;cursor:pointer}
+.kai-learning-path-cards button.is-active{border-color:#a99cff;background:rgba(132,116,255,.16)}
+.kai-learning-path-cards button span{font-size:.62rem;letter-spacing:.08em;color:#b8afff;font-weight:800}
+.kai-learning-path-cards button small{color:#bbc0d5;line-height:1.4}
+.kai-learning-path-detail{padding:.7rem .8rem;border-radius:9px;background:rgba(4,6,14,.45)}
+.kai-learning-path-detail p{margin:.35rem 0 .7rem;color:#d0d3e5}
+.kai-rich-tutorial>header{display:flex;justify-content:space-between;align-items:center}
+.kai-rich-tutorial>header small{color:#bfc1d4}
+.kai-tutorial-progress{height:5px;margin:.55rem 0 .8rem;border-radius:99px;background:#2c2e41;overflow:hidden}
+.kai-tutorial-progress span{display:block;height:100%;background:#a498ff;transition:width .2s ease}
+.kai-rich-tutorial footer{display:flex;justify-content:space-between;margin-top:.8rem;padding-top:.7rem;border-top:1px solid rgba(170,160,255,.18)}
+.kai-sim-terminal{padding:0;overflow:hidden;background:#0d1117;border-color:#303846;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.kai-sim-terminal>header{display:flex;align-items:center;gap:.65rem;padding:.7rem .9rem;background:#171d26;border-bottom:1px solid #303846;color:#dce4ef}
+.kai-sim-terminal>header>span:last-child{margin-left:auto;color:#8be29b;font-size:.62rem;letter-spacing:.08em;font-weight:800}
+.kai-sim-terminal-lights{display:flex;gap:4px}.kai-sim-terminal-lights i{width:8px;height:8px;border-radius:50%;background:#ee6a5f}.kai-sim-terminal-lights i:nth-child(2){background:#f5bd4f}.kai-sim-terminal-lights i:nth-child(3){background:#61c454}
+.kai-sim-terminal-scenario{margin:0;padding:.65rem .9rem;color:#b7c6d8;font: .82rem/1.5 system-ui,sans-serif;background:#111821}
+.kai-sim-terminal-screen{min-height:110px;max-height:280px;overflow:auto;padding:.7rem .9rem;color:#c2f3c8;font-size:.8rem}
+.kai-sim-terminal-screen p{margin:.2rem 0}.kai-sim-terminal-screen pre{margin:.15rem 0 .65rem;white-space:pre-wrap;color:#c5d1df;font:inherit}
+.kai-sim-terminal form{display:flex;align-items:center;gap:.55rem;padding:.6rem .85rem;border-top:1px solid #303846}
+.kai-sim-terminal form label{color:#8be29b}.kai-sim-terminal form input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#e6edf3;font:inherit}
+.kai-sim-terminal form button{font-size:.72rem;padding:.4rem .55rem}.kai-sim-terminal-ask{margin:0 .85rem .8rem;font-size:.72rem;padding:.4rem .55rem}
+@media(max-width:600px){.kai-rich-quiz,.kai-rich-learning-path,.kai-rich-tutorial{padding:.8rem}.kai-sim-terminal form{flex-wrap:wrap}.kai-sim-terminal form button{margin-left:auto}}
