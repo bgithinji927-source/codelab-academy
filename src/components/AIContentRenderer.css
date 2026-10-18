@@ -173,3 +173,5 @@
 .kai-sim-terminal form label{color:#8be29b}.kai-sim-terminal form input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#e6edf3;font:inherit}
 .kai-sim-terminal form button{font-size:.72rem;padding:.4rem .55rem}.kai-sim-terminal-ask{margin:0 .85rem .8rem;font-size:.72rem;padding:.4rem .55rem}
 @media(max-width:600px){.kai-rich-quiz,.kai-rich-learning-path,.kai-rich-tutorial{padding:.8rem}.kai-sim-terminal form{flex-wrap:wrap}.kai-sim-terminal form button{margin-left:auto}}
+.kai-rich-network-diagram{padding:.8rem;border:1px solid rgba(112,157,255,.25);border-radius:12px;background:rgba(14,22,38,.42)}
+.kai-network-diagram-label{display:inline-flex;margin-bottom:.35rem;color:#9dc4ff;font-size:.65rem;font-weight:800;letter-spacing:.12em}

@@ -159,10 +159,13 @@ function Diagram({ block }) {
   const width = 980;
   const nodeWidth = 190;
   const nodeHeight = 64;
-  const layoutName = String(block.layout || block.direction || (['architecture', 'class', 'network', 'dataflow'].includes(String(block.diagramType).toLowerCase()) ? 'horizontal' : 'auto')).toLowerCase();
+  const diagramType = String(block.diagramType || '').toLowerCase();
+  const defaultLayout = diagramType === 'network' ? 'radial' : ['architecture', 'class', 'dataflow'].includes(diagramType) ? 'horizontal' : 'auto';
+  const layoutName = String(block.layout || block.direction || defaultLayout).toLowerCase();
+  const radialLayout = ['radial', 'radial/all-sides', 'all-sides'].includes(layoutName);
   const columns = layoutName === 'horizontal' ? Math.min(4, Math.max(2, nodes.length)) : layoutName === 'grid' ? 3 : 1;
   const rows = Math.max(1, Math.ceil(nodes.length / columns));
-  const height = Math.max(230, rows * 150 + 50);
+  const height = radialLayout ? 430 : Math.max(230, rows * 150 + 50);
   const markerId = `kai-arrow-${String(block.title || block.label || 'diagram').replace(/[^a-z0-9]/gi, '').slice(0, 12) || 'diagram'}`;
   const position = (node) => {
     if (node.position && Number.isFinite(Number(node.position.x)) && Number.isFinite(Number(node.position.y))) {
@@ -194,7 +197,8 @@ function Diagram({ block }) {
     return <rect x={x} y={y} width={nodeWidth} height={nodeHeight} rx="12" />;
   };
   const anchor = (node, side) => { const p = position(node); return { x: p.x + nodeWidth / 2, y: p.y + nodeHeight / 2, top: p.y, bottom: p.y + nodeHeight, left: p.x, right: p.x + nodeWidth, side }; };
-  return <section className="kai-rich-diagram" role="img" aria-label={block.title || block.label || 'Kai diagram'}>
+  return <section className={`kai-rich-diagram${diagramType === 'network' ? ' kai-rich-network-diagram' : ''}`} role="img" aria-label={block.title || block.label || (diagramType === 'network' ? 'Kai network topology' : 'Kai diagram')}>
+    {diagramType === 'network' && <span className="kai-network-diagram-label">NETWORK TOPOLOGY</span>}
     {block.title && <h3>{block.title}</h3>}
     <div className="kai-rich-diagram-scroll"><svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMin meet">
       <defs><marker id={markerId} markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" /></marker></defs>
