@@ -2162,6 +2162,56 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               </div>
             )}
 
+        {!assessmentPassed && assessmentQuestions.length > 0 && (
+          <div className="chat-row kai-row kai-assessment-message">
+            <div className="chat-content">
+              <div className="kai-message-header">
+                <div className="chat-avatar kai-avatar-small"><Bot size={18} /></div>
+                <div className="chat-name"><strong>Kai</strong><span>AI Instructor</span></div>
+                <div className="kai-online"><span /> Online</div>
+              </div>
+              <div className="kai-board-content">
+                <div className="kai-message-text">
+                  <p className="kai-assessment-chat-label">KAI READINESS CHECK · QUESTION {assessmentQuestionIndex + 1} OF {assessmentQuestions.length}</p>
+                  <p>Let’s check your understanding. Answer this one, then I’ll send the next question.</p>
+                  {(() => {
+                    const question = assessmentQuestions[assessmentQuestionIndex];
+                    const answerValue = String(assessmentAnswers[question.id] || "");
+                    return <fieldset className="kai-assessment-question" key={`${assessmentRound}-${question.id}`}>
+                      <legend><span>{assessmentQuestionIndex + 1}</span>{question.question}</legend>
+                      {question.type === "text" ? (
+                        <label className="kai-assessment-answer-area">
+                          <span>Write your answer clearly</span>
+                          <textarea value={answerValue} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} placeholder="Explain your thinking, example, or review plan here..." rows={5} aria-label={`Written answer for question ${assessmentQuestionIndex + 1}`} disabled={assessmentSubmitting} />
+                        </label>
+                      ) : (
+                        <div className="kai-assessment-options">
+                          {question.options.map((option) => <label key={option}>
+                            <input type="radio" name={`assessment-${question.id}`} value={option} checked={answerValue === option} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} disabled={assessmentSubmitting} />
+                            <span>{option}</span>
+                          </label>)}
+                        </div>
+                      )}
+                    </fieldset>;
+                  })()}
+                  <button type="button" className="kai-assessment-submit" onClick={submitAssessment} disabled={assessmentSubmitting}>
+                    {assessmentSubmitting ? "Kai is marking your answers..." : assessmentQuestionIndex === assessmentQuestions.length - 1 ? "Send final answer to Kai" : "Send answer and continue"}
+                    {!assessmentSubmitting && <ArrowRight size={17} />}
+                  </button>
+                  {assessmentResult?.localError && <div className="kai-assessment-result is-error" role="alert"><strong>Answer needed</strong><p>{assessmentResult.localError}</p></div>}
+                  {assessmentResult && !assessmentResult.localError && <div className={`kai-assessment-result ${assessmentResult.passed ? "is-passed" : "is-reviewing"}`} role="status">
+                    <strong>{assessmentResult.passed ? "Kai approved your readiness" : "Kai recommends a focused review"}</strong>
+                    <p>{assessmentResult.feedback}</p>
+                    {assessmentResult.score !== undefined && <span className="kai-assessment-score">Score: {assessmentResult.score}%</span>}
+                    {!assessmentResult.passed && <p className="kai-assessment-next-focus"><b>Review focus:</b> {assessmentResult.nextExerciseFocus}</p>}
+                    {assessmentResult.corrections?.length > 0 && <ul>{assessmentResult.corrections.map((correction, index) => <li key={`${correction.questionId || "q"}-${index}`}>{correction.note}</li>)}</ul>}
+                  </div>}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {assessmentPassed && assessmentResult && <div className="chat-row kai-row kai-assessment-message"><div className="chat-content"><div className="kai-message-header"><div className="chat-avatar kai-avatar-small"><Bot size={18} /></div><div className="chat-name"><strong>Kai</strong><span>AI Instructor</span></div></div><div className="kai-board-content"><div className="kai-message-text"><p><strong>Kai approved your readiness</strong></p><p>{assessmentResult.feedback}</p>{assessmentResult.score !== undefined && <p>Score: {assessmentResult.score}%</p>}</div></div></div></div>}
           <div
             ref={conversationEndRef}
             className="conversation-end-anchor"
@@ -2170,51 +2220,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
         </section>
 
-        {!assessmentPassed && assessmentQuestions.length > 0 && (
-          <section className="kai-assessment-panel kai-assessment-single" aria-labelledby="kai-assessment-title">
-            <div className="kai-assessment-heading">
-              <div>
-                <span className="kai-assessment-kicker"><CheckCircle2 size={14} /> KAI READINESS CHECK</span>
-                <h2 id="kai-assessment-title">Question {assessmentQuestionIndex + 1} of {assessmentQuestions.length}</h2>
-                <p>Answer each question and send it to Kai to continue.</p>
-              </div>
-              <strong>Attempt {assessmentRound}</strong>
-            </div>
-            {(() => {
-              const question = assessmentQuestions[assessmentQuestionIndex];
-              const answerValue = String(assessmentAnswers[question.id] || "");
-              return <fieldset className="kai-assessment-question" key={`${assessmentRound}-${question.id}`}>
-                <legend><span>{assessmentQuestionIndex + 1}</span>{question.question}</legend>
-                {question.type === "text" ? (
-                  <label className="kai-assessment-answer-area">
-                    <span>Write your answer clearly</span>
-                    <textarea value={answerValue} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} placeholder="Explain your thinking, example, or review plan here..." rows={5} aria-label={`Written answer for question ${assessmentQuestionIndex + 1}`} disabled={assessmentSubmitting} />
-                  </label>
-                ) : (
-                  <div className="kai-assessment-options">
-                    {question.options.map((option) => <label key={option}>
-                      <input type="radio" name={`assessment-${question.id}`} value={option} checked={answerValue === option} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} disabled={assessmentSubmitting} />
-                      <span>{option}</span>
-                    </label>)}
-                  </div>
-                )}
-              </fieldset>;
-            })()}
-            <button type="button" className="kai-assessment-submit" onClick={submitAssessment} disabled={assessmentSubmitting}>
-              {assessmentSubmitting ? "Kai is marking your answers..." : assessmentQuestionIndex === assessmentQuestions.length - 1 ? "Send final answer to Kai" : "Send answer and continue"}
-              {!assessmentSubmitting && <ArrowRight size={17} />}
-            </button>
-            {assessmentResult?.localError && <div className="kai-assessment-result is-error" role="alert"><strong>Answer needed</strong><p>{assessmentResult.localError}</p></div>}
-            {assessmentResult && !assessmentResult.localError && <div className={`kai-assessment-result ${assessmentResult.passed ? "is-passed" : "is-reviewing"}`} role="status">
-              <strong>{assessmentResult.passed ? "Kai approved your readiness" : "Kai recommends a focused review"}</strong>
-              <p>{assessmentResult.feedback}</p>
-              {assessmentResult.score !== undefined && <span className="kai-assessment-score">Score: {assessmentResult.score}%</span>}
-              {!assessmentResult.passed && <p className="kai-assessment-next-focus"><b>Review focus:</b> {assessmentResult.nextExerciseFocus}</p>}
-              {assessmentResult.corrections?.length > 0 && <ul>{assessmentResult.corrections.map((correction, index) => <li key={`${correction.questionId || "q"}-${index}`}>{correction.note}</li>)}</ul>}
-            </div>}
-          </section>
-        )}
-        {assessmentPassed && assessmentResult && <div className="kai-assessment-result is-passed" role="status"><strong>Kai approved your readiness</strong><p>{assessmentResult.feedback}</p>{assessmentResult.score !== undefined && <span className="kai-assessment-score">Score: {assessmentResult.score}%</span>}</div>}
         {/* ======================================
             INPUT
         ====================================== */}

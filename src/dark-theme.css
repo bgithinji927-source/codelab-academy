@@ -7690,3 +7690,31 @@ html .learn-page .learner-board-content {
     margin-right: .45rem !important;
   }
 }
+
+/* Readiness prompts are Kai chat turns, not a separate teaching-area panel. */
+html .learn-page .kai-assessment-message .kai-assessment-chat-label {
+  margin: 0 0 8px;
+  color: #b7ff51 !important;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+html .learn-page .kai-assessment-message .kai-assessment-question {
+  width: auto;
+  min-height: 0;
+  margin: 12px 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+html .learn-page .kai-assessment-message .kai-assessment-question legend {
+  padding: 0 0 12px;
+}
+html .learn-page .kai-assessment-message .kai-assessment-answer-area textarea {
+  min-height: 110px;
+}
+html .learn-page .kai-assessment-message .kai-assessment-submit {
+  width: auto;
+  min-width: 220px;
+  margin-top: 8px;
+}
