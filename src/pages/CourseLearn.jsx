@@ -84,8 +84,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [labResult, setLabResult] = useState(null);
   const [labLoading, setLabLoading] = useState(false);
   const [assessmentRound, setAssessmentRound] = useState(1);
-  const [assessmentQuestionsOverride, setAssessmentQuestionsOverride] = useState(null);
-  const [generatedAssessmentQuestions, setGeneratedAssessmentQuestions] = useState(null);
+  const [assessmentQuestions, setAssessmentQuestions] = useState([]);
+  const [assessmentPreviousAttempts, setAssessmentPreviousAttempts] = useState([]);
   const [assessmentQuestionsLoading, setAssessmentQuestionsLoading] = useState(false);
   const [assessmentQuestionsError, setAssessmentQuestionsError] = useState("");
   const [assessmentAnswers, setAssessmentAnswers] = useState({});
@@ -107,47 +107,60 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const conversationEndRef = useRef(null);
   const assessmentMessageRef = useRef(null);
   const scrollFrameRef = useRef(null);
+  const [assessmentPassed, setAssessmentPassed] = useState(false);
   const assessmentTeachingContext = messages
     .filter((message) => message.role === "assistant")
     .map((message) => `${message.content || ""}${message.contentBlocks ? `\n${JSON.stringify(message.contentBlocks)}` : ""}`)
     .join("\n\n")
     .slice(0, 24000);
-  const assessmentQuestions = assessmentQuestionsOverride || generatedAssessmentQuestions || [];
-  const generateAssessmentQuestions = async () => {
-    if (!lesson || !assessmentTeachingContext.trim() || assessmentQuestionsLoading) return;
+  const generateAssessmentQuestion = async (questionNumber = assessmentQuestionIndex + 1, answersSoFar = assessmentAnswers) => {
+    if (!lesson || !assessmentTeachingContext.trim() || assessmentQuestionsLoading || questionNumber < 1 || questionNumber > 10) return;
     setAssessmentQuestionsLoading(true);
     setAssessmentQuestionsError("");
     try {
-      const response = await fetchWithAuth("/api/kai/assessment/questions", {
+      const previousQuestions = assessmentQuestions.map((question) => ({
+        question: question.question,
+        type: question.type,
+        learnerAnswer: String(answersSoFar[question.id] || ""),
+      }));
+      const response = await fetchWithAuth("/api/kai/assessment/question", {
         method: "POST",
         body: JSON.stringify({
           course: { ...course, title: courseTitle },
           lesson: { id: lesson.id, title: lesson.title },
           teachingContext: assessmentTeachingContext,
+          questionNumber,
+          attempt: assessmentRound,
+          previousQuestions,
+          previousAttempts: assessmentPreviousAttempts,
         }),
       });
       const data = await response.json();
-      if (!response.ok || !data.success || !Array.isArray(data.questions) || data.questions.length !== 10) {
-        throw new Error(data.message || "Kai could not make questions from the teaching yet.");
+      if (!response.ok || !data.success || !data.question?.question || !data.question?.answerKey) {
+        throw new Error(data.message || "Kai could not make the next question from the teaching yet.");
       }
-      setGeneratedAssessmentQuestions(data.questions);
-      setAssessmentQuestionIndex(0);
+      setAssessmentQuestions((current) => [...current, data.question]);
+      setAssessmentQuestionIndex(questionNumber - 1);
     } catch (error) {
-      setAssessmentQuestionsError(error.message || "Kai could not prepare questions from the teaching.");
+      setAssessmentQuestionsError(error.message || "Kai could not prepare the next question.");
     } finally {
       setAssessmentQuestionsLoading(false);
     }
   };
   useEffect(() => {
-    if (!assessmentQuestions.length && !assessmentQuestionsLoading && !assessmentQuestionsError && assessmentTeachingContext.trim().length >= 200) {
-      generateAssessmentQuestions();
+    if ((assessmentStarted || assessmentRequired || lessonCompletionReady)
+      && !assessmentPassed
+      && assessmentQuestions.length === 0
+      && !assessmentQuestionsLoading
+      && !assessmentQuestionsError
+      && assessmentTeachingContext.trim().length >= 200) {
+      generateAssessmentQuestion(1, {});
     }
-  }, [assessmentTeachingContext, assessmentQuestions.length, assessmentQuestionsLoading, assessmentQuestionsError, lesson?.id]);
-  const [assessmentPassed, setAssessmentPassed] = useState(false);
+  }, [assessmentTeachingContext, assessmentStarted, assessmentRequired, lessonCompletionReady, assessmentPassed, assessmentQuestions.length, assessmentQuestionsLoading, assessmentQuestionsError, lesson?.id]);
   useEffect(() => {
     setAssessmentRound(1);
-    setAssessmentQuestionsOverride(null);
-    setGeneratedAssessmentQuestions(null);
+    setAssessmentQuestions([]);
+    setAssessmentPreviousAttempts([]);
     setAssessmentQuestionsLoading(false);
     setAssessmentQuestionsError("");
     setAssessmentAnswers({});
@@ -168,20 +181,29 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   }, [assessmentStarted]);
   const startAssessment = () => setAssessmentStarted(true);
   const submitAssessment = async () => {
-    if (!assessmentQuestions.length || assessmentSubmitting) return;
+    if (!assessmentQuestions.length || assessmentSubmitting || assessmentQuestionsLoading) return;
     const currentQuestion = assessmentQuestions[assessmentQuestionIndex];
-    if (!currentQuestion || !String(assessmentAnswers[currentQuestion.id] || "").trim()) {
+    const currentAnswer = String(assessmentAnswers[currentQuestion?.id] || "").trim();
+    if (!currentQuestion || !currentAnswer) {
       setAssessmentResult({ localError: "Please answer this question before continuing." });
       return;
     }
+    const finalAnswers = { ...assessmentAnswers, [currentQuestion.id]: currentAnswer };
+    setAssessmentAnswers(finalAnswers);
     setAssessmentResult(null);
-    if (assessmentQuestionIndex < assessmentQuestions.length - 1) {
-      setAssessmentQuestionIndex((index) => index + 1);
+    if (assessmentQuestionIndex < 9) {
+      const nextQuestionNumber = assessmentQuestionIndex + 2;
+      setAssessmentQuestionIndex(nextQuestionNumber - 1);
+      await generateAssessmentQuestion(nextQuestionNumber, finalAnswers);
       return;
     }
-    setAssessmentSubmitting(true); setAssessmentMarked(false); setAssessmentResult(null);
+    setAssessmentSubmitting(true);
+    setAssessmentMarked(false);
     try {
-      const response = await fetchWithAuth("/api/kai/assessment", { method: "POST", body: JSON.stringify({ course: { ...course, title: courseTitle }, lesson, questions: assessmentQuestions, answers: assessmentAnswers, attempt: assessmentRound, currentLessonIndex, teachingContext: assessmentTeachingContext, assessmentRequired }) });
+      const response = await fetchWithAuth("/api/kai/assessment", {
+        method: "POST",
+        body: JSON.stringify({ course: { ...course, title: courseTitle }, lesson, questions: assessmentQuestions, answers: finalAnswers, attempt: assessmentRound, currentLessonIndex, teachingContext: assessmentTeachingContext, assessmentRequired }),
+      });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Kai could not grade this exercise.");
       setAssessmentResult(data);
@@ -196,13 +218,17 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
           setPreviousLessonSummary(data.feedback || `Assessment passed with ${data.score}%.`);
         }
       } else {
+        setAssessmentPreviousAttempts((attempts) => [...attempts, { questions: assessmentQuestions, answers: finalAnswers, score: data.score }]);
         setAssessmentRound((round) => round + 1);
-        setAssessmentQuestionsOverride(Array.isArray(data.nextAssessment) && data.nextAssessment.length === 10 ? data.nextAssessment : null);
+        setAssessmentQuestions([]);
         setAssessmentAnswers({});
         setAssessmentQuestionIndex(0);
       }
-    } catch (error) { setAssessmentResult({ localError: error.message || "Kai could not grade this exercise." }); }
-    finally { setAssessmentSubmitting(false); }
+    } catch (error) {
+      setAssessmentResult({ localError: error.message || "Kai could not grade this exercise." });
+    } finally {
+      setAssessmentSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -2211,18 +2237,18 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               </div>
             )}
 
-        {(assessmentStarted || lessonCompletionReady) && !assessmentPassed && !assessmentQuestions.length && assessmentTeachingContext.trim().length >= 200 && (
+        {(assessmentStarted || lessonCompletionReady || assessmentRequired) && !assessmentPassed && assessmentQuestionIndex >= assessmentQuestions.length && assessmentTeachingContext.trim().length >= 200 && (
           <div className="chat-row kai-row kai-assessment-message" ref={assessmentMessageRef}>
             <div className="chat-content">
               <div className="kai-message-header"><div className="chat-avatar kai-avatar-small"><Bot size={18} /></div><div className="chat-name"><strong>Kai</strong><span>AI Instructor</span></div></div>
               <div className="kai-board-content"><div className="kai-message-text">
-                <p>{assessmentQuestionsError ? `I couldn’t prepare questions from what I taught: ${assessmentQuestionsError}` : "I’m putting together questions from the ideas and examples we just covered…"}</p>
-                {assessmentQuestionsError && <button type="button" className="kai-assessment-submit" onClick={generateAssessmentQuestions} disabled={assessmentQuestionsLoading}>{assessmentQuestionsLoading ? "Preparing questions…" : "Try again"}</button>}
+                <p>{assessmentQuestionsError ? `I couldn’t prepare the next question from what I taught: ${assessmentQuestionsError}` : assessmentResult && !assessmentResult.passed ? `${assessmentResult.feedback} I’m preparing a fresh question from the lesson now…` : `I’m putting together question ${assessmentQuestionIndex + 1} from the ideas and examples we covered…`}</p>
+                {assessmentQuestionsError && <button type="button" className="kai-assessment-submit" onClick={() => generateAssessmentQuestion(assessmentQuestionIndex + 1)} disabled={assessmentQuestionsLoading}>{assessmentQuestionsLoading ? "Preparing question…" : "Try again"}</button>}
               </div></div>
             </div>
           </div>
         )}
-        {(assessmentStarted || lessonCompletionReady) && !assessmentPassed && assessmentQuestions.length > 0 && (
+        {(assessmentStarted || lessonCompletionReady || assessmentRequired) && !assessmentPassed && assessmentQuestionIndex < assessmentQuestions.length && (
           <div className="chat-row kai-row kai-assessment-message" ref={assessmentMessageRef}>
             <div className="chat-content">
               <div className="kai-message-header">
@@ -2232,7 +2258,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               </div>
               <div className="kai-board-content">
                 <div className="kai-message-text">
-                  <p className="kai-assessment-chat-label">KAI READINESS CHECK · QUESTION {assessmentQuestionIndex + 1} OF {assessmentQuestions.length}</p>
+                  <p className="kai-assessment-chat-label">KAI READINESS CHECK · QUESTION {assessmentQuestionIndex + 1} OF 10</p>
                   <p>{lessonCompletionReady || assessmentRequired ? "Before we move to the next lesson, complete this readiness check. Answer each question and send it to me one at a time." : "Let’s check your understanding. Answer this one, then I’ll send the next question."}</p>
                   {(() => {
                     const question = assessmentQuestions[assessmentQuestionIndex];
@@ -2242,22 +2268,23 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
                       {question.type === "text" ? (
                         <label className="kai-assessment-answer-area">
                           <span>Write your answer clearly</span>
-                          <textarea value={answerValue} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} placeholder="Explain your thinking, example, or review plan here..." rows={5} aria-label={`Written answer for question ${assessmentQuestionIndex + 1}`} disabled={assessmentSubmitting} />
+                          <textarea value={answerValue} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} placeholder="Explain your thinking, example, or review plan here..." rows={5} aria-label={`Written answer for question ${assessmentQuestionIndex + 1}`} disabled={assessmentSubmitting || assessmentQuestionsLoading} />
                         </label>
                       ) : (
                         <div className="kai-assessment-options">
                           {question.options.map((option) => <label key={option}>
-                            <input type="radio" name={`assessment-${question.id}`} value={option} checked={answerValue === option} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} disabled={assessmentSubmitting} />
+                            <input type="radio" name={`assessment-${question.id}`} value={option} checked={answerValue === option} onChange={(event) => setAssessmentAnswers((current) => ({ ...current, [question.id]: event.target.value }))} disabled={assessmentSubmitting || assessmentQuestionsLoading} />
                             <span>{option}</span>
                           </label>)}
                         </div>
                       )}
                     </fieldset>;
                   })()}
-                  <button type="button" className="kai-assessment-submit" onClick={submitAssessment} disabled={assessmentSubmitting}>
-                    {assessmentSubmitting ? "Kai is marking your answers..." : assessmentQuestionIndex === assessmentQuestions.length - 1 ? "Send final answer to Kai" : "Send answer and continue"}
-                    {!assessmentSubmitting && <ArrowRight size={17} />}
+                  <button type="button" className="kai-assessment-submit" onClick={submitAssessment} disabled={assessmentSubmitting || assessmentQuestionsLoading}>
+                    {assessmentSubmitting ? "Kai is marking your answers..." : assessmentQuestionsLoading ? "Kai is preparing your next question..." : assessmentQuestionIndex === 9 ? "Send final answer to Kai" : "Send answer and continue"}
+                    {!assessmentSubmitting && !assessmentQuestionsLoading && <ArrowRight size={17} />}
                   </button>
+                  {assessmentQuestionsError && <div className="kai-assessment-result is-error" role="alert"><strong>Kai needs to retry question generation</strong><p>{assessmentQuestionsError}</p><button type="button" onClick={() => generateAssessmentQuestion(assessmentQuestionIndex + 1)} disabled={assessmentQuestionsLoading}>Try again</button></div>}
                   {assessmentResult?.localError && <div className="kai-assessment-result is-error" role="alert"><strong>Answer needed</strong><p>{assessmentResult.localError}</p></div>}
                   {assessmentResult && !assessmentResult.localError && <div className={`kai-assessment-result ${assessmentResult.passed ? "is-passed" : "is-reviewing"}`} role="status">
                     <strong>{assessmentResult.passed ? "Kai approved your readiness" : "Kai recommends a focused review"}</strong>
