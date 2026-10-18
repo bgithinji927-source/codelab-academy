@@ -1602,6 +1602,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
     const isLatest =
       String(messageIndex).startsWith("active-") && latestAssistant?.content === content;
+    const assessmentActive = (assessmentStarted || assessmentRequired || lessonCompletionReady) && !assessmentPassed;
 
     const text =
       isLatest &&
@@ -1736,6 +1737,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
                   content={fallbackBlocks}
                   onChoice={(choice) => askKai({ learnerMessage: choice, conversation: [...messages, { role: "user", content: choice }] })}
                   onAction={handleKaiAction}
+                  assessmentActive={assessmentActive}
                 />
               ) : looksLikeJson ? (
                 <div className="kai-unstructured-response">

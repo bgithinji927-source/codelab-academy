@@ -175,3 +175,5 @@
 @media(max-width:600px){.kai-rich-quiz,.kai-rich-learning-path,.kai-rich-tutorial{padding:.8rem}.kai-sim-terminal form{flex-wrap:wrap}.kai-sim-terminal form button{margin-left:auto}}
 .kai-rich-network-diagram{padding:.8rem;border:1px solid rgba(112,157,255,.25);border-radius:12px;background:rgba(14,22,38,.42)}
 .kai-network-diagram-label{display:inline-flex;margin-bottom:.35rem;color:#9dc4ff;font-size:.65rem;font-weight:800;letter-spacing:.12em}
+.kai-interaction-paused{margin:.5rem 0 0;color:#aeb4c8;font-size:.78rem;font-style:italic}
+.kai-rich-content button:disabled{cursor:not-allowed;opacity:.48;filter:saturate(.55)}

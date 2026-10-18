@@ -207,12 +207,12 @@ function Diagram({ block }) {
     </svg></div>
   </section>;
 }
-function Choice({ block, onChoice }) {
+function Choice({ block, onChoice, assessmentActive = false }) {
   const [selected, setSelected] = useState(null);
-  return <section className="kai-rich-choice"><h3>{block.question}</h3><div className="kai-choice-options">{(block.options || []).map((option) => <button type="button" key={option} className={selected === option ? "selected" : ""} onClick={() => { setSelected(option); onChoice?.(option); }}>{option}</button>)}</div></section>;
+  return <section className="kai-rich-choice"><h3>{block.question}</h3><div className="kai-choice-options">{(block.options || []).map((option) => <button type="button" key={option} className={selected === option ? "selected" : ""} disabled={assessmentActive} onClick={() => { setSelected(option); onChoice?.(option); }}>{option}</button>)}</div></section>;
 }
 
-function InteractiveQuiz({ block, onChoice }) {
+function InteractiveQuiz({ block, onChoice, assessmentActive = false }) {
   const [selected, setSelected] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const options = Array.isArray(block.options) ? block.options.map((option) => typeof option === "string" ? option : String(option.text || option.label || "")) : [];
@@ -221,8 +221,9 @@ function InteractiveQuiz({ block, onChoice }) {
   return <section className="kai-rich-quiz" aria-live="polite">
     <div className="kai-rich-quiz-kicker">QUICK CHECK</div>
     <h3>{block.question || block.title || "Check your understanding"}</h3>
-    <div className="kai-choice-options">{options.map((option) => <button type="button" key={option} disabled={submitted} className={`${selected === option ? "selected" : ""}${submitted && selected === option ? (isCorrect ? " is-correct" : " is-incorrect") : ""}`} onClick={() => setSelected(option)}>{option}</button>)}</div>
-    {!submitted ? <button type="button" className="kai-rich-quiz-submit" disabled={!selected} onClick={() => { setSubmitted(true); onChoice?.(`For the question “${block.question || block.title || "Check your understanding"}”, I chose “${selected}”. Please respond to my answer and continue teaching from here.`); }}>{block.submitLabel || "Check my answer"}</button> : <div className={`kai-rich-quiz-feedback ${answerKey ? (isCorrect ? "is-correct" : "is-incorrect") : ""}`}>
+    <div className="kai-choice-options">{options.map((option) => <button type="button" key={option} disabled={submitted || assessmentActive} className={`${selected === option ? "selected" : ""}${submitted && selected === option ? (isCorrect ? " is-correct" : " is-incorrect") : ""}`} onClick={() => setSelected(option)}>{option}</button>)}</div>
+    {assessmentActive && <p className="kai-interaction-paused" role="status">Paused while you complete the lesson readiness check.</p>}
+    {!submitted ? <button type="button" className="kai-rich-quiz-submit" disabled={!selected || assessmentActive} onClick={() => { setSubmitted(true); onChoice?.(`For the question “${block.question || block.title || "Check your understanding"}”, I chose “${selected}”. Please respond to my answer and continue teaching from here.`); }}>{block.submitLabel || "Check my answer"}</button> : <div className={`kai-rich-quiz-feedback ${answerKey ? (isCorrect ? "is-correct" : "is-incorrect") : ""}`}>
       <strong>{answerKey ? (isCorrect ? "Correct" : `Not quite — the answer is ${answerKey}`) : "Answer sent to Kai"}</strong>
       {block.explanation && <p>{block.explanation}</p>}
       {!answerKey && <p>Kai will use your choice to guide the next explanation.</p>}
@@ -230,19 +231,20 @@ function InteractiveQuiz({ block, onChoice }) {
   </section>;
 }
 
-function LearningPath({ block, onAction }) {
+function LearningPath({ block, onAction, assessmentActive = false }) {
   const [activeStep, setActiveStep] = useState(0);
   const steps = Array.isArray(block.steps) ? block.steps : Array.isArray(block.items) ? block.items : [];
   const active = steps[activeStep];
   if (!steps.length) return null;
   return <section className="kai-rich-learning-path">
     <div className="kai-rich-learning-path-heading"><span>LEARNING PATH</span><h3>{block.title || "Choose a path to continue"}</h3>{block.description && <p>{block.description}</p>}</div>
-    <div className="kai-learning-path-cards">{steps.map((step, index) => <button type="button" key={`${step.title || step.name || "step"}-${index}`} className={activeStep === index ? "is-active" : ""} onClick={() => setActiveStep(index)}><span>STEP {index + 1}</span><strong>{step.title || step.name || `Step ${index + 1}`}</strong>{step.summary && <small>{step.summary}</small>}</button>)}</div>
-    {active && <div className="kai-learning-path-detail"><strong>{active.title || active.name || `Step ${activeStep + 1}`}</strong><p>{active.description || active.content || active.summary}</p>{(active.prompt || active.askKai) && <button type="button" onClick={() => onAction?.("prompt", active.prompt || active.askKai)}>Explore this step with Kai <ArrowRight size={14} /></button>}</div>}
+    <div className="kai-learning-path-cards">{steps.map((step, index) => <button type="button" key={`${step.title || step.name || "step"}-${index}`} className={activeStep === index ? "is-active" : ""} disabled={assessmentActive} onClick={() => setActiveStep(index)}><span>STEP {index + 1}</span><strong>{step.title || step.name || `Step ${index + 1}`}</strong>{step.summary && <small>{step.summary}</small>}</button>)}</div>
+    {active && <div className="kai-learning-path-detail"><strong>{active.title || active.name || `Step ${activeStep + 1}`}</strong><p>{active.description || active.content || active.summary}</p>{(active.prompt || active.askKai) && <button type="button" disabled={assessmentActive} onClick={() => onAction?.("prompt", active.prompt || active.askKai)}>Explore this step with Kai <ArrowRight size={14} /></button>}
+      {assessmentActive && <p className="kai-interaction-paused" role="status">Path actions are paused during the readiness check.</p>}</div>}
   </section>;
 }
 
-function StepTutorial({ block, onAction }) {
+function StepTutorial({ block, onAction, assessmentActive = false }) {
   const [stepIndex, setStepIndex] = useState(0);
   const steps = Array.isArray(block.steps) ? block.steps : [];
   const step = steps[stepIndex];
@@ -253,12 +255,13 @@ function StepTutorial({ block, onAction }) {
     <h3>{step.title || `Step ${stepIndex + 1}`}</h3>
     <p>{step.description || step.content || ""}</p>
     {step.code && <CodeBlock key={`tutorial-code-${stepIndex}`} block={{ code: step.code, language: step.language || "javascript", filename: step.filename || `step-${stepIndex + 1}` }} />}
-    {step.prompt && <button type="button" onClick={() => onAction?.("prompt", step.prompt)}>Ask Kai about this step <ArrowRight size={14} /></button>}
-    <footer><button type="button" disabled={stepIndex === 0} onClick={() => setStepIndex((index) => index - 1)}>Back</button><button type="button" disabled={stepIndex === steps.length - 1} onClick={() => setStepIndex((index) => index + 1)}>{stepIndex === steps.length - 1 ? "Tutorial complete" : "Next step"} <ArrowRight size={14} /></button></footer>
+    {step.prompt && <button type="button" disabled={assessmentActive} onClick={() => onAction?.("prompt", step.prompt)}>Ask Kai about this step <ArrowRight size={14} /></button>}
+    {assessmentActive && <p className="kai-interaction-paused" role="status">Tutorial actions are paused during the readiness check.</p>}
+    <footer><button type="button" disabled={assessmentActive || stepIndex === 0} onClick={() => setStepIndex((index) => index - 1)}>Back</button><button type="button" disabled={assessmentActive || stepIndex === steps.length - 1} onClick={() => setStepIndex((index) => index + 1)}>{stepIndex === steps.length - 1 ? "Tutorial complete" : "Next step"} <ArrowRight size={14} /></button></footer>
   </section>;
 }
 
-function SimulatedTerminal({ block, onAction }) {
+function SimulatedTerminal({ block, onAction, assessmentActive = false }) {
   const [command, setCommand] = useState("");
   const [history, setHistory] = useState([]);
   const files = block.files && typeof block.files === "object" ? block.files : {};
@@ -287,12 +290,13 @@ function SimulatedTerminal({ block, onAction }) {
       <p>{block.welcome || "Kai training shell — fixture data only. Type help to see supported commands."}</p>
       {history.map((item, index) => <div key={`${item.command}-${index}`}><p><b>$ {item.command}</b></p><pre>{item.output}</pre></div>)}
     </div>
-    <form onSubmit={run}><label htmlFor={`sim-terminal-${String(block.title || "kai").replace(/[^a-z0-9]/gi, "")}`}>$</label><input id={`sim-terminal-${String(block.title || "kai").replace(/[^a-z0-9]/gi, "")}`} value={command} onChange={(event) => setCommand(event.target.value)} placeholder="Try help" autoComplete="off" /><button type="submit">Run in simulation</button></form>
-    <button className="kai-sim-terminal-ask" type="button" disabled={!history.length} onClick={() => { const last = history[history.length - 1]; onAction?.("prompt", `In the simulated terminal for ${block.title || "this lesson"}, I ran “${last.command}” and got: ${last.output}. Explain what it means and what I should check next.`); }}>Discuss last result with Kai</button>
+    <form onSubmit={run}><label htmlFor={`sim-terminal-${String(block.title || "kai").replace(/[^a-z0-9]/gi, "")}`}>$</label><input id={`sim-terminal-${String(block.title || "kai").replace(/[^a-z0-9]/gi, "")}`} value={command} onChange={(event) => setCommand(event.target.value)} placeholder="Try help" autoComplete="off" disabled={assessmentActive} /><button type="submit" disabled={assessmentActive}>Run in simulation</button></form>
+    {assessmentActive && <p className="kai-interaction-paused">Terminal practice is paused during the readiness check.</p>}
+    <button className="kai-sim-terminal-ask" type="button" disabled={assessmentActive || !history.length} onClick={() => { const last = history[history.length - 1]; onAction?.("prompt", `In the simulated terminal for ${block.title || "this lesson"}, I ran “${last.command}” and got: ${last.output}. Explain what it means and what I should check next.`); }}>Discuss last result with Kai</button>
   </section>;
 }
 
-export function Suggestions({ block, onAction }) {
+export function Suggestions({ block, onAction, assessmentActive = false }) {
   const items = Array.isArray(block.items) ? block.items : [];
   const progressionText = /(?:start|open|go to|continue to)\s+(?:the\s+)?(?:next\s+lesson|.+\blesson\b)|\bnext\s+lesson\b/i;
   const normalizedItems = items.flatMap((item) => {
@@ -308,8 +312,9 @@ export function Suggestions({ block, onAction }) {
       const text = item.text;
       if (!text) return null;
       const action = item.action === "prompt" && progressionText.test(text) ? "next_lesson" : (item.action || "prompt");
-      return <button type="button" className="kai-suggestion-link" key={`${text}-${index}`} onClick={() => onAction?.(action, item.prompt || item.payload || text)}><span aria-hidden="true">→</span>{text}</button>;
+      return <button type="button" className="kai-suggestion-link" key={`${text}-${index}`} disabled={assessmentActive} onClick={() => onAction?.(action, item.prompt || item.payload || text)}><span aria-hidden="true">→</span>{text}</button>;
     })}</div>
+    {assessmentActive && <p className="kai-interaction-paused" role="status">Suggestions are paused while you complete the lesson readiness check.</p>}
   </section>;
 }
 
@@ -322,7 +327,7 @@ const QUICK_REPLY_ICONS = {
   prompt: MessageCircle,
 };
 
-export function QuickReplies({ block, onAction }) {
+export function QuickReplies({ block, onAction, assessmentActive = false }) {
   const items = Array.isArray(block.items) ? block.items : [];
   return <section className="kai-quick-replies" aria-label={block.title || "Quick replies"}>
     {block.title && <p className="kai-quick-replies-title">{block.title}</p>}
@@ -331,8 +336,9 @@ export function QuickReplies({ block, onAction }) {
       const text = value.text || value.label;
       if (!text) return null;
       const Icon = QUICK_REPLY_ICONS[value.action] || MessageCircle;
-      return <button type="button" className="kai-quick-reply" key={`${text}-${index}`} onClick={() => onAction?.(value.action || "prompt", value.prompt || value.payload || text)}><Icon size={15} aria-hidden="true" /><span>{text}</span></button>;
+      return <button type="button" className="kai-quick-reply" key={`${text}-${index}`} disabled={assessmentActive} onClick={() => onAction?.(value.action || "prompt", value.prompt || value.payload || text)}><Icon size={15} aria-hidden="true" /><span>{text}</span></button>;
     })}</div>
+    {assessmentActive && <p className="kai-interaction-paused" role="status">Quick replies are paused while you complete the lesson readiness check.</p>}
   </section>;
 }
 
@@ -370,7 +376,7 @@ export function KaiVideoPlayer({ video, aspectRatio = "16 / 9" }) {
   </figure>;
 }
 
-export default function AIContentRenderer({ content, onAction, onChoice }) {
+export default function AIContentRenderer({ content, onAction, onChoice, assessmentActive = false }) {
   const blocks = useMemo(() => Array.isArray(content) ? content : [], [content]);
   if (!blocks.length) return null;
   return <div className="kai-rich-content">{blocks.map((block, index) => {
@@ -381,30 +387,30 @@ export default function AIContentRenderer({ content, onAction, onChoice }) {
     if (block.type === "text") return <div key={key}><TextBlock value={block.text || block.content} /></div>;
     if (block.type === "bullets") return <ul className="kai-rich-bullet-list" key={key}>{(block.items || []).flatMap((item) => String(item).split(/\s+-\s+/).map((part) => part.trim()).filter(Boolean)).map((item, itemIndex) => <li key={`${itemIndex}-${item}`}><InlineText>{item}</InlineText></li>)}</ul>;
     if (block.type === "numbered") return <ol key={key}>{(block.items || []).map((item) => <li key={item}><InlineText>{item}</InlineText></li>)}</ol>;
-    if (block.type === "terminal") return <SimulatedTerminal block={block} onAction={onAction} key={key} />;
+    if (block.type === "terminal") return <SimulatedTerminal block={block} onAction={onAction} assessmentActive={assessmentActive} key={key} />;
     if (["code", "json", "xml"].includes(block.type)) return <CodeBlock block={{ ...block, language: block.language || block.type }} key={key} />;
     if (["copy", "copyable", "command", "config"].includes(block.type)) return <Copyable block={block} key={key} />;
     if (block.type === "diagram") return <Diagram block={block} key={key} />;
     if (block.type === "table") return <Table block={block} key={key} />;
-    if (block.type === "choice") return <Choice block={block} onChoice={onChoice} key={key} />;
-    if (block.type === "quiz") return <InteractiveQuiz block={block} onChoice={onChoice} key={key} />;
-    if (block.type === "suggestions") return <Suggestions block={block} onAction={onAction} key={key} />;
-    if (["quick_replies", "quickReplies"].includes(block.type)) return <QuickReplies block={block} onAction={onAction} key={key} />;
+    if (block.type === "choice") return <Choice block={block} onChoice={onChoice} assessmentActive={assessmentActive} key={key} />;
+    if (block.type === "quiz") return <InteractiveQuiz block={block} onChoice={onChoice} assessmentActive={assessmentActive} key={key} />;
+    if (block.type === "suggestions") return <Suggestions block={block} onAction={onAction} assessmentActive={assessmentActive} key={key} />;
+    if (["quick_replies", "quickReplies"].includes(block.type)) return <QuickReplies block={block} onAction={onAction} assessmentActive={assessmentActive} key={key} />;
     if (block.type === "callout") return <Callout block={block} key={key} />;
     if (block.type === "quote") return <QuoteBlock block={block} key={key} />;
     if (block.type === "checklist") return <Checklist block={block} key={key} />;
     if (["comparison", "compare"].includes(block.type)) return <Comparison block={block} key={key} />;
     if (block.type === "timeline") return <Timeline block={block} key={key} />;
-    if (block.type === "learning_path") return <LearningPath block={block} onAction={onAction} key={key} />;
-    if (block.type === "tutorial") return <StepTutorial block={block} onAction={onAction} key={key} />;
+    if (block.type === "learning_path") return <LearningPath block={block} onAction={onAction} assessmentActive={assessmentActive} key={key} />;
+    if (block.type === "tutorial") return <StepTutorial block={block} onAction={onAction} assessmentActive={assessmentActive} key={key} />;
     if (["equation", "math"].includes(block.type)) return <div className="kai-rich-equation" key={key}>{block.label && <span>{block.label}</span>}<code>{block.latex || block.expression || block.text}</code></div>;
     if (block.type === "progress") return <Progress block={block} key={key} />;
     if (["filetree", "file-tree"].includes(block.type)) return <FileTree block={block} key={key} />;
     if (block.type === "image") return <ImageBlock block={block} key={key} />;
     if (["preview", "embed"].includes(block.type)) return <Preview block={block} key={key} />;
     if (block.type === "video") return <KaiVideoPlayer video={block.video || block} aspectRatio={block.aspectRatio || "16 / 9"} key={key} />;
-    if (block.type === "exercise") return <button type="button" className="kai-rich-exercise" onClick={() => onAction?.("openExercise", block)} key={key}>{block.title || "Try this exercise"} <ArrowRight size={15} /></button>;
-    if (block.type === "action" && SAFE_ACTIONS.has(block.action)) return <button type="button" className="kai-rich-action" onClick={() => onAction?.(block.action, block)} key={key}>{block.label || "Continue"} <ArrowRight size={14} /></button>;
+    if (block.type === "exercise") return <button type="button" className="kai-rich-exercise" disabled={assessmentActive} onClick={() => onAction?.("openExercise", block)} key={key}>{block.title || "Try this exercise"} <ArrowRight size={15} /></button>;
+    if (block.type === "action" && SAFE_ACTIONS.has(block.action)) return <button type="button" className="kai-rich-action" disabled={assessmentActive} onClick={() => onAction?.(block.action, block)} key={key}>{block.label || "Continue"} <ArrowRight size={14} /></button>;
     return null;
   })}</div>;
 }
