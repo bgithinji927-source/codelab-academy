@@ -90,6 +90,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [assessmentQuestionsError, setAssessmentQuestionsError] = useState("");
   const [assessmentAnswers, setAssessmentAnswers] = useState({});
   const [assessmentQuestionIndex, setAssessmentQuestionIndex] = useState(0);
+  const [assessmentStarted, setAssessmentStarted] = useState(false);
+  const [assessmentRequired, setAssessmentRequired] = useState(false);
   const [assessmentResult, setAssessmentResult] = useState(null);
   const [assessmentMarked, setAssessmentMarked] = useState(false);
   const [assessmentSubmitting, setAssessmentSubmitting] = useState(false);
@@ -103,6 +105,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const lessonStartKeyRef = useRef("");
   const lessonViewCacheRef = useRef(new Map());
   const conversationEndRef = useRef(null);
+  const assessmentMessageRef = useRef(null);
   const scrollFrameRef = useRef(null);
   const assessmentTeachingContext = messages
     .filter((message) => message.role === "assistant")
@@ -149,12 +152,21 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     setAssessmentQuestionsError("");
     setAssessmentAnswers({});
     setAssessmentQuestionIndex(0);
+    setAssessmentStarted(false);
+    setAssessmentRequired(false);
     setAssessmentResult(null);
     setAssessmentMarked(false);
     setAssessmentPassed(false);
     setExpandedStoredSections([0]);
     setKaiGeneratedTeaching(null);
   }, [lesson?.id]);
+  useEffect(() => {
+    if ((lessonCompletionReady || assessmentRequired) && !assessmentPassed) setAssessmentStarted(true);
+  }, [lessonCompletionReady, assessmentRequired, assessmentPassed, lesson?.id]);
+  useEffect(() => {
+    if (assessmentStarted) assessmentMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [assessmentStarted]);
+  const startAssessment = () => setAssessmentStarted(true);
   const submitAssessment = async () => {
     if (!assessmentQuestions.length || assessmentSubmitting) return;
     const currentQuestion = assessmentQuestions[assessmentQuestionIndex];
@@ -169,7 +181,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     }
     setAssessmentSubmitting(true); setAssessmentMarked(false); setAssessmentResult(null);
     try {
-      const response = await fetchWithAuth("/api/kai/assessment", { method: "POST", body: JSON.stringify({ course: { ...course, title: courseTitle }, lesson, questions: assessmentQuestions, answers: assessmentAnswers, attempt: assessmentRound, currentLessonIndex, teachingContext: assessmentTeachingContext }) });
+      const response = await fetchWithAuth("/api/kai/assessment", { method: "POST", body: JSON.stringify({ course: { ...course, title: courseTitle }, lesson, questions: assessmentQuestions, answers: assessmentAnswers, attempt: assessmentRound, currentLessonIndex, teachingContext: assessmentTeachingContext, assessmentRequired }) });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Kai could not grade this exercise.");
       setAssessmentResult(data);
@@ -177,8 +189,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       setAssessmentPassed(Boolean(data.passed));
       if (data.courseProgress?.lessonsCompleted !== undefined) setCompletedLessonsCount(Number(data.courseProgress.lessonsCompleted) || 0);
       if (data.courseAccess) onProgressChanged?.(data);
-      if (data.passed) { setLessonCompletionReady(true); setPreviousLessonSummary(data.feedback || `Assessment passed with ${data.score}%.`); }
-      else {
+      if (data.passed) {
+        if (data.lessonComplete) {
+          setLessonCompletionReady(true);
+          setAssessmentRequired(false);
+          setPreviousLessonSummary(data.feedback || `Assessment passed with ${data.score}%.`);
+        }
+      } else {
         setAssessmentRound((round) => round + 1);
         setAssessmentQuestionsOverride(Array.isArray(data.nextAssessment) && data.nextAssessment.length === 10 ? data.nextAssessment : null);
         setAssessmentAnswers({});
@@ -887,7 +904,12 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       }
 
       const kaiOpenedNextLesson = data.uiAction?.type === "continue_lesson";
+      if (data.assessmentRequired) {
+        setAssessmentRequired(true);
+        setAssessmentStarted(true);
+      }
       if (data.lessonComplete || data.readyForNextLesson || kaiOpenedNextLesson) {
+        setAssessmentRequired(false);
         setLessonCompletionReady(Boolean(data.readyForNextLesson || data.lessonComplete || kaiOpenedNextLesson));
         if (data.lessonSummary) {
           setPreviousLessonSummary(data.lessonSummary);
@@ -1712,6 +1734,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
           )}
           {video?.playbackUrl && <KaiVideoPlayer video={video} aspectRatio={video.aspectRatio || "16 / 9"} />}
 
+          {!assessmentPassed && <button type="button" className="kai-assessment-invite" onClick={startAssessment}>
+            <CheckCircle2 size={15} />
+            {lessonCompletionReady || assessmentRequired ? "Start required readiness check" : "Check my understanding (optional)"}
+          </button>}
           <div className="kai-message-actions" aria-label="Kai response actions">
             <button type="button" onClick={copyKaiMessage} aria-label={copiedMessageIndex === messageKey ? "Copied Kai response" : "Copy Kai response"} title={copiedMessageIndex === messageKey ? "Copied" : "Copy response"}>
               {copiedMessageIndex === messageKey ? <Check size={15} /> : <Copy size={15} />}
@@ -2185,8 +2211,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               </div>
             )}
 
-        {!assessmentPassed && !assessmentQuestions.length && assessmentTeachingContext.trim().length >= 200 && (
-          <div className="chat-row kai-row kai-assessment-message">
+        {(assessmentStarted || lessonCompletionReady) && !assessmentPassed && !assessmentQuestions.length && assessmentTeachingContext.trim().length >= 200 && (
+          <div className="chat-row kai-row kai-assessment-message" ref={assessmentMessageRef}>
             <div className="chat-content">
               <div className="kai-message-header"><div className="chat-avatar kai-avatar-small"><Bot size={18} /></div><div className="chat-name"><strong>Kai</strong><span>AI Instructor</span></div></div>
               <div className="kai-board-content"><div className="kai-message-text">
@@ -2196,8 +2222,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             </div>
           </div>
         )}
-        {!assessmentPassed && assessmentQuestions.length > 0 && (
-          <div className="chat-row kai-row kai-assessment-message">
+        {(assessmentStarted || lessonCompletionReady) && !assessmentPassed && assessmentQuestions.length > 0 && (
+          <div className="chat-row kai-row kai-assessment-message" ref={assessmentMessageRef}>
             <div className="chat-content">
               <div className="kai-message-header">
                 <div className="chat-avatar kai-avatar-small"><Bot size={18} /></div>
@@ -2207,7 +2233,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               <div className="kai-board-content">
                 <div className="kai-message-text">
                   <p className="kai-assessment-chat-label">KAI READINESS CHECK · QUESTION {assessmentQuestionIndex + 1} OF {assessmentQuestions.length}</p>
-                  <p>Let’s check your understanding. Answer this one, then I’ll send the next question.</p>
+                  <p>{lessonCompletionReady || assessmentRequired ? "Before we move to the next lesson, complete this readiness check. Answer each question and send it to me one at a time." : "Let’s check your understanding. Answer this one, then I’ll send the next question."}</p>
                   {(() => {
                     const question = assessmentQuestions[assessmentQuestionIndex];
                     const answerValue = String(assessmentAnswers[question.id] || "");

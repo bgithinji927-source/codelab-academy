@@ -985,7 +985,7 @@ ${source}`;
 // ============================================
 router.post("/assessment", ensureAuth, async (req, res) => {
   try {
-    const { course, lesson, questions = [], answers = {}, attempt = 1, currentLessonIndex = 0, teachingContext = "" } = req.body;
+    const { course, lesson, questions = [], answers = {}, attempt = 1, currentLessonIndex = 0, teachingContext = "", assessmentRequired = false } = req.body;
     const userId = req.user?.id;
     if (!userId || !course?.id || !lesson?.id || !Array.isArray(questions) || questions.length === 0) {
       return res.status(400).json({ success: false, message: "Assessment details are required" });
@@ -1067,24 +1067,26 @@ router.post("/assessment", ensureAuth, async (req, res) => {
     let courseProgress = null;
     let courseAccess = null;
     if (passed) {
-      const updatedUser = await markLessonComplete(userId, course.id, lesson.id, `Assessment passed with ${score}%. ${String(result.feedback || "").slice(0, 300)}`, Number(process.env.LESSON_XP_DEFAULT) || 5, Number(currentLessonIndex) || 0);
-      if (updatedUser) {
-        await User.updateOne(
-          { _id: userId, lessonSessions: { $elemMatch: { courseId: course.id, lessonId: lesson.id } } },
-          { $set: {
-            "lessonSessions.$.assessmentPassed": true,
-            "lessonSessions.$.assessmentScore": score,
-            "lessonSessions.$.assessmentAttempt": Number(attempt) || 1,
-            "lessonSessions.$.assessmentFeedback": String(result.feedback || "Kai approved your readiness.").slice(0, 1000),
-            "lessonSessions.$.assessmentCompletedAt": new Date(),
-          } }
-        );
-        await markCurrentLessonComplete(userId, course.id, lesson.id);
-        courseProgress = updatedUser.courseProgress.find((item) => String(item.courseId) === String(course.id)) || null;
-        courseAccess = buildLearnerCourseAccess(updatedUser, await getCatalogCourses());
+      await User.updateOne(
+        { _id: userId, lessonSessions: { $elemMatch: { courseId: course.id, lessonId: lesson.id } } },
+        { $set: {
+          "lessonSessions.$.assessmentPassed": true,
+          "lessonSessions.$.assessmentScore": score,
+          "lessonSessions.$.assessmentAttempt": Number(attempt) || 1,
+          "lessonSessions.$.assessmentFeedback": String(result.feedback || "Kai approved your readiness.").slice(0, 1000),
+          "lessonSessions.$.assessmentCompletedAt": new Date(),
+        } }
+      );
+      if (assessmentRequired) {
+        const updatedUser = await markLessonComplete(userId, course.id, lesson.id, `Assessment passed with ${score}%. ${String(result.feedback || "").slice(0, 300)}`, Number(process.env.LESSON_XP_DEFAULT) || 5, Number(currentLessonIndex) || 0);
+        if (updatedUser) {
+          await markCurrentLessonComplete(userId, course.id, lesson.id);
+          courseProgress = updatedUser.courseProgress.find((item) => String(item.courseId) === String(course.id)) || null;
+          courseAccess = buildLearnerCourseAccess(updatedUser, await getCatalogCourses());
+        }
       }
     }
-    return res.json({ success: true, score, passed, feedback: String(result.feedback || "Kai finished grading this attempt."), corrections: Array.isArray(result.corrections) ? result.corrections.slice(0, 10) : [], nextExerciseFocus: String(result.nextExerciseFocus || "Apply the concept in a fresh example."), attempt: Number(attempt) || 1, lessonComplete: passed, readyForNextLesson: passed, nextAssessment, courseProgress, courseAccess });
+    return res.json({ success: true, score, passed, feedback: String(result.feedback || "Kai finished grading this attempt."), corrections: Array.isArray(result.corrections) ? result.corrections.slice(0, 10) : [], nextExerciseFocus: String(result.nextExerciseFocus || "Apply the concept in a fresh example."), attempt: Number(attempt) || 1, lessonComplete: Boolean(passed && assessmentRequired), readyForNextLesson: Boolean(passed && assessmentRequired), nextAssessment, courseProgress, courseAccess });
   } catch (error) {
     console.error("Kai assessment error:", error);
     return res.status(500).json({ success: false, message: "Kai could not grade this assessment" });

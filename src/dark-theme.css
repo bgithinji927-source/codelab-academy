@@ -7718,3 +7718,22 @@ html .learn-page .kai-assessment-message .kai-assessment-submit {
   min-width: 220px;
   margin-top: 8px;
 }
+
+html .learn-page .kai-assessment-invite {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 10px 0 4px;
+  padding: 8px 12px;
+  border: 1px solid rgba(183, 255, 81, .55);
+  border-radius: 8px;
+  background: rgba(183, 255, 81, .08);
+  color: #d7ffa0;
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+html .learn-page .kai-assessment-invite:hover {
+  background: rgba(183, 255, 81, .16);
+}
