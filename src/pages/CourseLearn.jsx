@@ -1743,6 +1743,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
                   onChoice={(choice) => askKai({ learnerMessage: choice, conversation: [...messages, { role: "user", content: choice }] })}
                   onAction={handleKaiAction}
                   assessmentActive={assessmentActive}
+                  theme={kaiLightMode ? "light" : "dark"}
                 />
               ) : looksLikeJson ? (
                 <div className="kai-unstructured-response">

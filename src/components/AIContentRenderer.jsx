@@ -105,7 +105,7 @@ function ImageBlock({ block }) {
   return <figure className="kai-rich-image"><img src={src} alt={block.alt || block.title || "Kai illustration"} loading="lazy" /><figcaption>{block.title || block.alt}</figcaption></figure>;
 }
 
-export function CodeBlock({ block }) {
+export function CodeBlock({ block, theme = "dark" }) {
   const [value, setValue] = useState(String(block.code || ""));
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
@@ -147,7 +147,7 @@ export function CodeBlock({ block }) {
         <button type="button" onClick={runCode}><Play size={14} /> Run</button>
       </div>
     </header>
-    <Editor height={Math.min(420, Math.max(72, value.split("\n").length * 21 + 24))} language={language === "py" ? "python" : language} value={value} onChange={(next) => setValue(next || "")} theme="vs-dark" options={{ minimap: { enabled: false }, lineNumbers: "on", lineNumbersMinChars: 4, lineDecorationsWidth: 12, glyphMargin: false, fontSize: 14, padding: { top: 12, bottom: 12, left: 12, right: 8 }, scrollBeyondLastLine: false, scrollBeyondLastColumn: 0 }} />
+    <Editor height={Math.min(420, Math.max(72, value.split("\n").length * 21 + 24))} language={language === "py" ? "python" : language} value={value} onChange={(next) => setValue(next || "")} theme={theme === "light" ? "light" : "vs-dark"} options={{ minimap: { enabled: false }, lineNumbers: "on", lineNumbersMinChars: 4, lineDecorationsWidth: 12, glyphMargin: false, fontSize: 14, padding: { top: 12, bottom: 12, left: 12, right: 8 }, scrollBeyondLastLine: false, scrollBeyondLastColumn: 0 }} />
     {output && <pre className="kai-rich-code-output">{output}</pre>}
   </section>;
 }
@@ -376,7 +376,7 @@ export function KaiVideoPlayer({ video, aspectRatio = "16 / 9" }) {
   </figure>;
 }
 
-export default function AIContentRenderer({ content, onAction, onChoice, assessmentActive = false }) {
+export default function AIContentRenderer({ content, onAction, onChoice, assessmentActive = false, theme = "dark" }) {
   const blocks = useMemo(() => Array.isArray(content) ? content : [], [content]);
   if (!blocks.length) return null;
   return <div className="kai-rich-content">{blocks.map((block, index) => {
@@ -388,7 +388,7 @@ export default function AIContentRenderer({ content, onAction, onChoice, assessm
     if (block.type === "bullets") return <ul className="kai-rich-bullet-list" key={key}>{(block.items || []).flatMap((item) => String(item).split(/\s+-\s+/).map((part) => part.trim()).filter(Boolean)).map((item, itemIndex) => <li key={`${itemIndex}-${item}`}><InlineText>{item}</InlineText></li>)}</ul>;
     if (block.type === "numbered") return <ol key={key}>{(block.items || []).map((item) => <li key={item}><InlineText>{item}</InlineText></li>)}</ol>;
     if (block.type === "terminal") return <SimulatedTerminal block={block} onAction={onAction} assessmentActive={assessmentActive} key={key} />;
-    if (["code", "json", "xml"].includes(block.type)) return <CodeBlock block={{ ...block, language: block.language || block.type }} key={key} />;
+    if (["code", "json", "xml"].includes(block.type)) return <CodeBlock block={{ ...block, language: block.language || block.type }} theme={theme} key={key} />;
     if (["copy", "copyable", "command", "config"].includes(block.type)) return <Copyable block={block} key={key} />;
     if (block.type === "diagram") return <Diagram block={block} key={key} />;
     if (block.type === "table") return <Table block={block} key={key} />;

@@ -3690,3 +3690,160 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-teaching-card svg,
 html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-avatar-small {
   color: #2563eb !important;
 }
+
+/* Final Firebox light palette: all lesson surfaces use one readable canvas.
+   These selectors intentionally match the legacy Firebox specificity. */
+html:has(.learn-page.kai-light-mode) body,
+html:has(.learn-page.kai-light-mode) #root {
+  background: #f7f9fc !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .chat-content,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-text,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-content {
+  color: #172033 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-panel,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-section,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-section-body,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-board-content,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-filetree,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-preview,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-image,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-checklist,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-comparison,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-timeline,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-progress,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-equation,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-quote,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-generated-teaching,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-lab-panel,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-readiness-panel {
+  background: #ffffff !important;
+  border-color: #d4dce7 !important;
+  color: #172033 !important;
+  box-shadow: 0 8px 24px rgba(27, 43, 67, .06) !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-panel h2,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-panel p,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-panel li,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-section h3,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-section p,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-section li,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-content-block,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-explanation,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-instructions,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-text,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-text *,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-content,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-content *,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .learner-message-text,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .learner-message-text *,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .chat-name,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .chat-name * {
+  color: #172033 !important;
+  text-shadow: none !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-section-toggle,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-section-toggle svg,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-content svg {
+  color: #2563eb !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-bullets li {
+  background: #f1f5f9 !important;
+  border-left-color: #2563eb !important;
+  color: #172033 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-bullets li::before {
+  color: #2563eb !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-code-wrapper {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: none !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-header,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-code-header {
+  background: #e8eef6 !important;
+  border-bottom-color: #cbd5e1 !important;
+  color: #172033 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-header *,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-code-header *,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-actions button,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable button {
+  color: #1f3a5b !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-actions button,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable button,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-action,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-exercise {
+  background: #ffffff !important;
+  border-color: #b7c6d8 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-output,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable pre,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-filetree pre,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-code-block {
+  background: #f8fafc !important;
+  border-color: #d4dce7 !important;
+  color: #172033 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-content code,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-inline-code {
+  background: #e8eef6 !important;
+  border-color: #cbd5e1 !important;
+  color: #163b70 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-table-wrap table,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-markdown-table {
+  background: #ffffff !important;
+  color: #172033 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-table-wrap th,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-markdown-table th {
+  background: #e8eef6 !important;
+  color: #172033 !important;
+  border-color: #cbd5e1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-table-wrap td,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-table-wrap td span,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-markdown-table td,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-markdown-table td span {
+  background: #ffffff !important;
+  color: #172033 !important;
+  border-color: #d7dee8 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock {
+  background: #ffffff !important;
+  border-color: #c7d2e0 !important;
+  box-shadow: 0 8px 24px rgba(27, 43, 67, .12) !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock::after {
+  background: #ffffff !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock textarea {
+  background: transparent !important;
+  color: #172033 !important;
+  caret-color: #2563eb !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock textarea::placeholder {
+  color: #66758b !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock .kai-composer-icon {
+  background: #eef4fb !important;
+  border-color: #b7c6d8 !important;
+  color: #1f3a5b !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock .kai-composer-send {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .input-hint,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .input-hint kbd {
+  color: #52627a !important;
+}
