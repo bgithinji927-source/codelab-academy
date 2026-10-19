@@ -14,6 +14,7 @@ const { getPlatformSettings } = require("../lib/challenges");
 const { getKaiBackgroundFile, streamKaiBackground } = require("../lib/videoStorage");
 const { retrieveTeachingContext } = require("../lib/teachingMaterials");
 const { isAdministrator } = require("../lib/admin");
+const { activeAIProvider: aiProvider, refreshAIProvider, getAIRequestHeaders } = require("../lib/aiProvider");
 
 const router = express.Router();
 
@@ -22,13 +23,10 @@ const fetch =
   globalThis.fetch ||
   ((...args) => import("node-fetch").then((m) => m.default(...args)));
 
-const GROQ_API_URL =
-  "https://api.groq.com/openai/v1/chat/completions";
-
-// Groq retired llama-3.3-70b-versatile. Keep this configurable while using
-// a current production model by default.
-const GROQ_MODEL =
-  process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+router.use(async (req, res, next) => {
+  await refreshAIProvider();
+  return next();
+});
 
 function extractAssistantText(data) {
   const choice = data?.choices?.[0] || {};
@@ -46,14 +44,14 @@ function extractAssistantText(data) {
 }
 
 async function generateActivityNarration({ course, lesson, learnerMessage }) {
-  const response = await fetch(GROQ_API_URL, {
+  const response = await fetch(aiProvider.url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+      ...getAIRequestHeaders(aiProvider),
     },
     body: JSON.stringify({
-      model: GROQ_MODEL,
+      model: aiProvider.model,
       messages: [
         {
           role: "system",
@@ -70,7 +68,7 @@ async function generateActivityNarration({ course, lesson, learnerMessage }) {
       ],
       max_completion_tokens: 80,
       response_format: { type: "json_object" },
-      ...(/gpt-oss/i.test(GROQ_MODEL)
+      ...(aiProvider.name === "groq" && /gpt-oss/i.test(aiProvider.model)
         ? { reasoning_effort: "low", include_reasoning: false }
         : {}),
     }),
@@ -117,19 +115,19 @@ ${systemPrompt}`,
     },
   ];
 
-  const response = await fetch(GROQ_API_URL, {
+  const response = await fetch(aiProvider.url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+      ...getAIRequestHeaders(aiProvider),
     },
     body: JSON.stringify({
-      model: GROQ_MODEL,
+      model: aiProvider.model,
       messages: reviewMessages,
       temperature: 0,
       max_completion_tokens: 4096,
       response_format: { type: "json_object" },
-      ...(/gpt-oss/i.test(GROQ_MODEL)
+      ...(aiProvider.name === "groq" && /gpt-oss/i.test(aiProvider.model)
         ? { reasoning_effort: "low", include_reasoning: false }
         : {}),
     }),
@@ -959,10 +957,10 @@ router.post("/assessment/question", ensureAuth, async (req, res) => {
 
 ACTUAL KAI TEACHING TRANSCRIPT:
 ${source}`;
-    const response = await fetch(GROQ_API_URL, {
+    const response = await fetch(aiProvider.url, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.GROQ_API_KEY}` },
-      body: JSON.stringify({ model: GROQ_MODEL, messages: [{ role: "system", content: prompt }], temperature: 0.35, max_completion_tokens: 900, response_format: { type: "json_object" }, ...(/gpt-oss/i.test(GROQ_MODEL) ? { reasoning_effort: "low", include_reasoning: false } : {}) }),
+      headers: { "Content-Type": "application/json", ...getAIRequestHeaders(aiProvider) },
+      body: JSON.stringify({ model: aiProvider.model, messages: [{ role: "system", content: prompt }], temperature: 0.35, max_completion_tokens: 900, response_format: { type: "json_object" }, ...(aiProvider.name === "groq" && /gpt-oss/i.test(aiProvider.model) ? { reasoning_effort: "low", include_reasoning: false } : {}) }),
     });
     if (!response.ok) throw new Error(`Question generation request failed (${response.status})`);
     const payload = await response.json();
@@ -1005,10 +1003,10 @@ router.post("/assessment", ensureAuth, async (req, res) => {
     const prompt = `You are Kai, grading a learner's ${course.title || course.id} lesson assessment. Grade only against what was taught in the transcript and the answer keys. Choice answers must match the answer key. Text answers earn credit when they demonstrate the taught idea, even if wording differs. Return ONLY JSON: {"score":0,"passed":false,"feedback":"short useful feedback","corrections":[{"questionId":"q1","note":"..."}],"nextExerciseFocus":"..."}. Passing requires score >= 70. If the learner fails, recommend a focused replacement exercise rather than repeating the exact same questions.\n\nOFFICIAL LESSON: ${lesson.title}\nACTUAL TEACHING: ${String(teachingContext || "").slice(0, 24000)}\nQUESTIONS AND ANSWERS: ${JSON.stringify(safeQuestions)}`;
     let result = null;
     try {
-      const response = await fetch(GROQ_API_URL, {
+      const response = await fetch(aiProvider.url, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.GROQ_API_KEY}` },
-        body: JSON.stringify({ model: GROQ_MODEL, messages: [{ role: "system", content: prompt }], temperature: 0, max_completion_tokens: 1600, response_format: { type: "json_object" }, ...(/gpt-oss/i.test(GROQ_MODEL) ? { reasoning_effort: "low", include_reasoning: false } : {}) }),
+        headers: { "Content-Type": "application/json", ...getAIRequestHeaders(aiProvider) },
+        body: JSON.stringify({ model: aiProvider.model, messages: [{ role: "system", content: prompt }], temperature: 0, max_completion_tokens: 1600, response_format: { type: "json_object" }, ...(aiProvider.name === "groq" && /gpt-oss/i.test(aiProvider.model) ? { reasoning_effort: "low", include_reasoning: false } : {}) }),
       });
       if (response.ok) {
         const payload = await response.json();
@@ -1193,12 +1191,12 @@ router.post("/", ensureAuth, async (req, res) => {
     }
 
     // Check GROQ API Key
-    if (!process.env.GROQ_API_KEY) {
-      console.error("GROQ_API_KEY is missing from environment variables.");
+    if (!aiProvider.configured) {
+      console.error("No AI provider API key is configured.");
 
       return res.status(500).json({
         success: false,
-        message: "GROQ_API_KEY is not configured on the server.",
+        message: "Configure GROQ_API_KEY or OPENROUTER_API_KEY on the server.",
       });
     }
 
@@ -1414,7 +1412,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
     // ========================================
 
     const groqRequestBody = {
-      model: GROQ_MODEL,
+      model: aiProvider.model,
       messages: groqMessages,
       temperature: 0.7,
       // Groq now prefers max_completion_tokens. A larger budget is important
@@ -1424,7 +1422,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       // partially serialized objects into the learner-facing response.
       response_format: { type: "json_object" },
     };
-    if (/gpt-oss/i.test(GROQ_MODEL)) {
+    if (aiProvider.name === "groq" && /gpt-oss/i.test(aiProvider.model)) {
       groqRequestBody.reasoning_effort = "low";
       groqRequestBody.include_reasoning = false;
     }
@@ -1436,11 +1434,11 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
       // learner UI, so fall back instead of exposing the provider error.
       if (!structured) delete requestBody.response_format;
 
-      return fetch(GROQ_API_URL, {
+      return fetch(aiProvider.url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          ...getAIRequestHeaders(aiProvider),
         },
         body: JSON.stringify(requestBody),
       });
@@ -1516,7 +1514,7 @@ LESSON COMPLETION:\n\n- Track progress through the conversation naturally\n- Aft
 
     if (!reply) {
       console.error("Groq returned no visible message:", {
-        model: GROQ_MODEL,
+        model: aiProvider.model,
         finishReason: data?.choices?.[0]?.finish_reason || null,
         hasChoices: Array.isArray(data?.choices) && data.choices.length > 0,
       });

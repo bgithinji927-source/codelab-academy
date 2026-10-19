@@ -25,13 +25,17 @@ const {
 } = require("../lib/videoStorage");
 const { serializeVideo, parseTopics } = require("../lib/videoCatalog");
 const { extractDocumentText } = require("../lib/teachingMaterials");
+const { activeAIProvider: aiProvider, refreshAIProvider, getAIRequestHeaders } = require("../lib/aiProvider");
 
 const router = express.Router();
 router.use(ensureAuth, ensureAdmin);
 
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 const fetch = globalThis.fetch || ((...args) => import("node-fetch").then((module) => module.default(...args)));
+
+router.use(async (req, res, next) => {
+  await refreshAIProvider();
+  return next();
+});
 
 function extractAssistantText(data) {
   const choice = data?.choices?.[0] || {};
@@ -492,7 +496,7 @@ router.post("/videos", parseVideoUpload, async (req, res) => {
 
 router.post("/videos/generate-description", async (req, res) => {
   try {
-    if (!process.env.GROQ_API_KEY) {
+    if (!aiProvider.configured) {
       return res.status(503).json({ success: false, message: "Kai description generation is not configured" });
     }
 
@@ -505,7 +509,7 @@ router.post("/videos/generate-description", async (req, res) => {
     }
 
     const requestBody = {
-      model: GROQ_MODEL,
+      model: aiProvider.model,
       messages: [
         {
           role: "system",
@@ -521,13 +525,13 @@ router.post("/videos/generate-description", async (req, res) => {
       // no visible answer. Give Kai enough room for a final short sentence.
       max_tokens: 256,
     };
-    if (/gpt-oss/i.test(GROQ_MODEL)) requestBody.reasoning_effort = "low";
+    if (aiProvider.name === "groq" && /gpt-oss/i.test(aiProvider.model)) requestBody.reasoning_effort = "low";
 
-    const response = await fetch(GROQ_API_URL, {
+    const response = await fetch(aiProvider.url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        ...getAIRequestHeaders(aiProvider),
       },
       body: JSON.stringify(requestBody),
     });
@@ -543,7 +547,7 @@ router.post("/videos/generate-description", async (req, res) => {
       .trim();
     if (!description) {
       console.error("Kai returned no visible description text:", {
-        model: GROQ_MODEL,
+        model: aiProvider.model,
         finishReason: data?.choices?.[0]?.finish_reason || null,
         hasChoices: Array.isArray(data?.choices) && data.choices.length > 0,
       });
@@ -807,7 +811,7 @@ router.post("/settings/kai-background-image", (req, res) => {
 
 router.patch("/settings", async (req, res) => {
   try {
-    const updates = pickFields(req.body || {}, ["academyName", "challengeWindowHours", "defaultChallengeXP", "dailyChallengesEnabled", "kaiBackground"]);
+    const updates = pickFields(req.body || {}, ["academyName", "challengeWindowHours", "defaultChallengeXP", "dailyChallengesEnabled", "aiProvider", "aiModel", "kaiBackground"]);
     if (updates.academyName !== undefined) {
       updates.academyName = String(updates.academyName).trim();
       if (!updates.academyName) return res.status(400).json({ success: false, message: "Academy name cannot be empty" });
@@ -817,6 +821,15 @@ router.patch("/settings", async (req, res) => {
     }
     if (updates.defaultChallengeXP !== undefined) {
       updates.defaultChallengeXP = Math.max(0, Math.min(10000, Number(updates.defaultChallengeXP) || 0));
+    }
+    if (updates.aiProvider !== undefined) {
+      updates.aiProvider = String(updates.aiProvider || "auto").trim().toLowerCase();
+      if (!["auto", "groq", "openrouter"].includes(updates.aiProvider)) {
+        return res.status(400).json({ success: false, message: "Invalid AI provider" });
+      }
+    }
+    if (updates.aiModel !== undefined) {
+      updates.aiModel = String(updates.aiModel || "").trim().slice(0, 200);
     }
     if (updates.kaiBackground !== undefined) {
       const allowedKaiBackgrounds = new Set([

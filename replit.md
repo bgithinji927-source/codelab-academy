@@ -14,7 +14,9 @@ CodeLab Academy is a React/Vite learning platform served by an Express backend. 
 ## Environment
 
 - `MONGODB_URI` enables persistent user accounts.
-- `GROQ_API_KEY` enables the Kai AI teaching service.
+- `GROQ_API_KEY` enables Groq for the Kai AI teaching service.
+- `OPENROUTER_API_KEY` enables OpenRouter. Set `AI_PROVIDER=groq`, `AI_PROVIDER=openrouter`, or leave it as `auto` (default: Groq first, then OpenRouter).
+- `GROQ_MODEL` and `OPENROUTER_MODEL` optionally select the model for each provider. `OPENROUTER_SITE_URL` and `OPENROUTER_APP_NAME` optionally provide OpenRouter attribution headers. Administrators can override the provider and model from Admin Control → Settings; those saved MongoDB settings apply live to Kai and admin AI tools.
 - `SESSION_SECRET` is available for session-related configuration.
 
 ## User preferences
