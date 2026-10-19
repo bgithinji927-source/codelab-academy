@@ -18,6 +18,8 @@ import {
   Share2,
   Check,
   FlaskConical,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 import fetchWithAuth from "../utils/fetchWithAuth";
@@ -74,6 +76,9 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [kaiBackgroundImageUrl, setKaiBackgroundImageUrl] = useState("");
   const [kaiUiMode, setKaiUiMode] = useState(() => (
     localStorage.getItem(`${KAI_UI_MODE_KEY}:${user?.id || "guest"}`) || "firebox"
+  ));
+  const [kaiLightMode, setKaiLightMode] = useState(() => (
+    localStorage.getItem(`codelabKaiLightMode:${user?.id || "guest"}`) === "true"
   ));
   const [messageFeedback, setMessageFeedback] = useState({});
   const [savedKaiFeedback, setSavedKaiFeedback] = useState([]);
@@ -1902,11 +1907,19 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     ? kaiBackgroundImageUrl
     : KAI_BACKGROUND_IMAGE_URLS[kaiBackground] || "";
   const hasCustomKaiBackground = kaiBackground === "uploaded-image" && kaiBackgroundImageUrl.startsWith("/api/kai/background/image");
+  const toggleKaiLightMode = () => {
+    setKaiLightMode((current) => {
+      const next = !current;
+      localStorage.setItem(`codelabKaiLightMode:${user?.id || "guest"}`, String(next));
+      return next;
+    });
+  };
 
   return (
     <div
-      className={`learn-page kai-${kaiUiMode}-mode${hasCustomKaiBackground ? " has-custom-kai-background" : ""}${kaiUiMode === "chatgpt" ? " kai-chatgpt-mode" : ""}`}
+      className={`learn-page kai-${kaiUiMode}-mode${hasCustomKaiBackground ? " has-custom-kai-background" : ""}${kaiUiMode === "chatgpt" ? " kai-chatgpt-mode" : ""}${kaiLightMode ? " kai-light-mode" : ""}`}
       data-kai-background={kaiBackground}
+      data-kai-theme={kaiLightMode ? "light" : "dark"}
     >
       <div className="kai-wallpaper-image" aria-hidden="true">
         {selectedKaiBackgroundImage && <img src={selectedKaiBackgroundImage} alt="" />}
@@ -1996,6 +2009,17 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         </div>
 
         <div className="learn-top-actions">
+          <button
+            type="button"
+            className="kai-light-mode-toggle"
+            onClick={toggleKaiLightMode}
+            aria-pressed={kaiLightMode}
+            aria-label={kaiLightMode ? "Switch Kai teaching page to dark mode" : "Switch Kai teaching page to light mode"}
+            title={kaiLightMode ? "Switch to dark mode" : "Switch to light mode"}
+          >
+            {kaiLightMode ? <Moon size={15} aria-hidden="true" /> : <Sun size={15} aria-hidden="true" />}
+            <span>{kaiLightMode ? "Dark mode" : "Light mode"}</span>
+          </button>
           <label className="kai-ui-mode-select">
             <span>Interface</span>
             <select
