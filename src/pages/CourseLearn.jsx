@@ -2094,6 +2094,17 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         </div>
 
         <div className="firebox-header-actions">
+          <button
+            type="button"
+            className="kai-light-mode-toggle"
+            onClick={toggleKaiLightMode}
+            aria-pressed={kaiLightMode}
+            aria-label={kaiLightMode ? "Switch Kai teaching page to dark mode" : "Switch Kai teaching page to light mode"}
+            title={kaiLightMode ? "Switch to dark mode" : "Switch to light mode"}
+          >
+            {kaiLightMode ? <Moon size={15} aria-hidden="true" /> : <Sun size={15} aria-hidden="true" />}
+            <span>{kaiLightMode ? "Dark mode" : "Light mode"}</span>
+          </button>
           <span className="firebox-ready"><span /> Ready</span>
           <button type="button" className="firebox-new-chat" onClick={() => { setMessages([]); setAnswer(""); }}>New chat</button>
         </div>
