@@ -3937,3 +3937,150 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock textarea:
   color: #52627a !important;
   opacity: 1 !important;
 }
+
+/* Final control-level contrast pass for Firebox light mode. */
+html #root .learn-page.kai-light-mode.kai-firebox-mode .firebox-brand-mark {
+  display: grid !important;
+  place-items: center !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 0 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .firebox-brand-mark svg {
+  display: block !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-light-mode-toggle {
+  min-width: 108px !important;
+  min-height: 34px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 6px 10px !important;
+  overflow: visible !important;
+  visibility: visible !important;
+  background: #e8f1ff !important;
+  border: 1px solid #8fb0da !important;
+  color: #163b70 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-light-mode-toggle span,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-light-mode-toggle svg {
+  display: inline-block !important;
+  visibility: visible !important;
+  color: #163b70 !important;
+  stroke: #163b70 !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-invite {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  background: #e8f1ff !important;
+  border: 1px solid #6f9bd0 !important;
+  color: #163b70 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-invite svg {
+  color: #1d4ed8 !important;
+  stroke: #1d4ed8 !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions button {
+  color: #315477 !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #b7c6d8 !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions button svg {
+  color: #315477 !important;
+  stroke: #315477 !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions button:hover,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions button:focus-visible,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions button.is-active {
+  background: #dbeafe !important;
+  border-color: #6f9bd0 !important;
+  color: #163b70 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions button:hover svg,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions button:focus-visible svg,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions button.is-active svg {
+  color: #163b70 !important;
+  stroke: #163b70 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock .kai-composer-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #e8f1ff !important;
+  border: 1px solid #8fb0da !important;
+  color: #163b70 !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock .kai-composer-icon svg {
+  color: #163b70 !important;
+  stroke: #163b70 !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock .kai-composer-send {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #2563eb !important;
+  border: 1px solid #1d4ed8 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock .kai-composer-send svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-panel,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-panel *,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-question,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-question *,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-result,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-result * {
+  color: #172033 !important;
+  text-shadow: none !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-question textarea,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-answer-area textarea {
+  background: #ffffff !important;
+  border-color: #9fb2c8 !important;
+  color: #172033 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-question textarea::placeholder,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-answer-area textarea::placeholder {
+  color: #52627a !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-submit {
+  background: #2563eb !important;
+  border-color: #1d4ed8 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-submit svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-options label {
+  background: #ffffff !important;
+  border-color: #b7c6d8 !important;
+  color: #172033 !important;
+}

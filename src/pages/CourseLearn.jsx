@@ -1331,6 +1331,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             language: codeLanguage || "text",
             filename: codeLanguage || "code",
           }}
+          theme={kaiLightMode ? "light" : "dark"}
         />
       );
 
@@ -1872,10 +1873,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               ))}
             </div>
           )}
-          {sectionType === "example" && section.code && <CodeBlock block={{ code: section.code, language: section.language || "javascript", filename: section.title || "example.js" }} />}
+          {sectionType === "example" && section.code && <CodeBlock block={{ code: section.code, language: section.language || "javascript", filename: section.title || "example.js" }} theme={kaiLightMode ? "light" : "dark"} />}
           {section.explanation && <p className="stored-lesson-explanation">{section.explanation}</p>}
           {sectionType === "challenge" && section.instructions && <p className="stored-lesson-instructions"><strong>Practice:</strong> {section.instructions}</p>}
-          {sectionType === "challenge" && section.starterCode && <CodeBlock block={{ code: section.starterCode, language: section.language || "javascript", filename: "starter.js" }} />}
+          {sectionType === "challenge" && section.starterCode && <CodeBlock block={{ code: section.starterCode, language: section.language || "javascript", filename: "starter.js" }} theme={kaiLightMode ? "light" : "dark"} />}
           {sectionType === "quiz" && (
             <div className="stored-lesson-quiz">
               <p><strong>{section.question}</strong></p>
