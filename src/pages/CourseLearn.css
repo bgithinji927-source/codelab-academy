@@ -3847,3 +3847,93 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .input-hint,
 html #root .learn-page.kai-light-mode.kai-firebox-mode .input-hint kbd {
   color: #52627a !important;
 }
+
+/* Unified light Firebox canvas and final text-contrast safety net. */
+html:has(.learn-page.kai-light-mode),
+html:has(.learn-page.kai-light-mode) body,
+html:has(.learn-page.kai-light-mode) #root,
+html #root .learn-page.kai-light-mode.kai-firebox-mode,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .learn-navbar,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-container,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-teaching-card,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages {
+  background: #ffffff !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-container,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-teaching-card,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages {
+  color: #172033 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages *,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-teaching-card .kai-message-text *,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-teaching-card .kai-rich-content * {
+  text-shadow: none !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages p,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages li,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages span,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages strong,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages em,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages label,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages legend,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages small,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages h1,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages h2,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages h3,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages h4,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages button:not(.kai-composer-send) {
+  color: #172033 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages a,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .conversation-messages .kai-rich-action {
+  color: #1d4ed8 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-header,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .chat-name,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-online,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-video-kicker,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .lesson-label,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .progress-label,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .progress-percent {
+  color: #52627a !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-board-content,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-panel,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-section,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-bubble,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .learner-bubble,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-filetree,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-generated-teaching,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-readiness-panel,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-lab-panel {
+  background: #ffffff !important;
+  color: #172033 !important;
+  border-color: #d4dce7 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-header,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-code-header,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-output,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable pre,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-filetree pre,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-code-block {
+  background: #f1f5f9 !important;
+  color: #172033 !important;
+  border-color: #cbd5e1 !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock::after {
+  background: #ffffff !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock textarea,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock textarea:focus {
+  background: transparent !important;
+  color: #172033 !important;
+  border-color: #c7d2e0 !important;
+  outline-color: #2563eb !important;
+}
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock textarea::placeholder {
+  color: #52627a !important;
+  opacity: 1 !important;
+}
