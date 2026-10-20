@@ -3,8 +3,8 @@ const { PDFParse } = require("pdf-parse");
 const TeachingMaterial = require("../models/TeachingMaterial");
 
 const MAX_TEXT_LENGTH = 8_000_000;
-const CHUNK_SIZE = 2400;
-const CHUNK_OVERLAP = 350;
+const CHUNK_SIZE = 1800;
+const CHUNK_OVERLAP = 250;
 
 function normalizeText(value) {
   return String(value || "")
@@ -73,13 +73,15 @@ async function retrieveTeachingContext({ courseId, lessonId, query, limit = 6 })
     const chunks = splitIntoChunks(material.extractedText);
     chunks.forEach((chunk, index) => {
       const lower = chunk.toLowerCase();
-      const score = queryTokens.reduce((total, token) => total + (lower.includes(token) ? 1 : 0), 0)
-        + (String(material.lessonId) === String(lessonId) ? 2 : 0);
+      const matchedTokens = queryTokens.reduce((total, token) => total + (lower.includes(token) ? 1 : 0), 0);
+      const score = matchedTokens
+        + (matchedTokens > 0 ? Math.min(matchedTokens, 8) : 0)
+        + (String(material.lessonId) === String(lessonId) ? 8 : 0);
       if (score > 0) candidates.push({ score, chunk, index, material });
     });
   }
   candidates.sort((left, right) => right.score - left.score);
-  const selected = candidates.slice(0, limit);
+  const selected = candidates.slice(0, Math.max(1, Math.min(4, limit)));
   return {
     text: selected.map((item, index) => `[Source ${index + 1}] ${item.material.title} (${item.material.lessonTitle || "course material"})\n${item.chunk}`).join("\n\n"),
     sources: selected.map((item) => ({
