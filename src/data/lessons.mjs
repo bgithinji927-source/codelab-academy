@@ -2294,23 +2294,62 @@ function authoredBlocksFromLegacySection(section) {
   }
   return blocks.filter(Boolean);
 }
+function pythonExampleCode(lesson, sections) {
+  const sectionWithCode = sections.find((section) => section?.code);
+  return String(lesson.code || sectionWithCode?.code || "").trim();
+}
+function explainPythonLine(line) {
+  const clean = line.trim();
+  if (!clean || clean.startsWith("#")) return null;
+  if (/^(from|import)\b/.test(clean)) return `\`${clean}\` imports a tool so the program can use functionality outside the current file.`;
+  if (/^(def|class)\b/.test(clean)) return `\`${clean}\` defines a reusable boundary. The body below it runs only when the function is called or the class is used.`;
+  if (/^(@|async def)/.test(clean)) return `\`${clean}\` changes how the following definition is created or executed.`;
+  if (/^\s*(if|elif|else|for|while|try|except|with)\b/.test(clean)) return `\`${clean}\` controls the next block. Indentation tells Python which statements belong to that block.`;
+  if (/\b(return|yield)\b/.test(clean)) return `\`${clean}\` sends a value back to the caller or produces the next value in a lazy sequence.`;
+  if (/\b(print|raise|assert)\b/.test(clean)) return `\`${clean}\` makes an observable check, output, or failure decision.`;
+  if (clean.includes("=")) return `\`${clean}\` stores a value or result in a name so a later statement can use it.`;
+  return `\`${clean}\` performs one operation in the example; trace its input and result before moving to the next line.`;
+}
 function makePythonAuthoredDelivery(lesson) {
   const legacySections = Array.isArray(lesson.sections) ? lesson.sections : [];
   const teachingSections = legacySections.filter((section) => ["explanation", "deepDive", "summary", "knowledgeExamples"].includes(section?.type));
   const practicalSections = legacySections.filter((section) => ["example", "code", "terminal", "challenge"].includes(section?.type));
   const assessmentSections = legacySections.filter((section) => section?.type === "quiz");
+  const code = pythonExampleCode(lesson, practicalSections);
+  const codeLineExplanations = code.split("\n").map(explainPythonLine).filter(Boolean).slice(0, 8);
+  const objectives = (lesson.objectives || []).filter(Boolean).slice(0, 5);
   const firstTeaching = teachingSections[0];
   const detailedTeaching = teachingSections.slice(1);
   const partOneBlocks = [
-    authoredTextBlock(lesson.description),
+    { type: "heading", text: `Why ${lesson.title} matters` },
+    authoredTextBlock(`This lesson solves a specific Python problem: ${lesson.description} Start by naming the input, the decision or transformation the program must perform, and the result a learner should be able to observe.`),
     ...authoredBlocksFromLegacySection(firstTeaching),
+    { type: "bullets", items: objectives.length ? objectives : [
+      `Define the purpose of ${lesson.title}.`,
+      "Trace the data from input to output.",
+      "Apply the idea in a small Python program.",
+    ] },
+    { type: "callout", title: "Key teaching habit", text: "Do not memorize the example. Change one input, predict the result, run it, and explain why the result changed." },
   ].filter(Boolean);
-  const partTwoBlocks = detailedTeaching.flatMap(authoredBlocksFromLegacySection);
-  if (!partTwoBlocks.length) partTwoBlocks.push(authoredTextBlock(`Key concepts to understand: ${(lesson.objectives || []).join("; ")}.`));
-  const partThreeBlocks = practicalSections.flatMap(authoredBlocksFromLegacySection);
-  if (!partThreeBlocks.length) partThreeBlocks.push({ type: "exercise", title: "Practice this lesson", description: `Create a small Python exercise that demonstrates ${lesson.title}. Explain the normal case and one failure or boundary case.` });
+  const partTwoBlocks = [
+    { type: "heading", text: "How the idea works" },
+    authoredTextBlock(`Use this mental model for ${lesson.title}: first establish the values or resources the program receives, then apply the Python construct described in the lesson, and finally verify the output or state change. The important question is not only what the syntax says, but what changes after each step.`),
+    ...(detailedTeaching.length ? detailedTeaching.flatMap(authoredBlocksFromLegacySection) : []),
+    codeLineExplanations.length ? { type: "bullets", items: codeLineExplanations } : null,
+    { type: "callout", title: "Common mistakes", text: `Check indentation, input types, empty values, boundary values, and the difference between changing a value and creating a new value. For ${lesson.title}, test at least one case that should fail or take a different branch.` },
+  ].filter(Boolean);
+  const partThreeBlocks = [
+    { type: "heading", text: "Read, predict, run, improve" },
+    authoredTextBlock("Before running the example, predict its output. Then trace each important line, run the code, and change one input. Your explanation should connect the changed input to the changed result."),
+    ...practicalSections.flatMap(authoredBlocksFromLegacySection),
+  ];
+  if (!partThreeBlocks.some((block) => block.type === "code")) {
+    if (code) partThreeBlocks.push({ type: "code", language: "python", filename: "lesson_example.py", code });
+    partThreeBlocks.push({ type: "exercise", title: "Practice this lesson", description: `Create a small Python exercise that demonstrates ${lesson.title}. Explain the normal case and one failure or boundary case.` });
+  }
   const partFourBlocks = [
-    authoredTextBlock("Review the lesson content, explain the key idea in your own words, and then start the Kai assessment. Kai will ask questions from this lesson and explain any incorrect answers."),
+    { type: "heading", text: "Explain it before Kai tests it" },
+    authoredTextBlock(`Summarize ${lesson.title} in your own words. Be able to explain the input, the Python construct, the expected result, and one mistake a beginner could make. Kai will ask questions from this lesson and explain any incorrect answers.`),
     ...assessmentSections.flatMap(authoredBlocksFromLegacySection),
     { type: "checklist", title: "Ready for Kai's assessment?", items: [
       "I can explain the main idea in my own words.",
