@@ -2263,6 +2263,82 @@ Professional review questions:
   });
 });
 
+
+function authoredTextBlock(text) {
+  const value = String(text || "").trim();
+  return value ? { type: "text", text: value } : null;
+}
+function authoredBlocksFromLegacySection(section) {
+  if (!section || typeof section !== "object") return [];
+  const blocks = [];
+  const sectionType = String(section.type || "");
+  if (["example", "code"].includes(sectionType) && section.code) {
+    blocks.push({ type: "code", language: section.language || "python", filename: section.title || "example.py", code: String(section.code) });
+    if (section.explanation) blocks.push(authoredTextBlock(section.explanation));
+  } else if (sectionType === "challenge") {
+    blocks.push(authoredTextBlock(section.instructions || section.content));
+    if (section.starterCode) blocks.push({ type: "code", language: section.language || "python", filename: "starter.py", code: String(section.starterCode) });
+  } else if (sectionType === "quiz") {
+    blocks.push({
+      type: "quiz",
+      question: section.question || section.title || "Check your understanding",
+      options: Array.isArray(section.options) && section.options.length >= 2 ? section.options : ["The approach described in this lesson", "Skip the concept", "Ignore input validation", "Change unrelated code"],
+      answer: section.answer || section.answerKey || "The approach described in this lesson",
+      explanation: section.explanation || "The correct answer connects the idea to the behavior the lesson teaches.",
+    });
+  } else if (sectionType === "knowledgeExamples" && Array.isArray(section.questions)) {
+    blocks.push(authoredTextBlock(section.content || section.title || "Use these questions to review the lesson."));
+    blocks.push({ type: "bullets", items: section.questions.map((question) => question.question).filter(Boolean) });
+  } else {
+    blocks.push(authoredTextBlock(section.content || section.explanation || section.text || section.title));
+  }
+  return blocks.filter(Boolean);
+}
+function makePythonAuthoredDelivery(lesson) {
+  const legacySections = Array.isArray(lesson.sections) ? lesson.sections : [];
+  const teachingSections = legacySections.filter((section) => ["explanation", "deepDive", "summary", "knowledgeExamples"].includes(section?.type));
+  const practicalSections = legacySections.filter((section) => ["example", "code", "terminal", "challenge"].includes(section?.type));
+  const assessmentSections = legacySections.filter((section) => section?.type === "quiz");
+  const firstTeaching = teachingSections[0];
+  const detailedTeaching = teachingSections.slice(1);
+  const partOneBlocks = [
+    authoredTextBlock(lesson.description),
+    ...authoredBlocksFromLegacySection(firstTeaching),
+  ].filter(Boolean);
+  const partTwoBlocks = detailedTeaching.flatMap(authoredBlocksFromLegacySection);
+  if (!partTwoBlocks.length) partTwoBlocks.push(authoredTextBlock(`Key concepts to understand: ${(lesson.objectives || []).join("; ")}.`));
+  const partThreeBlocks = practicalSections.flatMap(authoredBlocksFromLegacySection);
+  if (!partThreeBlocks.length) partThreeBlocks.push({ type: "exercise", title: "Practice this lesson", description: `Create a small Python exercise that demonstrates ${lesson.title}. Explain the normal case and one failure or boundary case.` });
+  const partFourBlocks = [
+    authoredTextBlock("Review the lesson content, explain the key idea in your own words, and then start the Kai assessment. Kai will ask questions from this lesson and explain any incorrect answers."),
+    ...assessmentSections.flatMap(authoredBlocksFromLegacySection),
+    { type: "checklist", title: "Ready for Kai's assessment?", items: [
+      "I can explain the main idea in my own words.",
+      "I can trace the example and predict its result.",
+      "I can apply the idea to a small Python exercise.",
+    ] },
+  ].filter(Boolean);
+  return {
+    type: "authored",
+    version: 1,
+    intro: `A structured Python lesson about ${lesson.title}.`,
+    sections: [
+      { id: `${lesson.id}-fundamentals`, title: "Introduction and Fundamentals", description: "Part 1 of 4", blocks: partOneBlocks.length ? partOneBlocks : [authoredTextBlock(`This lesson introduces ${lesson.title}.`)] },
+      { id: `${lesson.id}-concepts`, title: "Detailed Concepts", description: "Part 2 of 4", blocks: partTwoBlocks },
+      { id: `${lesson.id}-examples`, title: "Examples and Explanations", description: "Part 3 of 4", blocks: partThreeBlocks },
+      { id: `${lesson.id}-assessment`, title: "Test Your Understanding", description: "Part 4 of 4", blocks: partFourBlocks },
+    ],
+  };
+}
+
+// Python is the first complete coding roadmap on the authored delivery system.
+// Preserve the explicitly authored pilot lesson and migrate every other Python
+// lesson from its existing official sections without changing lesson identity,
+// ordering, progression, or Kai assessment behavior.
+lessons.python.forEach((lesson) => {
+  if (!lesson.delivery || lesson.delivery.type !== "authored") lesson.delivery = makePythonAuthoredDelivery(lesson);
+});
+
 // Keep the learner path predictable even when lessons are added, generated, or
 // edited later. The original order is preserved within the same difficulty so
 // related topics and project milestones remain in their intended sequence.
