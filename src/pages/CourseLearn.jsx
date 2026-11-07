@@ -27,7 +27,7 @@ import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_IMAGE_URLS, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
 import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
 import AuthoredLesson from "../components/AuthoredLesson";
-import { authoredDeliveryToContext, normalizeAuthoredDelivery } from "../utils/authoredLesson";
+import { authoredDeliveryToContext, normalizeAuthoredDelivery } from "../utils/authoredLesson.mjs";
 import "./CourseLearn.css";
 
 const KAI_UI_MODE_KEY = "codelabKaiUiMode:v2";

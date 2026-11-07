@@ -1,5 +1,5 @@
 import AIContentRenderer from "./AIContentRenderer";
-import { authoredDeliveryToContext } from "../utils/authoredLesson";
+import { authoredDeliveryToContext } from "../utils/authoredLesson.mjs";
 import "./AuthoredLesson.css";
 
 export default function AuthoredLesson({ lesson, delivery, theme = "dark" }) {
