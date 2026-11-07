@@ -72,7 +72,27 @@
 
 /* Keep structured teaching content scannable on every viewport. */
 .kai-rich-content { gap: 1.15rem; max-width: 100%; overflow-wrap: anywhere; }
-.kai-rich-text { max-width: 76ch; line-height: 1.78; }
+.kai-rich-text {
+  position: relative;
+  max-width: 76ch;
+  padding: .7rem .85rem .7rem 1.35rem;
+  border-left: 3px solid rgba(159, 140, 255, .55);
+  border-radius: 0 9px 9px 0;
+  background: rgba(126, 112, 255, .055);
+  line-height: 1.78;
+}
+.kai-rich-text::before {
+  content: "";
+  position: absolute;
+  top: 1.18rem;
+  left: -.39rem;
+  width: .55rem;
+  height: .55rem;
+  border: 2px solid #9f8cff;
+  border-radius: 50%;
+  background: #171a2b;
+  box-sizing: border-box;
+}
 .kai-rich-content ul,
 .kai-rich-content ol { max-width: 76ch; line-height: 1.7; }
 .kai-rich-content li { margin-bottom: .45rem; }
@@ -281,4 +301,14 @@
 }
 .learn-page.kai-light-mode .kai-sim-terminal form input {
   color: #172033;
+}
+
+.learn-page.kai-light-mode .kai-rich-text {
+  border-left-color: rgba(112, 85, 216, .48);
+  background: rgba(112, 85, 216, .055);
+}
+
+.learn-page.kai-light-mode .kai-rich-text::before {
+  border-color: #7055d8;
+  background: #f5f7fb;
 }
