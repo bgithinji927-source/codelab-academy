@@ -3,7 +3,7 @@ import { Bot } from "lucide-react";
 import AIContentRenderer from "./AIContentRenderer";
 import "./AuthoredLesson.css";
 
-export default function AuthoredLesson({ lesson, delivery, theme = "dark", onChoice, onStartAssessment, assessmentStarted = false }) {
+export default function AuthoredLesson({ lesson, delivery, theme = "dark", onStartAssessment, assessmentStarted = false }) {
   const progressKey = `codelab-authored-part:${lesson?.id || "lesson"}`;
   const [partIndex, setPartIndex] = useState(() => {
     const saved = Number.parseInt(localStorage.getItem(progressKey) || "0", 10);
@@ -53,7 +53,7 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onCho
                   {section.description && <p>{section.description}</p>}
                 </div>
               </div>
-              <AIContentRenderer content={section.blocks} theme={theme} onChoice={onChoice} />
+              <AIContentRenderer content={section.blocks} theme={theme} />
             </article>
           </div>
         </div>

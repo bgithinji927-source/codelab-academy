@@ -2614,6 +2614,111 @@ function makePythonAuthoredDelivery(lesson) {
   };
 }
 
+const pythonVariablesDataTypesDelivery = {
+  type: "authored",
+  version: 1,
+  intro: "Learn how Python stores information, works with variables, and handles different types of data.",
+  sections: [
+    {
+      id: "python-variables-data-types-fundamentals",
+      title: "Introduction to Variables",
+      description: "Part 1 of 4 · Understand variables, assignment, naming rules, and how Python stores values.",
+      blocks: [
+        { type: "heading", text: "What is a variable?" },
+        { type: "text", text: "A variable is a named reference used to store a value in a program. Variables allow programs to remember and reuse information. Think of a variable as a labelled container." },
+        { type: "code", language: "python", filename: "variables.py", code: "student_name = \"Brian\"" },
+        { type: "bullets", items: [
+          "student_name is the variable name.",
+          "= is the assignment operator.",
+          "Brian is the stored value.",
+        ] },
+        { type: "heading", text: "Why variables are important" },
+        { type: "bullets", items: [
+          "Store information such as names, ages, and scores.",
+          "Perform calculations with reusable values.",
+          "Use the same information in different parts of a program.",
+          "Update stored information when the program changes state.",
+        ] },
+        { type: "code", language: "python", filename: "assignment.py", code: "price = 500\nquantity = 3\ntotal = price * quantity\nprint(\"Total:\", total)\n\nname = \"Brian\"\nprint(\"Welcome\", name)\n\nscore = 50\nscore = 80\nprint(score)" },
+        { type: "heading", text: "Rules for naming variables" },
+        { type: "bullets", items: [
+          "Begin with a letter or underscore, not a number.",
+          "Use numbers only after the first character.",
+          "Do not use spaces; use descriptive names such as student_name.",
+          "Names are case-sensitive, so age and Age are different.",
+          "Do not use reserved Python keywords such as class.",
+        ] },
+        { type: "code", language: "python", filename: "multiple_assignment.py", code: "name, age, country = \"Brian\", 21, \"Kenya\"\nprint(name)\nprint(age)\nprint(country)" },
+        { type: "callout", title: "Part 1 summary", text: "A variable allows a Python program to store, access, and update information. Use descriptive names and remember that assignment can replace the value a name refers to." },
+      ],
+    },
+    {
+      id: "python-variables-data-types-concepts",
+      title: "Understanding Data Types",
+      description: "Part 2 of 4 · Learn strings, integers, floats, booleans, and how to identify data types.",
+      blocks: [
+        { type: "heading", text: "What are data types?" },
+        { type: "text", text: "A data type describes the kind of value stored in a variable. Names are text, ages are whole numbers, prices can contain decimal values, and conditions can be true or false." },
+        { type: "heading", text: "The four fundamental Python types" },
+        { type: "comparison", title: "Common data types", items: [
+          { name: "String (str)", bestFor: "Text such as names, addresses, messages, and email addresses", pros: ["Written inside quotation marks"], cons: ["A number in quotes is still text"] },
+          { name: "Integer (int)", bestFor: "Whole numbers such as ages, counts, and years", pros: ["Can be positive, negative, or zero"], cons: ["Does not represent decimal precision"] },
+          { name: "Float (float)", bestFor: "Measurements, prices, and decimal calculations", pros: ["Represents values with a decimal point"], cons: ["Decimal calculations can have precision limits"] },
+          { name: "Boolean (bool)", bestFor: "Conditions and yes/no state", pros: ["Only True or False"], cons: ["Does not store arbitrary text"] },
+        ] },
+        { type: "code", language: "python", filename: "types.py", code: "name = \"Brian\"\nage = 21\nprice = 250.50\nis_student = True\n\nprint(type(name))\nprint(type(age))\nprint(type(price))\nprint(type(is_student))" },
+        { type: "text", text: "Python provides type() to identify a value's type. This is useful when checking assumptions and debugging programs. Lists, tuples, sets, and dictionaries are additional data types that will be explored in later lessons." },
+        { type: "heading", text: "Converting between data types" },
+        { type: "code", language: "python", filename: "conversion.py", code: "age = 21\nage_text = str(age)\nprint(age_text)\n\nnumber = \"100\"\nconverted_number = int(number)\nprint(converted_number)\n\nprice = 100\nnew_price = float(price)\nprint(new_price)" },
+        { type: "callout", title: "Important", text: "Not every conversion is valid. For example, int(\"hello\") raises a ValueError. Convert user input at the program boundary and validate values before using them." },
+      ],
+    },
+    {
+      id: "python-variables-data-types-practice",
+      title: "Practical Examples and Explanations",
+      description: "Part 3 of 4 · Write Python programs, combine data types, and solve practical exercises.",
+      blocks: [
+        { type: "heading", text: "Prepare your coding environment" },
+        { type: "text", text: "Create a file named variables.py in VS Code, PyCharm, IDLE, or another Python-supported editor. Run it with python variables.py or python3 variables.py." },
+        { type: "heading", text: "Practical 1: Creating variables" },
+        { type: "code", language: "python", filename: "variables.py", code: "name = \"Brian\"\nage = 21\ncourse = \"Software Development\"\n\nprint(name)\nprint(age)\nprint(course)" },
+        { type: "text", text: "Python assigns values to three variables, then print() displays each value in order." },
+        { type: "heading", text: "Practical 2: Working with different data types" },
+        { type: "code", language: "python", filename: "student_profile.py", code: "student_name = \"Brian\"\nstudent_age = 21\ncourse_fee = 15000.50\nis_registered = True\n\nprint(type(student_name))\nprint(type(student_age))\nprint(type(course_fee))\nprint(type(is_registered))" },
+        { type: "heading", text: "Practical 3: Calculations and input" },
+        { type: "code", language: "python", filename: "student_information.py", code: "name = input(\"Student name: \")\nage = int(input(\"Student age: \"))\ncourse = input(\"Course: \")\nfee = float(input(\"Course fee: \"))\n\nprint(\"\\n--- STUDENT INFORMATION ---\")\nprint(\"Name:\", name)\nprint(\"Age:\", age)\nprint(\"Course:\", course)\nprint(\"Fee:\", fee)" },
+        { type: "text", text: "The input() function returns a string even when the learner enters a number. Use int() or float() when numeric input is required." },
+        { type: "heading", text: "Independent practical exercise" },
+        { type: "checklist", title: "Build a simple calculator", items: [
+          "Ask the user for the first number.",
+          "Ask for the second number.",
+          "Convert both inputs into numbers.",
+          "Calculate and display their sum.",
+          "Test the program with normal and invalid input.",
+        ] },
+        { type: "code", language: "python", filename: "calculator.py", code: "first = float(input(\"Enter first number: \"))\nsecond = float(input(\"Enter second number: \"))\nprint(\"Sum:\", first + second)" },
+        { type: "callout", title: "Part 3 summary", text: "You have used variables and data types in real Python programs, collected user input, converted values, performed calculations, and displayed useful output." },
+      ],
+    },
+    {
+      id: "python-variables-data-types-assessment",
+      title: "Kai Assessment",
+      description: "Part 4 of 4 · Demonstrate your understanding of variables and data types.",
+      blocks: [
+        { type: "heading", text: "Ready for Kai's assessment?" },
+        { type: "text", text: "This assessment tests the concepts covered in the three teaching parts. Kai will generate fresh questions from this lesson and explain mistakes after you answer." },
+        { type: "checklist", title: "Before you begin", items: [
+          "I can explain what a variable stores and how assignment works.",
+          "I can identify strings, integers, floats, and booleans.",
+          "I can use type() and convert valid values safely.",
+          "I can read and explain a small Python program using input and output.",
+        ] },
+        { type: "callout", title: "Assessment starts here", text: "Select Start Kai assessment below when you are ready. The assessment is generated from this lesson rather than from a separate teaching prompt." },
+      ],
+    },
+  ],
+};
+
 // Python is the first complete coding roadmap on the authored delivery system.
 // Preserve the explicitly authored pilot lesson and migrate every other Python
 // lesson from its existing official sections without changing lesson identity,
@@ -2625,6 +2730,7 @@ lessons.python.forEach((lesson) => {
     lesson.level = "Beginner";
     lesson.delivery = pythonIntroductionAuthoredDelivery;
   }
+  else if (lesson.id === "python-variables-data-types") lesson.delivery = pythonVariablesDataTypesDelivery;
   else if (!lesson.delivery || lesson.delivery.type !== "authored") lesson.delivery = makePythonAuthoredDelivery(lesson);
 });
 
