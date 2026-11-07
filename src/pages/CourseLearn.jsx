@@ -2170,18 +2170,18 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             )}
           </section>
         )}
-        {authoredDelivery && (
-          <AuthoredLesson
-            key={lesson.id}
-            lesson={lesson}
-            delivery={authoredDelivery}
-            theme={kaiLightMode ? "light" : "dark"}
-            onChoice={(choice) => askKai({ learnerMessage: choice, conversation: messages })}
-            onStartAssessment={startAssessment}
-            assessmentStarted={assessmentStarted}
-          />
-        )}
         <section className="conversation-messages">
+          {authoredDelivery && (
+            <AuthoredLesson
+              key={lesson.id}
+              lesson={lesson}
+              delivery={authoredDelivery}
+              theme={kaiLightMode ? "light" : "dark"}
+              onChoice={(choice) => askKai({ learnerMessage: choice, conversation: messages })}
+              onStartAssessment={startAssessment}
+              assessmentStarted={assessmentStarted}
+            />
+          )}
 
           {courseStateError && (
             <div className="kai-board-status" role="alert">
