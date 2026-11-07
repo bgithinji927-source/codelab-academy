@@ -177,3 +177,108 @@
 .kai-network-diagram-label{display:inline-flex;margin-bottom:.35rem;color:#9dc4ff;font-size:.65rem;font-weight:800;letter-spacing:.12em}
 .kai-interaction-paused{margin:.5rem 0 0;color:#aeb4c8;font-size:.78rem;font-style:italic}
 .kai-rich-content button:disabled{cursor:not-allowed;opacity:.48;filter:saturate(.55)}
+
+/* Kai's light mode is local to the lesson page (data-kai-theme/class), so
+   global html[data-theme] overrides do not reach these structured blocks. */
+.learn-page.kai-light-mode .kai-rich-quiz,
+.learn-page.kai-light-mode .kai-rich-learning-path,
+.learn-page.kai-light-mode .kai-rich-tutorial {
+  border-color: #d8dce5;
+  background: linear-gradient(145deg, #ffffff, #f6f8fb);
+  color: #172033;
+  box-shadow: 0 10px 24px rgba(35, 48, 72, .08);
+}
+.learn-page.kai-light-mode .kai-rich-quiz-kicker,
+.learn-page.kai-light-mode .kai-rich-learning-path-heading > span,
+.learn-page.kai-light-mode .kai-rich-tutorial > header > span {
+  color: #5c46c7;
+}
+.learn-page.kai-light-mode .kai-rich-quiz h3,
+.learn-page.kai-light-mode .kai-rich-learning-path h3,
+.learn-page.kai-light-mode .kai-rich-tutorial h3 {
+  color: #172033;
+}
+.learn-page.kai-light-mode .kai-rich-learning-path-heading p,
+.learn-page.kai-light-mode .kai-rich-tutorial > p,
+.learn-page.kai-light-mode .kai-rich-quiz-feedback p,
+.learn-page.kai-light-mode .kai-learning-path-detail p {
+  color: #4d586b;
+}
+.learn-page.kai-light-mode .kai-rich-tutorial > header small {
+  color: #667085;
+}
+.learn-page.kai-light-mode .kai-tutorial-progress {
+  background: #dfe3ea;
+}
+.learn-page.kai-light-mode .kai-tutorial-progress span {
+  background: linear-gradient(90deg, #7c62e8, #9b83f5);
+}
+.learn-page.kai-light-mode .kai-rich-tutorial footer {
+  border-top-color: #dfe3ea;
+}
+.learn-page.kai-light-mode .kai-rich-quiz-submit,
+.learn-page.kai-light-mode .kai-learning-path-detail button,
+.learn-page.kai-light-mode .kai-rich-tutorial > button,
+.learn-page.kai-light-mode .kai-rich-tutorial footer button,
+.learn-page.kai-light-mode .kai-sim-terminal form button,
+.learn-page.kai-light-mode .kai-sim-terminal-ask {
+  border-color: #b9aaf2;
+  background: #f0edff;
+  color: #392582;
+}
+.learn-page.kai-light-mode .kai-rich-tutorial footer button:disabled,
+.learn-page.kai-light-mode .kai-rich-quiz-submit:disabled,
+.learn-page.kai-light-mode .kai-sim-terminal-ask:disabled {
+  color: #697386;
+  background: #edf0f4;
+  border-color: #d6dbe4;
+  opacity: .75;
+}
+.learn-page.kai-light-mode .kai-learning-path-cards button {
+  border-color: #d7dce6;
+  background: #f8fafc;
+  color: #172033;
+}
+.learn-page.kai-light-mode .kai-learning-path-cards button.is-active {
+  border-color: #9b83f5;
+  background: #f0edff;
+}
+.learn-page.kai-light-mode .kai-learning-path-cards button span {
+  color: #5c46c7;
+}
+.learn-page.kai-light-mode .kai-learning-path-cards button small {
+  color: #596579;
+}
+.learn-page.kai-light-mode .kai-learning-path-detail {
+  background: #f1f4f8;
+}
+.learn-page.kai-light-mode .kai-sim-terminal {
+  border-color: #cbd2dc;
+  background: #f7f9fb;
+  color: #172033;
+}
+.learn-page.kai-light-mode .kai-sim-terminal > header {
+  background: #e9edf2;
+  border-bottom-color: #cbd2dc;
+  color: #263247;
+}
+.learn-page.kai-light-mode .kai-sim-terminal > header > span:last-child,
+.learn-page.kai-light-mode .kai-sim-terminal form label {
+  color: #287a45;
+}
+.learn-page.kai-light-mode .kai-sim-terminal-scenario {
+  background: #eef2f6;
+  color: #4d586b;
+}
+.learn-page.kai-light-mode .kai-sim-terminal-screen {
+  color: #245b35;
+}
+.learn-page.kai-light-mode .kai-sim-terminal-screen pre {
+  color: #344054;
+}
+.learn-page.kai-light-mode .kai-sim-terminal form {
+  border-top-color: #cbd2dc;
+}
+.learn-page.kai-light-mode .kai-sim-terminal form input {
+  color: #172033;
+}
