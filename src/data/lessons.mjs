@@ -2814,6 +2814,185 @@ const pythonStringsDelivery = {
   ],
 };
 
+const pythonNumbersOperatorsDelivery = {
+  type: "authored",
+  version: 1,
+  intro: "Learn how Python works with numerical data and performs mathematical and logical operations.",
+  sections: [
+    {
+      id: "python-operators-fundamentals",
+      title: "Understanding Numbers in Python",
+      description: "Part 1 of 4 · Understand integers, floats, numerical types, and conversion.",
+      blocks: [
+        { type: "heading", text: "Integers and floating-point numbers" },
+        { type: "text", text: "Python uses numbers to represent numerical values. Integers (int) are whole numbers, while floating-point numbers (float) contain a decimal point. Both can be positive, negative, or zero where appropriate." },
+        { type: "code", language: "python", filename: "numbers.py", code: "age = 21\nstudents = 45\ntemperature = -5\nbalance = 1000\n\nprice = 250.50\nheight = 1.75\ninterest_rate = 12.75\n\nprint(age)\nprint(price)\nprint(type(age))\nprint(type(price))" },
+        { type: "heading", text: "int versus float" },
+        { type: "comparison", title: "Numerical data types", items: [
+          { name: "Integer (int)", bestFor: "Whole numbers such as counts, ages, and quantities", pros: ["No decimal portion", "Can represent positive, negative, or zero"], cons: ["Cannot represent decimal measurements directly"] },
+          { name: "Float (float)", bestFor: "Prices, measurements, percentages, and decimal calculations", pros: ["Represents values with a decimal point"], cons: ["Floating-point calculations can have precision limits"] },
+        ] },
+        { type: "code", language: "python", filename: "conversion.py", code: "number = 25\nwhole_number = int(25.85)\ndecimal_number = float(number)\n\nprint(whole_number)\nprint(decimal_number)\n\n age = int(input(\"Enter your age: \"))\nprint(age + 1)".replace("\n age", "\nage") },
+        { type: "text", text: "int(25.85) produces 25 by removing the decimal portion; it does not round to the nearest integer. input() returns a string, so convert user input with int() or float() before performing calculations." },
+        { type: "callout", title: "Part 1 summary", text: "Use int for whole numbers and float for decimal values. Use type() to inspect values and convert compatible input before doing numerical work." },
+      ],
+    },
+    {
+      id: "python-operators-arithmetic",
+      title: "Arithmetic Operators",
+      description: "Part 2 of 4 · Perform calculations with addition, subtraction, multiplication, division, remainders, and powers.",
+      blocks: [
+        { type: "heading", text: "Main arithmetic operators" },
+        { type: "text", text: "Operators are symbols or keywords that perform operations on values. Python supports addition (+), subtraction (-), multiplication (*), division (/), floor division (//), modulus (%), and exponentiation (**)." },
+        { type: "comparison", title: "Arithmetic operations", items: [
+          { name: "+ and -", bestFor: "Adding values and calculating differences", pros: ["Direct and readable"], cons: ["Inputs must be compatible numeric values"] },
+          { name: "* and /", bestFor: "Totals, rates, and proportional calculations", pros: ["Useful for real calculations"], cons: ["Division returns a float and cannot divide by zero"] },
+          { name: "// and %", bestFor: "Whole-number groups and remainders", pros: ["Useful for even/odd checks and grouping"], cons: ["Division by zero is invalid"] },
+          { name: "**", bestFor: "Powers and exponential calculations", pros: ["Expresses repeated multiplication clearly"], cons: ["Large powers can produce very large values"] },
+        ] },
+        { type: "code", language: "python", filename: "arithmetic.py", code: "a = 17\nb = 5\n\nprint(a + b)\nprint(a - b)\nprint(a * b)\nprint(a / b)\nprint(a // b)\nprint(a % b)\nprint(2 ** 3)\n\nnumber = 10\nprint(\"Even remainder:\", number % 2)" },
+        { type: "text", text: "The / operator returns a floating-point result. Floor division returns the quotient rounded down, modulus returns the remainder, and exponentiation raises a number to a power." },
+        { type: "heading", text: "Arithmetic with variables" },
+        { type: "code", language: "python", filename: "total.py", code: "price = 500\nquantity = 4\ntotal = price * quantity\n\nprint(\"Total cost:\", total)" },
+        { type: "callout", title: "Part 2 summary", text: "Arithmetic operators are the foundation of calculators, shopping systems, financial applications, measurements, and progress calculations." },
+      ],
+    },
+    {
+      id: "python-operators-logic",
+      title: "Comparison, Logical, and Assignment Operators",
+      description: "Part 3 of 4 · Compare values, combine conditions, update variables, and control precedence.",
+      blocks: [
+        { type: "heading", text: "Comparison operators" },
+        { type: "text", text: "Comparison operators produce Boolean results: True or False. Remember that = assigns a value, while == checks whether two values are equal." },
+        { type: "code", language: "python", filename: "comparisons.py", code: "age = 21\nscore = 75\n\nprint(age == 21)\nprint(score != 50)\nprint(score > 60)\nprint(score >= 70)\nprint(age < 18)" },
+        { type: "heading", text: "Logical operators" },
+        { type: "bullets", items: [
+          "and is True only when both conditions are True.",
+          "or is True when at least one condition is True.",
+          "not reverses a Boolean value.",
+        ] },
+        { type: "code", language: "python", filename: "logic.py", code: "age = 22\nhas_id = True\nhas_email = False\nhas_phone = True\n\nprint(age >= 18 and has_id)\nprint(has_email or has_phone)\nprint(not has_email)" },
+        { type: "heading", text: "Assignment operators and precedence" },
+        { type: "code", language: "python", filename: "updates.py", code: "number = 10\nnumber += 5\nnumber -= 2\nnumber *= 3\nnumber /= 2\nprint(number)\n\nprint(10 + 5 * 2)\nprint((10 + 5) * 2)" },
+        { type: "text", text: "Shorthand operators such as +=, -=, *=, /=, //=, %=, and **= update a variable. Python evaluates parentheses first, then powers, multiplication/division/remainder, addition/subtraction, comparisons, not, and, and or. Use parentheses when they make the intended calculation clearer." },
+        { type: "callout", title: "Part 3 summary", text: "Comparisons evaluate relationships, logical operators combine conditions, assignment operators update state, and precedence determines calculation order." },
+      ],
+    },
+    {
+      id: "python-operators-assessment",
+      title: "Practical Programming and Kai Assessment",
+      description: "Part 4 of 4 · Build calculation programs and demonstrate your understanding.",
+      blocks: [
+        { type: "heading", text: "Build a simple calculator" },
+        { type: "code", language: "python", filename: "calculator.py", code: "print(\"===== SIMPLE CALCULATOR =====\")\n\nnum1 = float(input(\"Enter first number: \"))\nnum2 = float(input(\"Enter second number: \"))\n\nprint(\"\\n===== RESULTS =====\")\nprint(f\"Addition: {num1 + num2}\")\nprint(f\"Subtraction: {num1 - num2}\")\nprint(f\"Multiplication: {num1 * num2}\")\n\nif num2 != 0:\n    print(f\"Division: {num1 / num2}\")\n    print(f\"Floor Division: {num1 // num2}\")\n    print(f\"Remainder: {num1 % num2}\")\nelse:\n    print(\"Division, floor division, and remainder require a non-zero second number.\")\n\nprint(f\"Power: {num1 ** num2}\")" },
+        { type: "heading", text: "Build an even and odd checker" },
+        { type: "code", language: "python", filename: "even_odd.py", code: "number = int(input(\"Enter a number: \"))\n\nif number % 2 == 0:\n    print(\"This is an even number.\")\nelse:\n    print(\"This is an odd number.\")" },
+        { type: "heading", text: "Build a shopping calculator" },
+        { type: "code", language: "python", filename: "shopping.py", code: "product = input(\"Enter product name: \")\nprice = float(input(\"Enter product price: \"))\nquantity = int(input(\"Enter quantity: \"))\ntotal = price * quantity\n\nprint(\"Product:\", product)\nprint(f\"Price: KSh {price:.2f}\")\nprint(\"Quantity:\", quantity)\nprint(f\"Total: KSh {total:.2f}\")" },
+        { type: "checklist", title: "Before you begin Kai's assessment", items: [
+          "I can distinguish integers and floats and convert numerical input.",
+          "I can use all main arithmetic operators, including //, %, and **.",
+          "I can compare values and combine conditions with and, or, and not.",
+          "I can update variables with assignment operators.",
+          "I can explain precedence and avoid division by zero.",
+        ] },
+        { type: "callout", title: "Assessment starts here", text: "Select Start Kai assessment below when you are ready. Kai will test numbers, operators, Boolean logic, assignment, and calculation order." },
+      ],
+    },
+  ],
+};
+
+const pythonConditionalsDelivery = {
+  type: "authored",
+  version: 1,
+  intro: "Learn how to make Python programs make decisions using conditions.",
+  sections: [
+    {
+      id: "python-conditionals-fundamentals",
+      title: "Introduction to Conditional Statements",
+      description: "Part 1 of 4 · Understand conditions, comparisons, Boolean results, and indentation.",
+      blocks: [
+        { type: "heading", text: "What are conditional statements?" },
+        { type: "text", text: "A conditional statement allows a program to make decisions. It checks whether a condition is true or false and executes instructions based on the result." },
+        { type: "code", language: "python", filename: "voting.py", code: "age = 20\n\nif age >= 18:\n    print(\"You are eligible to vote.\")" },
+        { type: "heading", text: "The if statement" },
+        { type: "text", text: "The if keyword begins the condition, the expression is evaluated, the colon starts the block, and indented instructions execute only when the condition is true." },
+        { type: "code", language: "python", filename: "temperature.py", code: "temperature = 35\n\nif temperature > 30:\n    print(\"It is a hot day.\")\n\nprint(\"Program completed.\")" },
+        { type: "heading", text: "Boolean conditions and indentation" },
+        { type: "code", language: "python", filename: "conditions.py", code: "age = 25\n\nprint(age >= 18)\nprint(age < 18)\n\nif age >= 18:\n    print(\"You are an adult.\")\n    print(\"You can apply for an ID.\")" },
+        { type: "bullets", items: [
+          "Conditions produce True or False.",
+          "Comparison operators include ==, !=, >, <, >=, and <=.",
+          "Python commonly uses four spaces for each indentation level.",
+          "Indented statements belong to the conditional block; unindented statements do not.",
+        ] },
+        { type: "callout", title: "Part 1 summary", text: "Conditional statements make decisions, if runs code when a condition is true, comparisons produce Boolean values, and indentation defines each code block." },
+      ],
+    },
+    {
+      id: "python-conditionals-branches",
+      title: "Using if, elif, and else",
+      description: "Part 2 of 4 · Handle alternatives, multiple possibilities, and combined conditions.",
+      blocks: [
+        { type: "heading", text: "else provides an alternative" },
+        { type: "code", language: "python", filename: "age_check.py", code: "age = 16\n\nif age >= 18:\n    print(\"You are an adult.\")\nelse:\n    print(\"You are a minor.\")" },
+        { type: "heading", text: "elif checks another condition" },
+        { type: "text", text: "elif means else if. Python checks conditions from top to bottom and stops after the first true condition in the same if/elif/else structure." },
+        { type: "code", language: "python", filename: "grades.py", code: "marks = 75\n\nif marks >= 80:\n    print(\"Grade A\")\nelif marks >= 70:\n    print(\"Grade B\")\nelif marks >= 60:\n    print(\"Grade C\")\nelif marks >= 50:\n    print(\"Grade D\")\nelse:\n    print(\"Grade E\")" },
+        { type: "heading", text: "Combine conditions" },
+        { type: "code", language: "python", filename: "access.py", code: "age = 22\nhas_id = True\nhas_email = False\nhas_phone = True\n\nif age >= 18 and has_id:\n    print(\"Access granted.\")\n\nif has_email or has_phone:\n    print(\"You can register.\")\n\nif not has_email:\n    print(\"Email is missing.\")" },
+        { type: "bullets", items: [
+          "and requires both conditions to be true.",
+          "or requires at least one condition to be true.",
+          "not reverses a Boolean condition.",
+        ] },
+        { type: "callout", title: "Part 2 summary", text: "Use if for the first condition, elif for additional alternatives, else when all earlier conditions are false, and logical operators when a decision depends on more than one condition." },
+      ],
+    },
+    {
+      id: "python-conditionals-practice",
+      title: "Practical Conditional Programming",
+      description: "Part 3 of 4 · Build programs that validate input, grade results, authenticate users, and make decisions.",
+      blocks: [
+        { type: "heading", text: "Age checker" },
+        { type: "code", language: "python", filename: "age_checker.py", code: "age = int(input(\"Enter your age: \"))\n\nif age >= 18:\n    print(\"You are an adult.\")\nelse:\n    print(\"You are a minor.\")" },
+        { type: "heading", text: "Student grading system" },
+        { type: "code", language: "python", filename: "grading_system.py", code: "marks = float(input(\"Enter student marks: \"))\n\nif marks < 0 or marks > 100:\n    print(\"Invalid marks. Enter a value between 0 and 100.\")\nelif marks >= 80:\n    print(\"Grade: A\")\nelif marks >= 70:\n    print(\"Grade: B\")\nelif marks >= 60:\n    print(\"Grade: C\")\nelif marks >= 50:\n    print(\"Grade: D\")\nelse:\n    print(\"Grade: E\")" },
+        { type: "heading", text: "Login and nested decisions" },
+        { type: "code", language: "python", filename: "login.py", code: "correct_username = \"admin\"\ncorrect_password = \"12345\"\n\nusername = input(\"Enter username: \")\npassword = input(\"Enter password: \")\n\nif username == correct_username and password == correct_password:\n    print(\"Login successful. Welcome!\")\nelse:\n    print(\"Invalid username or password.\")" },
+        { type: "code", language: "python", filename: "nested_access.py", code: "age = 22\nhas_id = True\n\nif age >= 18:\n    if has_id:\n        print(\"You can enter.\")\n    else:\n        print(\"Identification required.\")\nelse:\n    print(\"You are too young to enter.\")" },
+        { type: "heading", text: "ATM withdrawal system" },
+        { type: "code", language: "python", filename: "atm.py", code: "balance = 10000\namount = float(input(\"Enter withdrawal amount: \"))\n\nif amount <= 0:\n    print(\"Invalid withdrawal amount.\")\nelif amount > balance:\n    print(\"Insufficient funds.\")\nelse:\n    balance -= amount\n    print(\"Withdrawal successful.\")\n    print(f\"Amount withdrawn: KSh {amount:.2f}\")\n    print(f\"Remaining balance: KSh {balance:.2f}\")" },
+        { type: "checklist", title: "Independent exercise: electricity billing", items: [
+          "Ask for the number of electricity units consumed.",
+          "Reject negative units.",
+          "Charge KSh 10 per unit for 0–100 units.",
+          "Charge KSh 15 per unit above 100 units.",
+          "Display the total with an f-string.",
+        ] },
+        { type: "callout", title: "Part 3 summary", text: "You have used input, if/elif/else, logical operators, nested conditionals, validation, and state updates to build practical decision-making programs." },
+      ],
+    },
+    {
+      id: "python-conditionals-assessment",
+      title: "Kai Assessment",
+      description: "Part 4 of 4 · Demonstrate your understanding of Python conditional statements.",
+      blocks: [
+        { type: "heading", text: "Ready for Kai's assessment?" },
+        { type: "text", text: "The assessment covers the purpose of conditional statements, if/elif/else, comparison operators, logical operators, indentation, nested decisions, and practical program execution." },
+        { type: "checklist", title: "Before you begin", items: [
+          "I can explain why programs need conditional statements.",
+          "I can write if, elif, and else blocks with correct indentation.",
+          "I can compare values and combine conditions with and, or, and not.",
+          "I can create nested conditionals when one decision depends on another.",
+          "I can validate input and build a practical decision-making program.",
+        ] },
+        { type: "callout", title: "Assessment starts here", text: "Select Start Kai assessment below when you are ready. A successful result allows you to progress to the next Python lesson." },
+      ],
+    },
+  ],
+};
+
 // Python is the first complete coding roadmap on the authored delivery system.
 // Preserve the explicitly authored pilot lesson and migrate every other Python
 // lesson from its existing official sections without changing lesson identity,
@@ -2827,6 +3006,8 @@ lessons.python.forEach((lesson) => {
   }
   else if (lesson.id === "python-variables-data-types") lesson.delivery = pythonVariablesDataTypesDelivery;
   else if (lesson.id === "python-strings") lesson.delivery = pythonStringsDelivery;
+  else if (lesson.id === "python-operators") lesson.delivery = pythonNumbersOperatorsDelivery;
+  else if (lesson.id === "python-conditional-statements") lesson.delivery = pythonConditionalsDelivery;
   else if (!lesson.delivery || lesson.delivery.type !== "authored") lesson.delivery = makePythonAuthoredDelivery(lesson);
 });
 
