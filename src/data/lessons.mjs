@@ -2126,6 +2126,23 @@ Professional review questions:
   });
 });
 
+// Keep the learner path predictable even when lessons are added, generated, or
+// edited later. The original order is preserved within the same difficulty so
+// related topics and project milestones remain in their intended sequence.
+const lessonLevelOrder = {
+  Beginner: 0,
+  Intermediate: 1,
+  Advanced: 2,
+};
+
+Object.values(lessons).forEach((courseLessons) => {
+  courseLessons.sort((left, right) => {
+    const leftLevel = lessonLevelOrder[left.level] ?? 3;
+    const rightLevel = lessonLevelOrder[right.level] ?? 3;
+    return leftLevel - rightLevel;
+  });
+});
+
 export { lessons };
 
 // ============================================
