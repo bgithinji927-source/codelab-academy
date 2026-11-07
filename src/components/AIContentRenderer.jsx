@@ -244,7 +244,7 @@ function LearningPath({ block, onAction, assessmentActive = false }) {
   </section>;
 }
 
-function StepTutorial({ block, onAction, assessmentActive = false }) {
+function StepTutorial({ block, onAction, assessmentActive = false, theme = "dark" }) {
   const [stepIndex, setStepIndex] = useState(0);
   const steps = Array.isArray(block.steps) ? block.steps : [];
   const step = steps[stepIndex];
@@ -254,7 +254,7 @@ function StepTutorial({ block, onAction, assessmentActive = false }) {
     <div className="kai-tutorial-progress"><span style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }} /></div>
     <h3>{step.title || `Step ${stepIndex + 1}`}</h3>
     <p>{step.description || step.content || ""}</p>
-    {step.code && <CodeBlock key={`tutorial-code-${stepIndex}`} block={{ code: step.code, language: step.language || "javascript", filename: step.filename || `step-${stepIndex + 1}` }} />}
+    {step.code && <CodeBlock key={`tutorial-code-${stepIndex}`} block={{ code: step.code, language: step.language || "javascript", filename: step.filename || `step-${stepIndex + 1}` }} theme={theme} />}
     {step.prompt && <button type="button" disabled={assessmentActive} onClick={() => onAction?.("prompt", step.prompt)}>Ask Kai about this step <ArrowRight size={14} /></button>}
     {assessmentActive && <p className="kai-interaction-paused" role="status">Tutorial actions are paused during the readiness check.</p>}
     <footer><button type="button" disabled={assessmentActive || stepIndex === 0} onClick={() => setStepIndex((index) => index - 1)}>Back</button><button type="button" disabled={assessmentActive || stepIndex === steps.length - 1} onClick={() => setStepIndex((index) => index + 1)}>{stepIndex === steps.length - 1 ? "Tutorial complete" : "Next step"} <ArrowRight size={14} /></button></footer>
@@ -402,7 +402,7 @@ export default function AIContentRenderer({ content, onAction, onChoice, assessm
     if (["comparison", "compare"].includes(block.type)) return <Comparison block={block} key={key} />;
     if (block.type === "timeline") return <Timeline block={block} key={key} />;
     if (block.type === "learning_path") return <LearningPath block={block} onAction={onAction} assessmentActive={assessmentActive} key={key} />;
-    if (block.type === "tutorial") return <StepTutorial block={block} onAction={onAction} assessmentActive={assessmentActive} key={key} />;
+    if (block.type === "tutorial") return <StepTutorial block={block} onAction={onAction} assessmentActive={assessmentActive} theme={theme} key={key} />;
     if (["equation", "math"].includes(block.type)) return <div className="kai-rich-equation" key={key}>{block.label && <span>{block.label}</span>}<code>{block.latex || block.expression || block.text}</code></div>;
     if (block.type === "progress") return <Progress block={block} key={key} />;
     if (["filetree", "file-tree"].includes(block.type)) return <FileTree block={block} key={key} />;
