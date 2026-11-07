@@ -251,3 +251,48 @@
     flex-wrap: wrap;
   }
 }
+
+/* Authored lessons live in Kai's conversation stream, not in a second card. */
+.authored-lesson-message {
+  width: 100%;
+  margin: 0 0 1.5rem;
+}
+
+.authored-lesson-message .chat-content {
+  width: 100%;
+}
+
+.authored-lesson-message .kai-board-content {
+  width: 100%;
+}
+
+.authored-lesson-message .authored-lesson-text {
+  width: 100%;
+}
+
+.authored-lesson-message .authored-lesson-header {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+
+.authored-lesson-message .authored-lesson-header h2 {
+  margin-top: .25rem;
+}
+
+.authored-lesson-message .authored-lesson-navigation {
+  margin-top: .85rem;
+  padding-top: .85rem;
+}
+
+.learn-page.kai-light-mode .authored-lesson-message .authored-lesson-header h2,
+.learn-page.kai-light-mode .authored-lesson-message .authored-lesson-section-heading h3 {
+  color: inherit;
+}
+
+.learn-page.kai-light-mode .authored-lesson-message .authored-lesson-header p,
+.learn-page.kai-light-mode .authored-lesson-message .authored-lesson-section-heading p,
+.learn-page.kai-light-mode .authored-lesson-message .authored-lesson-progress-copy,
+.learn-page.kai-light-mode .authored-lesson-message .authored-lesson-navigation > span {
+  color: inherit;
+  opacity: .78;
+}
