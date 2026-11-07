@@ -46,6 +46,40 @@
   font: .68rem ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
+.authored-lesson-progress {
+  display: grid;
+  gap: .65rem;
+  margin-top: 1.25rem;
+}
+
+.authored-lesson-progress-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #bfc1d4;
+  font-size: .78rem;
+}
+
+.authored-lesson-progress-copy strong {
+  color: #e5e1ff;
+  font-weight: 800;
+}
+
+.authored-lesson-progress-track {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(170, 160, 255, .16);
+}
+
+.authored-lesson-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #9f8cff;
+  transition: width .25s ease;
+}
+
 .authored-lesson-sections {
   display: grid;
   gap: 1.5rem;
@@ -92,6 +126,44 @@
   gap: .9rem;
 }
 
+.authored-lesson-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(170, 160, 255, .18);
+}
+
+.authored-lesson-navigation > span {
+  color: #bfc1d4;
+  font: .75rem ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.authored-lesson-navigation button {
+  min-height: 2.4rem;
+  padding: .55rem .85rem;
+  border: 1px solid rgba(170, 160, 255, .38);
+  border-radius: 7px;
+  background: transparent;
+  color: #e6e4ff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.authored-lesson-navigation button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+.authored-lesson-navigation button.is-primary {
+  border-color: #9f8cff;
+  background: #9f8cff;
+  color: #17132b;
+  font-weight: 800;
+}
+
 .authored-lesson-context {
   position: absolute;
   width: 1px;
@@ -133,6 +205,34 @@
   color: #667085;
 }
 
+.learn-page.kai-light-mode .authored-lesson-progress-copy,
+.learn-page.kai-light-mode .authored-lesson-navigation > span {
+  color: #667085;
+}
+
+.learn-page.kai-light-mode .authored-lesson-progress-copy strong {
+  color: #344054;
+}
+
+.learn-page.kai-light-mode .authored-lesson-progress-track,
+.learn-page.kai-light-mode .authored-lesson-navigation {
+  border-color: #dfe3ea;
+}
+
+.learn-page.kai-light-mode .authored-lesson-progress-track {
+  background: #e5e7eb;
+}
+
+.learn-page.kai-light-mode .authored-lesson-navigation button {
+  border-color: #c5b9f7;
+  color: #4c3b9f;
+}
+
+.learn-page.kai-light-mode .authored-lesson-navigation button.is-primary {
+  background: #7055d8;
+  color: #fff;
+}
+
 @media (max-width: 600px) {
   .authored-lesson {
     padding: 1rem;
@@ -140,5 +240,14 @@
 
   .authored-lesson-header {
     flex-direction: column;
+  }
+
+  .authored-lesson-progress-copy {
+    flex-direction: column;
+    gap: .25rem;
+  }
+
+  .authored-lesson-navigation {
+    flex-wrap: wrap;
   }
 }

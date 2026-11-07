@@ -1392,6 +1392,80 @@ const javascriptMasteryLessonPlans = [
   ["javascript-project-capstone", "JavaScript Mastery Capstone", "a complete JavaScript learning platform", "const platform = {\n  frontend: true,\n  api: true,\n  database: true,\n  tests: true,\n  securityReview: true,\n  productionRunbook: true\n};\nconsole.log(platform);", "Deliver a complete JavaScript product from requirements to production. Include architecture, frontend, backend, persistence, authentication, testing, security review, performance measurements, monitoring, deployment, rollback, and a retrospective."]
 ];
 
+
+const pythonVariablesAuthoredDelivery = {
+  type: "authored",
+  version: 1,
+  intro: "Learn how Python names values, stores information, and lets your program use that information later.",
+  sections: [
+    {
+      id: "python-variables-introduction",
+      title: "Introduction and Fundamentals",
+      description: "Part 1 of 4 · Understand what variables are and why programs use them.",
+      blocks: [
+        { type: "heading", text: "What is a variable?" },
+        { type: "text", text: "A variable is a name that refers to a value. The name gives your program a readable way to remember information." },
+        { type: "bullets", items: [
+          "A variable name identifies the value.",
+          "The value can be text, a number, a boolean, or another Python object.",
+          "Variables make programs easier to read, change, and reuse.",
+        ] },
+        { type: "callout", title: "Key term", text: "Assignment is the act of associating a name with a value by using the = operator." },
+      ],
+    },
+    {
+      id: "python-variables-concepts",
+      title: "Detailed Concepts",
+      description: "Part 2 of 4 · Learn assignment, naming, reassignment, and common value types.",
+      blocks: [
+        { type: "text", text: "Python does not require let or const to create a normal variable. The value on the right is assigned to the name on the left. A later assignment can give the same name a new value." },
+        { type: "table", title: "Common Python values", columns: ["Type", "Example", "Use"], rows: [
+          ["str", '\"Amina\"', "Text"],
+          ["int", "20", "Whole numbers"],
+          ["float", "1.68", "Decimal numbers"],
+          ["bool", "True", "True or false decisions"],
+        ] },
+        { type: "code", language: "python", filename: "assignment.py", code: "name = \"Amina\"\nage = 20\nage = age + 1\n\nprint(name)\nprint(age)" },
+        { type: "text", text: "Use clear names such as learner_name or total_score. Avoid names that hide the value's purpose or conflict with Python keywords." },
+      ],
+    },
+    {
+      id: "python-variables-examples",
+      title: "Examples and Explanations",
+      description: "Part 3 of 4 · Read a complete example, trace each line, and practice with your own values.",
+      blocks: [
+        { type: "code", language: "python", filename: "learner_profile.py", code: "name = \"Brian\"\nage = 25\nlanguage = \"Python\"\n\nprint(name)\nprint(age)\nprint(language)" },
+        { type: "tutorial", title: "Trace the example", steps: [
+          { title: "Store the name", description: "The name variable refers to the string Brian.", code: 'name = "Brian"' },
+          { title: "Store the age", description: "The age variable refers to the integer 25.", code: "age = 25" },
+          { title: "Print the values", description: "print reads each variable and writes its value to the output.", code: "print(name)" },
+        ] },
+        { type: "terminal", title: "Expected output", command: "python learner_profile.py", output: "Brian\n25\nPython" },
+        { type: "exercise", title: "Practice: build your profile", description: "Create variables for your name, age, and favorite programming language. Print all three values." },
+      ],
+    },
+    {
+      id: "python-variables-assessment",
+      title: "Test Your Understanding",
+      description: "Part 4 of 4 · Check the concept, then start the Kai assessment to unlock the next lesson.",
+      blocks: [
+        { type: "text", text: "Before starting the assessment, explain in your own words what the = operator does and why meaningful variable names help a program." },
+        { type: "quiz", question: "What does name = \"Brian\" do in Python?", options: [
+          "It assigns the string Brian to the name variable",
+          "It compares name with Brian",
+          "It prints Brian immediately",
+          "It creates a function called name",
+        ], answer: "It assigns the string Brian to the name variable", explanation: "The assignment operator associates the name on the left with the value on the right." },
+        { type: "checklist", title: "Ready for Kai's assessment?", items: [
+          "I can define a variable.",
+          "I can identify common Python value types.",
+          "I can write and explain a small variable-based program.",
+        ] },
+      ],
+    },
+  ],
+};
+
 const lessons = {
   javascript: [
     {
@@ -1683,6 +1757,8 @@ The typeof operator can help you inspect a value's type.
         "Change values",
         "Work with strings and numbers",
       ],
+
+      delivery: pythonVariablesAuthoredDelivery,
 
       sections: [
         {

@@ -2172,9 +2172,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         )}
         {authoredDelivery && (
           <AuthoredLesson
+            key={lesson.id}
             lesson={lesson}
             delivery={authoredDelivery}
             theme={kaiLightMode ? "light" : "dark"}
+            onChoice={(choice) => askKai({ learnerMessage: choice, conversation: messages })}
+            onStartAssessment={startAssessment}
+            assessmentStarted={assessmentStarted}
           />
         )}
         <section className="conversation-messages">
