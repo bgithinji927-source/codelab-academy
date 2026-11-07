@@ -2406,20 +2406,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             INPUT
         ====================================== */}
 
-        {authoredDelivery ? (
-          <div className="kai-input-dock kai-quick-ask-dock">
-            <button
-              type="button"
-              className="kai-ask-kai-button"
-              onClick={() => { setQuickAskError(""); setQuickAskOpen(true); }}
-              disabled={quickAskCount >= 3 || isKaiTyping || isAdvancing}
-            >
-              <Sparkles size={17} />
-              {quickAskCount >= 3 ? "Ask Kai limit reached" : "Ask Kai a quick question"}
-            </button>
-            <span className="kai-quick-ask-count">{Math.max(0, 3 - quickAskCount)} of 3 questions remaining for this lesson</span>
-          </div>
-        ) : (
+        {!authoredDelivery && (
           <>
             <div className="kai-input-dock">
               <textarea

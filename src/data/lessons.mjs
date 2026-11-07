@@ -2719,6 +2719,101 @@ const pythonVariablesDataTypesDelivery = {
   ],
 };
 
+const pythonStringsDelivery = {
+  type: "authored",
+  version: 1,
+  intro: "Learn how Python stores, manipulates, formats, and processes text using strings.",
+  sections: [
+    {
+      id: "python-strings-fundamentals",
+      title: "Introduction to Strings",
+      description: "Part 1 of 4 · Understand what strings are and how Python stores text.",
+      blocks: [
+        { type: "heading", text: "What is a string?" },
+        { type: "text", text: "A string is a Python data type used to store text such as names, sentences, addresses, and messages. Text inside quotation marks is recognized as a string." },
+        { type: "code", language: "python", filename: "strings.py", code: "name = \"Brian\"\ncountry = \"Kenya\"\nmessage = \"Welcome to Python programming!\"\n\nprint(name)\nprint(country)\nprint(message)" },
+        { type: "heading", text: "Creating strings" },
+        { type: "bullets", items: [
+          "Single quotation marks: name = 'Brian'",
+          "Double quotation marks: name = \"Brian\"",
+          "Triple quotation marks for text spanning multiple lines.",
+        ] },
+        { type: "code", language: "python", filename: "multiline.py", code: "message = \"\"\"Welcome to Python.\nWe are learning strings.\nPython makes programming interesting.\"\"\"\n\nprint(message)" },
+        { type: "heading", text: "Strings, variables, and empty text" },
+        { type: "code", language: "python", filename: "text_values.py", code: "first_name = \"Brian\"\nlast_name = \"Njogu\"\nempty_name = \"\"\n\nprint(first_name)\nprint(last_name)\nprint(type(first_name))\nprint(type(21))\nprint(type(\"0712345678\"))" },
+        { type: "text", text: "An empty string contains no characters but still gives a variable a text value. A phone number written inside quotation marks is also a string, even though it contains digits." },
+        { type: "callout", title: "Part 1 summary", text: "Strings store text, quotation marks create strings, triple quotes support multiline text, and type() identifies strings as str." },
+      ],
+    },
+    {
+      id: "python-strings-concepts",
+      title: "Working with Strings",
+      description: "Part 2 of 4 · Access characters, slice text, count characters, and use string methods.",
+      blocks: [
+        { type: "heading", text: "Indexing and negative indexing" },
+        { type: "text", text: "Every character has an index. Python starts counting at zero, while negative indexes count backward from the end. The last character is at index -1." },
+        { type: "code", language: "python", filename: "indexing.py", code: "word = \"PYTHON\"\n\nprint(word[0])\nprint(word[1])\nprint(word[3])\nprint(word[-1])\nprint(word[-2])" },
+        { type: "heading", text: "Slicing and length" },
+        { type: "text", text: "Slicing uses string[start:end]. The start position is included and the end position is excluded. len() counts every character, including spaces." },
+        { type: "code", language: "python", filename: "slicing.py", code: "word = \"PYTHON\"\nmessage = \"Hello Python\"\n\nprint(word[0:3])\nprint(word[:3])\nprint(word[2:])\nprint(len(message))" },
+        { type: "heading", text: "Useful string methods" },
+        { type: "comparison", title: "Common string operations", items: [
+          { name: "upper() and lower()", bestFor: "Changing all letters to uppercase or lowercase", pros: ["Useful for consistent comparisons and display"], cons: ["Returns a new string"] },
+          { name: "title() and capitalize()", bestFor: "Formatting names, headings, and sentences", pros: ["Makes display text easier to read"], cons: ["Automatic capitalization is not always the desired style"] },
+          { name: "strip(), lstrip(), rstrip()", bestFor: "Removing unwanted spaces around text", pros: ["Useful for cleaning user input"], cons: ["Only removes surrounding whitespace"] },
+          { name: "replace()", bestFor: "Replacing one piece of text with another", pros: ["Returns the updated text without changing the original"], cons: ["Must be assigned if the result should be kept"] },
+        ] },
+        { type: "code", language: "python", filename: "methods.py", code: "name = \"   brian   \"\nmessage = \"I love Java\"\n\nprint(name.strip().title())\nprint(message.replace(\"Java\", \"Python\"))\nprint(\"learning python programming\".upper())\nprint(\"WELCOME TO PYTHON\".lower())" },
+        { type: "callout", title: "Part 2 summary", text: "You can access characters with indexes, extract sections with slices, count characters with len(), clean text with strip(), change case, and replace text." },
+      ],
+    },
+    {
+      id: "python-strings-practice",
+      title: "Practical String Programming",
+      description: "Part 3 of 4 · Combine strings, format text, process input, and build a text program.",
+      blocks: [
+        { type: "heading", text: "Create and combine text" },
+        { type: "text", text: "Create a file called strings.py and run it with python strings.py or python3 strings.py. Combining strings with + is called concatenation." },
+        { type: "code", language: "python", filename: "strings.py", code: "first_name = \"Brian\"\nlast_name = \"Njogu\"\ncountry = \"Kenya\"\n\nfull_name = first_name + \" \" + last_name\nprint(\"Name:\", full_name)\nprint(\"Country:\", country)" },
+        { type: "heading", text: "Use f-strings" },
+        { type: "text", text: "An f-string inserts variables and expressions into formatted text. Place f before the opening quotation mark and put values inside curly brackets." },
+        { type: "code", language: "python", filename: "formatted_text.py", code: "name = \"Brian\"\nage = 21\ncountry = \"Kenya\"\nprice = 500\nquantity = 3\n\nprint(f\"My name is {name}.\")\nprint(f\"I am {age} years old.\")\nprint(f\"I live in {country}.\")\nprint(f\"Total cost: {price * quantity}\")" },
+        { type: "callout", title: "Watch the types", text: "You cannot directly concatenate a string and an integer with +. Convert the integer with str(age), or use an f-string instead." },
+        { type: "heading", text: "Receive and process user input" },
+        { type: "code", language: "python", filename: "user_profile.py", code: "print(\"===== USER PROFILE =====\")\n\nname = input(\"Enter your full name: \")\ncountry = input(\"Enter your country: \")\ncourse = input(\"Enter your course: \")\nage = int(input(\"Enter your age: \"))\n\nprint(\"\\n===== PROFILE DETAILS =====\")\nprint(f\"Name: {name.strip().title()}\")\nprint(f\"Country: {country.strip().title()}\")\nprint(f\"Course: {course.strip().title()}\")\nprint(f\"Age: {age}\")\nprint(f\"Your name has {len(name)} characters.\")" },
+        { type: "text", text: "input() returns a string by default. Convert it with int() when a whole number is required, and clean surrounding spaces before formatting the result." },
+        { type: "heading", text: "Independent exercise: build a text processor" },
+        { type: "checklist", title: "Your program should", items: [
+          "Ask the user for a sentence.",
+          "Display it in uppercase and lowercase.",
+          "Count the number of characters.",
+          "Ask for a word to replace and a replacement word.",
+          "Display the updated sentence.",
+        ] },
+        { type: "code", language: "python", filename: "text_processor.py", code: "sentence = input(\"Enter a sentence: \")\nold_word = input(\"Word to replace: \")\nnew_word = input(\"Replacement word: \")\n\nprint(sentence.upper())\nprint(sentence.lower())\nprint(\"Characters:\", len(sentence))\nprint(sentence.replace(old_word, new_word))" },
+        { type: "callout", title: "Part 3 summary", text: "You have created and run Python files, combined strings, used f-strings, received user input, converted values, and built a text-processing program." },
+      ],
+    },
+    {
+      id: "python-strings-assessment",
+      title: "Kai Assessment",
+      description: "Part 4 of 4 · Demonstrate your understanding of Python strings and text processing.",
+      blocks: [
+        { type: "heading", text: "Ready for Kai's assessment?" },
+        { type: "text", text: "The assessment will test string creation, indexing, slicing, string methods, concatenation, f-strings, user input, and type conversion. Kai will evaluate your answers and explain mistakes." },
+        { type: "checklist", title: "Before you begin", items: [
+          "I can create strings with single, double, and triple quotes.",
+          "I can access characters and use positive and negative indexes.",
+          "I can slice strings and count characters with len().",
+          "I can clean, format, replace, and combine text.",
+          "I understand that input() returns a string by default.",
+        ] },
+        { type: "callout", title: "Assessment starts here", text: "Select Start Kai assessment below when you are ready. Your result determines whether you can continue to the next Python lesson." },
+      ],
+    },
+  ],
+};
+
 // Python is the first complete coding roadmap on the authored delivery system.
 // Preserve the explicitly authored pilot lesson and migrate every other Python
 // lesson from its existing official sections without changing lesson identity,
@@ -2731,6 +2826,7 @@ lessons.python.forEach((lesson) => {
     lesson.delivery = pythonIntroductionAuthoredDelivery;
   }
   else if (lesson.id === "python-variables-data-types") lesson.delivery = pythonVariablesDataTypesDelivery;
+  else if (lesson.id === "python-strings") lesson.delivery = pythonStringsDelivery;
   else if (!lesson.delivery || lesson.delivery.type !== "authored") lesson.delivery = makePythonAuthoredDelivery(lesson);
 });
 
