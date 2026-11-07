@@ -61,6 +61,7 @@ function makeLesson({
   quizQuestion,
   quizOptions,
   quizAnswer,
+  delivery,
 }) {
   const notes = buildLessonNotes({ title, focus, code, quizAnswer });
   return {
@@ -75,6 +76,7 @@ function makeLesson({
       "Read and adapt a practical example",
       "Apply the concept in a guided challenge",
     ],
+    ...(delivery ? { delivery } : {}),
     sections: [
       {
         type: "explanation",
@@ -97,9 +99,68 @@ function makeLesson({
   };
 }
 
+
+const devopsCultureAuthoredDelivery = {
+  type: "authored",
+  version: 1,
+  intro: "Learn why DevOps is a delivery system built on collaboration, automation, and fast feedback.",
+  sections: [
+    {
+      id: "devops-culture-foundation",
+      title: "The delivery problem",
+      description: "DevOps reduces the friction between building software and operating it reliably.",
+      blocks: [
+        { type: "text", text: "DevOps is a way of working that brings development and operations closer together. The goal is not simply to release faster; it is to make delivery repeatable, observable, and safe to improve." },
+        { type: "bullets", items: [
+          "Shared ownership: the team owns the software after it ships.",
+          "Automation: repeatable checks and delivery steps reduce manual variation.",
+          "Feedback: tests, monitoring, and user signals guide the next change.",
+        ] },
+        { type: "callout", title: "Core idea", text: "A healthy delivery process makes the safe path the easy, repeatable path." },
+      ],
+    },
+    {
+      id: "devops-culture-worked-example",
+      title: "A repeatable workflow",
+      description: "This small model shows the stages a change should pass through before production.",
+      blocks: [
+        { type: "code", language: "javascript", filename: "delivery-workflow.js", code: "const workflow = {\n  build: true,\n  test: true,\n  deploy: \"repeatable\"\n};\n\nconsole.log(workflow);" },
+        { type: "tutorial", title: "Read the workflow", steps: [
+          { title: "Build", description: "Create a consistent artifact from the source code.", code: "build: true" },
+          { title: "Test", description: "Check the expected behavior before promotion.", code: "test: true" },
+          { title: "Deploy repeatedly", description: "Use the same controlled process instead of relying on one-off manual steps.", code: "deploy: \"repeatable\"" },
+        ] },
+      ],
+    },
+    {
+      id: "devops-culture-practice",
+      title: "Apply the idea",
+      description: "Design a delivery sequence for a small web application.",
+      blocks: [
+        { type: "text", text: "Write down the checks and delivery steps that should happen before a change reaches production. For each step, identify what could be automated and what feedback it should produce." },
+        { type: "code", language: "javascript", filename: "delivery-plan.js", code: "const deliverySteps = [];\n\n// Add build, test, and deploy steps here\nconsole.log(deliverySteps);" },
+        { type: "checklist", items: [
+          "Include a build or packaging step.",
+          "Include an automated test or verification step.",
+          "Include monitoring or rollback feedback after deployment.",
+        ] },
+      ],
+    },
+    {
+      id: "devops-culture-check",
+      title: "Check your understanding",
+      blocks: [{ type: "quiz", question: "What is a central goal of DevOps?", options: [
+        "Make releases repeatable and collaborative",
+        "Remove all testing",
+        "Avoid monitoring",
+        "Deploy only once",
+      ], answer: "Make releases repeatable and collaborative", explanation: "DevOps combines collaboration, automation, and feedback so teams can deliver changes safely and repeatedly." }],
+    },
+  ],
+};
 const courseLessonPlans = {
   "devops-foundations": [
-    makeLesson({ id: "devops-foundations-culture", title: "DevOps Culture and Delivery", focus: "DevOps culture", code: "const workflow = {\n  build: true,\n  test: true,\n  deploy: \"repeatable\"\n};\n\nconsole.log(workflow);", challenge: "Write down three steps that should happen before software reaches production. For each step, explain how automation could make it repeatable.", starterCode: "const deliverySteps = [];\n\n// Add build, test, and deploy steps here\nconsole.log(deliverySteps);", quizQuestion: "What is a central goal of DevOps?", quizOptions: ["Make releases repeatable and collaborative", "Remove all testing", "Avoid monitoring", "Deploy only once"], quizAnswer: "Make releases repeatable and collaborative" }),
+    makeLesson({ id: "devops-foundations-culture", title: "DevOps Culture and Delivery", focus: "DevOps culture", code: "const workflow = {\n  build: true,\n  test: true,\n  deploy: \"repeatable\"\n};\n\nconsole.log(workflow);", challenge: "Write down three steps that should happen before software reaches production. For each step, explain how automation could make it repeatable.", starterCode: "const deliverySteps = [];\n\n// Add build, test, and deploy steps here\nconsole.log(deliverySteps);", quizQuestion: "What is a central goal of DevOps?", quizOptions: ["Make releases repeatable and collaborative", "Remove all testing", "Avoid monitoring", "Deploy only once"], quizAnswer: "Make releases repeatable and collaborative", delivery: devopsCultureAuthoredDelivery }),
     makeLesson({ id: "devops-foundations-observability", title: "Feedback and Observability", focus: "DevOps observability", code: "const health = {\n  status: \"ok\",\n  latencyMs: 120\n};\n\nif (health.latencyMs > 500) {\n  console.log(\"Investigate latency\");\n}", challenge: "Choose one application metric, one log event, and one alert that would help you detect a failing release.", starterCode: "const metric = \"\";\nconst logEvent = \"\";\nconst alert = \"\";\n\nconsole.log(metric, logEvent, alert);", quizQuestion: "Why do teams collect metrics and logs?", quizOptions: ["To create feedback about system behavior", "To hide failures", "To replace source code", "To disable releases"], quizAnswer: "To create feedback about system behavior" }),
     makeLesson({ id: "devops-foundations-release", title: "Safe Release Practices", focus: "safe releases", code: "const release = {\n  version: \"1.2.0\",\n  tested: true,\n  rollbackPlan: true\n};\n\nconsole.log(release);", challenge: "Design a release checklist with tests, approval, monitoring, and rollback steps.", starterCode: "const releaseChecklist = [\n  \"\",\n  \"\",\n  \"\",\n  \"\"\n];\n\nconsole.log(releaseChecklist);", quizQuestion: "What makes a release safer?", quizOptions: ["Testing, monitoring, and a rollback plan", "Skipping code review", "Changing many systems at once", "Deleting logs"], quizAnswer: "Testing, monitoring, and a rollback plan" }),
   ],
