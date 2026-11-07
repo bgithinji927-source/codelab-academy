@@ -284,6 +284,10 @@
   padding-top: .85rem;
 }
 
+.authored-lesson-message .authored-lesson-navigation .is-primary {
+  margin-left: auto;
+}
+
 .learn-page.kai-light-mode .authored-lesson-message .authored-lesson-header h2,
 .learn-page.kai-light-mode .authored-lesson-message .authored-lesson-section-heading h3 {
   color: inherit;
