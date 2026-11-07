@@ -26,6 +26,8 @@ import fetchWithAuth from "../utils/fetchWithAuth";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_IMAGE_URLS, kaiBackgroundStorageKey, normalizeKaiBackground } from "../utils/kaiBackground";
 import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
+import AuthoredLesson from "../components/AuthoredLesson";
+import { authoredDeliveryToContext, normalizeAuthoredDelivery } from "../utils/authoredLesson";
 import "./CourseLearn.css";
 
 const KAI_UI_MODE_KEY = "codelabKaiUiMode:v2";
@@ -113,9 +115,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const assessmentMessageRef = useRef(null);
   const scrollFrameRef = useRef(null);
   const [assessmentPassed, setAssessmentPassed] = useState(false);
-  const assessmentTeachingContext = messages
-    .filter((message) => message.role === "assistant")
-    .map((message) => `${message.content || ""}${message.contentBlocks ? `\n${JSON.stringify(message.contentBlocks)}` : ""}`)
+  const authoredDelivery = normalizeAuthoredDelivery(lesson);
+  const assessmentTeachingContext = [
+    authoredDeliveryToContext(authoredDelivery),
+    ...messages
+      .filter((message) => message.role === "assistant")
+      .map((message) => `${message.content || ""}${message.contentBlocks ? `\n${JSON.stringify(message.contentBlocks)}` : ""}`),
+  ]
     .join("\n\n")
     .slice(0, 24000);
   const generateAssessmentQuestion = async (questionNumber = assessmentQuestionIndex + 1, answersSoFar = assessmentAnswers) => {
@@ -1020,6 +1026,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     setAnswer("");
     setDisplayedKaiText("");
     stopTyping();
+    if (normalizeAuthoredDelivery(lesson)) return;
     askKai({ learnerMessage: "", conversation: [], isIntro: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseStateLoaded, lesson, allLessons.length]);
@@ -2162,6 +2169,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               </div>
             )}
           </section>
+        )}
+        {authoredDelivery && (
+          <AuthoredLesson
+            lesson={lesson}
+            delivery={authoredDelivery}
+            theme={kaiLightMode ? "light" : "dark"}
+          />
         )}
         <section className="conversation-messages">
 

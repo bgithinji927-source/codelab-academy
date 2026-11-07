@@ -1,0 +1,144 @@
+.authored-lesson {
+  width: 100%;
+  margin: 0 0 2.5rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid rgba(151, 142, 255, .28);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(27, 29, 50, .94), rgba(16, 18, 30, .98));
+  color: #eef0ff;
+}
+
+.authored-lesson-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(170, 160, 255, .18);
+}
+
+.authored-lesson-kicker {
+  color: #b7afff;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+.authored-lesson-header h2 {
+  margin: .35rem 0 .45rem;
+  color: #fff;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+}
+
+.authored-lesson-header p {
+  max-width: 70ch;
+  margin: 0;
+  color: #cfd2ea;
+  line-height: 1.65;
+}
+
+.authored-lesson-version {
+  flex: none;
+  padding: .28rem .5rem;
+  border: 1px solid rgba(170, 160, 255, .3);
+  border-radius: 6px;
+  color: #bfc1d4;
+  font: .68rem ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.authored-lesson-sections {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.authored-lesson-section {
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(170, 160, 255, .14);
+}
+
+.authored-lesson-section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.authored-lesson-section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.authored-lesson-section-heading > span {
+  min-width: 1.8rem;
+  padding-top: .15rem;
+  color: #a498ff;
+  font: 700 .75rem ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.authored-lesson-section-heading h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.authored-lesson-section-heading p {
+  margin: .3rem 0 0;
+  color: #bfc1d4;
+  line-height: 1.55;
+}
+
+.authored-lesson-section .kai-rich-content {
+  gap: .9rem;
+}
+
+.authored-lesson-context {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.learn-page.kai-light-mode .authored-lesson {
+  border-color: #d4dce7;
+  background: linear-gradient(145deg, #ffffff, #f1f5f9);
+  color: #172033;
+  box-shadow: 0 10px 28px rgba(35, 48, 72, .08);
+}
+
+.learn-page.kai-light-mode .authored-lesson-header,
+.learn-page.kai-light-mode .authored-lesson-section {
+  border-color: #dfe3ea;
+}
+
+.learn-page.kai-light-mode .authored-lesson-kicker,
+.learn-page.kai-light-mode .authored-lesson-section-heading > span {
+  color: #5c46c7;
+}
+
+.learn-page.kai-light-mode .authored-lesson-header h2,
+.learn-page.kai-light-mode .authored-lesson-section-heading h3 {
+  color: #172033;
+}
+
+.learn-page.kai-light-mode .authored-lesson-header p,
+.learn-page.kai-light-mode .authored-lesson-section-heading p {
+  color: #4d586b;
+}
+
+.learn-page.kai-light-mode .authored-lesson-version {
+  border-color: #cbd5e1;
+  color: #667085;
+}
+
+@media (max-width: 600px) {
+  .authored-lesson {
+    padding: 1rem;
+  }
+
+  .authored-lesson-header {
+    flex-direction: column;
+  }
+}
