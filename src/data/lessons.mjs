@@ -2566,64 +2566,85 @@ function makePythonAuthoredDelivery(lesson) {
   const practicalSections = legacySections.filter((section) => ["example", "code", "terminal", "challenge"].includes(section?.type));
   const assessmentSections = legacySections.filter((section) => section?.type === "quiz");
   const code = pythonExampleCode(lesson, practicalSections);
-  const codeLineExplanations = code.split("\n").map(explainPythonLine).filter(Boolean).slice(0, 8);
-  const objectives = (lesson.objectives || []).filter(Boolean).slice(0, 5);
+  const codeLineExplanations = code.split("\n").map(explainPythonLine).filter(Boolean).slice(0, 10);
+  const objectives = (lesson.objectives || []).filter(Boolean).slice(0, 6);
   const firstTeaching = teachingSections[0];
   const detailedTeaching = teachingSections.slice(1);
+  const topic = lesson.title || lesson.id || "this Python topic";
   const partOneBlocks = [
-    { type: "heading", text: `Why ${lesson.title} matters` },
-    authoredTextBlock(`This lesson solves a specific Python problem: ${lesson.description} Start by naming the input, the decision or transformation the program must perform, and the result a learner should be able to observe.`),
+    { type: "heading", text: `Introduction and Foundations: ${topic}` },
+    authoredTextBlock(`This lesson teaches ${lesson.description || topic}. Start by connecting the topic to a problem a program needs to solve. Identify the important vocabulary, the information that enters the program, the operation Python performs, and the result a learner should be able to observe.`),
     ...authoredBlocksFromLegacySection(firstTeaching),
-    { type: "bullets", items: objectives.length ? objectives : [
-      `Define the purpose of ${lesson.title}.`,
-      "Trace the data from input to output.",
-      "Apply the idea in a small Python program.",
-    ] },
-    { type: "callout", title: "Key teaching habit", text: "Do not memorize the example. Change one input, predict the result, run it, and explain why the result changed." },
+    { type: "heading", text: "Why this matters in real programs" },
+    authoredTextBlock(`${topic} is useful because it gives a program a repeatable way to represent, transform, inspect, or respond to information. The same idea appears in scripts, web applications, automation, data tools, and larger software systems.`),
+    objectives.length ? { type: "bullets", items: objectives } : null,
+    { type: "callout", title: "Beginner reminder", text: "Do not memorize the example. Change one input, predict the result, run it, and explain why the result changed." },
   ].filter(Boolean);
   const partTwoBlocks = [
-    { type: "heading", text: "How the idea works" },
-    authoredTextBlock(`Use this mental model for ${lesson.title}: first establish the values or resources the program receives, then apply the Python construct described in the lesson, and finally verify the output or state change. The important question is not only what the syntax says, but what changes after each step.`),
+    { type: "heading", text: `Detailed Concepts and Explanations: ${topic}` },
+    authoredTextBlock(`Use this mental model for ${topic}: establish the values or resources the program receives, apply the Python construct, then verify the output or state change. The important question is not only what the syntax says, but what changes after each step and what assumptions must remain true.`),
     ...(detailedTeaching.length ? detailedTeaching.flatMap(authoredBlocksFromLegacySection) : []),
+    codeLineExplanations.length ? { type: "heading", text: "Reading the example line by line" } : null,
     codeLineExplanations.length ? { type: "bullets", items: codeLineExplanations } : null,
-    { type: "callout", title: "Common mistakes", text: `Check indentation, input types, empty values, boundary values, and the difference between changing a value and creating a new value. For ${lesson.title}, test at least one case that should fail or take a different branch.` },
+    { type: "heading", text: "Rules and common mistakes" },
+    { type: "bullets", items: [
+      "Check indentation, input types, empty values, and boundary values before trusting the result.",
+      "Distinguish between changing an existing value and creating a new value.",
+      "Test one normal case and one case that should fail or take a different branch.",
+      `Do not copy ${topic} without explaining its assumptions and limitations.`,
+    ] },
+    { type: "callout", title: "Think like a debugger", text: `When the result is unexpected, inspect the input first, then trace each operation in ${topic}, and finally compare the observed output with the expected result.` },
   ].filter(Boolean);
+  const practiceBlocks = practicalSections.flatMap(authoredBlocksFromLegacySection);
   const partThreeBlocks = [
-    { type: "heading", text: "Practical Application and Exercises" },
-    authoredTextBlock("You need Python 3, a text editor such as VS Code or IDLE, and a terminal. Create a file named lesson_example.py, paste the example into it, save it, and run python lesson_example.py (or python3 lesson_example.py on systems where Python 3 uses that command). Before running the example, predict its output. Then trace each important line, run the code, and change one input. Your explanation should connect the changed input to the changed result."),
-    ...practicalSections.flatMap(authoredBlocksFromLegacySection),
-  ];
-  if (!partThreeBlocks.some((block) => block.type === "code")) {
-    if (code) partThreeBlocks.push({ type: "code", language: "python", filename: "lesson_example.py", code });
-    if (code) partThreeBlocks.push({ type: "text", text: "Expected result: run the program and compare its output with your prediction. If the result differs, read the traceback, check the input values, and inspect the line named by Python." });
-    partThreeBlocks.push({ type: "exercise", title: "Practice this lesson", description: `Create a small Python exercise that demonstrates ${lesson.title}. Explain the normal case and one failure or boundary case.` });
-  }
+    { type: "heading", text: `Practical Application and Exercises: ${topic}` },
+    authoredTextBlock("You need Python 3, a text editor such as VS Code or IDLE, and a terminal. Create a folder for this lesson, create lesson_example.py, save the example, and run python lesson_example.py (or python3 lesson_example.py). Predict the output before running it, then compare the actual result with your prediction."),
+    { type: "numbered", items: [
+      "Create the file and enter the complete example below.",
+      "Run it with Python 3 and read the output or traceback.",
+      "Explain what each important line receives, changes, or produces.",
+      "Change one input and predict the new result before running again.",
+      "Test one boundary or invalid case and record how the program responds.",
+    ] },
+    ...practiceBlocks,
+    code && !practiceBlocks.some((block) => block.type === "code") ? { type: "code", language: "python", filename: "lesson_example.py", code } : null,
+    code ? { type: "text", text: "Expected output: the program should produce the result described by its print statements for the sample inputs. If your output differs, compare the inputs, indentation, data types, and operation order with the example." } : null,
+    { type: "exercise", title: `Practice project: apply ${topic}`, description: lesson.challenge || `Build a small Python program that demonstrates ${topic}. Include a normal case, a boundary or failure case, clear output, and a short explanation of why the result is correct.` },
+  ].filter(Boolean);
+  const assessmentQuiz = lesson.quizQuestion && Array.isArray(lesson.quizOptions) && lesson.quizOptions.length >= 2
+    ? { type: "quiz", question: lesson.quizQuestion, options: lesson.quizOptions, answer: lesson.quizAnswer, explanation: `This answer is correct because it applies the main idea taught in ${topic}, not just a memorised word.` }
+    : null;
   const partFourBlocks = [
-    { type: "heading", text: "Kai Assessment" },
-    authoredTextBlock(`Summarize ${lesson.title} in your own words. Be able to explain the input, the Python construct, the expected result, and one mistake a beginner could make. Kai will ask questions from this lesson and explain any incorrect answers.`),
+    { type: "heading", text: `Kai Assessment: ${topic}` },
+    authoredTextBlock(`This assessment checks the concepts taught in Parts 1–3. Kai will explain why an answer is correct or incorrect and will help you repair misunderstandings. Do not guess from vocabulary alone: use the example, its inputs, and its expected result.`),
+    assessmentQuiz,
     ...assessmentSections.flatMap(authoredBlocksFromLegacySection),
-    lesson.quizQuestion && Array.isArray(lesson.quizOptions) && lesson.quizOptions.length >= 2
-      ? { type: "quiz", question: lesson.quizQuestion, options: lesson.quizOptions, answer: lesson.quizAnswer, explanation: `The correct answer applies the main idea taught in ${lesson.title} rather than relying on memorisation.` }
-      : null,
+    { type: "heading", text: "Explain your reasoning" },
+    { type: "numbered", items: [
+      `Define ${topic} in your own words and explain why it matters.`,
+      "Trace the worked example and state its expected output or state change.",
+      "Describe one practical use and one beginner mistake.",
+      "Explain how you would test an empty, invalid, repeated, or boundary input.",
+    ] },
     { type: "checklist", title: "Ready for Kai's assessment?", items: [
-      "I can explain the main idea in my own words.",
+      "I can define the main idea and explain why it matters.",
       "I can trace the example and predict its result.",
       "I can apply the idea to a small Python exercise.",
+      "I can identify a boundary, failure, or recovery case.",
     ] },
   ].filter(Boolean);
   return {
     type: "authored",
     version: 1,
-    intro: `A structured Python lesson about ${lesson.title}.`,
+    intro: `A complete, structured Python lesson about ${topic}.`,
     sections: [
-      { id: `${lesson.id}-fundamentals`, title: "Introduction and Fundamentals", description: "Part 1 of 4", blocks: partOneBlocks.length ? partOneBlocks : [authoredTextBlock(`This lesson introduces ${lesson.title}.`)] },
-      { id: `${lesson.id}-concepts`, title: "Detailed Concepts", description: "Part 2 of 4", blocks: partTwoBlocks },
-      { id: `${lesson.id}-examples`, title: "Examples and Explanations", description: "Part 3 of 4", blocks: partThreeBlocks },
-      { id: `${lesson.id}-assessment`, title: "Test Your Understanding", description: "Part 4 of 4", blocks: partFourBlocks },
+      { id: `${lesson.id}-foundations`, title: "Introduction and Foundations", description: "Part 1 of 4 · Build the learner's mental model from the ground up.", blocks: partOneBlocks },
+      { id: `${lesson.id}-concepts`, title: "Detailed Concepts and Explanations", description: "Part 2 of 4 · Develop the rules, examples, and common mistakes.", blocks: partTwoBlocks },
+      { id: `${lesson.id}-practice`, title: "Practical Application and Exercises", description: "Part 3 of 4 · Create, run, explain, and extend a working program.", blocks: partThreeBlocks },
+      { id: `${lesson.id}-assessment`, title: "Kai Assessment", description: "Part 4 of 4 · Demonstrate understanding and receive explanatory feedback.", blocks: partFourBlocks },
     ],
   };
 }
-
 function makeGeneralAuthoredDelivery(lesson, courseId) {
   const legacySections = Array.isArray(lesson.sections) ? lesson.sections : [];
   const defaultLanguage = lesson.language || (courseId === "javascript" || courseId === "typescript" || courseId === "react" ? "javascript" : "text");
@@ -2634,41 +2655,61 @@ function makeGeneralAuthoredDelivery(lesson, courseId) {
   const detailedTeaching = teachingSections.slice(1);
   const codeSection = practicalSections.find((section) => section?.code);
   const code = String(lesson.code || codeSection?.code || "").trim();
-  const hasPracticalCode = practicalSections.some((section) => section?.code);
+  const practiceBlocks = practicalSections.flatMap((section) => authoredBlocksFromLegacySection(section, defaultLanguage));
   const objectives = (lesson.objectives || []).filter(Boolean).slice(0, 6);
   const topic = lesson.title || lesson.id || "this lesson";
   const partOneBlocks = [
     { type: "heading", text: `Introduction and Foundations: ${topic}` },
-    authoredTextBlock(`This lesson teaches ${lesson.description || topic}. Begin by identifying the problem the idea solves, the important vocabulary, the inputs it receives, and the result a learner should be able to observe. Understanding those connections is more useful than memorising isolated syntax.`),
-    ... (firstTeaching ? authoredBlocksFromLegacySection(firstTeaching, defaultLanguage) : []),
+    authoredTextBlock(`This lesson teaches ${lesson.description || topic}. Begin by defining the idea in plain language, identifying the problem it solves, and naming the inputs, operations, and observable results involved. Understanding these relationships is more useful than memorising isolated syntax.`),
+    ...(firstTeaching ? authoredBlocksFromLegacySection(firstTeaching, defaultLanguage) : []),
+    { type: "heading", text: "Purpose and real-world use" },
+    authoredTextBlock(`${topic} appears in real software when developers need a repeatable way to represent information, make decisions, transform data, or operate a system. Look for the same pattern in the tools and applications you use every day.`),
     objectives.length ? { type: "bullets", items: objectives } : null,
     { type: "callout", title: "Beginner reminder", text: "Read the example slowly. Name what each important line receives, changes, or produces before moving to the next line." },
   ].filter(Boolean);
   const partTwoBlocks = [
-    { type: "heading", text: "Detailed Concepts and Explanations" },
+    { type: "heading", text: `Detailed Concepts and Explanations: ${topic}` },
     authoredTextBlock(`Develop the foundation by tracing ${topic} from input to operation to outcome. Compare related ideas where appropriate, note the rules that govern the behavior, and check the assumptions that could cause a different result.`),
     ...detailedTeaching.flatMap((section) => authoredBlocksFromLegacySection(section, defaultLanguage)),
+    { type: "heading", text: "Rules, comparisons, and mistakes to avoid" },
     { type: "bullets", items: [
-      `Explain what problem ${topic} solves before choosing the implementation.`,
+      `Explain what problem ${topic} solves before choosing an implementation.`,
       "Identify the normal case, one boundary case, and one failure or recovery case.",
       "Use clear names and verify the observable result instead of assuming the code worked.",
+      `Do not copy ${topic} without checking its assumptions, constraints, and trade-offs.`,
     ] },
-    { type: "callout", title: "Common mistake", text: `Do not copy ${topic} without checking its assumptions. Change one input, predict the result, and explain why the result changed.` },
+    { type: "callout", title: "Common mistake", text: `Change one input, predict the result, and explain why the result changed. This exposes misunderstandings more reliably than rereading a definition.` },
   ].filter(Boolean);
   const partThreeBlocks = [
-    { type: "heading", text: "Practical Application and Exercises" },
+    { type: "heading", text: `Practical Application and Exercises: ${topic}` },
     authoredTextBlock(`Prepare the tools required by this course, create a small working file or project, and run the example in a controlled environment. First predict the result, then execute it, compare the output with your prediction, and record what you learned. Extend the example with one meaningful variation and test a boundary or failure case.`),
-    ...practicalSections.flatMap((section) => authoredBlocksFromLegacySection(section, defaultLanguage)),
-    !hasPracticalCode && code ? { type: "code", language: defaultLanguage, filename: `${String(lesson.id || "lesson").replace(/[^a-z0-9_-]/gi, "_")}.example`, code } : null,
+    { type: "numbered", items: [
+      "Create the file or project and copy the complete example into it.",
+      "Run the example using the course toolchain and inspect the result.",
+      "Explain the important lines or steps in your own words.",
+      "Change one input or condition and predict the new result.",
+      "Test a boundary or failure case and document what should happen.",
+    ] },
+    ...practiceBlocks,
+    !practiceBlocks.some((block) => block.type === "code") && code ? { type: "code", language: defaultLanguage, filename: `${String(lesson.id || "lesson").replace(/[^a-z0-9_-]/gi, "_")}.example`, code } : null,
+    code ? { type: "text", text: "Expected output: run the sample with its stated inputs and compare the observable result with your prediction. If it differs, inspect the input, operation order, configuration, and error message before changing the code." } : null,
     { type: "exercise", title: `Practice project: apply ${topic}`, description: lesson.challenge || `Create a small practical example for ${topic}. Explain the goal, inputs, expected output, normal case, failure case, and the test or observation that verifies your result.` },
   ].filter(Boolean);
+  const assessmentQuiz = lesson.quizQuestion && Array.isArray(lesson.quizOptions) && lesson.quizOptions.length >= 2
+    ? { type: "quiz", question: lesson.quizQuestion, options: lesson.quizOptions, answer: lesson.quizAnswer, explanation: `This answer is correct because it follows the principles taught in ${topic} and connects them to a testable result.` }
+    : null;
   const partFourBlocks = [
-    { type: "heading", text: "Kai Assessment" },
-    authoredTextBlock(`Before starting Kai's assessment, explain ${topic} in your own words. Be ready to describe its purpose, the important rules, how the worked example behaves, and one way the solution should respond to an unexpected input or failure.`),
+    { type: "heading", text: `Kai Assessment: ${topic}` },
+    authoredTextBlock(`This assessment is based only on the teaching and practical work in Parts 1–3. Kai will explain why each answer is correct or incorrect, identify the misunderstanding, and suggest how to improve it.`),
+    assessmentQuiz,
     ...assessmentSections.flatMap((section) => authoredBlocksFromLegacySection(section, defaultLanguage)),
-    lesson.quizQuestion && Array.isArray(lesson.quizOptions) && lesson.quizOptions.length >= 2
-      ? { type: "quiz", question: lesson.quizQuestion, options: lesson.quizOptions, answer: lesson.quizAnswer, explanation: `This answer is correct because it follows the principles taught in ${topic} and connects them to a testable result.` }
-      : { type: "text", text: `Explain the following before continuing: What problem does ${topic} solve, what is the normal input and output, and what boundary case should a developer test?` },
+    { type: "heading", text: "Scenario and explanation questions" },
+    { type: "numbered", items: [
+      `Define ${topic} and explain the problem it solves.`,
+      "Trace the worked example and describe its expected output or state change.",
+      "Choose a realistic use for this idea and explain why it fits.",
+      "Describe a boundary, failure, or recovery case and how you would test it.",
+    ] },
     { type: "checklist", title: "Ready for Kai's assessment?", items: [
       "I can define the main idea and explain why it matters.",
       "I can trace the example and predict its result.",
@@ -2679,16 +2720,15 @@ function makeGeneralAuthoredDelivery(lesson, courseId) {
   return {
     type: "authored",
     version: 1,
-    intro: `A structured lesson about ${topic}.`,
+    intro: `A complete, structured lesson about ${topic}.`,
     sections: [
-      { id: `${lesson.id}-foundations`, title: "Introduction and Foundations", description: "Part 1 of 4", blocks: partOneBlocks },
-      { id: `${lesson.id}-concepts`, title: "Detailed Concepts and Explanations", description: "Part 2 of 4", blocks: partTwoBlocks },
-      { id: `${lesson.id}-practice`, title: "Practical Application and Exercises", description: "Part 3 of 4", blocks: partThreeBlocks },
-      { id: `${lesson.id}-assessment`, title: "Kai Assessment", description: "Part 4 of 4", blocks: partFourBlocks },
+      { id: `${lesson.id}-foundations`, title: "Introduction and Foundations", description: "Part 1 of 4 · Build the learner's mental model from the ground up.", blocks: partOneBlocks },
+      { id: `${lesson.id}-concepts`, title: "Detailed Concepts and Explanations", description: "Part 2 of 4 · Develop the rules, examples, comparisons, and mistakes.", blocks: partTwoBlocks },
+      { id: `${lesson.id}-practice`, title: "Practical Application and Exercises", description: "Part 3 of 4 · Create, run, explain, and extend a working example.", blocks: partThreeBlocks },
+      { id: `${lesson.id}-assessment`, title: "Kai Assessment", description: "Part 4 of 4 · Demonstrate understanding and receive explanatory feedback.", blocks: partFourBlocks },
     ],
   };
 }
-
 const pythonVariablesDataTypesDelivery = {
   type: "authored",
   version: 1,
@@ -3068,6 +3108,183 @@ const pythonConditionalsDelivery = {
   ],
 };
 
+const javascriptDataTypesAuthoredDelivery = {
+  type: "authored",
+  version: 1,
+  intro: "Understand the values JavaScript can store, how those values behave, and how to use them in real programs.",
+  sections: [
+    {
+      id: "javascript-data-types-foundations",
+      title: "Introduction to JavaScript Data Types",
+      description: "Part 1 of 4 · Build the foundation: values, types, primitive data, objects, and real applications.",
+      blocks: [
+        { type: "heading", text: "What are data types?" },
+        { type: "text", text: "A data type describes the kind of value a variable stores. JavaScript uses the type to decide how a value behaves during an operation." },
+        { type: "text", text: "A name is text, an age is a number, and a login state is either true or false. These values all look different because they represent different kinds of information." },
+        { type: "code", language: "javascript", filename: "values.js", code: "const name = \"Amina\";\nconst age = 21;\nconst loggedIn = true;\n\nconsole.log(name);\nconsole.log(age);\nconsole.log(loggedIn);" },
+        { type: "text", text: "The variable names tell us what the values mean. The values themselves have different types: string, number, and boolean." },
+        { type: "table", columns: ["Variable", "Value", "Type", "Purpose"], rows: [
+          ["name", "\"Amina\"", "String", "Stores text"],
+          ["age", "21", "Number", "Stores a quantity"],
+          ["loggedIn", "true", "Boolean", "Stores a yes/no state"],
+        ] },
+        { type: "heading", text: "Types change how operators behave" },
+        { type: "code", language: "javascript", filename: "operations.js", code: "console.log(10 + 5);\nconsole.log(\"10\" + 5);\nconsole.log(\"Amina\" + \" Khan\");" },
+        { type: "text", text: "The first expression performs addition. The second joins text because one value is a string. The third joins two strings together; this is called concatenation." },
+        { type: "code", language: "text", filename: "output", code: "15\n105\nAmina Khan" },
+        { type: "heading", text: "The two broad groups" },
+        { type: "text", text: "JavaScript values are often discussed as primitive values and reference values. Primitive values represent one basic piece of data. Objects, arrays, and functions represent richer structures." },
+        { type: "table", columns: ["Group", "Examples", "What it represents"], rows: [
+          ["Primitive", "string, number, boolean", "One basic value"],
+          ["Primitive", "undefined, null, bigint, symbol", "Special or unique values"],
+          ["Reference", "object, array, function", "A structured value or reusable behavior"],
+        ] },
+        { type: "heading", text: "A small value model" },
+        { type: "diagram", title: "JavaScript variable, value, and type", diagramType: "dataflow", layout: "horizontal", nodes: [
+          { id: "name", label: "variable\nscore", shape: "input" },
+          { id: "value", label: "value\n87", shape: "process" },
+          { id: "kind", label: "type\nnumber", shape: "output" },
+        ], edges: [{ from: "name", to: "value", label: "refers to" }, { from: "value", to: "kind", label: "is a" }] },
+        { type: "heading", text: "Where types appear in applications" },
+        { type: "bullets", items: [
+          "Registration forms use strings for names and numbers for ages.",
+          "Shopping systems use numbers for prices and arrays for carts.",
+          "Permission checks use booleans such as isAdmin.",
+          "APIs exchange objects containing strings, numbers, arrays, booleans, and null.",
+        ] },
+        { type: "callout", title: "Key idea", text: "Before using a value, ask two questions: What information does it represent? Which type best describes that information?" },
+      ],
+    },
+    {
+      id: "javascript-data-types-concepts",
+      title: "Understanding JavaScript Data Types in Detail",
+      description: "Part 2 of 4 · Study common types, structures, typeof, dynamic typing, and conversion.",
+      blocks: [
+        { type: "heading", text: "1. Strings" },
+        { type: "text", text: "A string stores text. It may contain letters, spaces, symbols, or digits that should be treated as text." },
+        { type: "code", language: "javascript", filename: "strings.js", code: "const single = 'Kenya';\nconst double = \"JavaScript\";\nconst greeting = `Hello, ${single}!`;\n\nconsole.log(greeting);" },
+        { type: "code", language: "text", filename: "output", code: "Hello, Kenya!" },
+        { type: "text", text: "Backticks create a template literal. The expression inside ${} is replaced with its value." },
+        { type: "table", columns: ["Tool", "Purpose", "Example"], rows: [
+          ["length", "Counts characters", "message.length"],
+          ["toUpperCase()", "Creates uppercase text", "name.toUpperCase()"],
+          ["trim()", "Removes outer spaces", "input.trim()"],
+          ["includes()", "Checks for text", "email.includes('@')"],
+          ["slice()", "Extracts part of a string", "word.slice(0, 3)"],
+        ] },
+        { type: "code", language: "javascript", filename: "string-tools.js", code: "const message = \"  Learn JavaScript  \";\n\nconsole.log(message.trim());\nconsole.log(message.toUpperCase());\nconsole.log(message.includes(\"JavaScript\"));" },
+        { type: "code", language: "text", filename: "output", code: "Learn JavaScript\n  LEARN JAVASCRIPT  \ntrue" },
+        { type: "heading", text: "2. Numbers" },
+        { type: "text", text: "JavaScript uses the Number type for whole numbers and decimal numbers. It also provides special numeric values such as NaN and Infinity." },
+        { type: "table", columns: ["Operator", "Meaning", "Example", "Result"], rows: [
+          ["+", "Addition", "10 + 3", "13"],
+          ["-", "Subtraction", "10 - 3", "7"],
+          ["*", "Multiplication", "10 * 3", "30"],
+          ["/", "Division", "10 / 2", "5"],
+          ["%", "Remainder", "10 % 3", "1"],
+          ["**", "Power", "2 ** 3", "8"],
+        ] },
+        { type: "code", language: "javascript", filename: "numbers.js", code: "const price = 650;\nconst quantity = 3;\nconst total = price * quantity;\n\nconsole.log(total);\nconsole.log(\"Invalid result:\", \"hello\" / 2);\nconsole.log(\"Infinite result:\", 10 / 0);" },
+        { type: "code", language: "text", filename: "output", code: "1950\nInvalid result: NaN\nInfinite result: Infinity" },
+        { type: "text", text: "NaN means Not-a-Number. It usually signals that a numeric operation could not produce a valid number. Infinity is the result of a value growing beyond the finite range, such as dividing 10 by zero." },
+        { type: "heading", text: "3. Booleans" },
+        { type: "text", text: "A Boolean has only two values: true and false. Booleans are commonly used in conditions and feature flags." },
+        { type: "code", language: "javascript", filename: "booleans.js", code: "const age = 20;\nconst hasId = true;\n\nconsole.log(age >= 18);\nconsole.log(age >= 18 && hasId);" },
+        { type: "code", language: "text", filename: "output", code: "true\ntrue" },
+        { type: "text", text: "The comparison produces a Boolean. The && operator produces true only when both conditions are true." },
+        { type: "heading", text: "4. undefined and null" },
+        { type: "table", columns: ["Value", "Meaning", "Example"], rows: [
+          ["undefined", "A value has not been assigned", "let city;"],
+          ["null", "An intentional empty value", "let selectedUser = null;"],
+        ] },
+        { type: "code", language: "javascript", filename: "empty-values.js", code: "let city;\nconst selectedUser = null;\n\nconsole.log(city);\nconsole.log(selectedUser);\nconsole.log(typeof city);\nconsole.log(typeof selectedUser);" },
+        { type: "code", language: "text", filename: "output", code: "undefined\nnull\nundefined\nobject" },
+        { type: "callout", title: "JavaScript detail", kind: "warning", text: "typeof null returns object because of a historical JavaScript behavior. Check value === null when you specifically need to test for null." },
+        { type: "heading", text: "5. BigInt and Symbol" },
+        { type: "text", text: "BigInt represents integers larger than the safe range of Number. Add n to the end of an integer literal." },
+        { type: "code", language: "javascript", filename: "special-types.js", code: "const population = 9007199254740993n;\nconst userId = Symbol(\"user-id\");\n\nconsole.log(population);\nconsole.log(typeof userId);" },
+        { type: "text", text: "A Symbol creates a unique identifier. Symbols are useful when a property name must not accidentally collide with another property name." },
+        { type: "heading", text: "6. Objects, arrays, and functions" },
+        { type: "code", language: "javascript", filename: "structures.js", code: "const student = { name: \"Amina\", score: 87 };\nconst subjects = [\"JavaScript\", \"HTML\"];\nfunction greet() {\n  return \"Welcome\";\n}\n\nconsole.log(student.name);\nconsole.log(subjects[0]);\nconsole.log(greet());" },
+        { type: "text", text: "An object groups named properties. An array stores an ordered collection. A function stores reusable behavior that can be called later." },
+        { type: "heading", text: "7. Dynamic typing and conversion" },
+        { type: "text", text: "JavaScript is dynamically typed. A variable can refer to a value of one type and later refer to a value of another type." },
+        { type: "code", language: "javascript", filename: "dynamic.js", code: "let value = 10;\nconsole.log(typeof value);\n\nvalue = \"ten\";\nconsole.log(typeof value);" },
+        { type: "code", language: "text", filename: "output", code: "number\nstring" },
+        { type: "table", columns: ["Function", "Input", "Result"], rows: [
+          ["Number()", "Number(\"42\")", "42"],
+          ["String()", "String(42)", "\"42\""],
+          ["Boolean()", "Boolean(1)", "true"],
+        ] },
+        { type: "code", language: "javascript", filename: "convert.js", code: "const quantityText = \"4\";\nconst quantity = Number(quantityText);\nconst price = 25;\n\nconsole.log(quantity * price);\nconsole.log(typeof quantity);" },
+        { type: "code", language: "text", filename: "output", code: "100\nnumber" },
+        { type: "callout", title: "Common mistake", text: "The text \"4\" is not the same as the number 4. Convert user input before doing calculations." },
+      ],
+    },
+    {
+      id: "javascript-data-types-practice",
+      title: "Practical Application and Exercises",
+      description: "Part 3 of 4 · Build a data inspector, process input, and create a small registration record.",
+      blocks: [
+        { type: "heading", text: "Tools and setup" },
+        { type: "text", text: "Install Node.js and use a code editor such as VS Code. Create a folder named javascript-data-types and create data-types.js inside it." },
+        { type: "numbered", items: [
+          "Open the folder in your editor.",
+          "Write the example in data-types.js.",
+          "Open a terminal in the folder.",
+          "Run node data-types.js.",
+          "Compare the output with the expected output.",
+        ] },
+        { type: "heading", text: "Project 1: inspect a learner record" },
+        { type: "code", language: "javascript", filename: "data-types.js", code: "const learner = {\n  name: \"Amina\",\n  age: 21,\n  score: \"87\",\n  enrolled: true\n};\n\nconsole.log(\"Name type:\", typeof learner.name);\nconsole.log(\"Age type:\", typeof learner.age);\nconsole.log(\"Score type:\", typeof learner.score);\nconsole.log(\"Enrolled type:\", typeof learner.enrolled);\n\nconst numericScore = Number(learner.score);\nconsole.log(\"Numeric score:\", numericScore);" },
+        { type: "code", language: "text", filename: "expected-output", code: "Name type: string\nAge type: number\nScore type: string\nEnrolled type: boolean\nNumeric score: 87" },
+        { type: "text", text: "The score begins as text because it is written inside quotes. Number() creates a numeric copy that can be used in calculations." },
+        { type: "heading", text: "Project 2: build a registration summary" },
+        { type: "code", language: "javascript", filename: "registration.js", code: "const name = \"Amina\";\nconst age = 21;\nconst course = \"JavaScript\";\nconst active = true;\n\nconsole.log(`Name: ${name}`);\nconsole.log(`Age: ${age}`);\nconsole.log(`Course: ${course}`);\nconsole.log(`Active: ${active}`);" },
+        { type: "code", language: "text", filename: "expected-output", code: "Name: Amina\nAge: 21\nCourse: JavaScript\nActive: true" },
+        { type: "heading", text: "Exercises" },
+        { type: "numbered", items: [
+          "Create variables for a product name, price, quantity, and availability.",
+          "Print the type of each variable.",
+          "Calculate the total price using price * quantity.",
+          "Store a price as text, convert it with Number(), and compare the result.",
+          "Change availability to false and write a message when the product is unavailable.",
+        ] },
+        { type: "heading", text: "Challenge: safe score conversion" },
+        { type: "code", language: "javascript", filename: "challenge.js", code: "const scoreText = \"not submitted\";\nconst score = Number(scoreText);\n\nif (Number.isNaN(score)) {\n  console.log(\"Score must be a number.\");\n} else {\n  console.log(\"Score:\", score);\n}" },
+        { type: "code", language: "text", filename: "expected-output", code: "Score must be a number." },
+        { type: "exercise", title: "Mini-project: learner profile", description: "Create a learner object with a name, age, course, score, and enrolled status. Print the values, inspect their types, convert a score supplied as text, and handle invalid score input." },
+      ],
+    },
+    {
+      id: "javascript-data-types-assessment",
+      title: "Kai Assessment",
+      description: "Part 4 of 4 · Test definitions, code tracing, comparisons, and practical decisions.",
+      blocks: [
+        { type: "heading", text: "Assessment instructions" },
+        { type: "text", text: "Answer using the concepts and examples from Parts 1–3. Kai will explain the reason behind each result and help you correct any misunderstanding." },
+        { type: "quiz", question: "Which type stores text?", options: ["string", "number", "boolean", "object"], answer: "string", explanation: "Strings contain text such as names, messages, and course titles." },
+        { type: "quiz", question: "What is the result of typeof true?", options: ["string", "number", "boolean", "undefined"], answer: "boolean", explanation: "true and false are Boolean values." },
+        { type: "quiz", question: "What does Number(\"25\") do?", options: ["Converts text to a number", "Converts a number to text", "Creates an object", "Removes the value"], answer: "Converts text to a number", explanation: "Number(\"25\") returns the numeric value 25." },
+        { type: "quiz", question: "Which value represents an intentional absence of a value?", options: ["undefined", "null", "false", "0"], answer: "null", explanation: "null is commonly used when the program intentionally represents no value." },
+        { type: "heading", text: "Trace the output" },
+        { type: "code", language: "javascript", filename: "assessment-trace.js", code: "const value = \"5\";\nconsole.log(value + 2);\nconsole.log(Number(value) + 2);" },
+        { type: "code", language: "text", filename: "answer", code: "52\n7" },
+        { type: "text", text: "The first line joins a string and a number. The second line converts the string to a number before adding." },
+        { type: "heading", text: "Scenario question" },
+        { type: "text", text: "A registration form gives you age as \"21\". Explain why converting it before comparing it with 18 is a safe choice. Then describe what you would do if the user entered \"unknown\"." },
+        { type: "checklist", title: "Ready to finish?", items: [
+          "I can define a data type and explain why types matter.",
+          "I can distinguish primitive values from objects, arrays, and functions.",
+          "I can use typeof and explain the typeof null exception.",
+          "I can convert text input with Number() and check for invalid results.",
+          "I can trace an expression and predict its output.",
+        ] },
+      ],
+    },
+  ],
+};
+
 // Python is the first complete coding roadmap on the authored delivery system.
 // Preserve the explicitly authored pilot lesson and migrate every other Python
 // lesson from its existing official sections without changing lesson identity,
@@ -3098,6 +3315,13 @@ for (const lesson of lessons.python) {
   uniquePythonLessons.push(lesson);
 }
 lessons.python = uniquePythonLessons;
+
+// Use the fully authored Data Types lesson for both historical JavaScript entries.
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "js-data-types" || lesson.id === "javascript-roadmap-data-types") {
+    lesson.delivery = javascriptDataTypesAuthoredDelivery;
+  }
+}
 
 // Apply the same structured teaching experience to every remaining course while
 // preserving any delivery that has already been authored by hand.
