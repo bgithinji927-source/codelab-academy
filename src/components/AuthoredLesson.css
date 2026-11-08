@@ -30,6 +30,39 @@
   font-size: clamp(1.4rem, 3vw, 2.1rem);
 }
 
+.authored-lesson-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  margin: 0 0 1.1rem;
+  padding: .7rem 0 0;
+  border-top: 1px solid rgba(170, 160, 255, .14);
+}
+
+.authored-lesson-parts button {
+  min-height: 2rem;
+  padding: .35rem .65rem;
+  border: 1px solid rgba(170, 160, 255, .32);
+  border-radius: 999px;
+  background: transparent;
+  color: #bfc1d4;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.authored-lesson-parts button:hover,
+.authored-lesson-parts button.is-active {
+  border-color: #9f8cff;
+  background: rgba(159, 140, 255, .18);
+  color: #f0eeff;
+}
+
+.authored-lesson-parts button.is-active {
+  font-weight: 850;
+}
+
 .authored-lesson-header p {
   max-width: 70ch;
   margin: 0;
@@ -181,8 +214,21 @@
 }
 
 .learn-page.kai-light-mode .authored-lesson-header,
-.learn-page.kai-light-mode .authored-lesson-section {
+.learn-page.kai-light-mode .authored-lesson-section,
+.learn-page.kai-light-mode .authored-lesson-parts {
   border-color: #dfe3ea;
+}
+
+.learn-page.kai-light-mode .authored-lesson-parts button {
+  border-color: #cbd5e1;
+  color: #667085;
+}
+
+.learn-page.kai-light-mode .authored-lesson-parts button:hover,
+.learn-page.kai-light-mode .authored-lesson-parts button.is-active {
+  border-color: #7055d8;
+  background: #eef4fb;
+  color: #4c3b9f;
 }
 
 .learn-page.kai-light-mode .authored-lesson-kicker,

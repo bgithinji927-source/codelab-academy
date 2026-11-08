@@ -35,6 +35,19 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
             <header className="authored-lesson-header">
               <h2 id="authored-lesson-title">{lesson?.title || "Lesson"}</h2>
             </header>
+            <nav className="authored-lesson-parts" aria-label="Teaching parts">
+              {delivery.sections.map((part, index) => (
+                <button
+                  type="button"
+                  key={part.id || `part-${index}`}
+                  className={index === partIndex ? "is-active" : ""}
+                  onClick={() => setPartIndex(index)}
+                  aria-current={index === partIndex ? "step" : undefined}
+                >
+                  Part {index + 1}
+                </button>
+              ))}
+            </nav>
             <article className="authored-lesson-section" key={section.id}>
               <AIContentRenderer content={section.blocks} theme={theme} />
             </article>
@@ -42,6 +55,14 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
         </div>
 
         <nav className="authored-lesson-navigation" aria-label="Lesson part navigation">
+          <button
+            type="button"
+            onClick={() => setPartIndex((current) => Math.max(0, current - 1))}
+            disabled={partIndex === 0}
+          >
+            Back
+          </button>
+          <span>Part {partIndex + 1} of {delivery.sections.length}</span>
           {isFinalPart ? (
             <button type="button" className="is-primary" onClick={onStartAssessment} disabled={assessmentStarted}>
               {assessmentStarted ? "Kai assessment started" : "Start Kai assessment"}
