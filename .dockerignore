@@ -1,0 +1,17 @@
+node_modules
+dist
+.git
+.gitignore
+.cache
+.local
+.tmp
+tmp
+out-tsc
+coverage
+*.log
+.env
+.env.*
+!.env.example
+.vscode
+.idea
+attached_assets
