@@ -5,6 +5,7 @@
 import pythonListsCollectionsDelivery from "./pythonListsCollectionsDelivery.mjs";
 import pythonDictionariesDelivery from "./pythonDictionariesDelivery.mjs";
 import pythonLoopsDelivery from "./pythonLoopsDelivery.mjs";
+import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -3316,6 +3317,13 @@ for (const lesson of lessons.python) {
   uniquePythonLessons.push(lesson);
 }
 lessons.python = uniquePythonLessons;
+
+// Use the fully authored CIA Triad lesson for the Cybersecurity Fundamentals entry.
+for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
+  if (lesson.id === "cybersecurity-fundamentals-01-security-goals-and-the-cia-triad") {
+    lesson.delivery = cybersecurityCiaTriadDelivery;
+  }
+}
 
 // Use the fully authored Python loops lesson for both historical loop entries.
 for (const lesson of lessons.python) {
