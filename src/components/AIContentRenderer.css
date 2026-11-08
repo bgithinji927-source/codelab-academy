@@ -12,9 +12,43 @@
 .kai-rich-diagram-node polygon,
 .kai-rich-diagram-node circle { fill: rgba(109, 94, 255, .16); stroke: #a99cff; stroke-width: 2; }
 .kai-rich-diagram-node text { fill: #f2f1ff; font: 600 15px system-ui, sans-serif; }
-.kai-rich-diagram line { stroke: #b8b0ff; stroke-width: 2.5; }
+.kai-rich-diagram line,
+.kai-rich-diagram > .kai-rich-diagram-scroll svg > g > path { stroke: #b8b0ff; stroke-width: 2.5; fill: none; }
 .kai-rich-diagram marker path { fill: #b8b0ff; }
 .kai-rich-diagram-edge-label { fill: #d8d3ff !important; font-size: 12px !important; font-weight: 600; }
+
+.learn-page.kai-light-mode .kai-rich-diagram {
+  color: #5c46c7;
+}
+.learn-page.kai-light-mode .kai-rich-diagram h3 {
+  color: #172033;
+}
+.learn-page.kai-light-mode .kai-rich-diagram-node rect,
+.learn-page.kai-light-mode .kai-rich-diagram-node polygon,
+.learn-page.kai-light-mode .kai-rich-diagram-node circle {
+  fill: #f0edff;
+  stroke: #5c46c7;
+}
+.learn-page.kai-light-mode .kai-rich-diagram-node text {
+  fill: #172033;
+}
+.learn-page.kai-light-mode .kai-rich-diagram line,
+.learn-page.kai-light-mode .kai-rich-diagram > .kai-rich-diagram-scroll svg > g > path {
+  stroke: #6657b8;
+}
+.learn-page.kai-light-mode .kai-rich-diagram marker path {
+  fill: #6657b8;
+}
+.learn-page.kai-light-mode .kai-rich-diagram-edge-label {
+  fill: #465065 !important;
+}
+.learn-page.kai-light-mode .kai-rich-network-diagram {
+  border-color: #c9c2ed;
+  background: #f7f9fc;
+}
+.learn-page.kai-light-mode .kai-network-diagram-label {
+  color: #5c46c7;
+}
 
 /* Keep inline lesson videos readable without letting them dominate the page. */
 .kai-rich-video {
