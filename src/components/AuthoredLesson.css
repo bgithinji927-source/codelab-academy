@@ -165,6 +165,7 @@
   align-items: center;
   justify-content: space-between;
   gap: .75rem;
+  flex-wrap: wrap;
   margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(170, 160, 255, .18);
@@ -176,6 +177,10 @@
 }
 
 .authored-lesson-navigation button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
   min-height: 2.4rem;
   padding: .55rem .85rem;
   border: 1px solid rgba(170, 160, 255, .38);
@@ -196,6 +201,10 @@
   background: #9f8cff;
   color: #17132b;
   font-weight: 800;
+}
+.authored-lesson-navigation button:not(.is-primary):hover:not(:disabled) {
+  border-color: #9f8cff;
+  background: rgba(159, 140, 255, .12);
 }
 
 .authored-lesson-context {
@@ -295,7 +304,14 @@
   }
 
   .authored-lesson-navigation {
-    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .authored-lesson-navigation > span {
+    order: 5;
+    width: 100%;
+  }
+  .authored-lesson-navigation button.is-primary {
+    margin-left: auto;
   }
 }
 

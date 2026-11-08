@@ -5608,6 +5608,14 @@ html[data-appearance][data-theme] .kai-code-block {
   background: var(--theme-code-background) !important;
 }
 
+/* Keep rich Markdown code on the same plain surface as its code container.
+   The global pre rule otherwise applies the theme's elevated code shade. */
+html[data-appearance][data-theme] .learn-page .kai-rich-code-pre,
+html[data-appearance][data-theme] .learn-page .kai-rich-code-pre code {
+  background: inherit !important;
+  text-shadow: none !important;
+}
+
 html[data-appearance][data-theme] .kai-inline-code {
   background: var(--theme-surface-elevated) !important;
   border-color: var(--theme-border) !important;

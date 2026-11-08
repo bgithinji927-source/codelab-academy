@@ -1896,6 +1896,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const renderStoredLessonSection = (section, index) => {
     if (!section) return null;
     const sectionType = String(section.type || "explanation");
+    const sectionId = `kai-teaching-section-${index}`;
     const paragraphs = String(section.content || "")
       .trim()
       .split(/\n\s*\n/)
@@ -1905,10 +1906,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     const toggleSection = () => setExpandedStoredSections((current) => current.includes(index) ? current.filter((item) => item !== index) : [...current, index]);
     return (
       <article className={`stored-lesson-section stored-lesson-${sectionType}${isExpanded ? " is-expanded" : ""}`} key={`${sectionType}-${index}`}>
-        {section.title && <button type="button" className="stored-lesson-section-toggle" onClick={toggleSection} aria-expanded={isExpanded}>
+        {section.title && <button type="button" className="stored-lesson-section-toggle" onClick={toggleSection} aria-expanded={isExpanded} aria-controls={sectionId}>
           <h3>{section.title}</h3><ChevronDown size={18} aria-hidden="true" />
         </button>}
-        <div className="stored-lesson-section-body">
+        <div id={section.title ? sectionId : undefined} className="stored-lesson-section-body">
           {paragraphs.map((paragraph, paragraphIndex) => {
             const lines = paragraph.split("\n").map((line) => line.trim()).filter(Boolean);
             const bulletLines = lines.filter((line) => /^[-*]\s+/.test(line));
@@ -2229,6 +2230,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               delivery={authoredDelivery}
               theme={kaiLightMode ? "light" : "dark"}
               onStartAssessment={startAssessment}
+              onAskKai={() => {
+                setQuickAskError("");
+                setQuickAskOpen(true);
+              }}
               assessmentStarted={assessmentStarted}
             />
           )}
