@@ -684,10 +684,8 @@ html[data-theme="dark"] .lesson-picker-trigger[aria-expanded="true"] { border-co
   border: 1px solid #2f2a39;
   border-radius: 12px;
 
-  background: #17151f;
-
-  box-shadow:
-    0 8px 22px rgba(23, 21, 31, 0.10);
+  background: transparent;
+  box-shadow: none;
 }
 
 .kai-code-header {
@@ -699,7 +697,7 @@ html[data-theme="dark"] .lesson-picker-trigger[aria-expanded="true"] { border-co
 
   padding: 0 13px;
 
-  background: #17151f;
+  background: transparent;
   border-bottom: 1px solid #302c3b;
 
   box-sizing: border-box;
@@ -792,7 +790,7 @@ html[data-theme="dark"] .lesson-picker-trigger[aria-expanded="true"] { border-co
 
   border-radius: 6px;
 
-  background: #eee8fa;
+  background: transparent;
   color: #7c3aed;
 
   font-size: 10px;
@@ -3554,6 +3552,23 @@ html #root .learn-page.kai-firebox-mode .learn-back:hover {
   text-shadow: none !important;
   color: #172033 !important;
 }
+
+/* Kai teaching surfaces stay flat in both themes: no tinted callouts,
+   filled decorative markers, or shaded code-editor interiors. */
+.learn-page .kai-rich-text,
+.learn-page .kai-rich-text::before,
+.learn-page .kai-rich-code,
+.learn-page .kai-rich-code-header,
+.learn-page .kai-rich-code-pre,
+.learn-page .kai-rich-code-output,
+.learn-page .kai-code-wrapper,
+.learn-page .kai-code-header,
+.learn-page .kai-code-block,
+.learn-page .kai-number {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
 .learn-page.kai-light-mode .kai-teaching-card svg,
 .learn-page.kai-light-mode .learn-course-title svg,
 .learn-page.kai-light-mode .lesson-status svg,
@@ -4354,4 +4369,50 @@ html #root .learn-page.kai-firebox-mode .has-authored-lesson .conversation-messa
   .learn-page .kai-quick-ask-dock { align-items: stretch; flex-direction: column; }
   .learn-page .kai-quick-ask-count { text-align: center; }
   .kai-quick-ask-backdrop { padding: .75rem; }
+}
+
+/* Final flat Kai teaching surfaces for both light and dark modes. */
+.learn-page .kai-rich-text,
+.learn-page .kai-rich-text::before,
+.learn-page .kai-rich-code,
+.learn-page .kai-rich-code-header,
+.learn-page .kai-rich-code-pre,
+.learn-page .kai-rich-code-output,
+.learn-page .kai-rich-content > pre,
+.learn-page .kai-rich-content code,
+.learn-page .kai-rich-copyable,
+.learn-page .kai-rich-copyable pre,
+.learn-page .kai-rich-filetree pre,
+.learn-page .kai-code-wrapper,
+.learn-page .kai-code-header,
+.learn-page .kai-code-block,
+.learn-page .kai-number,
+.learn-page .stored-lesson-bullets li,
+.learn-page .stored-lesson-bullets li::before {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Keep the final Firebox light-mode overrides flat as well. */
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-text,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-text::before,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-header,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-pre,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code-output,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-content > pre,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-content code,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable pre,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-filetree pre,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-code-wrapper,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-code-header,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-code-block,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-number,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-bullets li,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-bullets li::before {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }

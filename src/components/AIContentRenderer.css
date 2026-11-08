@@ -78,7 +78,7 @@
   padding: .7rem .85rem .7rem 1.35rem;
   border-left: 3px solid rgba(159, 140, 255, .55);
   border-radius: 0 9px 9px 0;
-  background: rgba(126, 112, 255, .055);
+  background: transparent;
   line-height: 1.78;
 }
 .kai-rich-text::before {
@@ -90,7 +90,7 @@
   height: .55rem;
   border: 2px solid #9f8cff;
   border-radius: 50%;
-  background: #171a2b;
+  background: transparent;
   box-sizing: border-box;
 }
 .kai-rich-content ul,
@@ -138,7 +138,7 @@
   padding: .9rem 1rem;
   border: 1px solid rgba(151, 142, 255, .3);
   border-radius: 10px;
-  background: #111225;
+  background: transparent;
   color: #d8d2ff;
   white-space: pre;
   font: .86rem/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -342,7 +342,7 @@
 .kai-token-function { color: #82d2c8; }
 .kai-token-operator { color: #d6deeb; }
 .learn-page.kai-light-mode .kai-rich-code-pre {
-  background: #f6f8fb;
+  background: transparent;
   color: #263449;
   border-top: 1px solid #e2e8f0;
 }
@@ -359,7 +359,7 @@
 .kai-rich-code {
   width: fit-content;
   max-width: 100%;
-  background: #0b0d18;
+  background: transparent;
 }
 .kai-rich-code-header {
   justify-content: flex-start;
@@ -397,7 +397,7 @@
   font-weight: inherit;
 }
 .learn-page.kai-light-mode .kai-rich-code {
-  background: #f6f8fb;
+  background: transparent;
 }
 .learn-page.kai-light-mode .kai-rich-code-pre {
   border-top: 0;

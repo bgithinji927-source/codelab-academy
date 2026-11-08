@@ -689,7 +689,8 @@ body,
 
 .kai-code-wrapper,
 .code-block {
-  background: #000301 !important;
+  background: transparent !important;
+  box-shadow: none !important;
   border-color: var(--terminal-line) !important;
   color: #78ff5e !important;
 }
