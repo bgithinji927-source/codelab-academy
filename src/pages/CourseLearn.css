@@ -4085,6 +4085,39 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-assessment-options l
   color: #172033 !important;
 }
 
+/* Responsive Firebox workspace: use the full viewport instead of a fixed
+   centered 980px column that leaves empty gutters on desktop screens. */
+html #root .learn-page.kai-firebox-mode .conversation-container {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-left: clamp(16px, 3vw, 48px) !important;
+  padding-right: clamp(16px, 3vw, 48px) !important;
+}
+
+html #root .learn-page.kai-firebox-mode .conversation-messages {
+  width: 100% !important;
+  max-width: 1440px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+html #root .learn-page.kai-firebox-mode .kai-input-dock {
+  width: min(1440px, 100%) !important;
+  max-width: none !important;
+}
+
+@media (max-width: 700px) {
+  html #root .learn-page.kai-firebox-mode .conversation-container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .conversation-messages {
+    max-width: none !important;
+  }
+}
+
 /* Authored lessons use a focused Ask Kai modal instead of the open composer. */
 .learn-page .kai-quick-ask-dock {
   display: flex;
