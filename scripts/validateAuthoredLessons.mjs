@@ -39,12 +39,19 @@ function validateCode(block, location, issues) {
   }
   const language = String(block.language || "").toLowerCase();
   if (["javascript", "js", "node"].includes(language)) {
-    try {
-      // Syntax-check only. The validator never executes authored code.
-      // eslint-disable-next-line no-new-func
-      new Function(code);
-    } catch (error) {
-      issues.push(issue("error", location, `JavaScript syntax error: ${error.message}`));
+    // Function() validates classic scripts, but rejects valid ESM imports,
+    // exports, top-level await, and TypeScript-flavoured teaching snippets.
+    // Those forms are intentionally left to the target runtime/compiler.
+    const moduleOrTypedSnippet = /(^|\n)\s*(import|export)\b|\bawait\b|\b(interface|type)\s+[A-Za-z_$]|:\s*(string|number|boolean|unknown|any)\b/.test(code);
+    const jsonLikeSnippet = /^[\s\r\n]*[\[{]/.test(code);
+    if (!moduleOrTypedSnippet && !jsonLikeSnippet) {
+      try {
+        // Syntax-check only. The validator never executes authored code.
+        // eslint-disable-next-line no-new-func
+        new Function(code);
+      } catch (error) {
+        issues.push(issue("error", location, `JavaScript syntax error: ${error.message}`));
+      }
     }
   }
   if (["json"].includes(language) || block.type === "json") {
@@ -111,6 +118,9 @@ function validateDelivery(lesson, sourceLabel) {
   if (!Array.isArray(delivery.sections) || delivery.sections.length === 0) {
     issues.push(issue("error", `${prefix}.sections`, "authored delivery requires at least one section"));
     return issues;
+  }
+  if (delivery.sections.length !== 4) {
+    issues.push(issue("error", `${prefix}.sections`, "every authored lesson must contain exactly four sequential parts"));
   }
   const ids = new Set();
   for (const [index, section] of delivery.sections.entries()) {

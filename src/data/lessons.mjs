@@ -2,6 +2,9 @@
 // CODELAB ACADEMY - LESSON DATA
 // Deep-learning lesson structure for Kai
 // ============================================
+import pythonListsCollectionsDelivery from "./pythonListsCollectionsDelivery.mjs";
+import pythonDictionariesDelivery from "./pythonDictionariesDelivery.mjs";
+
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
 
@@ -76,6 +79,9 @@ function makeLesson({
       "Read and adapt a practical example",
       "Apply the concept in a guided challenge",
     ],
+    quizQuestion,
+    quizOptions,
+    quizAnswer,
     ...(delivery ? { delivery } : {}),
     sections: [
       {
@@ -2512,16 +2518,16 @@ function authoredTextBlock(text) {
   const value = String(text || "").trim();
   return value ? { type: "text", text: value } : null;
 }
-function authoredBlocksFromLegacySection(section) {
+function authoredBlocksFromLegacySection(section, defaultLanguage = "python") {
   if (!section || typeof section !== "object") return [];
   const blocks = [];
   const sectionType = String(section.type || "");
   if (["example", "code"].includes(sectionType) && section.code) {
-    blocks.push({ type: "code", language: section.language || "python", filename: section.title || "example.py", code: String(section.code) });
+    blocks.push({ type: "code", language: section.language || defaultLanguage, filename: section.title || "example", code: String(section.code) });
     if (section.explanation) blocks.push(authoredTextBlock(section.explanation));
   } else if (sectionType === "challenge") {
     blocks.push(authoredTextBlock(section.instructions || section.content));
-    if (section.starterCode) blocks.push({ type: "code", language: section.language || "python", filename: "starter.py", code: String(section.starterCode) });
+    if (section.starterCode) blocks.push({ type: "code", language: section.language || defaultLanguage, filename: "starter", code: String(section.starterCode) });
   } else if (sectionType === "quiz") {
     blocks.push({
       type: "quiz",
@@ -2583,18 +2589,22 @@ function makePythonAuthoredDelivery(lesson) {
     { type: "callout", title: "Common mistakes", text: `Check indentation, input types, empty values, boundary values, and the difference between changing a value and creating a new value. For ${lesson.title}, test at least one case that should fail or take a different branch.` },
   ].filter(Boolean);
   const partThreeBlocks = [
-    { type: "heading", text: "Read, predict, run, improve" },
-    authoredTextBlock("Before running the example, predict its output. Then trace each important line, run the code, and change one input. Your explanation should connect the changed input to the changed result."),
+    { type: "heading", text: "Practical Application and Exercises" },
+    authoredTextBlock("You need Python 3, a text editor such as VS Code or IDLE, and a terminal. Create a file named lesson_example.py, paste the example into it, save it, and run python lesson_example.py (or python3 lesson_example.py on systems where Python 3 uses that command). Before running the example, predict its output. Then trace each important line, run the code, and change one input. Your explanation should connect the changed input to the changed result."),
     ...practicalSections.flatMap(authoredBlocksFromLegacySection),
   ];
   if (!partThreeBlocks.some((block) => block.type === "code")) {
     if (code) partThreeBlocks.push({ type: "code", language: "python", filename: "lesson_example.py", code });
+    if (code) partThreeBlocks.push({ type: "text", text: "Expected result: run the program and compare its output with your prediction. If the result differs, read the traceback, check the input values, and inspect the line named by Python." });
     partThreeBlocks.push({ type: "exercise", title: "Practice this lesson", description: `Create a small Python exercise that demonstrates ${lesson.title}. Explain the normal case and one failure or boundary case.` });
   }
   const partFourBlocks = [
-    { type: "heading", text: "Explain it before Kai tests it" },
+    { type: "heading", text: "Kai Assessment" },
     authoredTextBlock(`Summarize ${lesson.title} in your own words. Be able to explain the input, the Python construct, the expected result, and one mistake a beginner could make. Kai will ask questions from this lesson and explain any incorrect answers.`),
     ...assessmentSections.flatMap(authoredBlocksFromLegacySection),
+    lesson.quizQuestion && Array.isArray(lesson.quizOptions) && lesson.quizOptions.length >= 2
+      ? { type: "quiz", question: lesson.quizQuestion, options: lesson.quizOptions, answer: lesson.quizAnswer, explanation: `The correct answer applies the main idea taught in ${lesson.title} rather than relying on memorisation.` }
+      : null,
     { type: "checklist", title: "Ready for Kai's assessment?", items: [
       "I can explain the main idea in my own words.",
       "I can trace the example and predict its result.",
@@ -2610,6 +2620,71 @@ function makePythonAuthoredDelivery(lesson) {
       { id: `${lesson.id}-concepts`, title: "Detailed Concepts", description: "Part 2 of 4", blocks: partTwoBlocks },
       { id: `${lesson.id}-examples`, title: "Examples and Explanations", description: "Part 3 of 4", blocks: partThreeBlocks },
       { id: `${lesson.id}-assessment`, title: "Test Your Understanding", description: "Part 4 of 4", blocks: partFourBlocks },
+    ],
+  };
+}
+
+function makeGeneralAuthoredDelivery(lesson, courseId) {
+  const legacySections = Array.isArray(lesson.sections) ? lesson.sections : [];
+  const defaultLanguage = lesson.language || (courseId === "javascript" || courseId === "typescript" || courseId === "react" ? "javascript" : "text");
+  const teachingSections = legacySections.filter((section) => ["explanation", "deepDive", "summary", "knowledgeExamples"].includes(section?.type));
+  const practicalSections = legacySections.filter((section) => ["example", "code", "terminal", "challenge"].includes(section?.type));
+  const assessmentSections = legacySections.filter((section) => section?.type === "quiz");
+  const firstTeaching = teachingSections[0];
+  const detailedTeaching = teachingSections.slice(1);
+  const codeSection = practicalSections.find((section) => section?.code);
+  const code = String(lesson.code || codeSection?.code || "").trim();
+  const hasPracticalCode = practicalSections.some((section) => section?.code);
+  const objectives = (lesson.objectives || []).filter(Boolean).slice(0, 6);
+  const topic = lesson.title || lesson.id || "this lesson";
+  const partOneBlocks = [
+    { type: "heading", text: `Introduction and Foundations: ${topic}` },
+    authoredTextBlock(`This lesson teaches ${lesson.description || topic}. Begin by identifying the problem the idea solves, the important vocabulary, the inputs it receives, and the result a learner should be able to observe. Understanding those connections is more useful than memorising isolated syntax.`),
+    ... (firstTeaching ? authoredBlocksFromLegacySection(firstTeaching, defaultLanguage) : []),
+    objectives.length ? { type: "bullets", items: objectives } : null,
+    { type: "callout", title: "Beginner reminder", text: "Read the example slowly. Name what each important line receives, changes, or produces before moving to the next line." },
+  ].filter(Boolean);
+  const partTwoBlocks = [
+    { type: "heading", text: "Detailed Concepts and Explanations" },
+    authoredTextBlock(`Develop the foundation by tracing ${topic} from input to operation to outcome. Compare related ideas where appropriate, note the rules that govern the behavior, and check the assumptions that could cause a different result.`),
+    ...detailedTeaching.flatMap((section) => authoredBlocksFromLegacySection(section, defaultLanguage)),
+    { type: "bullets", items: [
+      `Explain what problem ${topic} solves before choosing the implementation.`,
+      "Identify the normal case, one boundary case, and one failure or recovery case.",
+      "Use clear names and verify the observable result instead of assuming the code worked.",
+    ] },
+    { type: "callout", title: "Common mistake", text: `Do not copy ${topic} without checking its assumptions. Change one input, predict the result, and explain why the result changed.` },
+  ].filter(Boolean);
+  const partThreeBlocks = [
+    { type: "heading", text: "Practical Application and Exercises" },
+    authoredTextBlock(`Prepare the tools required by this course, create a small working file or project, and run the example in a controlled environment. First predict the result, then execute it, compare the output with your prediction, and record what you learned. Extend the example with one meaningful variation and test a boundary or failure case.`),
+    ...practicalSections.flatMap((section) => authoredBlocksFromLegacySection(section, defaultLanguage)),
+    !hasPracticalCode && code ? { type: "code", language: defaultLanguage, filename: `${String(lesson.id || "lesson").replace(/[^a-z0-9_-]/gi, "_")}.example`, code } : null,
+    { type: "exercise", title: `Practice project: apply ${topic}`, description: lesson.challenge || `Create a small practical example for ${topic}. Explain the goal, inputs, expected output, normal case, failure case, and the test or observation that verifies your result.` },
+  ].filter(Boolean);
+  const partFourBlocks = [
+    { type: "heading", text: "Kai Assessment" },
+    authoredTextBlock(`Before starting Kai's assessment, explain ${topic} in your own words. Be ready to describe its purpose, the important rules, how the worked example behaves, and one way the solution should respond to an unexpected input or failure.`),
+    ...assessmentSections.flatMap((section) => authoredBlocksFromLegacySection(section, defaultLanguage)),
+    lesson.quizQuestion && Array.isArray(lesson.quizOptions) && lesson.quizOptions.length >= 2
+      ? { type: "quiz", question: lesson.quizQuestion, options: lesson.quizOptions, answer: lesson.quizAnswer, explanation: `This answer is correct because it follows the principles taught in ${topic} and connects them to a testable result.` }
+      : { type: "text", text: `Explain the following before continuing: What problem does ${topic} solve, what is the normal input and output, and what boundary case should a developer test?` },
+    { type: "checklist", title: "Ready for Kai's assessment?", items: [
+      "I can define the main idea and explain why it matters.",
+      "I can trace the example and predict its result.",
+      "I can apply the idea in a practical exercise.",
+      "I can identify a boundary, failure, or recovery case.",
+    ] },
+  ].filter(Boolean);
+  return {
+    type: "authored",
+    version: 1,
+    intro: `A structured lesson about ${topic}.`,
+    sections: [
+      { id: `${lesson.id}-foundations`, title: "Introduction and Foundations", description: "Part 1 of 4", blocks: partOneBlocks },
+      { id: `${lesson.id}-concepts`, title: "Detailed Concepts and Explanations", description: "Part 2 of 4", blocks: partTwoBlocks },
+      { id: `${lesson.id}-practice`, title: "Practical Application and Exercises", description: "Part 3 of 4", blocks: partThreeBlocks },
+      { id: `${lesson.id}-assessment`, title: "Kai Assessment", description: "Part 4 of 4", blocks: partFourBlocks },
     ],
   };
 }
@@ -3008,7 +3083,31 @@ lessons.python.forEach((lesson) => {
   else if (lesson.id === "python-strings") lesson.delivery = pythonStringsDelivery;
   else if (lesson.id === "python-operators") lesson.delivery = pythonNumbersOperatorsDelivery;
   else if (lesson.id === "python-conditional-statements") lesson.delivery = pythonConditionalsDelivery;
+  else if (lesson.id === "python-lists-collections") lesson.delivery = pythonListsCollectionsDelivery;
+  else if (lesson.id === "python-dictionaries") lesson.delivery = pythonDictionariesDelivery;
   else if (!lesson.delivery || lesson.delivery.type !== "authored") lesson.delivery = makePythonAuthoredDelivery(lesson);
+});
+
+// Several historical roadmap fragments describe the same lesson more than once.
+// Keep the first occurrence so progress keys, URLs, and Kai sessions remain stable.
+const uniquePythonLessons = [];
+const seenPythonLessonIds = new Set();
+for (const lesson of lessons.python) {
+  if (seenPythonLessonIds.has(lesson.id)) continue;
+  seenPythonLessonIds.add(lesson.id);
+  uniquePythonLessons.push(lesson);
+}
+lessons.python = uniquePythonLessons;
+
+// Apply the same structured teaching experience to every remaining course while
+// preserving any delivery that has already been authored by hand.
+Object.entries(lessons).forEach(([courseId, courseLessons]) => {
+  if (courseId === "python") return;
+  courseLessons.forEach((lesson) => {
+    if (!lesson.delivery || lesson.delivery.type !== "authored") {
+      lesson.delivery = makeGeneralAuthoredDelivery(lesson, courseId);
+    }
+  });
 });
 
 // Keep the learner path predictable even when lessons are added, generated, or
