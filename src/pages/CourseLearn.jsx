@@ -102,6 +102,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [assessmentResult, setAssessmentResult] = useState(null);
   const [assessmentMarked, setAssessmentMarked] = useState(false);
   const [assessmentSubmitting, setAssessmentSubmitting] = useState(false);
+  const [expandedKaiMessages, setExpandedKaiMessages] = useState(() => new Set());
   const [expandedStoredSections, setExpandedStoredSections] = useState([0]);
   const [kaiGeneratedTeaching, setKaiGeneratedTeaching] = useState(null);
   const [kaiTeachingLoading, setKaiTeachingLoading] = useState(false);
@@ -1719,6 +1720,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     };
 
     const messageKey = String(messageIndex);
+    const isCollapsed = !isLatest && !expandedKaiMessages.has(messageKey);
+    const toggleKaiMessage = () => setExpandedKaiMessages((current) => {
+      const next = new Set(current);
+      if (next.has(messageKey)) next.delete(messageKey);
+      else next.add(messageKey);
+      return next;
+    });
     const copyKaiMessage = async () => {
       try {
         await navigator.clipboard.writeText(String(content || ""));
@@ -1793,43 +1801,49 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             </div>
           </div>
 
-          <div className="kai-board-content">
-            <div className="kai-message-text">
-              {fallbackBlocks?.length ? (
-                <AIContentRenderer
-                  content={fallbackBlocks}
-                  onChoice={(choice) => askKai({ learnerMessage: choice, conversation: [...messages, { role: "user", content: choice }] })}
-                  onAction={handleKaiAction}
-                  assessmentActive={assessmentActive}
-                  theme={kaiLightMode ? "light" : "dark"}
-                />
-              ) : looksLikeJson ? (
-                <div className="kai-unstructured-response">
-                  {renderMarkdown("Kai could not format that lesson response. Please ask the question again.")}
-                </div>
-              ) : renderMarkdown(text)}
-            </div>
-          </div>
-
-          {video?.playbackUrl && (
-            <div className="kai-video-recommendation">
-              <div className="kai-video-recommendation-copy">
-                <span className="kai-video-kicker">VISUAL SUPPLEMENT</span>
-                <strong>{video.title}</strong>
-                <span>{video.description}</span>
+          {!isCollapsed && <>
+            <div className="kai-board-content">
+              <div className="kai-message-text">
+                {fallbackBlocks?.length ? (
+                  <AIContentRenderer
+                    content={fallbackBlocks}
+                    onChoice={(choice) => askKai({ learnerMessage: choice, conversation: [...messages, { role: "user", content: choice }] })}
+                    onAction={handleKaiAction}
+                    assessmentActive={assessmentActive}
+                    theme={kaiLightMode ? "light" : "dark"}
+                  />
+                ) : looksLikeJson ? (
+                  <div className="kai-unstructured-response">
+                    {renderMarkdown("Kai could not format that lesson response. Please ask the question again.")}
+                  </div>
+                ) : renderMarkdown(text)}
               </div>
-              <button type="button" className="kai-watch-video" onClick={() => setActiveVideo(video)}>
-                <span className="kai-play-icon">▶</span>
-                Watch Video
-              </button>
             </div>
-          )}
-          {video?.playbackUrl && <KaiVideoPlayer video={video} aspectRatio={video.aspectRatio || "16 / 9"} />}
 
-          {!assessmentPassed && <button type="button" className="kai-assessment-invite" onClick={startAssessment}>
-            <CheckCircle2 size={15} />
-            {lessonCompletionReady || assessmentRequired ? "Start required readiness check" : "Check my understanding (optional)"}
-          </button>}
+            {video?.playbackUrl && (
+              <div className="kai-video-recommendation">
+                <div className="kai-video-recommendation-copy">
+                  <span className="kai-video-kicker">VISUAL SUPPLEMENT</span>
+                  <strong>{video.title}</strong>
+                  <span>{video.description}</span>
+                </div>
+                <button type="button" className="kai-watch-video" onClick={() => setActiveVideo(video)}>
+                  <span className="kai-play-icon">▶</span>
+                  Watch Video
+                </button>
+              </div>
+            )}
+            {video?.playbackUrl && <KaiVideoPlayer video={video} aspectRatio={video.aspectRatio || "16 / 9"} />}
+
+            {!assessmentPassed && <button type="button" className="kai-assessment-invite" onClick={startAssessment}>
+              <CheckCircle2 size={15} />
+              {lessonCompletionReady || assessmentRequired ? "Start required readiness check" : "Check my understanding (optional)"}
+            </button>}
+          </>}
+          <button type="button" className="kai-teaching-collapse-button" onClick={toggleKaiMessage} aria-expanded={!isCollapsed}>
+            <ChevronDown size={15} aria-hidden="true" />
+            {isCollapsed ? "Expand teaching" : "Collapse teaching"}
+          </button>
           <div className="kai-message-actions" aria-label="Kai response actions">
             <button type="button" onClick={copyKaiMessage} aria-label={copiedMessageIndex === messageKey ? "Copied Kai response" : "Copy Kai response"} title={copiedMessageIndex === messageKey ? "Copied" : "Copy response"}>
               {copiedMessageIndex === messageKey ? <Check size={15} /> : <Copy size={15} />}

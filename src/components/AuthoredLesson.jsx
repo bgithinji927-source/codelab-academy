@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Bot, ChevronDown, MessageCircle } from "lucide-react";
+import { Bot, MessageCircle } from "lucide-react";
 import AIContentRenderer from "./AIContentRenderer";
 import "./AuthoredLesson.css";
 
@@ -9,8 +9,7 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
     const saved = Number.parseInt(localStorage.getItem(progressKey) || "0", 10);
     return Number.isInteger(saved) ? Math.max(0, Math.min(saved, (delivery?.sections?.length || 1) - 1)) : 0;
   });
-  const [isTeachingCollapsed, setIsTeachingCollapsed] = useState(false);
-  const navigationRef = useRef(null);
+  const partStartRef = useRef(null);
 
   useEffect(() => {
     localStorage.setItem(progressKey, String(partIndex));
@@ -18,13 +17,9 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      navigationRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      partStartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [partIndex]);
-
-  useEffect(() => {
-    setIsTeachingCollapsed(false);
   }, [partIndex]);
 
   if (!delivery) return null;
@@ -61,13 +56,13 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
                 </button>
               ))}
             </nav>
-            {!isTeachingCollapsed && <article className="authored-lesson-section" key={section.id}>
+            <article className="authored-lesson-section" key={section.id} ref={partStartRef}>
               <AIContentRenderer content={section.blocks} theme={theme} />
-            </article>}
+            </article>
           </div>
         </div>
 
-        <nav className="authored-lesson-navigation" ref={navigationRef} aria-label="Lesson part navigation">
+        <nav className="authored-lesson-navigation" aria-label="Lesson part navigation">
           <button
             type="button"
             onClick={() => setPartIndex((current) => Math.max(0, current - 1))}
@@ -76,10 +71,6 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
             Back
           </button>
           <span>Part {partIndex + 1} of {delivery.sections.length}</span>
-          <button type="button" onClick={() => setIsTeachingCollapsed((current) => !current)} aria-expanded={!isTeachingCollapsed}>
-            <ChevronDown size={15} aria-hidden="true" />
-            {isTeachingCollapsed ? "Expand teaching" : "Collapse teaching"}
-          </button>
           <button type="button" onClick={onAskKai} disabled={!onAskKai}>
             <MessageCircle size={15} aria-hidden="true" />
             Ask Kai
