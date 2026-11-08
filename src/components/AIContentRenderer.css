@@ -386,16 +386,6 @@
   white-space: inherit;
   overflow-wrap: inherit;
 }
-.kai-token-comment,
-.kai-token-string,
-.kai-token-number,
-.kai-token-keyword,
-.kai-token-builtin,
-.kai-token-function,
-.kai-token-operator {
-  color: inherit;
-  font-weight: inherit;
-}
 .learn-page.kai-light-mode .kai-rich-code {
   background: transparent;
 }

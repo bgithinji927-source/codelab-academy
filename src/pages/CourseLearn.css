@@ -4416,3 +4416,19 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .stored-lesson-bullets li
   box-shadow: none !important;
   text-shadow: none !important;
 }
+
+/* Syntax colors must remain distinct from the editor surface and prose text. */
+.learn-page .kai-token-comment { color: #7f9a86 !important; }
+.learn-page .kai-token-string { color: #f6c177 !important; }
+.learn-page .kai-token-number { color: #82aaff !important; }
+.learn-page .kai-token-keyword { color: #c792ea !important; font-weight: 650; }
+.learn-page .kai-token-builtin { color: #89ddff !important; }
+.learn-page .kai-token-function { color: #82d2c8 !important; }
+.learn-page .kai-token-operator { color: #d6deeb !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-comment { color: #66806c !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-string { color: #a15c00 !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-number { color: #2458a6 !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-keyword { color: #7c3aed !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-builtin { color: #087f8c !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-function { color: #08745f !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-operator { color: #334155 !important; }
