@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bot } from "lucide-react";
 import AIContentRenderer from "./AIContentRenderer";
 import "./AuthoredLesson.css";
@@ -9,10 +9,18 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
     const saved = Number.parseInt(localStorage.getItem(progressKey) || "0", 10);
     return Number.isInteger(saved) ? Math.max(0, Math.min(saved, (delivery?.sections?.length || 1) - 1)) : 0;
   });
+  const partStartRef = useRef(null);
 
   useEffect(() => {
     localStorage.setItem(progressKey, String(partIndex));
   }, [partIndex, progressKey]);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      partStartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [partIndex]);
 
   if (!delivery) return null;
   const section = delivery.sections[partIndex] || delivery.sections[0];
@@ -48,7 +56,7 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
                 </button>
               ))}
             </nav>
-            <article className="authored-lesson-section" key={section.id}>
+            <article className="authored-lesson-section" key={section.id} ref={partStartRef}>
               <AIContentRenderer content={section.blocks} theme={theme} />
             </article>
           </div>

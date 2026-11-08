@@ -122,6 +122,7 @@
 .authored-lesson-section {
   padding-top: 1.25rem;
   border-top: 1px solid rgba(170, 160, 255, .14);
+  scroll-margin-top: 1rem;
 }
 
 .authored-lesson-section:first-child {
