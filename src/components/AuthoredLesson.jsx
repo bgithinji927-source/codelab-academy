@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Bot, ChevronDown, MessageCircle } from "lucide-react";
+import { Bot, ChevronDown } from "lucide-react";
 import AIContentRenderer from "./AIContentRenderer";
 import "./AuthoredLesson.css";
 
-export default function AuthoredLesson({ lesson, delivery, theme = "dark", onStartAssessment, onAskKai, kaiTeachingsCollapsed = false, onToggleKaiTeachings, assessmentStarted = false }) {
+export default function AuthoredLesson({ lesson, delivery, theme = "dark", onStartAssessment, kaiTeachingsCollapsed = false, onToggleKaiTeachings, assessmentStarted = false }) {
   const progressKey = `codelab-authored-part:${lesson?.id || "lesson"}`;
   const [partIndex, setPartIndex] = useState(() => {
     const saved = Number.parseInt(localStorage.getItem(progressKey) || "0", 10);
@@ -57,6 +57,13 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
               ))}
             </nav>
             <article className="authored-lesson-section" key={section.id} ref={partStartRef}>
+              <header className="authored-lesson-section-heading">
+                <span>PART {partIndex + 1}</span>
+                <div>
+                  <h3>{section.title || `Part ${partIndex + 1}`}</h3>
+                  {section.description && <p>{section.description}</p>}
+                </div>
+              </header>
               <AIContentRenderer content={section.blocks} theme={theme} />
             </article>
           </div>
@@ -74,10 +81,6 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
           <button type="button" className="kai-teaching-toggle" onClick={onToggleKaiTeachings} aria-expanded={!kaiTeachingsCollapsed}>
             <ChevronDown size={15} aria-hidden="true" />
             {kaiTeachingsCollapsed ? "Expand Kai teachings" : "Collapse Kai teachings"}
-          </button>
-          <button type="button" onClick={onAskKai} disabled={!onAskKai}>
-            <MessageCircle size={15} aria-hidden="true" />
-            Ask Kai
           </button>
           {isFinalPart ? (
             <button type="button" className="is-primary" onClick={onStartAssessment} disabled={assessmentStarted}>

@@ -4,8 +4,6 @@ import {
   ArrowRight,
   Bot,
   BookOpen,
-  Plus,
-  Send,
   UserRound,
   Sparkles,
   CheckCircle2,
@@ -40,7 +38,6 @@ function feedbackMapForLesson(records, courseId, lessonId) {
 
 function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse = null, onNextCourse, onProgressChanged }) {
   const [messages, setMessages] = useState([]);
-  const [answer, setAnswer] = useState("");
   const [isKaiTyping, setIsKaiTyping] = useState(false);
   const [displayedKaiText, setDisplayedKaiText] = useState("");
   const [kaiActivityText, setKaiActivityText] = useState("");
@@ -106,11 +103,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [expandedStoredSections, setExpandedStoredSections] = useState([0]);
   const [kaiGeneratedTeaching, setKaiGeneratedTeaching] = useState(null);
   const [kaiTeachingLoading, setKaiTeachingLoading] = useState(false);
-  const [quickAskOpen, setQuickAskOpen] = useState(false);
-  const [quickAskText, setQuickAskText] = useState("");
-  const [quickAskCount, setQuickAskCount] = useState(0);
-  const [quickAskLoading, setQuickAskLoading] = useState(false);
-  const [quickAskError, setQuickAskError] = useState("");
 
   const typingTimerRef = useRef(null);
   const kaiActivityTimerRef = useRef(null);
@@ -122,7 +114,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const scrollFrameRef = useRef(null);
   const [assessmentPassed, setAssessmentPassed] = useState(false);
   const authoredDelivery = normalizeAuthoredDelivery(lesson);
-  const quickAskStorageKey = `codelab-quick-questions:${user?.id || "guest"}:${course?.id || "course"}:${lesson?.id || "lesson"}`;
   const assessmentTeachingContext = [
     authoredDeliveryToContext(authoredDelivery),
     ...messages
@@ -192,14 +183,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     setExpandedStoredSections([0]);
     setKaiGeneratedTeaching(null);
   }, [lesson?.id]);
-  useEffect(() => {
-    if (!lesson?.id) return;
-    const savedCount = Number.parseInt(localStorage.getItem(quickAskStorageKey) || "0", 10);
-    setQuickAskCount(Number.isFinite(savedCount) ? Math.max(0, Math.min(3, savedCount)) : 0);
-    setQuickAskText("");
-    setQuickAskError("");
-    setQuickAskOpen(false);
-  }, [lesson?.id, quickAskStorageKey]);
   useEffect(() => {
     if ((lessonCompletionReady || assessmentRequired) && !assessmentPassed) setAssessmentStarted(true);
   }, [lessonCompletionReady, assessmentRequired, assessmentPassed, lesson?.id]);
@@ -370,7 +353,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
   // Keep keyboard resizing local to the lesson viewport. Mobile browsers can
   // report a smaller visual viewport when the keyboard opens; expose that
-  // inset to the fixed composer without moving the document itself.
+  // Keep the teaching surface sized to the available viewport without moving the document itself.
   useEffect(() => {
     const viewport = window.visualViewport;
     if (!viewport) return undefined;
@@ -1030,31 +1013,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     }
   };
 
-  const submitQuickQuestion = async () => {
-    const question = quickAskText.trim();
-    if (!question || quickAskLoading || quickAskCount >= 3 || !lesson || !authoredDelivery) return;
-
-    const nextCount = quickAskCount + 1;
-    const learnerMessage = { role: "user", content: question };
-    setQuickAskCount(nextCount);
-    localStorage.setItem(quickAskStorageKey, String(nextCount));
-    setQuickAskText("");
-    setQuickAskError("");
-    setQuickAskLoading(true);
-    setMessages((current) => [...current, learnerMessage]);
-    try {
-      await askKai({
-        learnerMessage: question,
-        conversation: [...messages, learnerMessage],
-      });
-      setQuickAskOpen(false);
-    } catch (error) {
-      setQuickAskError(error.message || "Kai could not answer that question.");
-    } finally {
-      setQuickAskLoading(false);
-    }
-  };
-
   // ============================================
   // START LESSON ONLY WHEN THERE IS NO SAVED SESSION
   // ============================================
@@ -1068,7 +1026,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     // Keep the catalog notes as the stable official material, then restore
     // Kai's interactive teaching conversation underneath them.
     lessonStartKeyRef.current = lessonKey;
-    setAnswer("");
     setDisplayedKaiText("");
     stopTyping();
     if (normalizeAuthoredDelivery(lesson)) return;
@@ -1121,7 +1078,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
       stopTyping();
       setCourseStateError("");
-      setAnswer("");
       setDisplayedKaiText("");
       setPreviousLessonSummary(data.previousLessonSummary || previousLessonSummary);
       setSavedLessonSessions((previous) => [
@@ -1231,7 +1187,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
 
     forceStopKai();
     setPendingUiAction(null);
-    setAnswer("");
     setDisplayedKaiText("");
     setPreviousLessonSuggestion(null);
     setCourseStateError("");
@@ -1252,40 +1207,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     // transcript deliberately leaves the key blank so the lesson-start effect
     // creates that lesson's first Kai message.
     lessonStartKeyRef.current = targetHistory.length > 0 ? targetLessonKey : "";
-  };
-
-  // ============================================
-  // SEND LEARNER MESSAGE
-  // ============================================
-
-  const handleSend = async () => {
-    const trimmedAnswer = answer.trim();
-
-    if (!trimmedAnswer || isKaiTyping || isReviewingPastLesson) {
-      return;
-    }
-
-    const learnerMessage = {
-      role: "user",
-      content: trimmedAnswer,
-    };
-
-    const conversation = [
-      ...messages,
-      learnerMessage,
-    ];
-
-    setMessages((previous) => [
-      ...previous,
-      learnerMessage,
-    ]);
-
-    setAnswer("");
-
-    await askKai({
-      learnerMessage: trimmedAnswer,
-      conversation,
-    });
   };
 
   // ============================================
@@ -2156,7 +2077,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             <span>{kaiLightMode ? "Dark mode" : "Light mode"}</span>
           </button>
           <span className="firebox-ready"><span /> Ready</span>
-          <button type="button" className="firebox-new-chat" onClick={() => { setMessages([]); setAnswer(""); }}>New chat</button>
+          <button type="button" className="firebox-new-chat" onClick={() => setMessages([])}>New chat</button>
         </div>
 
       </header>
@@ -2221,10 +2142,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               onStartAssessment={startAssessment}
               kaiTeachingsCollapsed={kaiTeachingsCollapsed}
               onToggleKaiTeachings={() => setKaiTeachingsCollapsed((current) => !current)}
-              onAskKai={() => {
-                setQuickAskError("");
-                setQuickAskOpen(true);
-              }}
               assessmentStarted={assessmentStarted}
             />
           )}
@@ -2420,98 +2337,9 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             INPUT
         ====================================== */}
 
-        {!authoredDelivery && (
-          <>
-            <div className="kai-input-dock">
-              <textarea
-                rows={2}
-                value={answer}
-                onChange={(event) => setAnswer(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    handleSend();
-                  }
-                }}
-                placeholder={
-                  isReviewingPastLesson
-                    ? "Select the current lesson to continue with Kai..."
-                    : isKaiTyping
-                    ? "Kai is thinking..."
-                    : "Answer Kai or ask a question..."
-                }
-                disabled={isReviewingPastLesson || isKaiTyping || (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) || isAdvancing}
-                autoComplete="off"
-              />
-              <button type="button" className="kai-composer-icon" aria-label="Add attachment" title="Add attachment">
-                <Plus size={17} />
-              </button>
-              <button
-                type="button"
-                className="kai-composer-send"
-                onClick={handleSend}
-                disabled={isReviewingPastLesson || isKaiTyping || (lessonCompletionReady && (!isFinalLesson || courseReadyForNext)) || isAdvancing || !answer.trim()}
-                aria-label="Send message"
-              >
-                <Send size={15} />
-              </button>
-            </div>
-            <div className="input-hint">Press <kbd>Enter</kbd> to send</div>
-          </>
-        )}
-
         </div>
 
       </main>
-
-      {authoredDelivery && quickAskOpen && (
-        <div
-          className="kai-quick-ask-backdrop"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget && !quickAskLoading) setQuickAskOpen(false);
-          }}
-        >
-          <section className="kai-quick-ask-modal" role="dialog" aria-modal="true" aria-labelledby="kai-quick-ask-title">
-            <header className="kai-quick-ask-header">
-              <div>
-                <span className="kai-video-kicker">QUICK HELP FROM KAI</span>
-                <h2 id="kai-quick-ask-title">Ask Kai about this lesson</h2>
-              </div>
-              <button type="button" className="kai-video-modal-close" onClick={() => setQuickAskOpen(false)} disabled={quickAskLoading} aria-label="Close Ask Kai">
-                <X size={19} />
-              </button>
-            </header>
-            <p className="kai-quick-ask-description">The lesson teaching is already prepared. Ask a focused question about the examples, code, or concepts.</p>
-            <div className="kai-quick-ask-remaining" role="status">
-              {Math.max(0, 3 - quickAskCount)} of 3 questions remaining for this lesson
-            </div>
-            <textarea
-              value={quickAskText}
-              onChange={(event) => setQuickAskText(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) {
-                  event.preventDefault();
-                  submitQuickQuestion();
-                }
-              }}
-              placeholder="Example: Why does this code use a list here?"
-              rows={5}
-              autoFocus
-              disabled={quickAskLoading || quickAskCount >= 3}
-              aria-label="Your question for Kai"
-            />
-            {quickAskError && <p className="kai-quick-ask-error" role="alert">{quickAskError}</p>}
-            <footer className="kai-quick-ask-actions">
-              <button type="button" className="kai-quick-ask-cancel" onClick={() => setQuickAskOpen(false)} disabled={quickAskLoading}>Cancel</button>
-              <button type="button" className="kai-assessment-submit" onClick={submitQuickQuestion} disabled={!quickAskText.trim() || quickAskLoading || quickAskCount >= 3}>
-                {quickAskLoading ? "Kai is thinking..." : "Ask Kai"}
-                {!quickAskLoading && <ArrowRight size={17} />}
-              </button>
-            </footer>
-          </section>
-        </div>
-      )}
 
       {activeVideo && (
         <div
