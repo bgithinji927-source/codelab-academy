@@ -428,6 +428,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   // requestAnimationFrame coalesces the 15ms typing updates into one scroll
   // per rendered frame instead of creating a queue of smooth scrolls.
   useEffect(() => {
+    // Authored lessons have their own part navigation and must open at the
+    // selected part's beginning. The generic chat transcript scroll would
+    // otherwise move the learner to the bottom as saved messages hydrate.
+    if (authoredDelivery && !assessmentStarted) return undefined;
     // Do not move the viewport while Kai is typing. The learner must be able
     // to review earlier messages and then scroll back down freely; repeatedly
     // calling scrollIntoView here makes downward and upward swipes compete
@@ -452,7 +456,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         scrollFrameRef.current = null;
       }
     };
-  }, [displayedKaiText, isKaiTyping, messages.length]);
+  }, [Boolean(authoredDelivery), assessmentStarted, displayedKaiText, isKaiTyping, messages.length]);
 
   // ============================================
   // CLEAN KAI RESPONSE
