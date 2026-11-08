@@ -353,3 +353,58 @@
 .learn-page.kai-light-mode .kai-token-builtin { color: #087f8c; }
 .learn-page.kai-light-mode .kai-token-function { color: #08745f; }
 .learn-page.kai-light-mode .kai-token-operator { color: #334155; }
+
+
+/* Compact Markdown presentation: heading, one divider, then uniform code content. */
+.kai-rich-code {
+  width: fit-content;
+  max-width: 100%;
+  background: #0b0d18;
+}
+.kai-rich-code-header {
+  justify-content: flex-start;
+  border-bottom: 1px solid rgba(151, 142, 255, .3);
+  background: inherit;
+}
+.kai-rich-code-header > span {
+  color: #c9c7ff;
+}
+.kai-rich-code-actions {
+  margin-left: auto;
+}
+.kai-rich-code-pre {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: inherit;
+}
+.kai-rich-code-pre code {
+  min-width: 0;
+  white-space: inherit;
+  overflow-wrap: inherit;
+}
+.kai-token-comment,
+.kai-token-string,
+.kai-token-number,
+.kai-token-keyword,
+.kai-token-builtin,
+.kai-token-function,
+.kai-token-operator {
+  color: inherit;
+  font-weight: inherit;
+}
+.learn-page.kai-light-mode .kai-rich-code {
+  background: #f6f8fb;
+}
+.learn-page.kai-light-mode .kai-rich-code-pre {
+  border-top: 0;
+}
+.learn-page.kai-light-mode .kai-rich-code-header {
+  border-bottom-color: #d8e0eb;
+}
+.learn-page.kai-light-mode .kai-rich-code-header > span {
+  color: #334155;
+}
