@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Bot, MessageCircle } from "lucide-react";
+import { Bot, ChevronDown, MessageCircle } from "lucide-react";
 import AIContentRenderer from "./AIContentRenderer";
 import "./AuthoredLesson.css";
 
-export default function AuthoredLesson({ lesson, delivery, theme = "dark", onStartAssessment, onAskKai, assessmentStarted = false }) {
+export default function AuthoredLesson({ lesson, delivery, theme = "dark", onStartAssessment, onAskKai, kaiTeachingsCollapsed = false, onToggleKaiTeachings, assessmentStarted = false }) {
   const progressKey = `codelab-authored-part:${lesson?.id || "lesson"}`;
   const [partIndex, setPartIndex] = useState(() => {
     const saved = Number.parseInt(localStorage.getItem(progressKey) || "0", 10);
@@ -71,6 +71,10 @@ export default function AuthoredLesson({ lesson, delivery, theme = "dark", onSta
             Back
           </button>
           <span>Part {partIndex + 1} of {delivery.sections.length}</span>
+          <button type="button" className="kai-teaching-toggle" onClick={onToggleKaiTeachings} aria-expanded={!kaiTeachingsCollapsed}>
+            <ChevronDown size={15} aria-hidden="true" />
+            {kaiTeachingsCollapsed ? "Expand Kai teachings" : "Collapse Kai teachings"}
+          </button>
           <button type="button" onClick={onAskKai} disabled={!onAskKai}>
             <MessageCircle size={15} aria-hidden="true" />
             Ask Kai

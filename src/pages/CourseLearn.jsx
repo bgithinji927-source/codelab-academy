@@ -102,7 +102,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const [assessmentResult, setAssessmentResult] = useState(null);
   const [assessmentMarked, setAssessmentMarked] = useState(false);
   const [assessmentSubmitting, setAssessmentSubmitting] = useState(false);
-  const [expandedKaiMessages, setExpandedKaiMessages] = useState(() => new Set());
+  const [kaiTeachingsCollapsed, setKaiTeachingsCollapsed] = useState(false);
   const [expandedStoredSections, setExpandedStoredSections] = useState([0]);
   const [kaiGeneratedTeaching, setKaiGeneratedTeaching] = useState(null);
   const [kaiTeachingLoading, setKaiTeachingLoading] = useState(false);
@@ -188,6 +188,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     setAssessmentResult(null);
     setAssessmentMarked(false);
     setAssessmentPassed(false);
+    setKaiTeachingsCollapsed(false);
     setExpandedStoredSections([0]);
     setKaiGeneratedTeaching(null);
   }, [lesson?.id]);
@@ -1720,13 +1721,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     };
 
     const messageKey = String(messageIndex);
-    const isCollapsed = !isLatest && !expandedKaiMessages.has(messageKey);
-    const toggleKaiMessage = () => setExpandedKaiMessages((current) => {
-      const next = new Set(current);
-      if (next.has(messageKey)) next.delete(messageKey);
-      else next.add(messageKey);
-      return next;
-    });
     const copyKaiMessage = async () => {
       try {
         await navigator.clipboard.writeText(String(content || ""));
@@ -1801,7 +1795,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             </div>
           </div>
 
-          {!isCollapsed && <>
+          <>
             <div className="kai-board-content">
               <div className="kai-message-text">
                 {fallbackBlocks?.length ? (
@@ -1839,11 +1833,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               <CheckCircle2 size={15} />
               {lessonCompletionReady || assessmentRequired ? "Start required readiness check" : "Check my understanding (optional)"}
             </button>}
-          </>}
-          <button type="button" className="kai-teaching-collapse-button" onClick={toggleKaiMessage} aria-expanded={!isCollapsed}>
-            <ChevronDown size={15} aria-hidden="true" />
-            {isCollapsed ? "Expand teaching" : "Collapse teaching"}
-          </button>
+          </>
           <div className="kai-message-actions" aria-label="Kai response actions">
             <button type="button" onClick={copyKaiMessage} aria-label={copiedMessageIndex === messageKey ? "Copied Kai response" : "Copy Kai response"} title={copiedMessageIndex === messageKey ? "Copied" : "Copy response"}>
               {copiedMessageIndex === messageKey ? <Check size={15} /> : <Copy size={15} />}
@@ -2244,6 +2234,8 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
               delivery={authoredDelivery}
               theme={kaiLightMode ? "light" : "dark"}
               onStartAssessment={startAssessment}
+              kaiTeachingsCollapsed={kaiTeachingsCollapsed}
+              onToggleKaiTeachings={() => setKaiTeachingsCollapsed((current) => !current)}
               onAskKai={() => {
                 setQuickAskError("");
                 setQuickAskOpen(true);
@@ -2297,7 +2289,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             </div>
           )}
 
-          {messages.map(
+          {!kaiTeachingsCollapsed && messages.map(
             (message, index) => {
               if (
                 message.role ===

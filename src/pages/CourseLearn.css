@@ -2599,29 +2599,6 @@ html[data-theme="light"] .learn-page.kai-chatgpt-mode .kai-teaching-card,
 }
 
 /* Kai response actions: separate, independently clickable controls. */
-.kai-teaching-collapse-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-  padding: 7px 10px;
-  border: 1px solid rgba(151, 142, 255, .32);
-  border-radius: 7px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: .78rem;
-  font-weight: 750;
-  cursor: pointer;
-}
-.kai-teaching-collapse-button:hover,
-.kai-teaching-collapse-button:focus-visible {
-  border-color: #9f8cff;
-  background: rgba(159, 140, 255, .12);
-  outline: none;
-}
-.kai-teaching-collapse-button svg { transition: transform .2s ease; }
-.kai-teaching-collapse-button[aria-expanded="true"] svg { transform: rotate(180deg); }
 .kai-message-actions {
   display: flex;
   align-items: center;

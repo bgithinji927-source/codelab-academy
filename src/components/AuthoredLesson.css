@@ -206,6 +206,12 @@
   border-color: #9f8cff;
   background: rgba(159, 140, 255, .12);
 }
+.authored-lesson-navigation .kai-teaching-toggle svg {
+  transition: transform .2s ease;
+}
+.authored-lesson-navigation .kai-teaching-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
 
 .authored-lesson-context {
   position: absolute;
