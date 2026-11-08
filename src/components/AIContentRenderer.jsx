@@ -21,12 +21,22 @@ const SAFE_ACTIONS = new Set([
 ]);
 
 function InlineText({ children }) {
-  return <span>{String(children || "").split(/(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g).map((part, index) => {
-    if (part.startsWith("`") && part.endsWith("`")) return <code key={index}>{part.slice(1, -1)}</code>;
-    if (part.startsWith("**") && part.endsWith("**")) return <strong key={index}>{part.slice(2, -2)}</strong>;
-    if (part.startsWith("*") && part.endsWith("*")) return <em key={index}>{part.slice(1, -1)}</em>;
-    return <span key={index}>{part}</span>;
-  })}</span>;
+  const value = String(children || "");
+  const tokenPattern = /(`[^`\n]+`|(\*\*\*|___)(?=\S)([\s\S]*?\S)\2|(\*\*|__)(?=\S)([\s\S]*?\S)\4|(?<!\w)(\*|_)(?=\S)([^*_\n]*?\S)\6(?!\w))/g;
+  const parts = [];
+  let cursor = 0;
+  let match;
+  let index = 0;
+  while ((match = tokenPattern.exec(value))) {
+    if (match.index > cursor) parts.push(<span key={`text-${index++}`}>{value.slice(cursor, match.index)}</span>);
+    if (match[0].startsWith("`")) parts.push(<code key={`code-${index++}`}>{match[0].slice(1, -1)}</code>);
+    else if (match[2]) parts.push(<strong key={`bold-italic-${index++}`}><em>{match[3]}</em></strong>);
+    else if (match[4]) parts.push(<strong key={`bold-${index++}`}>{match[5]}</strong>);
+    else if (match[6]) parts.push(<em key={`italic-${index++}`}>{match[7]}</em>);
+    cursor = match.index + match[0].length;
+  }
+  if (cursor < value.length) parts.push(<span key={`text-${index++}`}>{value.slice(cursor)}</span>);
+  return <span>{parts.length ? parts : value}</span>;
 }
 
 function TextBlock({ value }) {

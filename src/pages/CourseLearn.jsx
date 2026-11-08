@@ -1293,42 +1293,27 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   // ============================================
 
   const renderInlineMarkdown = (text) => {
-    const parts = String(text).split(
-      /(`[^`]+`|\*\*[^*]+\*\*)/g
-    );
-
-    return parts.map((part, index) => {
-      if (
-        part.startsWith("`") &&
-        part.endsWith("`")
-      ) {
-        return (
-          <code
-            key={index}
-            className="kai-inline-code"
-          >
-            {part.slice(1, -1)}
-          </code>
-        );
+    const tokenPattern = /(`[^`\n]+`|(\*\*\*|___)(?=\S)([\s\S]*?\S)\2|(\*\*|__)(?=\S)([\s\S]*?\S)\4|(?<!\w)(\*|_)(?=\S)([^*_\n]*?\S)\6(?!\w))/g;
+    const parts = [];
+    let cursor = 0;
+    let match;
+    let index = 0;
+    while ((match = tokenPattern.exec(String(text)))) {
+      if (match.index > cursor) parts.push(<span key={`text-${index++}`}>{String(text).slice(cursor, match.index)}</span>);
+      const token = match[0];
+      if (token.startsWith("`")) {
+        parts.push(<code key={`code-${index++}`} className="kai-inline-code">{token.slice(1, -1)}</code>);
+      } else if (match[2] && (match[2] === "***" || match[2] === "___")) {
+        parts.push(<strong key={`bold-italic-${index++}`}><em>{renderInlineMarkdown(match[3])}</em></strong>);
+      } else if (match[4]) {
+        parts.push(<strong key={`bold-${index++}`}>{renderInlineMarkdown(match[5])}</strong>);
+      } else if (match[6]) {
+        parts.push(<em key={`italic-${index++}`}>{renderInlineMarkdown(match[7])}</em>);
       }
-
-      if (
-        part.startsWith("**") &&
-        part.endsWith("**")
-      ) {
-        return (
-          <strong key={index}>
-            {part.slice(2, -2)}
-          </strong>
-        );
-      }
-
-      return (
-        <span key={index}>
-          {part}
-        </span>
-      );
-    });
+      cursor = match.index + token.length;
+    }
+    if (cursor < String(text).length) parts.push(<span key={`text-${index++}`}>{String(text).slice(cursor)}</span>);
+    return parts.length ? parts : <span>{String(text)}</span>;
   };
 
   // ============================================
