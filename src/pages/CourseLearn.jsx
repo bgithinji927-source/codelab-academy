@@ -116,7 +116,6 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const kaiRequestRef = useRef(null);
   const lessonStartKeyRef = useRef("");
   const lessonViewCacheRef = useRef(new Map());
-  const conversationStartRef = useRef(null);
   const conversationEndRef = useRef(null);
   const assessmentMessageRef = useRef(null);
   const scrollFrameRef = useRef(null);
@@ -1184,12 +1183,12 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   }, [pendingUiAction, lessonCompletionReady, isKaiTyping, isAdvancing]);
 
   const isReviewingPastLesson = viewingLessonIndex !== null;
-  const returnToFirstTeachingPart = () => {
-    if (currentLessonIndex !== 0) {
-      handleLessonSelect(0);
+  const handlePreviousLesson = () => {
+    if (currentLessonIndex > 0) {
+      handleLessonSelect(currentLessonIndex - 1);
       return;
     }
-    conversationStartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    onBack();
   };
   const handleLessonSelect = (targetIndex) => {
     if (
@@ -1995,11 +1994,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         <button
           type="button"
           className="learn-back"
-          onClick={returnToFirstTeachingPart}
-          aria-label="Return to Part 1 of the teaching"
+          onClick={onBack}
+          aria-label="Back to courses"
         >
           <ArrowLeft size={17} />
-          <span>Part 1</span>
+          <span>Courses</span>
         </button>
 
         <div className="learn-course-title">
@@ -2218,7 +2217,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             )}
           </section>
         )}
-        <section className="conversation-messages" ref={conversationStartRef}>
+        <section className="conversation-messages">
           {authoredDelivery && (
             <AuthoredLesson
               key={lesson.id}
@@ -2403,6 +2402,12 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
           </div>
         )}
         {assessmentPassed && assessmentResult && <div className="chat-row kai-row kai-assessment-message"><div className="chat-content"><div className="kai-message-header"><div className="chat-avatar kai-avatar-small"><Bot size={18} /></div><div className="chat-name"><strong>Kai</strong><span>AI Instructor</span></div></div><div className="kai-board-content"><div className="kai-message-text"><p><strong>Kai approved your readiness</strong></p><p>{assessmentResult.feedback}</p>{assessmentResult.score !== undefined && <p>Score: {assessmentResult.score}%</p>}</div></div></div></div>}
+          <div className="lesson-actions lesson-actions-bottom">
+            <button type="button" className="back-lesson" onClick={handlePreviousLesson}>
+              <ArrowLeft size={17} />
+              {currentLessonIndex > 0 ? "Back to Previous Lesson" : "Back to Courses"}
+            </button>
+          </div>
           <div
             ref={conversationEndRef}
             className="conversation-end-anchor"

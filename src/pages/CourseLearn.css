@@ -4126,6 +4126,47 @@ html #root .learn-page.kai-firebox-mode .learn-back {
   opacity: 1 !important;
 }
 
+html #root .learn-page.kai-firebox-mode .lesson-actions-bottom {
+  justify-content: flex-start;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top-color: #2b2f33;
+}
+
+html #root .learn-page.kai-firebox-mode .lesson-actions-bottom .back-lesson {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #4b5359 !important;
+  border-radius: 9px;
+  background: #191d21 !important;
+  color: #edf2ed !important;
+  padding: 10px 15px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+html #root .learn-page.kai-firebox-mode .lesson-actions-bottom .back-lesson:hover {
+  border-color: #8d9890 !important;
+  background: #23282d !important;
+}
+
+html #root .learn-page.kai-light-mode.kai-firebox-mode .lesson-actions-bottom {
+  border-top-color: #d9e0ea;
+}
+
+html #root .learn-page.kai-light-mode.kai-firebox-mode .lesson-actions-bottom .back-lesson {
+  border-color: #c7d2e0 !important;
+  background: #ffffff !important;
+  color: #1f3a5b !important;
+}
+
+html #root .learn-page.kai-light-mode.kai-firebox-mode .lesson-actions-bottom .back-lesson:hover {
+  border-color: #93a9c2 !important;
+  background: #eef4fb !important;
+}
+
 /* Authored lessons use a focused Ask Kai modal instead of the open composer. */
 .learn-page .kai-quick-ask-dock {
   display: flex;
