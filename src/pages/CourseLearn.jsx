@@ -116,6 +116,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   const kaiRequestRef = useRef(null);
   const lessonStartKeyRef = useRef("");
   const lessonViewCacheRef = useRef(new Map());
+  const conversationStartRef = useRef(null);
   const conversationEndRef = useRef(null);
   const assessmentMessageRef = useRef(null);
   const scrollFrameRef = useRef(null);
@@ -1183,6 +1184,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
   }, [pendingUiAction, lessonCompletionReady, isKaiTyping, isAdvancing]);
 
   const isReviewingPastLesson = viewingLessonIndex !== null;
+  const returnToFirstTeachingPart = () => {
+    if (currentLessonIndex !== 0) {
+      handleLessonSelect(0);
+      return;
+    }
+    conversationStartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const handleLessonSelect = (targetIndex) => {
     if (
       targetIndex < 0 ||
@@ -1987,10 +1995,11 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         <button
           type="button"
           className="learn-back"
-          onClick={onBack}
+          onClick={returnToFirstTeachingPart}
+          aria-label="Return to Part 1 of the teaching"
         >
           <ArrowLeft size={17} />
-          <span>Courses</span>
+          <span>Part 1</span>
         </button>
 
         <div className="learn-course-title">
@@ -2209,7 +2218,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             )}
           </section>
         )}
-        <section className="conversation-messages">
+        <section className="conversation-messages" ref={conversationStartRef}>
           {authoredDelivery && (
             <AuthoredLesson
               key={lesson.id}
