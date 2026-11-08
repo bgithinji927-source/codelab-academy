@@ -312,3 +312,44 @@
   border-color: #7055d8;
   background: #f5f7fb;
 }
+
+
+/* Static Markdown-style code blocks: readable, colored, and never an editor. */
+.kai-rich-code-pre {
+  margin: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1rem 1.1rem;
+  background: #0b0d18;
+  color: #e5e7eb;
+  font: .9rem/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  tab-size: 2;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+}
+.kai-rich-code-pre code {
+  display: block;
+  min-width: max-content;
+  color: inherit;
+  font: inherit;
+}
+.kai-code-line { display: block; min-height: 1.65em; }
+.kai-token-comment { color: #7f9a86; }
+.kai-token-string { color: #f6c177; }
+.kai-token-number { color: #82aaff; }
+.kai-token-keyword { color: #c792ea; font-weight: 650; }
+.kai-token-builtin { color: #89ddff; }
+.kai-token-function { color: #82d2c8; }
+.kai-token-operator { color: #d6deeb; }
+.learn-page.kai-light-mode .kai-rich-code-pre {
+  background: #f6f8fb;
+  color: #263449;
+  border-top: 1px solid #e2e8f0;
+}
+.learn-page.kai-light-mode .kai-token-comment { color: #66806c; }
+.learn-page.kai-light-mode .kai-token-string { color: #a15c00; }
+.learn-page.kai-light-mode .kai-token-number { color: #2458a6; }
+.learn-page.kai-light-mode .kai-token-keyword { color: #7c3aed; }
+.learn-page.kai-light-mode .kai-token-builtin { color: #087f8c; }
+.learn-page.kai-light-mode .kai-token-function { color: #08745f; }
+.learn-page.kai-light-mode .kai-token-operator { color: #334155; }

@@ -41,8 +41,6 @@ html[data-appearance="white-purple"] #root :where(
   .lesson-example,
   .challenge-code,
   .editor,
-  .monaco-editor,
-  .monaco-editor *,
   .cm-editor,
   .cm-editor *
 ) {
@@ -64,7 +62,6 @@ html[data-appearance="white-purple"] #root :where(
   .lesson-example,
   .challenge-code,
   .editor,
-  .monaco-editor,
   .cm-editor
 ) :where(button, label, input, textarea, select) {
   font-family: var(--white-purple-code-font) !important;

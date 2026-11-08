@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import Editor from "@monaco-editor/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Play, RotateCcw, Copy, Check, Lightbulb, AlertTriangle, Info, ArrowRight, Quote, CheckSquare, Clock, ExternalLink, MessageCircle, Code2, HelpCircle, Dumbbell, Sparkles, ListChecks } from "lucide-react";
+import { Copy, Check, Lightbulb, AlertTriangle, Info, ArrowRight, Quote, CheckSquare, Clock, ExternalLink, MessageCircle, Code2, HelpCircle, Dumbbell, Sparkles, ListChecks } from "lucide-react";
 import resolveVideoPlaybackUrl from "../utils/resolveVideoPlaybackUrl";
 import "./AIContentRenderer.css";
 
@@ -105,29 +104,36 @@ function ImageBlock({ block }) {
   return <figure className="kai-rich-image"><img src={src} alt={block.alt || block.title || "Kai illustration"} loading="lazy" /><figcaption>{block.title || block.alt}</figcaption></figure>;
 }
 
-export function CodeBlock({ block, theme = "dark" }) {
-  const [value, setValue] = useState(String(block.code || ""));
-  const [output, setOutput] = useState("");
+const CODE_KEYWORDS = new Set("as async await break case catch class const continue def default delete do else except export extends finally for from function if import in instanceof let match new of pass raise return switch throw try typeof var void while with yield and or not is True False None null undefined true false this self public private protected static final interface implements package super lambda print input range len str int float list dict set tuple boolean Boolean String Number Array Object Math console return".split(/\s+/));
+const CODE_BUILTINS = new Set("console.log console.error Math.random Math.floor document window Promise JSON map filter reduce forEach appendChild querySelector".split(/\s+/));
+
+function highlightCodeLine(line) {
+  const pattern = /(\/\/.*|#.*|\/\*.*?\*\/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\b\d+(?:\.\d+)?\b|\b[A-Za-z_$][\w$]*\b|===|!==|=>|==|!=|<=|>=|&&|\|\||[{}[\]();,.:=+\-*/%<>!])/g;
+  const parts = [];
+  let cursor = 0;
+  let match;
+  while ((match = pattern.exec(line))) {
+    if (match.index > cursor) parts.push(line.slice(cursor, match.index));
+    const token = match[0];
+    let tokenClass = "kai-token-operator";
+    if (/^(\/\/|#|\/\*)/.test(token)) tokenClass = "kai-token-comment";
+    else if (/^["'`]/.test(token)) tokenClass = "kai-token-string";
+    else if (/^\d/.test(token)) tokenClass = "kai-token-number";
+    else if (CODE_KEYWORDS.has(token)) tokenClass = "kai-token-keyword";
+    else if (CODE_BUILTINS.has(token)) tokenClass = "kai-token-builtin";
+    else if (/^[A-Za-z_$]/.test(token) && /^\s*\(/.test(line.slice(match.index + token.length))) tokenClass = "kai-token-function";
+    parts.push(<span className={tokenClass} key={`${match.index}-${token}`}>{token}</span>);
+    cursor = match.index + token.length;
+  }
+  if (cursor < line.length) parts.push(line.slice(cursor));
+  return parts.length ? parts : " ";
+}
+
+export function CodeBlock({ block }) {
   const [copied, setCopied] = useState(false);
+  const value = String(block.code || "");
   const language = String(block.language || "javascript").toLowerCase();
-
-  const runCode = () => {
-    if (language !== "javascript" && language !== "js") {
-      setOutput("Run is available in the browser for JavaScript. Kai can still review this code and explain it.");
-      return;
-    }
-    try {
-      const logs = [];
-      // Deliberately restricted: no network, DOM, storage, or arbitrary app access.
-      const safeConsole = { log: (...args) => logs.push(args.map(String).join(" ")) };
-      // eslint-disable-next-line no-new-func
-      Function("console", `"use strict";\n${value}`)(safeConsole);
-      setOutput(logs.join("\n") || "Code ran without console output.");
-    } catch (error) {
-      setOutput(`Error: ${error.message}`);
-    }
-  };
-
+  const lines = value.split("\n");
   const copyCode = async () => {
     try {
       await navigator.clipboard.writeText(value);
@@ -143,12 +149,9 @@ export function CodeBlock({ block, theme = "dark" }) {
       <span>{block.filename || language}</span>
       <div className="kai-rich-code-actions">
         <button type="button" onClick={copyCode}>{copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Copied" : "Copy"}</button>
-        <button type="button" onClick={() => setValue(String(block.code || ""))}><RotateCcw size={14} /> Reset</button>
-        <button type="button" onClick={runCode}><Play size={14} /> Run</button>
       </div>
     </header>
-    <Editor height={Math.min(420, Math.max(72, value.split("\n").length * 21 + 24))} language={language === "py" ? "python" : language} value={value} onChange={(next) => setValue(next || "")} theme={theme === "light" ? "light" : "vs-dark"} options={{ minimap: { enabled: false }, lineNumbers: "on", lineNumbersMinChars: 4, lineDecorationsWidth: 12, glyphMargin: false, fontSize: 14, padding: { top: 12, bottom: 12, left: 12, right: 8 }, scrollBeyondLastLine: false, scrollBeyondLastColumn: 0 }} />
-    {output && <pre className="kai-rich-code-output">{output}</pre>}
+    <pre className="kai-rich-code-pre"><code className={`language-${language === "py" ? "python" : language}`}>{lines.map((line, index) => <span className="kai-code-line" key={index}>{highlightCodeLine(line)}{index < lines.length - 1 ? "\n" : ""}</span>)}</code></pre>
   </section>;
 }
 
