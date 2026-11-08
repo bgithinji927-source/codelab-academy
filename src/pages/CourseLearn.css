@@ -3572,7 +3572,9 @@ html #root .learn-page.kai-firebox-mode .learn-back:hover {
 .learn-page.kai-light-mode .kai-rich-code pre,
 .learn-page.kai-light-mode .kai-code-wrapper pre,
 .learn-page.kai-light-mode pre {
-  background: #f1f5f9 !important;
+  background: inherit !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
   color: #172033 !important;
 }
 .learn-page.kai-light-mode .kai-teaching-card svg,
