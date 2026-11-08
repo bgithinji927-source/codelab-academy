@@ -4021,6 +4021,81 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-message-actions butt
   color: #163b70 !important;
   stroke: #163b70 !important;
 }
+
+/* Compact Firebox phone header: keep the brand and essential controls on one
+   short row and remove the secondary New chat action from small screens. */
+@media (max-width: 700px) {
+  html #root .learn-page.kai-firebox-mode .learn-navbar {
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 0 12px !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    overflow: hidden !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .firebox-brand {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .firebox-brand-mark {
+    flex: 0 0 30px !important;
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .firebox-brand strong {
+    overflow: hidden !important;
+    font-size: 10px !important;
+    letter-spacing: .13em !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .firebox-brand span {
+    display: none !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .firebox-header-actions {
+    flex: 0 0 auto !important;
+    gap: 7px !important;
+    margin-left: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .firebox-new-chat {
+    display: none !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .firebox-ready {
+    width: 8px !important;
+    height: 8px !important;
+    overflow: hidden !important;
+    font-size: 0 !important;
+    gap: 0 !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .firebox-ready > span {
+    display: block !important;
+    flex: 0 0 8px !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .kai-light-mode-toggle {
+    min-width: 34px !important;
+    width: 34px !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 5px !important;
+    gap: 0 !important;
+  }
+
+  html #root .learn-page.kai-firebox-mode .kai-light-mode-toggle span {
+    display: none !important;
+  }
+}
 html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-input-dock .kai-composer-icon {
   display: inline-flex !important;
   align-items: center !important;
