@@ -4,6 +4,7 @@
 // ============================================
 import pythonListsCollectionsDelivery from "./pythonListsCollectionsDelivery.mjs";
 import pythonDictionariesDelivery from "./pythonDictionariesDelivery.mjs";
+import pythonLoopsDelivery from "./pythonLoopsDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -3315,6 +3316,13 @@ for (const lesson of lessons.python) {
   uniquePythonLessons.push(lesson);
 }
 lessons.python = uniquePythonLessons;
+
+// Use the fully authored Python loops lesson for both historical loop entries.
+for (const lesson of lessons.python) {
+  if (lesson.id === "python-loops" || lesson.id === "python-loops-roadmap") {
+    lesson.delivery = pythonLoopsDelivery;
+  }
+}
 
 // Use the fully authored Data Types lesson for both historical JavaScript entries.
 for (const lesson of lessons.javascript) {
