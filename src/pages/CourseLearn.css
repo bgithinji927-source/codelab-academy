@@ -4118,6 +4118,14 @@ html #root .learn-page.kai-firebox-mode .kai-input-dock {
   }
 }
 
+/* Keep the course return control available in every responsive Firebox layout. */
+html #root .learn-page.kai-firebox-mode .learn-back {
+  display: inline-flex !important;
+  flex: 0 0 auto;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
 /* Authored lessons use a focused Ask Kai modal instead of the open composer. */
 .learn-page .kai-quick-ask-dock {
   display: flex;
