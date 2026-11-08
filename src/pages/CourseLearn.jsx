@@ -2171,7 +2171,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
           MAIN
       ======================================== */}
 
-      <main className="conversation-container">
+      <main className={`conversation-container${authoredDelivery ? " has-authored-lesson" : ""}`}>
 
         <div className="kai-teaching-card">
 

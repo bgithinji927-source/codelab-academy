@@ -4167,6 +4167,27 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .lesson-actions-bottom .b
   background: #eef4fb !important;
 }
 
+/* Authored lessons do not render the chat composer. Let their page end after
+   the teaching content instead of reserving the unused chat workspace height. */
+html #root .learn-page.kai-firebox-mode .conversation-container.has-authored-lesson {
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  padding-bottom: clamp(32px, 5vw, 72px) !important;
+}
+
+html #root .learn-page.kai-firebox-mode .has-authored-lesson .kai-teaching-card {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+html #root .learn-page.kai-firebox-mode .has-authored-lesson .conversation-messages {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  padding-bottom: 0 !important;
+}
+
 /* Authored lessons use a focused Ask Kai modal instead of the open composer. */
 .learn-page .kai-quick-ask-dock {
   display: flex;
