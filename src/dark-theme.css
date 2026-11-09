@@ -7928,3 +7928,14 @@ html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-navbar .d
 html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-navbar .dashboard-logo small {
   color: #9ab8a0 !important;
 }
+
+html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-navbar + .dashboard-main .stat-card strong,
+html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-content-container .stat-card strong,
+html[data-theme="dark"]:not([data-appearance-mode="light"]) .stat-card strong {
+  color: #effff0 !important;
+}
+html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-navbar + .dashboard-main .stat-card p,
+html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-content-container .stat-card p,
+html[data-theme="dark"]:not([data-appearance-mode="light"]) .stat-card p {
+  color: #a9c5ae !important;
+}
