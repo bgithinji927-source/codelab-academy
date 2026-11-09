@@ -2,7 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import InstallPrompt from "./components/InstallPrompt.jsx";
-import "./dark-theme.css";
+import "./dark-theme-scoped.css";
+import "./light-theme.css";
 import "./nonKaiAnimations.css";
 import "./whitePurpleTypography.css";
 
