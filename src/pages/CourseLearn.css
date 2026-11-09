@@ -4466,3 +4466,67 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-operator { col
     padding-top: 82px;
   }
 }
+
+
+/* Monaco-style syntax colors for teaching Markdown code blocks only.
+   These selectors target rendered tokens and do not affect the code editor. */
+.learn-page .kai-rich-code .kai-token-comment,
+.learn-page .kai-rich-copyable .kai-token-comment { color: #6a9955 !important; }
+.learn-page .kai-rich-code .kai-token-string,
+.learn-page .kai-rich-copyable .kai-token-string { color: #ce9178 !important; }
+.learn-page .kai-rich-code .kai-token-number,
+.learn-page .kai-rich-copyable .kai-token-number { color: #b5cea8 !important; }
+.learn-page .kai-rich-code .kai-token-keyword,
+.learn-page .kai-rich-copyable .kai-token-keyword { color: #569cd6 !important; font-weight: 650; }
+.learn-page .kai-rich-code .kai-token-builtin,
+.learn-page .kai-rich-copyable .kai-token-builtin { color: #4ec9b0 !important; }
+.learn-page .kai-rich-code .kai-token-function,
+.learn-page .kai-rich-copyable .kai-token-function { color: #dcdcaa !important; }
+.learn-page .kai-rich-code .kai-token-operator,
+.learn-page .kai-rich-copyable .kai-token-operator { color: #d4d4d4 !important; }
+
+.learn-page.kai-light-mode .kai-rich-code .kai-token-comment,
+.learn-page.kai-light-mode .kai-rich-copyable .kai-token-comment { color: #008000 !important; }
+.learn-page.kai-light-mode .kai-rich-code .kai-token-string,
+.learn-page.kai-light-mode .kai-rich-copyable .kai-token-string { color: #a31515 !important; }
+.learn-page.kai-light-mode .kai-rich-code .kai-token-number,
+.learn-page.kai-light-mode .kai-rich-copyable .kai-token-number { color: #098658 !important; }
+.learn-page.kai-light-mode .kai-rich-code .kai-token-keyword,
+.learn-page.kai-light-mode .kai-rich-copyable .kai-token-keyword { color: #0000ff !important; }
+.learn-page.kai-light-mode .kai-rich-code .kai-token-builtin,
+.learn-page.kai-light-mode .kai-rich-copyable .kai-token-builtin { color: #267f99 !important; }
+.learn-page.kai-light-mode .kai-rich-code .kai-token-function,
+.learn-page.kai-light-mode .kai-rich-copyable .kai-token-function { color: #795e26 !important; }
+.learn-page.kai-light-mode .kai-rich-code .kai-token-operator,
+.learn-page.kai-light-mode .kai-rich-copyable .kai-token-operator { color: #333333 !important; }
+
+/* Firebox's monochrome text rule must not flatten syntax tokens. */
+html #root .learn-page.kai-firebox-mode .kai-rich-code .kai-token-comment,
+html #root .learn-page.kai-firebox-mode .kai-rich-copyable .kai-token-comment { color: #6a9955 !important; }
+html #root .learn-page.kai-firebox-mode .kai-rich-code .kai-token-string,
+html #root .learn-page.kai-firebox-mode .kai-rich-copyable .kai-token-string { color: #ce9178 !important; }
+html #root .learn-page.kai-firebox-mode .kai-rich-code .kai-token-number,
+html #root .learn-page.kai-firebox-mode .kai-rich-copyable .kai-token-number { color: #b5cea8 !important; }
+html #root .learn-page.kai-firebox-mode .kai-rich-code .kai-token-keyword,
+html #root .learn-page.kai-firebox-mode .kai-rich-copyable .kai-token-keyword { color: #569cd6 !important; }
+html #root .learn-page.kai-firebox-mode .kai-rich-code .kai-token-builtin,
+html #root .learn-page.kai-firebox-mode .kai-rich-copyable .kai-token-builtin { color: #4ec9b0 !important; }
+html #root .learn-page.kai-firebox-mode .kai-rich-code .kai-token-function,
+html #root .learn-page.kai-firebox-mode .kai-rich-copyable .kai-token-function { color: #dcdcaa !important; }
+html #root .learn-page.kai-firebox-mode .kai-rich-code .kai-token-operator,
+html #root .learn-page.kai-firebox-mode .kai-rich-copyable .kai-token-operator { color: #d4d4d4 !important; }
+
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code .kai-token-comment,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-token-comment { color: #008000 !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code .kai-token-string,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-token-string { color: #a31515 !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code .kai-token-number,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-token-number { color: #098658 !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code .kai-token-keyword,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-token-keyword { color: #0000ff !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code .kai-token-builtin,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-token-builtin { color: #267f99 !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code .kai-token-function,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-token-function { color: #795e26 !important; }
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code .kai-token-operator,
+html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-token-operator { color: #333333 !important; }
