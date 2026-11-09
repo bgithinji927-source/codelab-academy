@@ -22,10 +22,10 @@ root.walkRules((rule) => {
   rule.selectors = selectors.map((selector) => {
     const trimmed = selector.trim();
     if (!trimmed) return trimmed;
-    if (trimmed === ":root") return 'html[data-theme="dark"]';
+    if (trimmed === ":root") return 'html[data-theme="dark"]:not([data-appearance-mode="light"])';
     if (trimmed.startsWith("html[data-theme=")) return trimmed;
-    if (trimmed.startsWith("html")) return `html[data-theme="dark"]${trimmed.slice(4)}`;
-    return `html[data-theme="dark"] ${trimmed}`;
+    if (trimmed.startsWith("html")) return `html[data-theme="dark"]:not([data-appearance-mode="light"])${trimmed.slice(4)}`;
+    return `html[data-theme="dark"]:not([data-appearance-mode="light"]) ${trimmed}`;
   });
 });
 

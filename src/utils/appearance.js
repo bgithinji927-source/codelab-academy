@@ -460,6 +460,9 @@ export function applyAppearance(value) {
   }
 
   root.dataset.appearance = preset.id;
+  root.dataset.appearanceMode = ["light", "white-purple", "clean"].includes(preset.id)
+    ? "light"
+    : "dark";
   Object.entries(preset.tokens).forEach(([key, tokenValue]) => {
     root.style.setProperty(cssTokenName(key), tokenValue);
   });

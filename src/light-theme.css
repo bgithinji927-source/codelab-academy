@@ -1,66 +1,83 @@
 /* CodeLab Academy — one light surface for every route.
    This file is intentionally loaded after page styles so light mode cannot
    inherit the terminal palette from a previous dark render. */
-html[data-theme="light"] {
+html[data-theme="light"], html[data-appearance-mode="light"] {
   color-scheme: light;
-  --theme-background: #f4f8f5 !important;
-  --theme-surface: #ffffff !important;
-  --theme-surface-elevated: #ffffff !important;
-  --theme-border: #b8cdbd !important;
-  --theme-text-primary: #173520 !important;
-  --theme-text-secondary: #365742 !important;
-  --theme-text-muted: #5d7564 !important;
-  --theme-accent: #1e9f3c !important;
-  --theme-accent-hover: #168a32 !important;
-  --theme-accent-text: #06120a !important;
-  --theme-success: #1e9f3c !important;
-  --theme-warning: #a05a00 !important;
-  --theme-error: #b42318 !important;
-  --theme-info: #0b6ea8 !important;
-  --theme-input-background: #ffffff !important;
-  --theme-input-border: #9bd2a5 !important;
-  --theme-button-background: #1e9f3c !important;
-  --theme-button-text: #06120a !important;
-  --theme-code-background: #07110d !important;
-  --theme-code-text: #e7f7e9 !important;
-  --dark-bg: #f4f8f5 !important;
-  --dark-surface: #ffffff !important;
-  --dark-surface-raised: #ffffff !important;
-  --dark-surface-soft: #f1f8f2 !important;
-  --dark-border: #b8cdbd !important;
-  --dark-text: #173520 !important;
-  --dark-muted: #5d7564 !important;
-  --terminal-black: #f4f8f5 !important;
-  --terminal-surface: #ffffff !important;
-  --terminal-panel: #f1f8f2 !important;
-  --terminal-green: #1e9f3c !important;
-  --terminal-green-mid: #168a32 !important;
-  --terminal-green-dark: #126b28 !important;
-  --terminal-line: rgba(30, 159, 60, .32) !important;
-  --terminal-muted: #5d7564 !important;
+  --theme-background: #f4f8f5;
+  --theme-surface: #ffffff;
+  --theme-surface-elevated: #ffffff;
+  --theme-border: #b8cdbd;
+  --theme-text-primary: #173520;
+  --theme-text-secondary: #365742;
+  --theme-text-muted: #5d7564;
+  --theme-accent: #1e9f3c;
+  --theme-accent-hover: #168a32;
+  --theme-accent-text: #06120a;
+  --theme-success: #1e9f3c;
+  --theme-warning: #a05a00;
+  --theme-error: #b42318;
+  --theme-info: #0b6ea8;
+  --theme-input-background: #ffffff;
+  --theme-input-border: #9bd2a5;
+  --theme-button-background: #1e9f3c;
+  --theme-button-text: #06120a;
+  --theme-code-background: #07110d;
+  --theme-code-text: #e7f7e9;
+  --dark-bg: var(--theme-background);
+  --dark-surface: var(--theme-surface);
+  --dark-surface-raised: var(--theme-surface-elevated);
+  --dark-surface-soft: color-mix(in srgb, var(--theme-surface) 92%, var(--theme-accent));
+  --dark-border: var(--theme-border);
+  --dark-text: var(--theme-text-primary);
+  --dark-muted: var(--theme-text-muted);
+  --terminal-black: var(--theme-background);
+  --terminal-surface: var(--theme-surface);
+  --terminal-panel: var(--theme-surface-elevated);
+  --terminal-green: var(--theme-accent);
+  --terminal-green-mid: var(--theme-accent-hover);
+  --terminal-green-dark: var(--theme-accent);
+  --terminal-line: rgba(30, 159, 60, .32);
+  --terminal-muted: var(--theme-text-muted);
 }
 
 html[data-theme="light"],
+html[data-appearance-mode="light"],
 html[data-theme="light"] body,
+html[data-appearance-mode="light"] body,
 html[data-theme="light"] #root,
+html[data-appearance-mode="light"] #root,
 html[data-theme="light"] .app,
+html[data-appearance-mode="light"] .app,
 html[data-theme="light"] main,
+html[data-appearance-mode="light"] main,
 html[data-theme="light"] [class$="-page"],
+html[data-appearance-mode="light"] [class$="-page"],
 html[data-theme="light"] [class$="-main"],
-html[data-theme="light"] [class$="-container"] {
+html[data-appearance-mode="light"] [class$="-main"],
+html[data-theme="light"] [class$="-container"],
+html[data-appearance-mode="light"] [class$="-container"] {
   background-color: var(--theme-background) !important;
   color: var(--theme-text-primary) !important;
 }
 
 html[data-theme="light"] .navbar,
+html[data-appearance-mode="light"] .navbar,
 html[data-theme="light"] .dashboard-navbar,
+html[data-appearance-mode="light"] .dashboard-navbar,
 html[data-theme="light"] .courses-navbar,
+html[data-appearance-mode="light"] .courses-navbar,
 html[data-theme="light"] .learn-navbar,
+html[data-appearance-mode="light"] .learn-navbar,
 html[data-theme="light"] .kai-header,
+html[data-appearance-mode="light"] .kai-header,
 html[data-theme="light"] .challenge-header,
+html[data-appearance-mode="light"] .challenge-header,
 html[data-theme="light"] .roadmap-header,
+html[data-appearance-mode="light"] .roadmap-header,
 html[data-theme="light"] .public-navbar,
-html[data-theme="light"] .admin-topbar {
+html[data-appearance-mode="light"] .public-navbar,
+html[data-theme="light"] .admin-topbar,
+html[data-appearance-mode="light"] .admin-topbar {
   background: rgba(255, 255, 255, .96) !important;
   color: var(--theme-text-primary) !important;
   border-color: var(--theme-border) !important;
@@ -68,9 +85,13 @@ html[data-theme="light"] .admin-topbar {
 }
 
 html[data-theme="light"] .dashboard-sidebar,
+html[data-appearance-mode="light"] .dashboard-sidebar,
 html[data-theme="light"] .dashboard-course-sidebar,
+html[data-appearance-mode="light"] .dashboard-course-sidebar,
 html[data-theme="light"] .admin-sidebar,
-html[data-theme="light"] .category-sidebar {
+html[data-appearance-mode="light"] .admin-sidebar,
+html[data-theme="light"] .category-sidebar,
+html[data-appearance-mode="light"] .category-sidebar {
   background: #ffffff !important;
   color: var(--theme-text-primary) !important;
   border-color: var(--theme-border) !important;
@@ -78,38 +99,71 @@ html[data-theme="light"] .category-sidebar {
 }
 
 html[data-theme="light"] .dashboard-card,
+html[data-appearance-mode="light"] .dashboard-card,
 html[data-theme="light"] .dashboard-course-card,
+html[data-appearance-mode="light"] .dashboard-course-card,
 html[data-theme="light"] .continue-card,
+html[data-appearance-mode="light"] .continue-card,
 html[data-theme="light"] .continue-learning,
+html[data-appearance-mode="light"] .continue-learning,
 html[data-theme="light"] .stat-card,
+html[data-appearance-mode="light"] .stat-card,
 html[data-theme="light"] .course-item,
+html[data-appearance-mode="light"] .course-item,
 html[data-theme="light"] .empty-course,
+html[data-appearance-mode="light"] .empty-course,
 html[data-theme="light"] .category-card,
+html[data-appearance-mode="light"] .category-card,
 html[data-theme="light"] .category-overview-card,
+html[data-appearance-mode="light"] .category-overview-card,
 html[data-theme="light"] .course-card,
+html[data-appearance-mode="light"] .course-card,
 html[data-theme="light"] .intro-card,
+html[data-appearance-mode="light"] .intro-card,
 html[data-theme="light"] .kai-sidebar,
+html[data-appearance-mode="light"] .kai-sidebar,
 html[data-theme="light"] .sidebar-card,
+html[data-appearance-mode="light"] .sidebar-card,
 html[data-theme="light"] .kai-input-area,
+html[data-appearance-mode="light"] .kai-input-area,
 html[data-theme="light"] .challenge-card,
+html[data-appearance-mode="light"] .challenge-card,
 html[data-theme="light"] .challenge-header,
+html[data-appearance-mode="light"] .challenge-header,
 html[data-theme="light"] .leaderboard-card,
+html[data-appearance-mode="light"] .leaderboard-card,
 html[data-theme="light"] .info-card,
+html[data-appearance-mode="light"] .info-card,
 html[data-theme="light"] .path-card,
+html[data-appearance-mode="light"] .path-card,
 html[data-theme="light"] .module-card,
+html[data-appearance-mode="light"] .module-card,
 html[data-theme="light"] .progress-card,
+html[data-appearance-mode="light"] .progress-card,
 html[data-theme="light"] .settings-card,
+html[data-appearance-mode="light"] .settings-card,
 html[data-theme="light"] .settings-option-card,
+html[data-appearance-mode="light"] .settings-option-card,
 html[data-theme="light"] .settings-section-panel,
+html[data-appearance-mode="light"] .settings-section-panel,
 html[data-theme="light"] .appearance-card,
+html[data-appearance-mode="light"] .appearance-card,
 html[data-theme="light"] .design-card,
+html[data-appearance-mode="light"] .design-card,
 html[data-theme="light"] .admin-panel,
+html[data-appearance-mode="light"] .admin-panel,
 html[data-theme="light"] .admin-stat-card,
+html[data-appearance-mode="light"] .admin-stat-card,
 html[data-theme="light"] .admin-course-panel,
+html[data-appearance-mode="light"] .admin-course-panel,
 html[data-theme="light"] .admin-video-panel,
+html[data-appearance-mode="light"] .admin-video-panel,
 html[data-theme="light"] .login-modal,
+html[data-appearance-mode="light"] .login-modal,
 html[data-theme="light"] .signup-modal,
-html[data-theme="light"] .tutorial-card {
+html[data-appearance-mode="light"] .signup-modal,
+html[data-theme="light"] .tutorial-card,
+html[data-appearance-mode="light"] .tutorial-card {
   background: var(--theme-surface) !important;
   color: var(--theme-text-primary) !important;
   border-color: var(--theme-border) !important;
@@ -117,73 +171,124 @@ html[data-theme="light"] .tutorial-card {
 }
 
 html[data-theme="light"] h1,
+html[data-appearance-mode="light"] h1,
 html[data-theme="light"] h2,
+html[data-appearance-mode="light"] h2,
 html[data-theme="light"] h3,
+html[data-appearance-mode="light"] h3,
 html[data-theme="light"] h4,
+html[data-appearance-mode="light"] h4,
 html[data-theme="light"] strong,
+html[data-appearance-mode="light"] strong,
 html[data-theme="light"] label,
+html[data-appearance-mode="light"] label,
 html[data-theme="light"] .logo-text .code,
+html[data-appearance-mode="light"] .logo-text .code,
 html[data-theme="light"] .hero h1,
+html[data-appearance-mode="light"] .hero h1,
 html[data-theme="light"] .dashboard-user-name,
+html[data-appearance-mode="light"] .dashboard-user-name,
 html[data-theme="light"] .course-card h3,
+html[data-appearance-mode="light"] .course-card h3,
 html[data-theme="light"] .course-item h3,
-html[data-theme="light"] .kai-message h3 {
+html[data-appearance-mode="light"] .course-item h3,
+html[data-theme="light"] .kai-message h3,
+html[data-appearance-mode="light"] .kai-message h3 {
   color: var(--theme-text-primary) !important;
 }
 
 html[data-theme="light"] p,
+html[data-appearance-mode="light"] p,
 html[data-theme="light"] span,
+html[data-appearance-mode="light"] span,
 html[data-theme="light"] li,
+html[data-appearance-mode="light"] li,
 html[data-theme="light"] small,
+html[data-appearance-mode="light"] small,
 html[data-theme="light"] .hero-description,
+html[data-appearance-mode="light"] .hero-description,
 html[data-theme="light"] .dashboard-card p,
+html[data-appearance-mode="light"] .dashboard-card p,
 html[data-theme="light"] .course-card p,
+html[data-appearance-mode="light"] .course-card p,
 html[data-theme="light"] .course-item p,
+html[data-appearance-mode="light"] .course-item p,
 html[data-theme="light"] .input-hint,
+html[data-appearance-mode="light"] .input-hint,
 html[data-theme="light"] .settings-note,
-html[data-theme="light"] .admin-muted-copy {
+html[data-appearance-mode="light"] .settings-note,
+html[data-theme="light"] .admin-muted-copy,
+html[data-appearance-mode="light"] .admin-muted-copy {
   color: var(--theme-text-secondary) !important;
 }
 
 html[data-theme="light"] a,
+html[data-appearance-mode="light"] a,
 html[data-theme="light"] .logo-text .lab,
+html[data-appearance-mode="light"] .logo-text .lab,
 html[data-theme="light"] .lesson-label,
+html[data-appearance-mode="light"] .lesson-label,
 html[data-theme="light"] .course-level,
+html[data-appearance-mode="light"] .course-level,
 html[data-theme="light"] .progress-percent,
+html[data-appearance-mode="light"] .progress-percent,
 html[data-theme="light"] .course-progress-text,
+html[data-appearance-mode="light"] .course-progress-text,
 html[data-theme="light"] .category-icon,
-html[data-theme="light"] .overview-icon {
+html[data-appearance-mode="light"] .category-icon,
+html[data-theme="light"] .overview-icon,
+html[data-appearance-mode="light"] .overview-icon {
   color: var(--theme-accent) !important;
 }
 
 html[data-theme="light"] input,
+html[data-appearance-mode="light"] input,
 html[data-theme="light"] textarea,
+html[data-appearance-mode="light"] textarea,
 html[data-theme="light"] select,
+html[data-appearance-mode="light"] select,
 html[data-theme="light"] .kai-input,
+html[data-appearance-mode="light"] .kai-input,
 html[data-theme="light"] .challenge-answer,
+html[data-appearance-mode="light"] .challenge-answer,
 html[data-theme="light"] .login-modal input,
+html[data-appearance-mode="light"] .login-modal input,
 html[data-theme="light"] .code-editor-input,
+html[data-appearance-mode="light"] .code-editor-input,
 html[data-theme="light"] .admin-search,
-html[data-theme="light"] .admin-number-input {
+html[data-appearance-mode="light"] .admin-search,
+html[data-theme="light"] .admin-number-input,
+html[data-appearance-mode="light"] .admin-number-input {
   background: var(--theme-input-background) !important;
   color: var(--theme-text-primary) !important;
   border-color: var(--theme-input-border) !important;
 }
 
 html[data-theme="light"] input::placeholder,
-html[data-theme="light"] textarea::placeholder {
+html[data-appearance-mode="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder,
+html[data-appearance-mode="light"] textarea::placeholder {
   color: var(--theme-text-muted) !important;
 }
 
 html[data-theme="light"] button,
+html[data-appearance-mode="light"] button,
 html[data-theme="light"] .primary-button,
+html[data-appearance-mode="light"] .primary-button,
 html[data-theme="light"] .get-started,
+html[data-appearance-mode="light"] .get-started,
 html[data-theme="light"] .start-learning,
+html[data-appearance-mode="light"] .start-learning,
 html[data-theme="light"] .start-course-button,
+html[data-appearance-mode="light"] .start-course-button,
 html[data-theme="light"] .send-btn,
+html[data-appearance-mode="light"] .send-btn,
 html[data-theme="light"] .submit-btn,
+html[data-appearance-mode="light"] .submit-btn,
 html[data-theme="light"] .login-button,
-html[data-theme="light"] .module-action-btn {
+html[data-appearance-mode="light"] .login-button,
+html[data-theme="light"] .module-action-btn,
+html[data-appearance-mode="light"] .module-action-btn {
   background: var(--theme-button-background) !important;
   color: var(--theme-button-text) !important;
   border-color: var(--theme-accent) !important;
@@ -192,15 +297,25 @@ html[data-theme="light"] .module-action-btn {
 }
 
 html[data-theme="light"] .secondary-button,
+html[data-appearance-mode="light"] .secondary-button,
 html[data-theme="light"] .sign-in,
+html[data-appearance-mode="light"] .sign-in,
 html[data-theme="light"] .learn-back,
+html[data-appearance-mode="light"] .learn-back,
 html[data-theme="light"] .back-lesson,
+html[data-appearance-mode="light"] .back-lesson,
 html[data-theme="light"] .courses-back-button,
+html[data-appearance-mode="light"] .courses-back-button,
 html[data-theme="light"] .kai-back-btn,
+html[data-appearance-mode="light"] .kai-back-btn,
 html[data-theme="light"] .challenge-back-btn,
+html[data-appearance-mode="light"] .challenge-back-btn,
 html[data-theme="light"] .roadmap-back-btn,
+html[data-appearance-mode="light"] .roadmap-back-btn,
 html[data-theme="light"] .login-close,
-html[data-theme="light"] .theme-toggle {
+html[data-appearance-mode="light"] .login-close,
+html[data-theme="light"] .theme-toggle,
+html[data-appearance-mode="light"] .theme-toggle {
   background: #ffffff !important;
   color: var(--theme-accent) !important;
   border-color: var(--theme-border) !important;
@@ -208,15 +323,25 @@ html[data-theme="light"] .theme-toggle {
 }
 
 html[data-theme="light"] .category-icon,
+html[data-appearance-mode="light"] .category-icon,
 html[data-theme="light"] .feature-icon,
+html[data-appearance-mode="light"] .feature-icon,
 html[data-theme="light"] .intro-card-icon,
+html[data-appearance-mode="light"] .intro-card-icon,
 html[data-theme="light"] .course-card-icon,
+html[data-appearance-mode="light"] .course-card-icon,
 html[data-theme="light"] .course-category-icon,
+html[data-appearance-mode="light"] .course-category-icon,
 html[data-theme="light"] .card-icon,
+html[data-appearance-mode="light"] .card-icon,
 html[data-theme="light"] .empty-course-icon,
+html[data-appearance-mode="light"] .empty-course-icon,
 html[data-theme="light"] .input-avatar,
+html[data-appearance-mode="light"] .input-avatar,
 html[data-theme="light"] .kai-avatar,
-html[data-theme="light"] .learner-avatar {
+html[data-appearance-mode="light"] .kai-avatar,
+html[data-theme="light"] .learner-avatar,
+html[data-appearance-mode="light"] .learner-avatar {
   background: #e7f5e9 !important;
   color: var(--theme-accent) !important;
   border-color: #9bd2a5 !important;
@@ -224,47 +349,443 @@ html[data-theme="light"] .learner-avatar {
 }
 
 html[data-theme="light"] .kai-bubble,
+html[data-appearance-mode="light"] .kai-bubble,
 html[data-theme="light"] .message-bubble,
+html[data-appearance-mode="light"] .message-bubble,
 html[data-theme="light"] .learner-bubble,
+html[data-appearance-mode="light"] .learner-bubble,
 html[data-theme="light"] .code-block,
-html[data-theme="light"] .kai-code-wrapper {
+html[data-appearance-mode="light"] .code-block,
+html[data-theme="light"] .kai-code-wrapper,
+html[data-appearance-mode="light"] .kai-code-wrapper {
   background: #f1f8f2 !important;
   color: var(--theme-text-primary) !important;
   border-color: var(--theme-border) !important;
 }
 
 html[data-theme="light"] .progress-track,
+html[data-appearance-mode="light"] .progress-track,
 html[data-theme="light"] .course-progress-bar,
+html[data-appearance-mode="light"] .course-progress-bar,
 html[data-theme="light"] .course-progress-track,
+html[data-appearance-mode="light"] .course-progress-track,
 html[data-theme="light"] .progress-bar,
+html[data-appearance-mode="light"] .progress-bar,
 html[data-theme="light"] .module-progress-bar,
-html[data-theme="light"] .path-progress {
+html[data-appearance-mode="light"] .module-progress-bar,
+html[data-theme="light"] .path-progress,
+html[data-appearance-mode="light"] .path-progress {
   background: #dcecdf !important;
   border-color: #b8cdbd !important;
 }
 
 html[data-theme="light"] .progress-fill,
+html[data-appearance-mode="light"] .progress-fill,
 html[data-theme="light"] .course-progress-fill,
+html[data-appearance-mode="light"] .course-progress-fill,
 html[data-theme="light"] .progress-fill-small,
-html[data-theme="light"] .module-progress-fill {
+html[data-appearance-mode="light"] .progress-fill-small,
+html[data-theme="light"] .module-progress-fill,
+html[data-appearance-mode="light"] .module-progress-fill {
   background: var(--theme-accent) !important;
   box-shadow: none !important;
 }
 
 html[data-theme="light"] .login-overlay,
+html[data-appearance-mode="light"] .login-overlay,
 html[data-theme="light"] .assessment-backdrop,
-html[data-theme="light"] .kai-quick-ask-backdrop {
+html[data-appearance-mode="light"] .assessment-backdrop,
+html[data-theme="light"] .kai-quick-ask-backdrop,
+html[data-appearance-mode="light"] .kai-quick-ask-backdrop {
   background: rgba(23, 53, 32, .32) !important;
 }
 
 html[data-theme="light"] .categories,
+html[data-appearance-mode="light"] .categories,
 html[data-theme="light"] .public-footer,
-html[data-theme="light"] .public-content-section {
+html[data-appearance-mode="light"] .public-footer,
+html[data-theme="light"] .public-content-section,
+html[data-appearance-mode="light"] .public-content-section {
   background: #edf6ef !important;
   border-color: var(--theme-border) !important;
 }
 
-html[data-theme="light"] ::selection {
+html[data-theme="light"] ::selection, html[data-appearance-mode="light"] ::selection {
+  background: rgba(30, 159, 60, .24) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-theme="light"],
+html[data-appearance-mode="light"],
+html[data-theme="light"] body,
+html[data-appearance-mode="light"] body,
+html[data-theme="light"] #root,
+html[data-appearance-mode="light"] #root,
+html[data-theme="light"] .app,
+html[data-appearance-mode="light"] .app,
+html[data-theme="light"] main,
+html[data-appearance-mode="light"] main,
+html[data-theme="light"] [class$="-page"],
+html[data-appearance-mode="light"] [class$="-page"],
+html[data-theme="light"] [class$="-main"],
+html[data-appearance-mode="light"] [class$="-main"],
+html[data-theme="light"] [class$="-container"],
+html[data-appearance-mode="light"] [class$="-container"] {
+  background-color: var(--theme-background) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-theme="light"] .navbar,
+html[data-appearance-mode="light"] .navbar,
+html[data-theme="light"] .dashboard-navbar,
+html[data-appearance-mode="light"] .dashboard-navbar,
+html[data-theme="light"] .courses-navbar,
+html[data-appearance-mode="light"] .courses-navbar,
+html[data-theme="light"] .learn-navbar,
+html[data-appearance-mode="light"] .learn-navbar,
+html[data-theme="light"] .kai-header,
+html[data-appearance-mode="light"] .kai-header,
+html[data-theme="light"] .challenge-header,
+html[data-appearance-mode="light"] .challenge-header,
+html[data-theme="light"] .roadmap-header,
+html[data-appearance-mode="light"] .roadmap-header,
+html[data-theme="light"] .public-navbar,
+html[data-appearance-mode="light"] .public-navbar,
+html[data-theme="light"] .admin-topbar,
+html[data-appearance-mode="light"] .admin-topbar {
+  background: rgba(255, 255, 255, .96) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-border) !important;
+  box-shadow: 0 1px 8px rgba(23, 53, 32, .08) !important;
+}
+
+html[data-theme="light"] .dashboard-sidebar,
+html[data-appearance-mode="light"] .dashboard-sidebar,
+html[data-theme="light"] .dashboard-course-sidebar,
+html[data-appearance-mode="light"] .dashboard-course-sidebar,
+html[data-theme="light"] .admin-sidebar,
+html[data-appearance-mode="light"] .admin-sidebar,
+html[data-theme="light"] .category-sidebar,
+html[data-appearance-mode="light"] .category-sidebar {
+  background: #ffffff !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-border) !important;
+  box-shadow: 4px 0 18px rgba(23, 53, 32, .06) !important;
+}
+
+html[data-theme="light"] .dashboard-card,
+html[data-appearance-mode="light"] .dashboard-card,
+html[data-theme="light"] .dashboard-course-card,
+html[data-appearance-mode="light"] .dashboard-course-card,
+html[data-theme="light"] .continue-card,
+html[data-appearance-mode="light"] .continue-card,
+html[data-theme="light"] .continue-learning,
+html[data-appearance-mode="light"] .continue-learning,
+html[data-theme="light"] .stat-card,
+html[data-appearance-mode="light"] .stat-card,
+html[data-theme="light"] .course-item,
+html[data-appearance-mode="light"] .course-item,
+html[data-theme="light"] .empty-course,
+html[data-appearance-mode="light"] .empty-course,
+html[data-theme="light"] .category-card,
+html[data-appearance-mode="light"] .category-card,
+html[data-theme="light"] .category-overview-card,
+html[data-appearance-mode="light"] .category-overview-card,
+html[data-theme="light"] .course-card,
+html[data-appearance-mode="light"] .course-card,
+html[data-theme="light"] .intro-card,
+html[data-appearance-mode="light"] .intro-card,
+html[data-theme="light"] .kai-sidebar,
+html[data-appearance-mode="light"] .kai-sidebar,
+html[data-theme="light"] .sidebar-card,
+html[data-appearance-mode="light"] .sidebar-card,
+html[data-theme="light"] .kai-input-area,
+html[data-appearance-mode="light"] .kai-input-area,
+html[data-theme="light"] .challenge-card,
+html[data-appearance-mode="light"] .challenge-card,
+html[data-theme="light"] .challenge-header,
+html[data-appearance-mode="light"] .challenge-header,
+html[data-theme="light"] .leaderboard-card,
+html[data-appearance-mode="light"] .leaderboard-card,
+html[data-theme="light"] .info-card,
+html[data-appearance-mode="light"] .info-card,
+html[data-theme="light"] .path-card,
+html[data-appearance-mode="light"] .path-card,
+html[data-theme="light"] .module-card,
+html[data-appearance-mode="light"] .module-card,
+html[data-theme="light"] .progress-card,
+html[data-appearance-mode="light"] .progress-card,
+html[data-theme="light"] .settings-card,
+html[data-appearance-mode="light"] .settings-card,
+html[data-theme="light"] .settings-option-card,
+html[data-appearance-mode="light"] .settings-option-card,
+html[data-theme="light"] .settings-section-panel,
+html[data-appearance-mode="light"] .settings-section-panel,
+html[data-theme="light"] .appearance-card,
+html[data-appearance-mode="light"] .appearance-card,
+html[data-theme="light"] .design-card,
+html[data-appearance-mode="light"] .design-card,
+html[data-theme="light"] .admin-panel,
+html[data-appearance-mode="light"] .admin-panel,
+html[data-theme="light"] .admin-stat-card,
+html[data-appearance-mode="light"] .admin-stat-card,
+html[data-theme="light"] .admin-course-panel,
+html[data-appearance-mode="light"] .admin-course-panel,
+html[data-theme="light"] .admin-video-panel,
+html[data-appearance-mode="light"] .admin-video-panel,
+html[data-theme="light"] .login-modal,
+html[data-appearance-mode="light"] .login-modal,
+html[data-theme="light"] .signup-modal,
+html[data-appearance-mode="light"] .signup-modal,
+html[data-theme="light"] .tutorial-card,
+html[data-appearance-mode="light"] .tutorial-card {
+  background: var(--theme-surface) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-border) !important;
+  box-shadow: 0 8px 24px rgba(23, 53, 32, .08) !important;
+}
+
+html[data-theme="light"] h1,
+html[data-appearance-mode="light"] h1,
+html[data-theme="light"] h2,
+html[data-appearance-mode="light"] h2,
+html[data-theme="light"] h3,
+html[data-appearance-mode="light"] h3,
+html[data-theme="light"] h4,
+html[data-appearance-mode="light"] h4,
+html[data-theme="light"] strong,
+html[data-appearance-mode="light"] strong,
+html[data-theme="light"] label,
+html[data-appearance-mode="light"] label,
+html[data-theme="light"] .logo-text .code,
+html[data-appearance-mode="light"] .logo-text .code,
+html[data-theme="light"] .hero h1,
+html[data-appearance-mode="light"] .hero h1,
+html[data-theme="light"] .dashboard-user-name,
+html[data-appearance-mode="light"] .dashboard-user-name,
+html[data-theme="light"] .course-card h3,
+html[data-appearance-mode="light"] .course-card h3,
+html[data-theme="light"] .course-item h3,
+html[data-appearance-mode="light"] .course-item h3,
+html[data-theme="light"] .kai-message h3,
+html[data-appearance-mode="light"] .kai-message h3 {
+  color: var(--theme-text-primary) !important;
+}
+
+html[data-theme="light"] p,
+html[data-appearance-mode="light"] p,
+html[data-theme="light"] span,
+html[data-appearance-mode="light"] span,
+html[data-theme="light"] li,
+html[data-appearance-mode="light"] li,
+html[data-theme="light"] small,
+html[data-appearance-mode="light"] small,
+html[data-theme="light"] .hero-description,
+html[data-appearance-mode="light"] .hero-description,
+html[data-theme="light"] .dashboard-card p,
+html[data-appearance-mode="light"] .dashboard-card p,
+html[data-theme="light"] .course-card p,
+html[data-appearance-mode="light"] .course-card p,
+html[data-theme="light"] .course-item p,
+html[data-appearance-mode="light"] .course-item p,
+html[data-theme="light"] .input-hint,
+html[data-appearance-mode="light"] .input-hint,
+html[data-theme="light"] .settings-note,
+html[data-appearance-mode="light"] .settings-note,
+html[data-theme="light"] .admin-muted-copy,
+html[data-appearance-mode="light"] .admin-muted-copy {
+  color: var(--theme-text-secondary) !important;
+}
+
+html[data-theme="light"] a,
+html[data-appearance-mode="light"] a,
+html[data-theme="light"] .logo-text .lab,
+html[data-appearance-mode="light"] .logo-text .lab,
+html[data-theme="light"] .lesson-label,
+html[data-appearance-mode="light"] .lesson-label,
+html[data-theme="light"] .course-level,
+html[data-appearance-mode="light"] .course-level,
+html[data-theme="light"] .progress-percent,
+html[data-appearance-mode="light"] .progress-percent,
+html[data-theme="light"] .course-progress-text,
+html[data-appearance-mode="light"] .course-progress-text,
+html[data-theme="light"] .category-icon,
+html[data-appearance-mode="light"] .category-icon,
+html[data-theme="light"] .overview-icon,
+html[data-appearance-mode="light"] .overview-icon {
+  color: var(--theme-accent) !important;
+}
+
+html[data-theme="light"] input,
+html[data-appearance-mode="light"] input,
+html[data-theme="light"] textarea,
+html[data-appearance-mode="light"] textarea,
+html[data-theme="light"] select,
+html[data-appearance-mode="light"] select,
+html[data-theme="light"] .kai-input,
+html[data-appearance-mode="light"] .kai-input,
+html[data-theme="light"] .challenge-answer,
+html[data-appearance-mode="light"] .challenge-answer,
+html[data-theme="light"] .login-modal input,
+html[data-appearance-mode="light"] .login-modal input,
+html[data-theme="light"] .code-editor-input,
+html[data-appearance-mode="light"] .code-editor-input,
+html[data-theme="light"] .admin-search,
+html[data-appearance-mode="light"] .admin-search,
+html[data-theme="light"] .admin-number-input,
+html[data-appearance-mode="light"] .admin-number-input {
+  background: var(--theme-input-background) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-input-border) !important;
+}
+
+html[data-theme="light"] input::placeholder,
+html[data-appearance-mode="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder,
+html[data-appearance-mode="light"] textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+html[data-theme="light"] button,
+html[data-appearance-mode="light"] button,
+html[data-theme="light"] .primary-button,
+html[data-appearance-mode="light"] .primary-button,
+html[data-theme="light"] .get-started,
+html[data-appearance-mode="light"] .get-started,
+html[data-theme="light"] .start-learning,
+html[data-appearance-mode="light"] .start-learning,
+html[data-theme="light"] .start-course-button,
+html[data-appearance-mode="light"] .start-course-button,
+html[data-theme="light"] .send-btn,
+html[data-appearance-mode="light"] .send-btn,
+html[data-theme="light"] .submit-btn,
+html[data-appearance-mode="light"] .submit-btn,
+html[data-theme="light"] .login-button,
+html[data-appearance-mode="light"] .login-button,
+html[data-theme="light"] .module-action-btn,
+html[data-appearance-mode="light"] .module-action-btn {
+  background: var(--theme-button-background) !important;
+  color: var(--theme-button-text) !important;
+  border-color: var(--theme-accent) !important;
+  text-shadow: none !important;
+  box-shadow: 0 4px 12px rgba(30, 159, 60, .18) !important;
+}
+
+html[data-theme="light"] .secondary-button,
+html[data-appearance-mode="light"] .secondary-button,
+html[data-theme="light"] .sign-in,
+html[data-appearance-mode="light"] .sign-in,
+html[data-theme="light"] .learn-back,
+html[data-appearance-mode="light"] .learn-back,
+html[data-theme="light"] .back-lesson,
+html[data-appearance-mode="light"] .back-lesson,
+html[data-theme="light"] .courses-back-button,
+html[data-appearance-mode="light"] .courses-back-button,
+html[data-theme="light"] .kai-back-btn,
+html[data-appearance-mode="light"] .kai-back-btn,
+html[data-theme="light"] .challenge-back-btn,
+html[data-appearance-mode="light"] .challenge-back-btn,
+html[data-theme="light"] .roadmap-back-btn,
+html[data-appearance-mode="light"] .roadmap-back-btn,
+html[data-theme="light"] .login-close,
+html[data-appearance-mode="light"] .login-close,
+html[data-theme="light"] .theme-toggle,
+html[data-appearance-mode="light"] .theme-toggle {
+  background: #ffffff !important;
+  color: var(--theme-accent) !important;
+  border-color: var(--theme-border) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .category-icon,
+html[data-appearance-mode="light"] .category-icon,
+html[data-theme="light"] .feature-icon,
+html[data-appearance-mode="light"] .feature-icon,
+html[data-theme="light"] .intro-card-icon,
+html[data-appearance-mode="light"] .intro-card-icon,
+html[data-theme="light"] .course-card-icon,
+html[data-appearance-mode="light"] .course-card-icon,
+html[data-theme="light"] .course-category-icon,
+html[data-appearance-mode="light"] .course-category-icon,
+html[data-theme="light"] .card-icon,
+html[data-appearance-mode="light"] .card-icon,
+html[data-theme="light"] .empty-course-icon,
+html[data-appearance-mode="light"] .empty-course-icon,
+html[data-theme="light"] .input-avatar,
+html[data-appearance-mode="light"] .input-avatar,
+html[data-theme="light"] .kai-avatar,
+html[data-appearance-mode="light"] .kai-avatar,
+html[data-theme="light"] .learner-avatar,
+html[data-appearance-mode="light"] .learner-avatar {
+  background: #e7f5e9 !important;
+  color: var(--theme-accent) !important;
+  border-color: #9bd2a5 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .kai-bubble,
+html[data-appearance-mode="light"] .kai-bubble,
+html[data-theme="light"] .message-bubble,
+html[data-appearance-mode="light"] .message-bubble,
+html[data-theme="light"] .learner-bubble,
+html[data-appearance-mode="light"] .learner-bubble,
+html[data-theme="light"] .code-block,
+html[data-appearance-mode="light"] .code-block,
+html[data-theme="light"] .kai-code-wrapper,
+html[data-appearance-mode="light"] .kai-code-wrapper {
+  background: #f1f8f2 !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="light"] .progress-track,
+html[data-appearance-mode="light"] .progress-track,
+html[data-theme="light"] .course-progress-bar,
+html[data-appearance-mode="light"] .course-progress-bar,
+html[data-theme="light"] .course-progress-track,
+html[data-appearance-mode="light"] .course-progress-track,
+html[data-theme="light"] .progress-bar,
+html[data-appearance-mode="light"] .progress-bar,
+html[data-theme="light"] .module-progress-bar,
+html[data-appearance-mode="light"] .module-progress-bar,
+html[data-theme="light"] .path-progress,
+html[data-appearance-mode="light"] .path-progress {
+  background: #dcecdf !important;
+  border-color: #b8cdbd !important;
+}
+
+html[data-theme="light"] .progress-fill,
+html[data-appearance-mode="light"] .progress-fill,
+html[data-theme="light"] .course-progress-fill,
+html[data-appearance-mode="light"] .course-progress-fill,
+html[data-theme="light"] .progress-fill-small,
+html[data-appearance-mode="light"] .progress-fill-small,
+html[data-theme="light"] .module-progress-fill,
+html[data-appearance-mode="light"] .module-progress-fill {
+  background: var(--theme-accent) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .login-overlay,
+html[data-appearance-mode="light"] .login-overlay,
+html[data-theme="light"] .assessment-backdrop,
+html[data-appearance-mode="light"] .assessment-backdrop,
+html[data-theme="light"] .kai-quick-ask-backdrop,
+html[data-appearance-mode="light"] .kai-quick-ask-backdrop {
+  background: rgba(23, 53, 32, .32) !important;
+}
+
+html[data-theme="light"] .categories,
+html[data-appearance-mode="light"] .categories,
+html[data-theme="light"] .public-footer,
+html[data-appearance-mode="light"] .public-footer,
+html[data-theme="light"] .public-content-section,
+html[data-appearance-mode="light"] .public-content-section {
+  background: #edf6ef !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="light"] ::selection, html[data-appearance-mode="light"] ::selection {
   background: rgba(30, 159, 60, .24) !important;
   color: var(--theme-text-primary) !important;
 }
