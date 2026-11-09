@@ -7813,3 +7813,73 @@ html[data-design="canvas"] .dashboard-sidebar-bookmark {
     height: 36px !important;
   }
 }
+
+
+/* Phone canvas behavior: the horizontal toolbar is replaced by the shared
+   collapsible vertical sidebar. */
+@media (max-width: 900px) {
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-collapsed .dashboard-course-sidebar {
+    display: none !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-course-sidebar {
+    position: fixed !important;
+    top: 64px !important;
+    right: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 25 !important;
+    display: block !important;
+    width: min(88vw, 280px) !important;
+    height: calc(100vh - 64px) !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 14px 10px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    border-radius: 0 14px 14px 0 !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-course-sidebar,
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-nav {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-brand {
+    display: flex !important;
+    justify-content: flex-start !important;
+    padding: 2px 8px 16px !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-label {
+    display: block !important;
+    padding: 0 8px 12px !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-nav {
+    display: flex !important;
+    width: 100% !important;
+    height: auto !important;
+    gap: 2px !important;
+    overflow: visible !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-nav button {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    padding: 11px 10px !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-divider {
+    display: block !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-bookmark,
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-profile {
+    display: flex !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+  }
+}

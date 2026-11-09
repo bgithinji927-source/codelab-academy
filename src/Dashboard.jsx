@@ -30,6 +30,8 @@ import {
   Settings as SettingsIcon,
   LockKeyhole,
   CircleCheck,
+  Menu,
+  X,
 } from "lucide-react";
 
 import LearnWithKai from "./pages/LearnWithKai";
@@ -145,6 +147,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
   const [learningAssessments, setLearningAssessments] = useState([]);
   const [courseCatalog, setCourseCatalog] = useState(courses);
   const [courseAccess, setCourseAccess] = useState(() => buildFallbackCourseAccess(courses));
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isAdmin = Boolean(user?.isAdmin || user?.role === "admin");
 
   // Initialize store and load current state into local component state
@@ -479,10 +482,20 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
 
   // Dashboard view
   return (
-    <div className={`dashboard-page${selectedCategory ? " has-category-library" : ""}`}>
+    <div className={`dashboard-page${selectedCategory ? " has-category-library" : ""}${isSidebarOpen ? " mobile-sidebar-open" : " mobile-sidebar-collapsed"}`}>
 
       {/* NAVBAR */}
       <header className="dashboard-navbar">
+
+        <button
+          type="button"
+          className="mobile-sidebar-toggle"
+          aria-label={isSidebarOpen ? "Close course navigation" : "Open course navigation"}
+          aria-expanded={isSidebarOpen}
+          onClick={() => setIsSidebarOpen((open) => !open)}
+        >
+          {isSidebarOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+        </button>
 
         <div className="dashboard-logo">
           <span className="code">code</span>
@@ -538,6 +551,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
                       ? (activeView === "videos" ? "active" : "")
                       : (selectedCategory === category ? "active" : "")}
                 onClick={() => {
+                  setIsSidebarOpen(false);
                   if (view === "settings") {
                     setActiveView("settings");
                     setSelectedCategory(null);

@@ -751,3 +751,103 @@ html[data-design="canvas"] .dashboard-sidebar-bookmark {
     height: 36px;
   }
 }
+
+
+/* Phone navigation: every workspace design uses the same collapsible side rail.
+   Canvas stays horizontal on tablet/desktop, but never becomes a tall top bar
+   on a phone. */
+.mobile-sidebar-toggle {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .dashboard-navbar {
+    position: relative;
+    z-index: 30;
+  }
+
+  .mobile-sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    padding: 0;
+    border: 1px solid #d9c8f5;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #7c3aed;
+  }
+
+  .dashboard-page.mobile-sidebar-collapsed .dashboard-course-sidebar {
+    display: none !important;
+  }
+
+  .dashboard-page.mobile-sidebar-open .dashboard-course-sidebar {
+    position: fixed !important;
+    top: 64px !important;
+    right: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 25 !important;
+    display: block !important;
+    width: min(88vw, 280px) !important;
+    height: calc(100vh - 64px) !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 14px 10px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    border-radius: 0 14px 14px 0 !important;
+  }
+
+  .dashboard-page.mobile-sidebar-open .dashboard-course-sidebar,
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-course-sidebar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-brand {
+    display: flex !important;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+    padding: 2px 8px 16px !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-label {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 8px 12px !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    height: auto !important;
+    gap: 2px !important;
+    overflow: visible !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-nav button {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    flex: 0 0 auto !important;
+    padding: 11px 10px !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-divider {
+    display: block !important;
+  }
+
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-bookmark,
+  html[data-design="canvas"] .dashboard-page.mobile-sidebar-open .dashboard-sidebar-profile {
+    display: flex !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+  }
+}
