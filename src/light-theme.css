@@ -170,77 +170,6 @@ html[data-appearance-mode="light"] .tutorial-card {
   box-shadow: 0 8px 24px rgba(23, 53, 32, .08) !important;
 }
 
-html[data-theme="light"] h1,
-html[data-appearance-mode="light"] h1,
-html[data-theme="light"] h2,
-html[data-appearance-mode="light"] h2,
-html[data-theme="light"] h3,
-html[data-appearance-mode="light"] h3,
-html[data-theme="light"] h4,
-html[data-appearance-mode="light"] h4,
-html[data-theme="light"] strong,
-html[data-appearance-mode="light"] strong,
-html[data-theme="light"] label,
-html[data-appearance-mode="light"] label,
-html[data-theme="light"] .logo-text .code,
-html[data-appearance-mode="light"] .logo-text .code,
-html[data-theme="light"] .hero h1,
-html[data-appearance-mode="light"] .hero h1,
-html[data-theme="light"] .dashboard-user-name,
-html[data-appearance-mode="light"] .dashboard-user-name,
-html[data-theme="light"] .course-card h3,
-html[data-appearance-mode="light"] .course-card h3,
-html[data-theme="light"] .course-item h3,
-html[data-appearance-mode="light"] .course-item h3,
-html[data-theme="light"] .kai-message h3,
-html[data-appearance-mode="light"] .kai-message h3 {
-  color: var(--theme-text-primary) !important;
-}
-
-html[data-theme="light"] p,
-html[data-appearance-mode="light"] p,
-html[data-theme="light"] span,
-html[data-appearance-mode="light"] span,
-html[data-theme="light"] li,
-html[data-appearance-mode="light"] li,
-html[data-theme="light"] small,
-html[data-appearance-mode="light"] small,
-html[data-theme="light"] .hero-description,
-html[data-appearance-mode="light"] .hero-description,
-html[data-theme="light"] .dashboard-card p,
-html[data-appearance-mode="light"] .dashboard-card p,
-html[data-theme="light"] .course-card p,
-html[data-appearance-mode="light"] .course-card p,
-html[data-theme="light"] .course-item p,
-html[data-appearance-mode="light"] .course-item p,
-html[data-theme="light"] .input-hint,
-html[data-appearance-mode="light"] .input-hint,
-html[data-theme="light"] .settings-note,
-html[data-appearance-mode="light"] .settings-note,
-html[data-theme="light"] .admin-muted-copy,
-html[data-appearance-mode="light"] .admin-muted-copy {
-  color: var(--theme-text-secondary) !important;
-}
-
-html[data-theme="light"] a,
-html[data-appearance-mode="light"] a,
-html[data-theme="light"] .logo-text .lab,
-html[data-appearance-mode="light"] .logo-text .lab,
-html[data-theme="light"] .lesson-label,
-html[data-appearance-mode="light"] .lesson-label,
-html[data-theme="light"] .course-level,
-html[data-appearance-mode="light"] .course-level,
-html[data-theme="light"] .progress-percent,
-html[data-appearance-mode="light"] .progress-percent,
-html[data-theme="light"] .course-progress-text,
-html[data-appearance-mode="light"] .course-progress-text,
-html[data-theme="light"] .category-icon,
-html[data-appearance-mode="light"] .category-icon,
-html[data-theme="light"] .overview-icon,
-html[data-appearance-mode="light"] .overview-icon {
-  color: var(--theme-accent) !important;
-}
-
 html[data-theme="light"] input,
 html[data-appearance-mode="light"] input,
 html[data-theme="light"] textarea,
@@ -269,31 +198,6 @@ html[data-appearance-mode="light"] input::placeholder,
 html[data-theme="light"] textarea::placeholder,
 html[data-appearance-mode="light"] textarea::placeholder {
   color: var(--theme-text-muted) !important;
-}
-
-html[data-theme="light"] button,
-html[data-appearance-mode="light"] button,
-html[data-theme="light"] .primary-button,
-html[data-appearance-mode="light"] .primary-button,
-html[data-theme="light"] .get-started,
-html[data-appearance-mode="light"] .get-started,
-html[data-theme="light"] .start-learning,
-html[data-appearance-mode="light"] .start-learning,
-html[data-theme="light"] .start-course-button,
-html[data-appearance-mode="light"] .start-course-button,
-html[data-theme="light"] .send-btn,
-html[data-appearance-mode="light"] .send-btn,
-html[data-theme="light"] .submit-btn,
-html[data-appearance-mode="light"] .submit-btn,
-html[data-theme="light"] .login-button,
-html[data-appearance-mode="light"] .login-button,
-html[data-theme="light"] .module-action-btn,
-html[data-appearance-mode="light"] .module-action-btn {
-  background: var(--theme-button-background) !important;
-  color: var(--theme-button-text) !important;
-  border-color: var(--theme-accent) !important;
-  text-shadow: none !important;
-  box-shadow: 0 4px 12px rgba(30, 159, 60, .18) !important;
 }
 
 html[data-theme="light"] .secondary-button,
@@ -545,77 +449,6 @@ html[data-appearance-mode="light"] .tutorial-card {
   box-shadow: 0 8px 24px rgba(23, 53, 32, .08) !important;
 }
 
-html[data-theme="light"] h1,
-html[data-appearance-mode="light"] h1,
-html[data-theme="light"] h2,
-html[data-appearance-mode="light"] h2,
-html[data-theme="light"] h3,
-html[data-appearance-mode="light"] h3,
-html[data-theme="light"] h4,
-html[data-appearance-mode="light"] h4,
-html[data-theme="light"] strong,
-html[data-appearance-mode="light"] strong,
-html[data-theme="light"] label,
-html[data-appearance-mode="light"] label,
-html[data-theme="light"] .logo-text .code,
-html[data-appearance-mode="light"] .logo-text .code,
-html[data-theme="light"] .hero h1,
-html[data-appearance-mode="light"] .hero h1,
-html[data-theme="light"] .dashboard-user-name,
-html[data-appearance-mode="light"] .dashboard-user-name,
-html[data-theme="light"] .course-card h3,
-html[data-appearance-mode="light"] .course-card h3,
-html[data-theme="light"] .course-item h3,
-html[data-appearance-mode="light"] .course-item h3,
-html[data-theme="light"] .kai-message h3,
-html[data-appearance-mode="light"] .kai-message h3 {
-  color: var(--theme-text-primary) !important;
-}
-
-html[data-theme="light"] p,
-html[data-appearance-mode="light"] p,
-html[data-theme="light"] span,
-html[data-appearance-mode="light"] span,
-html[data-theme="light"] li,
-html[data-appearance-mode="light"] li,
-html[data-theme="light"] small,
-html[data-appearance-mode="light"] small,
-html[data-theme="light"] .hero-description,
-html[data-appearance-mode="light"] .hero-description,
-html[data-theme="light"] .dashboard-card p,
-html[data-appearance-mode="light"] .dashboard-card p,
-html[data-theme="light"] .course-card p,
-html[data-appearance-mode="light"] .course-card p,
-html[data-theme="light"] .course-item p,
-html[data-appearance-mode="light"] .course-item p,
-html[data-theme="light"] .input-hint,
-html[data-appearance-mode="light"] .input-hint,
-html[data-theme="light"] .settings-note,
-html[data-appearance-mode="light"] .settings-note,
-html[data-theme="light"] .admin-muted-copy,
-html[data-appearance-mode="light"] .admin-muted-copy {
-  color: var(--theme-text-secondary) !important;
-}
-
-html[data-theme="light"] a,
-html[data-appearance-mode="light"] a,
-html[data-theme="light"] .logo-text .lab,
-html[data-appearance-mode="light"] .logo-text .lab,
-html[data-theme="light"] .lesson-label,
-html[data-appearance-mode="light"] .lesson-label,
-html[data-theme="light"] .course-level,
-html[data-appearance-mode="light"] .course-level,
-html[data-theme="light"] .progress-percent,
-html[data-appearance-mode="light"] .progress-percent,
-html[data-theme="light"] .course-progress-text,
-html[data-appearance-mode="light"] .course-progress-text,
-html[data-theme="light"] .category-icon,
-html[data-appearance-mode="light"] .category-icon,
-html[data-theme="light"] .overview-icon,
-html[data-appearance-mode="light"] .overview-icon {
-  color: var(--theme-accent) !important;
-}
-
 html[data-theme="light"] input,
 html[data-appearance-mode="light"] input,
 html[data-theme="light"] textarea,
@@ -644,31 +477,6 @@ html[data-appearance-mode="light"] input::placeholder,
 html[data-theme="light"] textarea::placeholder,
 html[data-appearance-mode="light"] textarea::placeholder {
   color: var(--theme-text-muted) !important;
-}
-
-html[data-theme="light"] button,
-html[data-appearance-mode="light"] button,
-html[data-theme="light"] .primary-button,
-html[data-appearance-mode="light"] .primary-button,
-html[data-theme="light"] .get-started,
-html[data-appearance-mode="light"] .get-started,
-html[data-theme="light"] .start-learning,
-html[data-appearance-mode="light"] .start-learning,
-html[data-theme="light"] .start-course-button,
-html[data-appearance-mode="light"] .start-course-button,
-html[data-theme="light"] .send-btn,
-html[data-appearance-mode="light"] .send-btn,
-html[data-theme="light"] .submit-btn,
-html[data-appearance-mode="light"] .submit-btn,
-html[data-theme="light"] .login-button,
-html[data-appearance-mode="light"] .login-button,
-html[data-theme="light"] .module-action-btn,
-html[data-appearance-mode="light"] .module-action-btn {
-  background: var(--theme-button-background) !important;
-  color: var(--theme-button-text) !important;
-  border-color: var(--theme-accent) !important;
-  text-shadow: none !important;
-  box-shadow: 0 4px 12px rgba(30, 159, 60, .18) !important;
 }
 
 html[data-theme="light"] .secondary-button,
