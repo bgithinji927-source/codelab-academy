@@ -7916,3 +7916,15 @@ html[data-theme="dark"]:not([data-appearance-mode="light"])[data-design="canvas"
     padding-top: 82px !important;
   }
 }
+
+
+/* Keep the dashboard brand readable against the dark navbar. */
+html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-navbar .dashboard-logo .code {
+  color: #effff0 !important;
+}
+html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-navbar .dashboard-logo .lab {
+  color: var(--emerald-shine, #b7ff51) !important;
+}
+html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-navbar .dashboard-logo small {
+  color: #9ab8a0 !important;
+}
