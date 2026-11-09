@@ -4432,3 +4432,37 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-keyword { colo
 html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-builtin { color: #087f8c !important; }
 html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-function { color: #08745f !important; }
 html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-token-operator { color: #334155 !important; }
+
+
+/* Compact lesson header on phones. Keep course, lesson, progress, and actions
+   available without letting the header consume the lesson viewport. */
+@media (max-width: 700px) {
+  .learn-page > .learn-navbar {
+    min-height: 72px;
+    height: auto;
+    padding: 5px 10px;
+    row-gap: 4px;
+  }
+
+  .learn-page > .learn-navbar .firebox-brand {
+    display: none;
+  }
+
+  .learn-page > .learn-navbar .learn-top-actions {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 27px;
+    gap: 5px;
+    padding: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .learn-page > .learn-navbar .learn-top-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .learn-page > .conversation-container {
+    padding-top: 82px;
+  }
+}

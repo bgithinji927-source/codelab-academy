@@ -7883,3 +7883,36 @@ html[data-design="canvas"] .dashboard-sidebar-bookmark {
     margin-top: 10px !important;
   }
 }
+
+
+/* Final compact lesson header override for phones. */
+@media (max-width: 700px) {
+  html .learn-page > .learn-navbar {
+    min-height: 72px !important;
+    height: auto !important;
+    padding: 5px 10px !important;
+    row-gap: 4px !important;
+  }
+
+  html .learn-page > .learn-navbar .firebox-brand {
+    display: none !important;
+  }
+
+  html .learn-page > .learn-navbar .learn-top-actions {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-height: 27px !important;
+    gap: 5px !important;
+    padding: 0 !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+  }
+
+  html .learn-page > .learn-navbar .learn-top-actions::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html .learn-page > .conversation-container {
+    padding-top: 82px !important;
+  }
+}
