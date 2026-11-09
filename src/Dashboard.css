@@ -673,3 +673,81 @@
     flex: 0 0 auto;
   }
 }
+
+
+/* Compact canvas workspace navigation. Keep the toolbar on one shallow row
+   instead of stacking the brand, label, categories, and utility controls. */
+html[data-design="canvas"] .dashboard-course-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 0;
+  height: auto;
+  padding: 8px 12px;
+  margin: 10px 16px 0;
+  overflow: hidden;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-brand {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-brand svg {
+  width: 22px;
+  height: 22px;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-label {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-nav {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 38px;
+  margin: 0;
+  align-items: center;
+  padding: 0;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-nav button {
+  min-width: max-content;
+  height: 34px;
+  padding: 7px 9px;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-divider,
+html[data-design="canvas"] .dashboard-sidebar-profile {
+  display: none;
+}
+
+html[data-design="canvas"] .dashboard-sidebar-bookmark {
+  flex: 0 0 auto;
+  width: auto;
+  margin: 0;
+  padding: 7px 9px;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  html[data-design="canvas"] .dashboard-course-sidebar {
+    gap: 8px;
+    margin: 8px 8px 0;
+    padding: 7px 8px;
+  }
+
+  html[data-design="canvas"] .dashboard-sidebar-label,
+  html[data-design="canvas"] .dashboard-sidebar-bookmark {
+    display: none;
+  }
+
+  html[data-design="canvas"] .dashboard-sidebar-nav {
+    height: 36px;
+  }
+}
