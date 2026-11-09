@@ -4530,3 +4530,29 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code .kai-token
 html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-token-function { color: #795e26 !important; }
 html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-code .kai-token-operator,
 html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-token-operator { color: #333333 !important; }
+
+
+/* Preserve Kai's borderless teaching board while keeping phone messages
+   visually separated instead of running into one another. */
+@media (max-width: 700px) {
+  .learn-page:not(.kai-chatgpt-mode) .chat-row {
+    margin-bottom: clamp(1.5rem, 6vw, 2.4rem);
+  }
+
+  .learn-page:not(.kai-chatgpt-mode) .kai-board-content,
+  .learn-page:not(.kai-chatgpt-mode) .learner-board-content {
+    padding-top: 2px;
+    padding-bottom: 8px;
+  }
+
+  .learn-page:not(.kai-chatgpt-mode) > .learn-navbar .learn-top-actions {
+    justify-content: flex-end;
+    margin-left: auto;
+    width: auto;
+    max-width: calc(100vw - 24px);
+  }
+
+  .learn-page:not(.kai-chatgpt-mode) > .learn-navbar .kai-light-mode-toggle {
+    margin-left: auto;
+  }
+}

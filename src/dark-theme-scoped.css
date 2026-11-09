@@ -7939,3 +7939,29 @@ html[data-theme="dark"]:not([data-appearance-mode="light"]) .dashboard-content-c
 html[data-theme="dark"]:not([data-appearance-mode="light"]) .stat-card p {
   color: #a9c5ae !important;
 }
+
+
+/* Final Kai phone alignment: keep the light/dark toggle with the right-side
+   controls; do not reintroduce message cards into the continuous board. */
+@media (max-width: 700px) {
+  html[data-theme="dark"]:not([data-appearance-mode="light"]) .learn-page:not(.kai-chatgpt-mode) > .learn-navbar .learn-top-actions {
+    justify-content: flex-end !important;
+    margin-left: auto !important;
+    width: auto !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  html[data-theme="dark"]:not([data-appearance-mode="light"]) .learn-page:not(.kai-chatgpt-mode) > .learn-navbar .kai-light-mode-toggle {
+    margin-left: auto !important;
+  }
+
+  html[data-theme="dark"]:not([data-appearance-mode="light"]) .learn-page:not(.kai-chatgpt-mode) .chat-row {
+    margin-bottom: clamp(1.5rem, 6vw, 2.4rem) !important;
+  }
+
+  html[data-theme="dark"]:not([data-appearance-mode="light"]) .learn-page:not(.kai-chatgpt-mode) .kai-board-content,
+  html[data-theme="dark"]:not([data-appearance-mode="light"]) .learn-page:not(.kai-chatgpt-mode) .learner-board-content {
+    padding-top: 2px !important;
+    padding-bottom: 8px !important;
+  }
+}
