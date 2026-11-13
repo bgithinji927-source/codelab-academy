@@ -6,6 +6,7 @@ import pythonListsCollectionsDelivery from "./pythonListsCollectionsDelivery.mjs
 import pythonDictionariesDelivery from "./pythonDictionariesDelivery.mjs";
 import pythonLoopsDelivery from "./pythonLoopsDelivery.mjs";
 import pythonFunctionsDelivery from "./pythonFunctionsDelivery.mjs";
+import pythonErrorsDebuggingDelivery from "./pythonErrorsDebuggingDelivery.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -3306,6 +3307,7 @@ lessons.python.forEach((lesson) => {
   else if (lesson.id === "python-lists-collections") lesson.delivery = pythonListsCollectionsDelivery;
   else if (lesson.id === "python-dictionaries") lesson.delivery = pythonDictionariesDelivery;
   else if (lesson.id === "python-functions-roadmap") lesson.delivery = pythonFunctionsDelivery;
+  else if (lesson.id === "python-errors-debugging") lesson.delivery = pythonErrorsDebuggingDelivery;
   else if (!lesson.delivery || lesson.delivery.type !== "authored") lesson.delivery = makePythonAuthoredDelivery(lesson);
 });
 
