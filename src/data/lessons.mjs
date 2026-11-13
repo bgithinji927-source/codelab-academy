@@ -27,6 +27,7 @@ import javascriptFunctionsMarkdown from "./javascriptFunctionsLessonContent.mjs"
 import javascriptStringsMarkdown from "./javascriptStringsLessonContent.mjs";
 import javascriptArraysMarkdown from "./javascriptArraysLessonContent.mjs";
 import javaSyntaxMarkdown from "./javaSyntaxLessonContent.mjs";
+import javaVariablesMarkdown from "./javaVariablesLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1601,6 +1602,12 @@ const javaSyntaxAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "A complete, four-part introduction to Java, its execution environment, syntax, program structure, output, variables, multiple classes, and debugging.",
   { 1: "B", 2: "C", 3: "B", 4: "B", 5: "C", 6: "C", 7: "B", 8: "B" }
 );
+const javaVariablesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javaVariablesMarkdown,
+  "java-variables-and-data-types",
+  "A complete, four-part lesson on Java variables, scope, primitive and reference types, conversions, wrappers, constants, and practical programs.",
+  { 1: "B", 2: "A", 3: "C", 4: "B", 5: "C", 6: "D", 7: "C", 8: "B", 9: "C", 10: "B" }
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
@@ -2503,6 +2510,20 @@ lessons.java = [{
     "Create programs with multiple classes and correct common errors",
   ],
   delivery: javaSyntaxAuthoredDelivery,
+}, {
+  id: "java-variables-and-data-types",
+  title: "Java: Variables and Data Types",
+  description: "Understand Java variable declarations, scope, primitive and reference types, type conversions, wrapper classes, and constants.",
+  level: "Beginner",
+  estimatedTime: "75 min",
+  objectives: [
+    "Declare, initialize, and reassign Java variables",
+    "Understand local, instance, and static variables and their scope",
+    "Recognize Java primitive and reference data types",
+    "Convert values safely between data types",
+    "Use wrapper classes and final constants",
+  ],
+  delivery: javaVariablesAuthoredDelivery,
 }];
 
 // Apply the supplied full authored lesson to the matching roadmap entry while
