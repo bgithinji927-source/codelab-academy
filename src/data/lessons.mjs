@@ -17,6 +17,8 @@ import pythonBasicsProjectDelivery from "./pythonBasicsProjectDelivery.mjs";
 import pythonListComprehensionsDelivery from "./pythonListComprehensionsDelivery.mjs";
 import pythonModulesPackagesRoadmapDelivery from "./pythonModulesPackagesRoadmapDelivery.mjs";
 import pythonExceptionsDelivery from "./pythonExceptionsDelivery.mjs";
+import javascriptIntroductionMarkdown from "./javascriptIntroductionLessonContent.mjs";
+import javascriptVariablesMarkdown from "./javascriptVariablesLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1359,6 +1361,55 @@ The working rule is to define the input and expected result first, apply the con
   };
 }
 
+const javascriptIntroductionAuthoredDelivery = (() => {
+  const headings = [...javascriptIntroductionMarkdown.matchAll(/^# PART ([1-4]) OF 4: (.+)$/gm)];
+  const sections = headings.map((match, index) => {
+    const start = match.index;
+    const end = headings[index + 1]?.index ?? javascriptIntroductionMarkdown.length;
+    return {
+      id: `javascript-introduction-part-${match[1]}`,
+      title: match[2].trim(),
+      description: `Part ${match[1]} of 4 — ${match[2].trim()}`,
+      blocks: [{ type: "text", text: javascriptIntroductionMarkdown.slice(start, end).trim() }],
+    };
+  });
+  if (sections.length) {
+    const firstHeading = headings[0].index;
+    const opening = javascriptIntroductionMarkdown.slice(0, firstHeading).trim();
+    if (opening) sections[0].blocks[0].text = `${opening}\n\n${sections[0].blocks[0].text}`;
+  }
+  return {
+    type: "authored",
+    version: 1,
+    intro: "A complete, four-part authored introduction to JavaScript, preserving the supplied explanations, examples, tables, exercises, assessment, and completion checklist.",
+    sections,
+  };
+})();
+
+const javascriptVariablesAuthoredDelivery = (() => {
+  const headings = [...javascriptVariablesMarkdown.matchAll(/^# PART ([1-4]) OF 4: (.+)$/gm)];
+  const sections = headings.map((match, index) => {
+    const start = match.index;
+    const end = headings[index + 1]?.index ?? javascriptVariablesMarkdown.length;
+    return {
+      id: `javascript-variables-part-${match[1]}`,
+      title: match[2].trim(),
+      description: `Part ${match[1]} of 4 — ${match[2].trim()}`,
+      blocks: [{ type: "text", text: javascriptVariablesMarkdown.slice(start, end).trim() }],
+    };
+  });
+  if (sections.length) {
+    const opening = javascriptVariablesMarkdown.slice(0, headings[0].index).trim();
+    if (opening) sections[0].blocks[0].text = `${opening}\n\n${sections[0].blocks[0].text}`;
+  }
+  return {
+    type: "authored",
+    version: 1,
+    intro: "A complete, four-part authored lesson on JavaScript variables, declaration keywords, scope, hoisting, practical applications, exercises, and assessment.",
+    sections,
+  };
+})();
+
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
     id,
@@ -2244,6 +2295,24 @@ lessons.javascript = [
   ]),
   ...javascriptMasteryLessonPlans.map(makeJavaScriptMasteryLesson),
 ];
+
+// Apply the supplied full authored lesson to the matching roadmap entry while
+// keeping its existing ID, title, position, and all other lessons unchanged.
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "javascript-roadmap-introduction-to-javascript") {
+    lesson.title = "Introduction to JavaScript";
+    lesson.delivery = javascriptIntroductionAuthoredDelivery;
+    break;
+  }
+}
+
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "javascript-roadmap-variables-let-const-var") {
+    lesson.title = "Variables (`let`, `const`, `var`)";
+    lesson.delivery = javascriptVariablesAuthoredDelivery;
+    break;
+  }
+}
 
 function makeMasteryProjectLesson(courseId, courseLessons) {
   const courseTitle = courseId
