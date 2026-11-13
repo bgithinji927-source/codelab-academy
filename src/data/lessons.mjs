@@ -1362,78 +1362,133 @@ The working rule is to define the input and expected result first, apply the con
   };
 }
 
-const javascriptIntroductionAuthoredDelivery = (() => {
-  const headings = [...javascriptIntroductionMarkdown.matchAll(/^# PART ([1-4]) OF 4: (.+)$/gm)];
-  const sections = headings.map((match, index) => {
-    const start = match.index;
-    const end = headings[index + 1]?.index ?? javascriptIntroductionMarkdown.length;
-    return {
-      id: `javascript-introduction-part-${match[1]}`,
-      title: match[2].trim(),
-      description: `Part ${match[1]} of 4 — ${match[2].trim()}`,
-      blocks: [{ type: "text", text: javascriptIntroductionMarkdown.slice(start, end).trim() }],
-    };
-  });
-  if (sections.length) {
-    const firstHeading = headings[0].index;
-    const opening = javascriptIntroductionMarkdown.slice(0, firstHeading).trim();
-    if (opening) sections[0].blocks[0].text = `${opening}\n\n${sections[0].blocks[0].text}`;
-  }
-  return {
-    type: "authored",
-    version: 1,
-    intro: "A complete, four-part authored introduction to JavaScript, preserving the supplied explanations, examples, tables, exercises, assessment, and completion checklist.",
-    sections,
-  };
-})();
+function splitAuthoredLessonParts(markdown) {
+  const headings = [...markdown.matchAll(/^#{1,3}\s*PART ([1-4]) OF 4\s*[—:-]\s*(.+)$/gim)];
+  return headings.map((match, index) => ({
+    number: match[1],
+    title: match[2].trim(),
+    start: match.index,
+    bodyStart: match.index + match[0].length,
+    end: headings[index + 1]?.index ?? markdown.length,
+  }));
+}
 
-const javascriptVariablesAuthoredDelivery = (() => {
-  const headings = [...javascriptVariablesMarkdown.matchAll(/^# PART ([1-4]) OF 4: (.+)$/gm)];
-  const sections = headings.map((match, index) => {
-    const start = match.index;
-    const end = headings[index + 1]?.index ?? javascriptVariablesMarkdown.length;
-    return {
-      id: `javascript-variables-part-${match[1]}`,
-      title: match[2].trim(),
-      description: `Part ${match[1]} of 4 — ${match[2].trim()}`,
-      blocks: [{ type: "text", text: javascriptVariablesMarkdown.slice(start, end).trim() }],
-    };
-  });
-  if (sections.length) {
-    const opening = javascriptVariablesMarkdown.slice(0, headings[0].index).trim();
-    if (opening) sections[0].blocks[0].text = `${opening}\n\n${sections[0].blocks[0].text}`;
-  }
-  return {
-    type: "authored",
-    version: 1,
-    intro: "A complete, four-part authored lesson on JavaScript variables, declaration keywords, scope, hoisting, practical applications, exercises, and assessment.",
-    sections,
-  };
-})();
+function parseAuthoredMarkdownBlocks(markdown) {
+  const lines = markdown.replace(/\r/g, "").split("\n");
+  const blocks = [];
+  let index = 0;
+  const isTableDivider = (line) => /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
+  const tableCells = (line) => line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
 
-const javascriptOperatorsAuthoredDelivery = (() => {
-  const headings = [...javascriptOperatorsMarkdown.matchAll(/^#{1,3}\s*PART ([1-4]) OF 4\s*[—:-]\s*(.+)$/gim)];
-  const sections = headings.map((match, index) => {
-    const start = match.index;
-    const end = headings[index + 1]?.index ?? javascriptOperatorsMarkdown.length;
-    return {
-      id: `javascript-operators-part-${match[1]}`,
-      title: match[2].trim(),
-      description: `Part ${match[1]} of 4 — ${match[2].trim()}`,
-      blocks: [{ type: "text", text: javascriptOperatorsMarkdown.slice(start, end).trim() }],
-    };
-  });
-  if (sections.length) {
-    const opening = javascriptOperatorsMarkdown.slice(0, headings[0].index).trim();
-    if (opening) sections[0].blocks[0].text = `${opening}\n\n${sections[0].blocks[0].text}`;
+  while (index < lines.length) {
+    const line = lines[index];
+    if (!line.trim()) { index += 1; continue; }
+
+    const fence = line.match(/^\s*```([\w+-]*)\s*$/);
+    if (fence) {
+      const codeLines = [];
+      index += 1;
+      while (index < lines.length && !/^\s*```\s*$/.test(lines[index])) codeLines.push(lines[index++]);
+      if (index < lines.length) index += 1;
+      let codeLanguage = fence[1] || "text";
+      const snippet = codeLines.join("\n");
+      if (["javascript", "js"].includes(codeLanguage.toLowerCase()) && !/(^|\n)\s*(import|export)\b|\bawait\b/.test(snippet)) {
+        try { new Function(snippet); } catch { codeLanguage = "text"; }
+      }
+      blocks.push({ type: "code", language: codeLanguage, code: snippet });
+      continue;
+    }
+
+    if (line.includes("|") && index + 1 < lines.length && isTableDivider(lines[index + 1])) {
+      const columns = tableCells(line);
+      index += 2;
+      const rows = [];
+      while (index < lines.length && lines[index].includes("|") && lines[index].trim()) rows.push(tableCells(lines[index++]));
+      blocks.push({ type: "table", columns, rows });
+      continue;
+    }
+
+    const heading = line.match(/^\s*(#{1,6})\s+(.+?)\s*#*\s*$/);
+    if (heading) {
+      blocks.push({ type: heading[1].length <= 2 ? "heading" : "subheading", text: heading[2].trim() });
+      index += 1;
+      continue;
+    }
+
+    const listItem = line.match(/^\s*(?:[-*+]\s+|\d+[.)]\s+)(.*)$/);
+    if (listItem) {
+      const items = [];
+      let ordered = /^\s*\d+[.)]\s+/.test(line);
+      let checklist = /^\s*[-*+]\s+\[[ xX]\]\s+/.test(line);
+      while (index < lines.length) {
+        const current = lines[index];
+        const match = current.match(/^\s*(?:([-*+]\s+)|(\d+[.)]\s+))(.*)$/);
+        if (!match) break;
+        const isOrdered = Boolean(match[2]);
+        const isChecklist = !isOrdered && /^\[[ xX]\]\s+/.test(match[3]);
+        if (isOrdered !== ordered || isChecklist !== checklist) break;
+        let value = match[3];
+        if (isChecklist) value = value.replace(/^\[[ xX]\]\s+/, "");
+        items.push(checklist ? { text: value, done: /^\[[xX]\]/.test(match[3]) } : value);
+        index += 1;
+      }
+      blocks.push({ type: checklist ? "checklist" : ordered ? "numbered" : "bullets", ...(checklist ? { title: "Lesson checklist" } : {}), items });
+      continue;
+    }
+
+    if (/^\s*(?:---+|\*\*\*+|___+)\s*$/.test(line)) {
+      blocks.push({ type: "text", text: line.trim() });
+      index += 1;
+      continue;
+    }
+
+    const paragraph = [line];
+    index += 1;
+    while (index < lines.length && lines[index].trim()) {
+      if (/^\s*```/.test(lines[index]) || /^\s*#{1,6}\s+/.test(lines[index]) || /^\s*(?:[-*+]\s+|\d+[.)]\s+)/.test(lines[index])) break;
+      if (lines[index].includes("|") && index + 1 < lines.length && isTableDivider(lines[index + 1])) break;
+      paragraph.push(lines[index++]);
+    }
+    blocks.push({ type: "text", text: paragraph.join("\n").trim() });
   }
+  return blocks;
+}
+
+function makeAuthoredMarkdownDelivery(markdown, lessonId, intro) {
+  const parts = splitAuthoredLessonParts(markdown);
+  const opening = parts.length ? markdown.slice(0, parts[0].start).trim() : markdown.trim();
   return {
     type: "authored",
     version: 1,
-    intro: "A complete, four-part authored lesson covering JavaScript arithmetic, assignment, comparison, logical, string, ternary, and type operators, with practical projects and assessment.",
-    sections,
+    intro,
+    sections: parts.map((part, index) => {
+      const body = markdown.slice(part.bodyStart, part.end).trim();
+      const content = [index === 0 ? opening : "", body].filter(Boolean).join("\n\n");
+      return {
+        id: `${lessonId}-part-${part.number}`,
+        title: part.title,
+        description: `Part ${part.number} of 4 — ${part.title}`,
+        blocks: parseAuthoredMarkdownBlocks(content),
+      };
+    }),
   };
-})();
+}
+
+const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javascriptIntroductionMarkdown,
+  "javascript-introduction",
+  "A complete, four-part JavaScript introduction with structured explanations, comparison tables, code examples, exercises, assessment, and completion checklist."
+);
+const javascriptVariablesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javascriptVariablesMarkdown,
+  "javascript-variables",
+  "A complete, four-part lesson on JavaScript variables, declaration keywords, scope, hoisting, practical applications, exercises, and assessment."
+);
+const javascriptOperatorsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javascriptOperatorsMarkdown,
+  "javascript-operators",
+  "A complete, four-part lesson covering JavaScript arithmetic, assignment, comparison, logical, string, ternary, and type operators, with practical projects and assessment."
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
