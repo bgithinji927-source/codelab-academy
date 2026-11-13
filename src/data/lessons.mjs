@@ -20,6 +20,7 @@ import pythonExceptionsDelivery from "./pythonExceptionsDelivery.mjs";
 import javascriptIntroductionMarkdown from "./javascriptIntroductionLessonContent.mjs";
 import javascriptVariablesMarkdown from "./javascriptVariablesLessonContent.mjs";
 import javascriptOperatorsMarkdown from "./javascriptOperatorsLessonContent.mjs";
+import javascriptInputOutputMarkdown from "./javascriptInputOutputLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1489,6 +1490,11 @@ const javascriptOperatorsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "javascript-operators",
   "A complete, four-part lesson covering JavaScript arithmetic, assignment, comparison, logical, string, ternary, and type operators, with practical projects and assessment."
 );
+const javascriptInputOutputAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javascriptInputOutputMarkdown,
+  "javascript-input-output",
+  "A complete, four-part lesson on the Input–Process–Output cycle, browser and Node.js input/output, data conversion, validation, and practical projects."
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
@@ -2398,6 +2404,14 @@ for (const lesson of lessons.javascript) {
   if (lesson.id === "javascript-roadmap-operators") {
     lesson.title = "JavaScript: Operators";
     lesson.delivery = javascriptOperatorsAuthoredDelivery;
+    break;
+  }
+}
+
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "javascript-roadmap-input-and-output") {
+    lesson.title = "JavaScript: Input and Output";
+    lesson.delivery = javascriptInputOutputAuthoredDelivery;
     break;
   }
 }
