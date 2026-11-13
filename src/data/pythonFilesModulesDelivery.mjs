@@ -1,163 +1,1958 @@
 const delivery = {
-  type: "authored",
-  version: 1,
-  intro: "Build a complete understanding of Python file handling, resource management, modules, imports, JSON, packages, and reusable application structure.",
-  sections: [
+  "type": "authored",
+  "version": 1,
+  "sections": [
     {
-      id: "python-files-modules-foundations",
-      title: "Introduction to File Handling",
-      description: "Part 1 of 4 · Understand persistence, file types, modes, reading, writing, appending, and automatic cleanup.",
-      blocks: [
-        { type: "heading", text: "What file handling solves" },
-        { type: "text", text: "A variable normally stores information in the program's working memory. That information is available while the program is running, but it does not automatically survive when the process ends. File handling lets a program create, open, read, write, update, and remove information stored outside the running process." },
-        { type: "code", language: "python", filename: "temporary_data.py", code: "learner_name = \"Amina\"\ncompleted_lessons = 3\nprint(learner_name, completed_lessons)" },
-        { type: "text", text: "The values above are useful during this run. If the application closes, the values must be loaded again from a file or another storage system. File handling is useful for learner records, bank transactions, product inventory, uploaded content, settings, reports, and application logs." },
-        { type: "heading", text: "Text files and binary files" },
-        { type: "table", columns: ["File category", "Meaning", "Examples"], rows: [
-          ["Text", "Characters represented using an encoding and readable by text tools", ".txt, .csv, .json, .py"],
-          ["Binary", "Bytes interpreted by a particular format or application", ".jpg, .png, .mp3, .pdf"],
-        ] },
-        { type: "code", language: "text", filename: "learners.txt", code: "Amina\nJon\nMusa\n" },
-        { type: "text", text: "A text file can be inspected as characters. A photograph, audio file, or PDF normally contains binary data and should be opened in binary mode when the bytes must be preserved exactly. The extension is a naming convention; the actual content and the mode used to interpret it still matter." },
-        { type: "heading", text: "The open() function" },
-        { type: "code", language: "python", filename: "open_file.py", code: "file = open(\"learners.txt\", \"r\")\ncontent = file.read()\nprint(content)\nfile.close()" },
-        { type: "text", text: "open() receives a filename or path and a mode. It returns a file object. In this example, file is the object, learners.txt is the path, and r requests reading. close() releases the operating-system resource. The safer with pattern appears later and should be the normal choice for application code." },
-        { type: "heading", text: "File modes" },
-        { type: "table", columns: ["Mode", "Purpose", "Effect and caution"], rows: [
-          ["r", "Read text", "The file must already exist; missing paths raise FileNotFoundError"],
-          ["w", "Write text", "Creates a file or replaces all existing content"],
-          ["a", "Append text", "Creates a file if needed and writes after existing content"],
-          ["x", "Create exclusively", "Creates a new file and fails if the path already exists"],
-          ["b", "Binary flag", "Use with another mode, such as rb or wb, to work with bytes"],
-          ["t", "Text flag", "The default text mode; can combine with another mode"],
-          ["r+", "Read and write", "Requires an existing file and does not initially truncate it"],
-        ] },
-        { type: "heading", text: "Reading with read(), readline(), and readlines()" },
-        { type: "code", language: "python", filename: "reading_methods.py", code: "with open(\"learners.txt\", \"r\", encoding=\"utf-8\") as file:\n    complete_text = file.read()\n    print(complete_text)\n\nwith open(\"learners.txt\", \"r\", encoding=\"utf-8\") as file:\n    first = file.readline()\n    remaining = file.readlines()\n    print(\"First:\", first.strip())\n    print(\"Remaining:\", remaining)" },
-        { type: "text", text: "read() returns all remaining content as one string. readline() returns one line and advances the file position. readlines() returns the remaining lines as a list, often including each line's newline character. strip() is useful when displaying a line without its surrounding whitespace. For very large files, loop over the file rather than loading every line into memory at once." },
-        { type: "heading", text: "Writing and appending records" },
-        { type: "code", language: "python", filename: "write_append.py", code: "with open(\"learners.txt\", \"w\", encoding=\"utf-8\") as file:\n    file.write(\"Amina\\n\")\n    file.write(\"Jon\\n\")\n    file.write(\"Musa\\n\")\n\nwith open(\"learners.txt\", \"a\", encoding=\"utf-8\") as file:\n    file.write(\"Lina\\n\")" },
-        { type: "text", text: "The first block creates a fresh three-line file or replaces the old contents. The second block keeps those records and adds Lina after them. The newline escape separates records. Use w only when replacing the file is intentional; use a when adding information should preserve what is already there." },
-        { type: "heading", text: "The with statement" },
-        { type: "code", language: "python", filename: "managed_file.py", code: "with open(\"learners.txt\", \"r\", encoding=\"utf-8\") as file:\n    content = file.read()\n    print(content)\n\nprint(\"The file block has finished.\")" },
-        { type: "text", text: "with opens the resource, gives it the name file, runs the indented block, and closes the file when the block finishes. Cleanup also occurs when the block exits because of an exception. This prevents forgotten handles and is generally safer than manually calling close() on every path." },
-        { type: "callout", title: "Part 1 checkpoint", text: "You should now be able to explain why variables are temporary, distinguish text from binary files, choose a mode, read with three methods, replace or append content, and explain why with is preferred." },
-      ],
+      "id": "python-pythonfilesmodules-part-1",
+      "title": "PART 1 OF 4: INTRODUCTION TO FILE HANDLING",
+      "description": "Part 1 of 4",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "PYTHON FILES AND MODULES"
+        },
+        {
+          "type": "heading",
+          "text": "1. What Is File Handling?"
+        },
+        {
+          "type": "text",
+          "text": "File handling in Python refers to the process of creating, opening, reading, writing, updating, and deleting files using Python code."
+        },
+        {
+          "type": "text",
+          "text": "Normally, when a Python program runs, the data stored in its variables exists temporarily in memory."
+        },
+        {
+          "type": "text",
+          "text": "For example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "student_name = \"Brian\"\nstudent_age = 22"
+        },
+        {
+          "type": "text",
+          "text": "These variables store information while the program is running. However, when the program closes, the values are not automatically saved for the next execution."
+        },
+        {
+          "type": "text",
+          "text": "File handling allows us to save information permanently so that it can be accessed later."
+        },
+        {
+          "type": "heading",
+          "text": "Real-world applications"
+        },
+        {
+          "type": "text",
+          "text": "File handling is useful in:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Student management systems for storing student records.",
+            "Banking applications for maintaining transaction records.",
+            "Inventory systems for saving product information.",
+            "Websites for storing uploaded files.",
+            "Software applications for saving settings and logs."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "2. Types of Files in Python"
+        },
+        {
+          "type": "text",
+          "text": "There are two common categories of files:"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "File type",
+            "Description",
+            "Examples"
+          ],
+          "rows": [
+            [
+              "Text files",
+              "Store readable text",
+              "`.txt`, `.csv`, `.json`, `.py`"
+            ],
+            [
+              "Binary files",
+              "Store data in binary format",
+              "`.jpg`, `.png`, `.mp3`, `.pdf`"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Text files"
+        },
+        {
+          "type": "text",
+          "text": "A text file contains readable characters."
+        },
+        {
+          "type": "text",
+          "text": "For example, a file named `students.txt` could contain:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Brian\nJohn\nMary\nPeter"
+        },
+        {
+          "type": "heading",
+          "text": "Binary files"
+        },
+        {
+          "type": "text",
+          "text": "Binary files store information in a format that is not normally readable as plain text."
+        },
+        {
+          "type": "text",
+          "text": "Examples include photographs, audio files and PDF documents."
+        },
+        {
+          "type": "text",
+          "text": "Python can work with both text and binary files."
+        },
+        {
+          "type": "heading",
+          "text": "3. Opening Files in Python"
+        },
+        {
+          "type": "text",
+          "text": "Python provides the built-in `open()` function to open files."
+        },
+        {
+          "type": "text",
+          "text": "Syntax:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "open(\"filename\", \"mode\")"
+        },
+        {
+          "type": "text",
+          "text": "There are two main arguments:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`filename`: The name or path of the file.",
+            "`mode`: Specifies what you want to do with the file."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Common file modes"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Mode",
+            "Meaning"
+          ],
+          "rows": [
+            [
+              "`\"r\"`",
+              "Read an existing file"
+            ],
+            [
+              "`\"w\"`",
+              "Write to a file, replacing existing content"
+            ],
+            [
+              "`\"a\"`",
+              "Append information to a file"
+            ],
+            [
+              "`\"x\"`",
+              "Create a new file, failing if it already exists"
+            ],
+            [
+              "`\"b\"`",
+              "Open a file in binary mode"
+            ],
+            [
+              "`\"t\"`",
+              "Open a file in text mode (default)"
+            ],
+            [
+              "`\"r+\"`",
+              "Read and write without initially truncating the file"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Example: Opening a file"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file = open(\"students.txt\", \"r\")"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`file` is a variable that holds the opened file object.",
+            "`open()` is the built-in Python function used to open files.",
+            "`\"students.txt\"` is the file we want to open.",
+            "`\"r\"` tells Python that we want to read the file."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The file must exist when using read mode. Otherwise, Python raises a `FileNotFoundError`."
+        },
+        {
+          "type": "heading",
+          "text": "4. Reading Files"
+        },
+        {
+          "type": "text",
+          "text": "Python provides different methods for reading file contents."
+        },
+        {
+          "type": "heading",
+          "text": "A. read()"
+        },
+        {
+          "type": "text",
+          "text": "The `read()` method reads the contents of a file."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file = open(\"students.txt\", \"r\")\n\ncontent = file.read()\n\nprint(content)\n\nfile.close()"
+        },
+        {
+          "type": "text",
+          "text": "Line-by-line explanation:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "`file = open(\"students.txt\", \"r\")` opens the file in reading mode.",
+            "`content = file.read()` reads the entire file and stores its contents in the `content` variable.",
+            "`print(content)` displays the information.",
+            "`file.close()` closes the file after reading."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "If `students.txt` contains:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Brian\nJohn\nMary"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Brian\nJohn\nMary"
+        },
+        {
+          "type": "heading",
+          "text": "B. readline()"
+        },
+        {
+          "type": "text",
+          "text": "The `readline()` method reads one line at a time."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file = open(\"students.txt\", \"r\")\n\nfirst_line = file.readline()\n\nprint(first_line)\n\nfile.close()"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "The file is opened in reading mode.",
+            "`readline()` reads the first line from the file.",
+            "The first line is stored in `first_line`.",
+            "`print()` displays it.",
+            "`close()` closes the file."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "C. readlines()"
+        },
+        {
+          "type": "text",
+          "text": "The `readlines()` method reads all lines and returns them as a list."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file = open(\"students.txt\", \"r\")\n\nlines = file.readlines()\n\nprint(lines)\n\nfile.close()"
+        },
+        {
+          "type": "text",
+          "text": "Possible output:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "['Brian\\n', 'John\\n', 'Mary\\n']"
+        },
+        {
+          "type": "text",
+          "text": "Notice that each line may contain `\\n`, which represents a newline character."
+        },
+        {
+          "type": "heading",
+          "text": "5. Writing to Files"
+        },
+        {
+          "type": "text",
+          "text": "Python uses write mode (`\"w\"`) to write information into a file."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file = open(\"students.txt\", \"w\")\n\nfile.write(\"Brian\\n\")\nfile.write(\"John\\n\")\nfile.write(\"Mary\\n\")\n\nfile.close()"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Open `students.txt` in write mode.",
+            "Write `Brian` into the file.",
+            "Write `John` on a new line.",
+            "Write `Mary` on another new line.",
+            "Close the file."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The `\\n` character moves the next text to a new line."
+        },
+        {
+          "type": "text",
+          "text": "**Important:** Write mode replaces the existing contents of a file. If the file does not exist, Python creates it."
+        },
+        {
+          "type": "heading",
+          "text": "6. Appending Information to Files"
+        },
+        {
+          "type": "text",
+          "text": "Sometimes we want to add new information without deleting existing information."
+        },
+        {
+          "type": "text",
+          "text": "This is where append mode (`\"a\"`) becomes useful."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file = open(\"students.txt\", \"a\")\n\nfile.write(\"Peter\\n\")\n\nfile.close()"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`\"a\"` opens the file in append mode.",
+            "`write()` adds Peter after the existing content.",
+            "`close()` closes the file."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "If the file previously contained:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Brian\nJohn\nMary"
+        },
+        {
+          "type": "text",
+          "text": "It will now contain:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Brian\nJohn\nMary\nPeter"
+        },
+        {
+          "type": "heading",
+          "text": "7. Using with to Open Files"
+        },
+        {
+          "type": "text",
+          "text": "Python provides a safer and cleaner way to handle files using the `with` statement."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "with open(\"students.txt\", \"r\") as file:\n    content = file.read()\n    print(content)"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "`with` opens the file and manages its lifecycle.",
+            "`open()` opens `students.txt` in reading mode.",
+            "`as file` assigns the opened file object to the variable `file`.",
+            "`content = file.read()` reads the file.",
+            "`print(content)` displays the information."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The important advantage is that Python automatically closes the file when the `with` block finishes, even if an exception occurs."
+        },
+        {
+          "type": "text",
+          "text": "This is generally the recommended approach."
+        },
+        {
+          "type": "heading",
+          "text": "8. Part 1 Summary"
+        },
+        {
+          "type": "text",
+          "text": "You have learned:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "What file handling means.",
+            "The difference between text and binary files.",
+            "How to open files using `open()`.",
+            "How to read files using `read()`, `readline()` and `readlines()`.",
+            "How to write information using `\"w\"`.",
+            "How to append information using `\"a\"`.",
+            "How to manage files using `with`."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Progress: Part 1 of 4"
+        }
+      ]
     },
     {
-      id: "python-files-modules-advanced",
-      title: "Advanced File Handling and Python Modules",
-      description: "Part 2 of 4 · Combine modes, inspect resources, handle failures, delete safely, and create reusable modules.",
-      blocks: [
-        { type: "heading", text: "Reading and writing in one opening" },
-        { type: "code", language: "python", filename: "read_write_mode.py", code: "with open(\"notes.txt\", \"r+\", encoding=\"utf-8\") as file:\n    old_notes = file.read()\n    print(old_notes)\n    file.write(\"A new note\\n\")" },
-        { type: "text", text: "r+ opens an existing file for both reading and writing. Reading advances the file cursor, so the next write occurs at the current position. When cursor placement matters, use seek() deliberately. In many beginner applications, a separate read operation followed by a clear rewrite or append operation is easier to reason about than mixing actions unexpectedly." },
-        { type: "heading", text: "Checking whether a file is closed" },
-        { type: "code", language: "python", filename: "file_lifecycle.py", code: "file = open(\"notes.txt\", \"r\", encoding=\"utf-8\")\nprint(\"Before close:\", file.closed)\nfile.close()\nprint(\"After close:\", file.closed)" },
-        { type: "code", language: "text", filename: "output", code: "Before close: False\nAfter close: True" },
-        { type: "text", text: "An open file consumes a system resource. Leaving many files open can cause reliability problems. The closed property lets you inspect the state, but using with is better because it makes the cleanup rule automatic and visible in the program structure." },
-        { type: "heading", text: "Handling a missing or inaccessible file" },
-        { type: "code", language: "python", filename: "safe_file_read.py", code: "try:\n    with open(\"settings.txt\", \"r\", encoding=\"utf-8\") as file:\n        settings = file.read()\nexcept FileNotFoundError:\n    print(\"No settings file exists yet. Starting with defaults.\")\nelse:\n    print(\"Loaded settings:\")\n    print(settings)" },
-        { type: "text", text: "The try block contains the operation that may fail. FileNotFoundError is handled because a first run without settings is expected. Other failures, such as a permission problem, should not automatically be mislabeled as a missing file. Catch the exception that matches the situation and give the user an actionable message." },
-        { type: "heading", text: "Deleting a file deliberately" },
-        { type: "code", language: "python", filename: "delete_file.py", code: "from pathlib import Path\n\npath = Path(\"old-notes.txt\")\nif path.exists() and path.is_file():\n    path.unlink()\n    print(\"Deleted the selected file.\")\nelse:\n    print(\"The selected file was not found.\")" },
-        { type: "text", text: "pathlib.Path provides readable filesystem operations. os.path.exists() and os.remove() are also common: import os, check os.path.exists(path), then call os.remove(path). Deletion cannot normally be undone, so verify the path, restrict user input, and never treat an unchecked path as safe." },
-        { type: "heading", text: "What is a module?" },
-        { type: "text", text: "A module is a Python file that contains reusable code. It can define functions, variables, classes, constants, and controlled executable statements. Splitting a large application into modules makes responsibilities clearer, supports independent tests, and lets several programs reuse the same behavior." },
-        { type: "code", language: "python", filename: "calculator.py", code: "def add(first, second):\n    return first + second\n\ndef subtract(first, second):\n    return first - second\n\ndef multiply(first, second):\n    return first * second" },
-        { type: "code", language: "python", filename: "main.py", code: "import calculator\n\nfirst_result = calculator.add(10, 5)\nsecond_result = calculator.subtract(10, 5)\nthird_result = calculator.multiply(10, 5)\n\nprint(first_result)\nprint(second_result)\nprint(third_result)" },
-        { type: "code", language: "text", filename: "output", code: "15\n5\n50" },
-        { type: "text", text: "Because calculator.py and main.py are in the same project directory, import calculator lets main.py access its functions through the module namespace. The dot makes the boundary visible: calculator.add means add belongs to calculator." },
-        { type: "heading", text: "Three import styles" },
-        { type: "code", language: "python", filename: "import_styles.py", code: "import math\nfrom math import sqrt\nimport math as mathematics\n\nprint(math.sqrt(25))\nprint(sqrt(36))\nprint(mathematics.sqrt(49))" },
-        { type: "text", text: "import math keeps the module name visible. from math import sqrt brings one named item into the local namespace. import math as mathematics gives the module an alias. Prefer imports that keep the source of a name understandable, especially in a larger project." },
-        { type: "heading", text: "Useful built-in modules" },
-        { type: "table", columns: ["Module", "Typical role", "Example idea"], rows: [
-          ["math", "Mathematical operations", "sqrt, ceil, floor"],
-          ["random", "Pseudo-random values", "randint for a bounded integer"],
-          ["datetime", "Dates and times", "Record when a lesson was completed"],
-          ["os", "Operating-system integration", "Environment variables and file operations"],
-          ["json", "Structured data exchange", "Save a learner dictionary"],
-          ["statistics", "Descriptive calculations", "Mean and median"],
-          ["pathlib", "Filesystem paths", "Create, inspect, and read Path objects"],
-        ] },
-        { type: "code", language: "python", filename: "random_example.py", code: "import random\n\nquestion_number = random.randint(1, 10)\nprint(\"Practice question:\", question_number)" },
-        { type: "text", text: "randint includes both endpoints, so the value can be any integer from 1 through 10. The output changes between runs. Standard-library modules are available with Python; third-party packages require an installed environment and dependency management." },
-        { type: "callout", title: "Common mistakes", kind: "warning", text: "A module import can fail because of spelling, a wrong working directory, a missing dependency, or a local file that shadows the intended library. Check the project tree, interpreter, module name, and environment before changing the program." },
-      ],
+      "id": "python-pythonfilesmodules-part-2",
+      "title": "PART 2 OF 4: ADVANCED FILE HANDLING AND PYTHON MODULES",
+      "description": "Part 2 of 4",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "1. Reading and Writing Files Together"
+        },
+        {
+          "type": "text",
+          "text": "Python allows you to open files using different combinations of reading and writing modes."
+        },
+        {
+          "type": "text",
+          "text": "For example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "with open(\"students.txt\", \"r+\") as file:\n    content = file.read()\n    print(content)\n\n    file.write(\"\\nNew Student\")"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`\"r+\"` opens the existing file for reading and writing.",
+            "`file.read()` reads the existing content.",
+            "`print(content)` displays it.",
+            "`file.write()` writes additional text at the current file position."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Because reading moves the file position to the end, this example writes after the existing content."
+        },
+        {
+          "type": "heading",
+          "text": "2. Closing and Managing Files"
+        },
+        {
+          "type": "text",
+          "text": "When working with files, proper resource management is important."
+        },
+        {
+          "type": "text",
+          "text": "An opened file uses system resources. If too many files remain open, an application may experience problems."
+        },
+        {
+          "type": "text",
+          "text": "The `with` statement helps prevent this by automatically closing files."
+        },
+        {
+          "type": "text",
+          "text": "You can also check whether a file is closed:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file = open(\"students.txt\", \"r\")\n\nprint(file.closed)\n\nfile.close()\n\nprint(file.closed)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "False\nTrue"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Before closing, `file.closed` returns `False`.",
+            "After calling `close()`, it returns `True`."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "3. Handling File Errors"
+        },
+        {
+          "type": "text",
+          "text": "A program should not crash unexpectedly when a file is missing or inaccessible."
+        },
+        {
+          "type": "text",
+          "text": "Python provides exception handling for this."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    with open(\"students.txt\", \"r\") as file:\n        content = file.read()\n        print(content)\n\nexcept FileNotFoundError:\n    print(\"The file does not exist.\")"
+        },
+        {
+          "type": "text",
+          "text": "Line-by-line explanation:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "`try:` tells Python to execute code that might cause an exception.",
+            "`with open(...)` attempts to open the file.",
+            "`content = file.read()` reads the information.",
+            "`print(content)` displays it.",
+            "`except FileNotFoundError:` catches the specific error if the file cannot be found.",
+            "`print()` displays a helpful message instead of allowing the exception to terminate the program."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "4. Deleting Files"
+        },
+        {
+          "type": "text",
+          "text": "Python can delete files using the `os` module."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import os\n\nif os.path.exists(\"students.txt\"):\n    os.remove(\"students.txt\")\n    print(\"File deleted successfully.\")\nelse:\n    print(\"File does not exist.\")"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`import os` imports Python's operating-system functionality.",
+            "`os.path.exists()` checks whether the specified file exists.",
+            "`os.remove()` deletes the file.",
+            "The `if` and `else` statements determine which message to display."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Warning:** Deleting a file using `os.remove()` is destructive. Make sure the path is correct before deleting anything."
+        },
+        {
+          "type": "heading",
+          "text": "5. What Is a Python Module?"
+        },
+        {
+          "type": "text",
+          "text": "A Python module is a file containing Python code that can be reused in another Python program."
+        },
+        {
+          "type": "text",
+          "text": "A module may contain:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Variables.",
+            "Functions.",
+            "Classes.",
+            "Executable statements."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "For example, imagine you are developing a student management system."
+        },
+        {
+          "type": "text",
+          "text": "You may have separate functions for:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Calculating student averages.",
+            "Registering students.",
+            "Displaying student information.",
+            "Calculating grades."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Instead of writing everything in one large Python file, you can separate related functionality into modules."
+        },
+        {
+          "type": "text",
+          "text": "This makes programs easier to maintain, test and reuse."
+        },
+        {
+          "type": "heading",
+          "text": "6. Creating Your Own Python Module"
+        },
+        {
+          "type": "text",
+          "text": "Let's create a simple module."
+        },
+        {
+          "type": "text",
+          "text": "Create a folder named:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "python_modules"
+        },
+        {
+          "type": "text",
+          "text": "Inside it, create two Python files:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "python_modules/\n│\n├── calculator.py\n│\n└── main.py"
+        },
+        {
+          "type": "heading",
+          "text": "Step 1: Create calculator.py"
+        },
+        {
+          "type": "text",
+          "text": "Write the following code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def add(a, b):\n    return a + b\n\n\ndef subtract(a, b):\n    return a - b\n\n\ndef multiply(a, b):\n    return a * b"
+        },
+        {
+          "type": "text",
+          "text": "Line-by-line explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`def add(a, b):` defines a function called `add` that accepts two arguments.",
+            "`return a + b` calculates and returns their sum.",
+            "`def subtract(a, b):` defines another function.",
+            "`return a - b` subtracts the second value from the first.",
+            "`def multiply(a, b):` defines a multiplication function.",
+            "`return a * b` multiplies the two values."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "We have created a module containing three reusable functions."
+        },
+        {
+          "type": "heading",
+          "text": "Step 2: Create main.py"
+        },
+        {
+          "type": "text",
+          "text": "Write:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import calculator\n\nresult1 = calculator.add(10, 5)\nresult2 = calculator.subtract(10, 5)\nresult3 = calculator.multiply(10, 5)\n\nprint(result1)\nprint(result2)\nprint(result3)"
+        },
+        {
+          "type": "text",
+          "text": "Line-by-line explanation:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "`import calculator` imports the calculator module.",
+            "`calculator.add(10, 5)` accesses the `add()` function inside the module.",
+            "`calculator.subtract(10, 5)` accesses the subtraction function.",
+            "`calculator.multiply(10, 5)` accesses the multiplication function.",
+            "The three `print()` statements display the results."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "15\n5\n50"
+        },
+        {
+          "type": "text",
+          "text": "**Important:** Both files are in the same directory, so Python can find the module using this simple import."
+        },
+        {
+          "type": "heading",
+          "text": "7. Different Ways of Importing Modules"
+        },
+        {
+          "type": "text",
+          "text": "Python provides different ways to import code."
+        },
+        {
+          "type": "heading",
+          "text": "A. Import the entire module"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import math\n\nprint(math.sqrt(25))"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`import math` imports the math module.",
+            "`math.sqrt(25)` calls the square-root function.",
+            "`print()` displays the result."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "5.0"
+        },
+        {
+          "type": "heading",
+          "text": "B. Import a specific function"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "from math import sqrt\n\nprint(sqrt(36))"
+        },
+        {
+          "type": "text",
+          "text": "Here:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`from math import sqrt` imports only the `sqrt` function.",
+            "You can call `sqrt()` directly without writing `math.sqrt()`."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "6.0"
+        },
+        {
+          "type": "heading",
+          "text": "C. Import using an alias"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import math as m\n\nprint(m.sqrt(49))"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`import math as m` gives the math module a shorter name.",
+            "`m.sqrt(49)` uses that alias to access the square-root function."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "7.0"
+        },
+        {
+          "type": "heading",
+          "text": "8. Built-in Python Modules"
+        },
+        {
+          "type": "text",
+          "text": "Python comes with many modules that provide ready-made functionality."
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Module",
+            "Purpose"
+          ],
+          "rows": [
+            [
+              "`math`",
+              "Mathematical operations"
+            ],
+            [
+              "`random`",
+              "Generating random values"
+            ],
+            [
+              "`datetime`",
+              "Working with dates and times"
+            ],
+            [
+              "`os`",
+              "Operating-system operations"
+            ],
+            [
+              "`json`",
+              "Working with JSON data"
+            ],
+            [
+              "`statistics`",
+              "Statistical calculations"
+            ],
+            [
+              "`pathlib`",
+              "Working with filesystem paths"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Example using the `random` module:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import random\n\nnumber = random.randint(1, 10)\n\nprint(number)"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`import random` imports the random module.",
+            "`random.randint(1, 10)` generates a random integer between 1 and 10, including both endpoints.",
+            "`print(number)` displays the generated number."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The output may differ each time you execute the program."
+        },
+        {
+          "type": "heading",
+          "text": "9. Part 2 Summary"
+        },
+        {
+          "type": "text",
+          "text": "You have learned:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "How to read and write using combined modes.",
+            "How to handle file-related errors.",
+            "How to delete files.",
+            "What Python modules are.",
+            "How to create your own modules.",
+            "How to import entire modules or specific functions.",
+            "How to use aliases.",
+            "Examples of built-in Python modules."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Progress: Part 2 of 4"
+        }
+      ]
     },
     {
-      id: "python-files-modules-practice",
-      title: "Practical File and Module Development",
-      description: "Part 3 of 4 · Build student records, use JSON, organize packages, and practise safe project structure.",
-      blocks: [
-        { type: "heading", text: "Project setup" },
-        { type: "text", text: "Create a directory named files-and-modules-project. It will contain a main entry point, a reusable operations module, and data files created while the program runs. Run the program from the project directory with python main.py or python3 main.py." },
-        { type: "code", language: "text", filename: "initial-tree", code: "files-and-modules-project/\n├── main.py\n└── student_operations.py" },
-        { type: "heading", text: "Build the student operations module" },
-        { type: "code", language: "python", filename: "student_operations.py", code: "from pathlib import Path\n\nRECORDS_FILE = Path(\"students.txt\")\n\ndef register_student(name, age, course):\n    record = f\"{name},{age},{course}\\n\"\n    with RECORDS_FILE.open(\"a\", encoding=\"utf-8\") as file:\n        file.write(record)\n    return True\n\ndef display_students():\n    try:\n        with RECORDS_FILE.open(\"r\", encoding=\"utf-8\") as file:\n            records = file.readlines()\n    except FileNotFoundError:\n        return [\"No student records found.\"]\n\n    return [record.strip() for record in records if record.strip()]" },
-        { type: "text", text: "register_student() accepts a name, age, and course, formats one record, and appends it so older records remain. display_students() reads every line, strips the newline, and returns a clean list. Returning data instead of printing inside the module gives main.py more control over presentation and testing." },
-        { type: "heading", text: "Connect the module to main.py" },
-        { type: "code", language: "python", filename: "main.py", code: "from student_operations import display_students, register_student\n\nprint(\"STUDENT MANAGEMENT\")\nname = input(\"Student name: \" ).strip()\nage = input(\"Student age: \" ).strip()\ncourse = input(\"Course: \" ).strip()\n\nregister_student(name, age, course)\nprint(\"\\nREGISTERED STUDENTS\")\nfor record in display_students():\n    print(record)" },
-        { type: "text", text: "The import selects two functions from the custom module. input() initially returns text, so age would need int() if the program had to calculate with it. The first run creates students.txt through append mode. Later runs preserve the earlier records and display the new record as well." },
-        { type: "code", language: "text", filename: "example-run", code: "STUDENT MANAGEMENT\nStudent name: Amina\nStudent age: 21\nCourse: Python\n\nREGISTERED STUDENTS\nAmina,21,Python" },
-        { type: "heading", text: "Saving structured records as JSON" },
-        { type: "code", language: "python", filename: "json_records.py", code: "import json\n\nstudent = {\n    \"name\": \"Amina\",\n    \"age\": 21,\n    \"course\": \"Python\"\n}\n\nwith open(\"student.json\", \"w\", encoding=\"utf-8\") as file:\n    json.dump(student, file, indent=4)\n\nwith open(\"student.json\", \"r\", encoding=\"utf-8\") as file:\n    loaded = json.load(file)\n\nprint(loaded[\"name\"])\nprint(loaded[\"age\"])\nprint(loaded[\"course\"])" },
-        { type: "code", language: "json", filename: "student.json", code: "{\n    \"name\": \"Amina\",\n    \"age\": 21,\n    \"course\": \"Python\"\n}" },
-        { type: "text", text: "json.dump() serializes Python data directly into an open file. json.load() reads a file and converts its JSON content back into Python data. json.dumps() produces JSON text in memory, while json.loads() parses JSON text in memory. JSON is useful for configuration, saved progress, and API data, but loaded data should still be checked for required fields and expected types." },
-        { type: "table", columns: ["Function", "Input and output", "Use"], rows: [
-          ["json.dump(data, file)", "Python value to file", "Save structured data"],
-          ["json.load(file)", "File to Python value", "Read structured data"],
-          ["json.dumps(data)", "Python value to string", "Create JSON text in memory"],
-          ["json.loads(text)", "String to Python value", "Parse JSON received as text"],
-        ] },
-        { type: "heading", text: "Organize related modules in a package" },
-        { type: "code", language: "text", filename: "package-tree", code: "school_app/\n├── main.py\n└── student/\n    ├── __init__.py\n    ├── registration.py\n    ├── records.py\n    └── calculations.py" },
-        { type: "code", language: "python", filename: "student/registration.py", code: "def register(name):\n    return f\"{name} registered successfully.\"" },
-        { type: "code", language: "python", filename: "student/calculations.py", code: "def average(scores):\n    if not scores:\n        return None\n    return sum(scores) / len(scores)" },
-        { type: "code", language: "python", filename: "main.py", code: "from student.registration import register\nfrom student.calculations import average\n\nprint(register(\"Musa\"))\nprint(average([70, 80, 90]))" },
-        { type: "text", text: "A package is a directory that groups related modules. __init__.py can mark a regular package and can contain package initialization code. Some modern Python environments also support namespace packages without that file. A clear package boundary lets registration, records, and calculations evolve separately." },
-        { type: "heading", text: "Mistakes to avoid" },
-        { type: "table", columns: ["Mistake", "Why it causes trouble", "Correction"], rows: [
-          ["Use r for a missing file", "Read mode requires an existing path", "Create it first or handle FileNotFoundError"],
-          ["Use w when intending to add", "w replaces all old content", "Use a or write a deliberate new snapshot"],
-          ["Forget to close files", "System resources remain occupied", "Use with"],
-          ["Use the wrong module name", "Python cannot resolve the import", "Check spelling and project structure"],
-          ["Create circular imports", "Modules wait on one another", "Move shared code to a lower-level module"],
-          ["Run from the wrong directory", "Relative paths and imports change", "Run from the project root or construct reliable paths"],
-        ] },
-        { type: "heading", text: "Practical exercises" },
-        { type: "numbered", items: ["Ask for a learner's name and age, save them in personal.txt, read the file, and display the saved values.", "Register at least three learners in a text file, then read and display each record separately.", "Create calculator.py with add, subtract, multiply, and divide functions. Import them from main.py and handle division by zero.", "Save a learner dictionary as JSON and load it back while preserving the number type for age.", "Create a student package with registration, records, and calculations modules. Import each function from main.py and demonstrate it."] },
-        { type: "exercise", title: "Capstone project: persistent learner manager", description: "Build an application that adds learners, lists saved learners, and stores structured records in JSON. Put persistence functions in one module, validation in another, and the interaction flow in main.py. Handle a missing data file, malformed JSON, duplicate names, invalid ages, an empty learner list, and an interrupted write. Explain the project tree and how each module communicates with the others." },
-        { type: "callout", title: "Part 3 checkpoint", text: "A useful project is not only code that runs. It should preserve existing records, fail with understandable messages, keep file access under control, and separate responsibilities so each module can be tested." },
-      ],
+      "id": "python-pythonfilesmodules-part-3",
+      "title": "PART 3 OF 4: PRACTICAL FILE HANDLING AND MODULE DEVELOPMENT",
+      "description": "Part 3 of 4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "This part focuses on building actual programs using files and modules."
+        },
+        {
+          "type": "heading",
+          "text": "1. Setting Up Your Project"
+        },
+        {
+          "type": "text",
+          "text": "Open Visual Studio Code or another Python code editor."
+        },
+        {
+          "type": "text",
+          "text": "Create a folder called:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "files_and_modules_project"
+        },
+        {
+          "type": "text",
+          "text": "Inside it, create these files:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "files_and_modules_project/\n│\n├── student_manager.py\n├── student_operations.py\n└── main.py"
+        },
+        {
+          "type": "text",
+          "text": "Our goal is to build a simple student management program that can:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Register students.",
+            "Save student information in a file.",
+            "Display registered students.",
+            "Reuse functions through a separate module."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "2. Building the Student Management Module"
+        },
+        {
+          "type": "text",
+          "text": "Open `student_operations.py`."
+        },
+        {
+          "type": "text",
+          "text": "Add this code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def register_student(name, age, course):\n    with open(\"students.txt\", \"a\") as file:\n        file.write(f\"{name},{age},{course}\\n\")\n\n    print(\"Student registered successfully!\")\n\n\ndef display_students():\n    try:\n        with open(\"students.txt\", \"r\") as file:\n            students = file.readlines()\n\n            for student in students:\n                print(student.strip())\n\n    except FileNotFoundError:\n        print(\"No student records found.\")"
+        },
+        {
+          "type": "heading",
+          "text": "Understanding the code line by line"
+        },
+        {
+          "type": "text",
+          "text": "**Function 1: register_student()**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def register_student(name, age, course):"
+        },
+        {
+          "type": "text",
+          "text": "Creates a function that accepts a student's name, age and course."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "with open(\"students.txt\", \"a\") as file:"
+        },
+        {
+          "type": "text",
+          "text": "Opens the student records file in append mode."
+        },
+        {
+          "type": "text",
+          "text": "If the file does not exist, Python creates it."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file.write(f\"{name},{age},{course}\\n\")"
+        },
+        {
+          "type": "text",
+          "text": "Saves the student's information in the file."
+        },
+        {
+          "type": "text",
+          "text": "The `f` before the quotation marks creates an f-string. It allows us to insert variable values directly into a string."
+        },
+        {
+          "type": "text",
+          "text": "For example, if:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "name = Brian",
+            "age = 22",
+            "course = BBIT"
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The saved line becomes:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Brian,22,BBIT"
+        },
+        {
+          "type": "text",
+          "text": "The `\\n` moves the next student's record to a new line."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Student registered successfully!\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a success message."
+        },
+        {
+          "type": "text",
+          "text": "**Function 2: display_students()**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def display_students():"
+        },
+        {
+          "type": "text",
+          "text": "Defines a function responsible for displaying student records."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:"
+        },
+        {
+          "type": "text",
+          "text": "Begins an exception-handling block."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "with open(\"students.txt\", \"r\") as file:"
+        },
+        {
+          "type": "text",
+          "text": "Opens the student file in reading mode."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "students = file.readlines()"
+        },
+        {
+          "type": "text",
+          "text": "Reads all student records and stores them in a list."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "for student in students:"
+        },
+        {
+          "type": "text",
+          "text": "Loops through each student record."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(student.strip())"
+        },
+        {
+          "type": "text",
+          "text": "Displays the record after removing surrounding whitespace, including the newline character."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "except FileNotFoundError:"
+        },
+        {
+          "type": "text",
+          "text": "Handles the situation where the records file does not exist."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"No student records found.\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a helpful message."
+        },
+        {
+          "type": "heading",
+          "text": "3. Connecting the Module to the Main Program"
+        },
+        {
+          "type": "text",
+          "text": "Open `main.py`."
+        },
+        {
+          "type": "text",
+          "text": "Write:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import student_operations\n\nprint(\"STUDENT MANAGEMENT SYSTEM\")\n\nname = input(\"Enter student name: \")\nage = input(\"Enter student age: \")\ncourse = input(\"Enter student course: \")\n\nstudent_operations.register_student(name, age, course)\n\nprint(\"\\nREGISTERED STUDENTS\")\n\nstudent_operations.display_students()"
+        },
+        {
+          "type": "heading",
+          "text": "Line-by-line explanation"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import student_operations"
+        },
+        {
+          "type": "text",
+          "text": "Imports our custom module."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"STUDENT MANAGEMENT SYSTEM\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays the application title."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "name = input(\"Enter student name: \")"
+        },
+        {
+          "type": "text",
+          "text": "Requests the student's name and stores the response."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "age = input(\"Enter student age: \")"
+        },
+        {
+          "type": "text",
+          "text": "Requests the student's age."
+        },
+        {
+          "type": "text",
+          "text": "The input is initially stored as text. If you needed to perform mathematical operations on the age, you would convert it to an integer using `int()`."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "course = input(\"Enter student course: \")"
+        },
+        {
+          "type": "text",
+          "text": "Requests the student's course."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "student_operations.register_student(name, age, course)"
+        },
+        {
+          "type": "text",
+          "text": "Calls the registration function from our module and passes the collected information."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"\\nREGISTERED STUDENTS\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a heading. `\\n` creates a blank line before the heading."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "student_operations.display_students()"
+        },
+        {
+          "type": "text",
+          "text": "Calls the function that reads and displays the saved student records."
+        },
+        {
+          "type": "heading",
+          "text": "Running the program"
+        },
+        {
+          "type": "text",
+          "text": "Open the terminal inside your project folder."
+        },
+        {
+          "type": "text",
+          "text": "Run:"
+        },
+        {
+          "type": "code",
+          "language": "bash",
+          "code": "python main.py"
+        },
+        {
+          "type": "text",
+          "text": "Example interaction:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "STUDENT MANAGEMENT SYSTEM\nEnter student name: Brian\nEnter student age: 22\nEnter student course: BBIT\n\nStudent registered successfully!\n\nREGISTERED STUDENTS\nBrian,22,BBIT"
+        },
+        {
+          "type": "text",
+          "text": "Run the program again and register another student."
+        },
+        {
+          "type": "text",
+          "text": "The previous student's record will remain because we used append mode."
+        },
+        {
+          "type": "heading",
+          "text": "4. Working with JSON Files"
+        },
+        {
+          "type": "text",
+          "text": "JSON stands for JavaScript Object Notation."
+        },
+        {
+          "type": "text",
+          "text": "It is a data format commonly used to exchange and store structured information."
+        },
+        {
+          "type": "text",
+          "text": "Python provides the built-in `json` module to work with JSON."
+        },
+        {
+          "type": "text",
+          "text": "Example JSON data:"
+        },
+        {
+          "type": "code",
+          "language": "json",
+          "code": "{\n    \"name\": \"Brian\",\n    \"age\": 22,\n    \"course\": \"BBIT\"\n}"
+        },
+        {
+          "type": "heading",
+          "text": "Saving information in JSON"
+        },
+        {
+          "type": "text",
+          "text": "Create a file called `json_example.py`."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import json\n\nstudent = {\n    \"name\": \"Brian\",\n    \"age\": 22,\n    \"course\": \"BBIT\"\n}\n\nwith open(\"student.json\", \"w\") as file:\n    json.dump(student, file, indent=4)\n\nprint(\"Student information saved.\")"
+        },
+        {
+          "type": "text",
+          "text": "Line-by-line explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`import json` imports Python's JSON module.",
+            "`student = {...}` creates a Python dictionary containing student information.",
+            "`open(\"student.json\", \"w\")` creates or replaces the JSON file.",
+            "`json.dump(student, file, indent=4)` converts the dictionary into JSON and writes it into the file.",
+            "`indent=4` formats the JSON with four spaces of indentation.",
+            "`print()` displays a confirmation message."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The generated file will contain:"
+        },
+        {
+          "type": "code",
+          "language": "json",
+          "code": "{\n    \"name\": \"Brian\",\n    \"age\": 22,\n    \"course\": \"BBIT\"\n}"
+        },
+        {
+          "type": "heading",
+          "text": "Reading information from JSON"
+        },
+        {
+          "type": "text",
+          "text": "Add this code to another file or run it after the saving example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import json\n\nwith open(\"student.json\", \"r\") as file:\n    student = json.load(file)\n\nprint(student[\"name\"])\nprint(student[\"age\"])\nprint(student[\"course\"])"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`import json` imports the JSON module.",
+            "`open()` opens the JSON file.",
+            "`json.load(file)` reads the JSON data and converts it into a Python dictionary.",
+            "`student[\"name\"]` accesses the name value.",
+            "`student[\"age\"]` accesses the age.",
+            "`student[\"course\"]` accesses the course."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Brian\n22\nBBIT"
+        },
+        {
+          "type": "text",
+          "text": "**Important distinction:**"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Function",
+            "Purpose"
+          ],
+          "rows": [
+            [
+              "`json.dump()`",
+              "Writes Python data into a JSON file"
+            ],
+            [
+              "`json.load()`",
+              "Reads JSON data from a file"
+            ],
+            [
+              "`json.dumps()`",
+              "Converts Python data into a JSON string"
+            ],
+            [
+              "`json.loads()`",
+              "Converts a JSON string into Python data"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "JSON is especially useful when building applications that exchange data through APIs."
+        },
+        {
+          "type": "heading",
+          "text": "5. Understanding Python Packages"
+        },
+        {
+          "type": "text",
+          "text": "A Python package is a way of organizing related modules into directories."
+        },
+        {
+          "type": "text",
+          "text": "Imagine a large application containing hundreds of functions. Keeping everything in one file would make the application difficult to manage."
+        },
+        {
+          "type": "text",
+          "text": "You can organize your modules into packages."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "school_system/\n│\n├── main.py\n│\n└── student/\n    │\n    ├── __init__.py\n    ├── registration.py\n    └── records.py"
+        },
+        {
+          "type": "text",
+          "text": "Here:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`school_system` is the main project directory.",
+            "`student` is a package.",
+            "`registration.py` is a module for registering students.",
+            "`records.py` is a module for managing student records.",
+            "`__init__.py` marks the directory as a regular Python package and can contain package initialization code."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "In modern Python, some package structures can also work without `__init__.py`, using namespace packages."
+        },
+        {
+          "type": "heading",
+          "text": "Importing from a package"
+        },
+        {
+          "type": "text",
+          "text": "Suppose `registration.py` contains:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def register(name):\n    print(f\"{name} registered successfully.\")"
+        },
+        {
+          "type": "text",
+          "text": "You can access this function from `main.py`:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "from student.registration import register\n\nregister(\"Brian\")"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Brian registered successfully."
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`from student.registration import register` imports the function from the registration module inside the student package.",
+            "`register(\"Brian\")` executes the function."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "6. Common Mistakes When Working with Files and Modules"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Mistake",
+            "Explanation",
+            "Solution"
+          ],
+          "rows": [
+            [
+              "Using `\"r\"` for a missing file",
+              "Reading mode requires an existing file",
+              "Create the file or handle `FileNotFoundError`"
+            ],
+            [
+              "Using `\"w\"` accidentally",
+              "Existing contents are replaced",
+              "Use `\"a\"` when adding records"
+            ],
+            [
+              "Forgetting to close files",
+              "Resources may remain occupied",
+              "Use `with`"
+            ],
+            [
+              "Incorrect module name",
+              "Python cannot find the module",
+              "Check spelling and project structure"
+            ],
+            [
+              "Circular imports",
+              "Modules depend on each other in a cycle",
+              "Reorganize shared code"
+            ],
+            [
+              "Running from the wrong directory",
+              "Relative file paths may point somewhere unexpected",
+              "Run from the project directory or use reliable paths"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "7. Practical Exercises"
+        },
+        {
+          "type": "text",
+          "text": "Complete these exercises using your Python environment."
+        },
+        {
+          "type": "heading",
+          "text": "Exercise 1: Personal Information File"
+        },
+        {
+          "type": "text",
+          "text": "Write a Python program that:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Requests the user's name.",
+            "Requests their age.",
+            "Saves the information in `personal.txt`.",
+            "Reads and displays the saved information."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Exercise 2: Student Records"
+        },
+        {
+          "type": "text",
+          "text": "Create a program that:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Registers at least three students.",
+            "Saves their information in a text file.",
+            "Reads all saved records.",
+            "Displays each student separately."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Exercise 3: Calculator Module"
+        },
+        {
+          "type": "text",
+          "text": "Create a module called `calculator.py` containing functions for:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Addition.",
+            "Subtraction.",
+            "Multiplication.",
+            "Division."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Create a separate `main.py` that imports and uses those functions."
+        },
+        {
+          "type": "text",
+          "text": "Make sure division by zero is handled properly."
+        },
+        {
+          "type": "heading",
+          "text": "Exercise 4: JSON Student Record"
+        },
+        {
+          "type": "text",
+          "text": "Create a program that stores student information in JSON format and reads it back."
+        },
+        {
+          "type": "heading",
+          "text": "Exercise 5: Organizing a Project"
+        },
+        {
+          "type": "text",
+          "text": "Create a Python package with separate modules for:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Student registration.",
+            "Student records.",
+            "Student calculations."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Import the functions into a main program and demonstrate that they work."
+        },
+        {
+          "type": "heading",
+          "text": "8. Part 3 Summary"
+        },
+        {
+          "type": "text",
+          "text": "You have now built programs that:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Save and retrieve student information.",
+            "Separate application functionality into modules.",
+            "Import and reuse functions.",
+            "Store structured information in JSON.",
+            "Organize modules into packages."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Progress: Part 3 of 4"
+        }
+      ]
     },
     {
-      id: "python-files-modules-assessment",
-      title: "Kai Assessment",
-      description: "Part 4 of 4 · Test file handling, modules, imports, JSON, packages, safety, and project reasoning.",
-      blocks: [
-        { type: "heading", text: "Lesson review" },
-        { type: "text", text: "Before starting, review the purpose of persistence, the difference between text and binary files, the effects of each common file mode, the three reading methods, writing and appending, the with statement, file errors, safe deletion, modules, imports, standard-library tools, JSON conversion, packages, common import failures, and project organization." },
-        { type: "quiz", question: "What is the main purpose of file handling?", options: ["To store, retrieve, and manage information outside the running program", "To change Python's grammar", "To automatically fix every error", "To create a new programming language"], answer: "To store, retrieve, and manage information outside the running program", explanation: "Files allow information to persist after the current process ends." },
-        { type: "quiz", question: "Which mode adds content without first replacing existing content?", options: ["r", "w", "a", "x"], answer: "a", explanation: "Append mode writes at the end and preserves earlier content." },
-        { type: "quiz", question: "What does read() return?", options: ["The remaining file content as a string", "A deleted file", "A new module", "A renamed path"], answer: "The remaining file content as a string", explanation: "read() returns the remaining content from the current file position." },
-        { type: "quiz", question: "Why is with useful when opening a file?", options: ["It closes the file when the managed block finishes", "It deletes the file after reading", "It changes text into binary automatically", "It prevents all invalid input"], answer: "It closes the file when the managed block finishes", explanation: "The context manager makes resource cleanup automatic on normal and exceptional exits." },
-        { type: "quiz", question: "What is a Python module?", options: ["A Python file containing reusable code", "A folder that can store only pictures", "A database record", "A Python exception"], answer: "A Python file containing reusable code", explanation: "Functions, classes, values, and other definitions can be imported from a module." },
-        { type: "quiz", question: "What does this display?", options: ["8.0", "64", "6", "16"], answer: "8.0", explanation: "math.sqrt(64) returns the floating-point square root of 64.", code: "import math\nprint(math.sqrt(64))" },
-        { type: "quiz", question: "What is the difference between a module and a package?", options: ["A module is a Python file; a package organizes related modules", "A module stores images; a package stores videos", "They are always exactly the same", "A package is only a variable"], answer: "A module is a Python file; a package organizes related modules", explanation: "A package provides a directory-level organization for related modules." },
-        { type: "quiz", question: "What does json.dump() do?", options: ["Writes Python data into an open JSON file", "Deletes JSON data", "Converts a JSON file into a function", "Creates a package directory"], answer: "Writes Python data into an open JSON file", explanation: "dump serializes Python data directly to a file object." },
-        { type: "heading", text: "Trace file mode behavior" },
-        { type: "code", language: "python", filename: "trace_files.py", code: "from pathlib import Path\n\npath = Path(\"progress.txt\")\nwith path.open(\"w\", encoding=\"utf-8\") as file:\n    file.write(\"started\\n\")\nwith path.open(\"a\", encoding=\"utf-8\") as file:\n    file.write(\"finished\\n\")\nprint(path.read_text(encoding=\"utf-8\"), end=\"\")" },
-        { type: "code", language: "text", filename: "trace_answer", code: "started\nfinished" },
-        { type: "text", text: "w creates or replaces the file and writes the first line. a preserves that line and adds the second. Both with blocks close their file handles before the next operation." },
-        { type: "heading", text: "Scenario and design questions" },
-        { type: "text", text: "A program raises ModuleNotFoundError after importing a custom file. Explain at least three checks: confirm the filename and import spelling, inspect the project tree and current working directory, and verify that the selected Python interpreter is the environment containing the intended code. Then explain why moving shared behavior into a well-named module is better than copying the same functions into several files." },
-        { type: "text", text: "A learner manager loses existing records after a new registration. Identify the most likely file-mode mistake, explain why it causes data loss, and describe a safer correction with a test that proves earlier records remain." },
-        { type: "checklist", title: "Ready to finish?", items: ["I can explain temporary memory versus persistent files.", "I can select and justify r, w, a, x, binary, text, and r+ modes.", "I can read, write, append, close, and handle files safely.", "I can handle missing files and approach deletion cautiously.", "I can create modules, use several import styles, and use standard-library modules.", "I can save and load JSON data and explain dump/load versus dumps/loads.", "I can organize modules into a package and avoid circular imports.", "I can design and test a persistent multi-module Python project."] },
-      ],
-    },
-  ],
+      "id": "python-pythonfilesmodules-part-4",
+      "title": "PART 4 OF 4: KAI ASSESSMENT",
+      "description": "Part 4 of 4",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "Python: Files and Modules"
+        },
+        {
+          "type": "text",
+          "text": "You have completed the lesson. Now test your understanding."
+        },
+        {
+          "type": "text",
+          "text": "Answer the following eight questions. Submit your answers to Kai for marking and feedback."
+        },
+        {
+          "type": "heading",
+          "text": "Question 1"
+        },
+        {
+          "type": "text",
+          "text": "What is the main purpose of file handling in Python?"
+        },
+        {
+          "type": "text",
+          "text": "A. To change Python syntax."
+        },
+        {
+          "type": "text",
+          "text": "B. To store, retrieve and manage information in files."
+        },
+        {
+          "type": "text",
+          "text": "C. To automatically correct errors."
+        },
+        {
+          "type": "text",
+          "text": "D. To create programming languages."
+        },
+        {
+          "type": "heading",
+          "text": "Question 2"
+        },
+        {
+          "type": "text",
+          "text": "Which file mode is used to add information without replacing existing content?"
+        },
+        {
+          "type": "text",
+          "text": "A. `\"r\"`"
+        },
+        {
+          "type": "text",
+          "text": "B. `\"w\"`"
+        },
+        {
+          "type": "text",
+          "text": "C. `\"a\"`"
+        },
+        {
+          "type": "text",
+          "text": "D. `\"x\"`"
+        },
+        {
+          "type": "heading",
+          "text": "Question 3"
+        },
+        {
+          "type": "text",
+          "text": "What does the `read()` method do?"
+        },
+        {
+          "type": "text",
+          "text": "A. Deletes a file."
+        },
+        {
+          "type": "text",
+          "text": "B. Reads the contents of a file."
+        },
+        {
+          "type": "text",
+          "text": "C. Creates a Python module."
+        },
+        {
+          "type": "text",
+          "text": "D. Renames a file."
+        },
+        {
+          "type": "heading",
+          "text": "Question 4"
+        },
+        {
+          "type": "text",
+          "text": "What is the advantage of using the `with` statement when opening files?"
+        },
+        {
+          "type": "text",
+          "text": "A. It automatically closes the file when the block finishes."
+        },
+        {
+          "type": "text",
+          "text": "B. It automatically deletes the file."
+        },
+        {
+          "type": "text",
+          "text": "C. It prevents all programming errors."
+        },
+        {
+          "type": "text",
+          "text": "D. It converts files into modules."
+        },
+        {
+          "type": "heading",
+          "text": "Question 5"
+        },
+        {
+          "type": "text",
+          "text": "What is a Python module?"
+        },
+        {
+          "type": "text",
+          "text": "A. A folder containing images."
+        },
+        {
+          "type": "text",
+          "text": "B. A Python file containing reusable code."
+        },
+        {
+          "type": "text",
+          "text": "C. A type of database."
+        },
+        {
+          "type": "text",
+          "text": "D. A Python error."
+        },
+        {
+          "type": "heading",
+          "text": "Question 6"
+        },
+        {
+          "type": "text",
+          "text": "Consider this code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import math\n\nprint(math.sqrt(64))"
+        },
+        {
+          "type": "text",
+          "text": "What will be displayed?"
+        },
+        {
+          "type": "text",
+          "text": "A. 6"
+        },
+        {
+          "type": "text",
+          "text": "B. 8.0"
+        },
+        {
+          "type": "text",
+          "text": "C. 64"
+        },
+        {
+          "type": "text",
+          "text": "D. 16"
+        },
+        {
+          "type": "heading",
+          "text": "Question 7"
+        },
+        {
+          "type": "text",
+          "text": "What is the difference between a Python module and a package?"
+        },
+        {
+          "type": "text",
+          "text": "A. A module is a Python file, while a package organizes related modules."
+        },
+        {
+          "type": "text",
+          "text": "B. A module stores images, while a package stores videos."
+        },
+        {
+          "type": "text",
+          "text": "C. They are exactly the same."
+        },
+        {
+          "type": "text",
+          "text": "D. A package is a Python variable."
+        },
+        {
+          "type": "heading",
+          "text": "Question 8"
+        },
+        {
+          "type": "text",
+          "text": "What does `json.dump()` do?"
+        },
+        {
+          "type": "text",
+          "text": "A. Deletes JSON data."
+        },
+        {
+          "type": "text",
+          "text": "B. Converts JSON into a Python function."
+        },
+        {
+          "type": "text",
+          "text": "C. Writes Python data into a JSON file."
+        },
+        {
+          "type": "text",
+          "text": "D. Creates a Python package."
+        },
+        {
+          "type": "heading",
+          "text": "Lesson Completion"
+        },
+        {
+          "type": "text",
+          "text": "After answering all eight questions, submit your answers to Kai."
+        },
+        {
+          "type": "text",
+          "text": "Kai should:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Mark each answer.",
+            "Show the correct answers.",
+            "Explain any incorrect responses.",
+            "Calculate your final score.",
+            "Recommend areas that need revision."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Part 4 of 4 — Lesson Complete**"
+        },
+        {
+          "type": "heading",
+          "text": "Recommended Next Lesson"
+        },
+        {
+          "type": "text",
+          "text": "**Python: Object-Oriented Programming (OOP)**"
+        },
+        {
+          "type": "text",
+          "text": "You will learn about classes, objects, attributes, methods, constructors and how to organize larger Python applications."
+        }
+      ]
+    }
+  ]
 };
 
 export default delivery;

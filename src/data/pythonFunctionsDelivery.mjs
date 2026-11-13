@@ -1,140 +1,1685 @@
 const delivery = {
-  type: "authored",
-  version: 1,
-  intro: "Learn how Python functions organize programs into reusable responsibilities, accept inputs, return results, and support practical applications.",
-  sections: [
+  "type": "authored",
+  "version": 1,
+  "sections": [
     {
-      id: "python-functions-foundations",
-      title: "Introduction to Functions",
-      description: "Part 1 of 4 · Understand reusable code, function definitions, calls, execution order, and built-in functions.",
-      blocks: [
-        { type: "heading", text: "What is a function?" },
-        { type: "text", text: "A function is a named, reusable group of instructions designed to perform one task. Instead of repeating the same statements throughout an application, define the behavior once and call it whenever it is needed. Functions help divide a large problem into smaller parts that can be understood, tested, and changed independently." },
-        { type: "code", language: "python", filename: "without_function.py", code: "print(\"Welcome to the Student Portal\")\nprint(\"Welcome to the Student Portal\")\nprint(\"Welcome to the Student Portal\")" },
-        { type: "code", language: "python", filename: "with_function.py", code: "def show_welcome():\n    print(\"Welcome to the Student Portal\")\n\nshow_welcome()\nshow_welcome()\nshow_welcome()" },
-        { type: "code", language: "text", filename: "output", code: "Welcome to the Student Portal\nWelcome to the Student Portal\nWelcome to the Student Portal" },
-        { type: "text", text: "The second version stores the repeated behavior behind a meaningful name. The def keyword begins a definition, show_welcome is the function name, the parentheses hold parameters when needed, the colon starts the body, and indentation shows which statements belong to the function. Defining a function does not run its body; the call show_welcome() does." },
-        { type: "heading", text: "Why functions are important" },
-        { type: "bullets", items: ["Reuse code instead of rewriting the same instructions.", "Reduce repetition and the number of places a bug can hide.", "Organize a large program into focused responsibilities.", "Improve readability by giving a group of steps a meaningful name.", "Simplify debugging because a small unit can be inspected independently.", "Support teamwork by giving different developers clear components to own."] },
-        { type: "text", text: "A shopping application might use separate functions for registering a user, checking credentials, adding a product to a cart, calculating a total, processing a payment, and sending a confirmation. Each function can then be improved without turning the entire application into one unmanageable block." },
-        { type: "heading", text: "Function syntax" },
-        { type: "table", columns: ["Part", "Meaning", "Example"], rows: [
-          ["def", "Keyword that starts a definition", "def greet():"],
-          ["Name", "The identifier used to call the function", "greet"],
-          ["Parentheses", "A place for parameters", "(name)"],
-          ["Colon", "Marks the beginning of the body", ":"],
-          ["Indented body", "Instructions executed by the function", "    print(name)"],
-        ] },
-        { type: "code", language: "python", filename: "execution_order.py", code: "def first_step():\n    print(\"First step\")\n\ndef second_step():\n    print(\"Second step\")\n\nprint(\"Program started\")\nsecond_step()\nfirst_step()\nprint(\"Program finished\")" },
-        { type: "code", language: "text", filename: "output", code: "Program started\nSecond step\nFirst step\nProgram finished" },
-        { type: "text", text: "Python reads definitions in order but waits to execute their bodies until a call occurs. After the definitions, the program reaches the calls and follows their order. This is why functions can be defined near the top of a file and used later in a different sequence." },
-        { type: "heading", text: "Built-in and user-defined functions" },
-        { type: "code", language: "python", filename: "builtins.py", code: "scores = [72, 88, 91, 64]\nprint(\"Count:\", len(scores))\nprint(\"Total:\", sum(scores))\nprint(\"Highest:\", max(scores))\nprint(\"Type:\", type(scores).__name__)" },
-        { type: "text", text: "Built-in functions are provided by Python. Common examples include print(), input(), len(), type(), sum(), max(), min(), and range(). User-defined functions are created with def to solve a need in your own program. The built-ins and your functions follow the same basic call idea: name followed by parentheses and any required arguments." },
-        { type: "code", language: "python", filename: "unfinished_operations.py", code: "def check_balance():\n    pass\n\ndef deposit_money():\n    pass\n\ndef withdraw_money():\n    pass" },
-        { type: "text", text: "pass is a placeholder that lets a function body remain syntactically valid while the implementation is still being designed. It does not perform the banking operation; it only does nothing for now. A real financial application would also need authentication, authorization, validation, persistent records, and audit trails." },
-        { type: "callout", title: "Part 1 checkpoint", text: "You should be able to define a function, explain why it is useful, distinguish a definition from a call, predict execution order, and distinguish built-in from user-defined functions." },
-      ],
+      "id": "python-pythonfunctions-part-1",
+      "title": "PART 1 OF 4: INTRODUCTION TO FUNCTIONS",
+      "description": "Part 1 of 4",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "PYTHON PROGRAMMING: FUNCTIONS"
+        },
+        {
+          "type": "heading",
+          "text": "1. What Is a Function in Python?"
+        },
+        {
+          "type": "text",
+          "text": "A function is a reusable block of code designed to perform a particular task."
+        },
+        {
+          "type": "text",
+          "text": "Instead of writing the same instructions repeatedly throughout a program, you can place those instructions inside a function and execute them whenever needed."
+        },
+        {
+          "type": "text",
+          "text": "For example, imagine you are developing a student management system. You want your program to display a welcome message whenever a student logs in."
+        },
+        {
+          "type": "text",
+          "text": "Without a function, you might write:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Welcome to the Student System\")\nprint(\"Welcome to the Student System\")\nprint(\"Welcome to the Student System\")"
+        },
+        {
+          "type": "text",
+          "text": "This repeats the same instruction."
+        },
+        {
+          "type": "text",
+          "text": "Using a function, you can write:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def welcome():\n    print(\"Welcome to the Student System\")"
+        },
+        {
+          "type": "text",
+          "text": "You can then execute the function whenever you need it:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "welcome()\nwelcome()\nwelcome()"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Welcome to the Student System\nWelcome to the Student System\nWelcome to the Student System"
+        },
+        {
+          "type": "text",
+          "text": "The function allows you to reuse the same code without rewriting it."
+        },
+        {
+          "type": "heading",
+          "text": "2. Why Are Functions Important?"
+        },
+        {
+          "type": "text",
+          "text": "Functions are important because they help programmers:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "**Reuse code:** Write instructions once and use them multiple times.",
+            "**Reduce repetition:** Avoid writing the same code repeatedly.",
+            "**Organize programs:** Divide large programs into smaller sections.",
+            "**Improve readability:** Make programs easier to understand.",
+            "**Simplify debugging:** Find and correct errors within specific functions.",
+            "**Support teamwork:** Different developers can work on different functions of a project."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "For example, an online shopping application might have separate functions for:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Registering users.",
+            "Logging in.",
+            "Adding products to a cart.",
+            "Calculating order totals.",
+            "Processing payments.",
+            "Sending order confirmations."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Each function performs a particular task."
+        },
+        {
+          "type": "heading",
+          "text": "3. Creating a Function in Python"
+        },
+        {
+          "type": "text",
+          "text": "Python uses the `def` keyword to define a function."
+        },
+        {
+          "type": "text",
+          "text": "Basic syntax:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def function_name():\n    # Instructions to execute"
+        },
+        {
+          "type": "text",
+          "text": "Let's understand the components."
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Component",
+            "Meaning"
+          ],
+          "rows": [
+            [
+              "`def`",
+              "Keyword used to define a function."
+            ],
+            [
+              "`function_name`",
+              "The name given to the function."
+            ],
+            [
+              "`()`",
+              "Parentheses that can contain parameters."
+            ],
+            [
+              "`:`",
+              "Indicates the beginning of the function body."
+            ],
+            [
+              "Indented code",
+              "Instructions that belong to the function."
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet():\n    print(\"Hello, welcome to Python!\")"
+        },
+        {
+          "type": "text",
+          "text": "This creates a function called `greet`."
+        },
+        {
+          "type": "text",
+          "text": "However, defining a function does not automatically execute its instructions."
+        },
+        {
+          "type": "text",
+          "text": "You must call the function."
+        },
+        {
+          "type": "heading",
+          "text": "4. Calling a Function"
+        },
+        {
+          "type": "text",
+          "text": "Calling a function means instructing Python to execute the code inside that function."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet():\n    print(\"Hello, welcome to Python!\")\n\ngreet()"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Hello, welcome to Python!"
+        },
+        {
+          "type": "text",
+          "text": "Notice the difference:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`def greet():` creates the function.",
+            "`greet()` executes the function."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "A function can be called multiple times."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet():\n    print(\"Hello!\")\n\ngreet()\ngreet()\ngreet()"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Hello!\nHello!\nHello!"
+        },
+        {
+          "type": "heading",
+          "text": "5. Functions and Program Execution"
+        },
+        {
+          "type": "text",
+          "text": "Consider this program:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def first():\n    print(\"First function\")\n\ndef second():\n    print(\"Second function\")\n\nprint(\"Program started\")\n\nsecond()\nfirst()\n\nprint(\"Program finished\")"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Program started\nSecond function\nFirst function\nProgram finished"
+        },
+        {
+          "type": "text",
+          "text": "Python executes instructions in order."
+        },
+        {
+          "type": "text",
+          "text": "Defining the functions does not execute their bodies. Their bodies run when they are called."
+        },
+        {
+          "type": "text",
+          "text": "This allows programmers to organize functions in one part of a program and call them from another part."
+        },
+        {
+          "type": "heading",
+          "text": "6. Types of Functions in Python"
+        },
+        {
+          "type": "text",
+          "text": "Python functions can be grouped into two common categories."
+        },
+        {
+          "type": "text",
+          "text": "**A. Built-in Functions**"
+        },
+        {
+          "type": "text",
+          "text": "These are functions already provided by Python."
+        },
+        {
+          "type": "text",
+          "text": "Examples:"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Function",
+            "Purpose"
+          ],
+          "rows": [
+            [
+              "`print()`",
+              "Displays information."
+            ],
+            [
+              "`input()`",
+              "Accepts user input."
+            ],
+            [
+              "`len()`",
+              "Returns the length of an object."
+            ],
+            [
+              "`type()`",
+              "Identifies an object's type."
+            ],
+            [
+              "`sum()`",
+              "Calculates the sum of values."
+            ],
+            [
+              "`max()`",
+              "Returns the largest value."
+            ],
+            [
+              "`min()`",
+              "Returns the smallest value."
+            ],
+            [
+              "`range()`",
+              "Produces a sequence of numbers."
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "numbers = [10, 20, 30, 40]\n\nprint(len(numbers))\nprint(sum(numbers))\nprint(max(numbers))"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "4\n100\n40"
+        },
+        {
+          "type": "text",
+          "text": "**B. User-Defined Functions**"
+        },
+        {
+          "type": "text",
+          "text": "These are functions created by programmers to perform specific tasks."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate_area():\n    length = 10\n    width = 5\n\n    area = length * width\n\n    print(\"Area:\", area)\n\ncalculate_area()"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Area: 50"
+        },
+        {
+          "type": "heading",
+          "text": "7. Real-World Applications of Functions"
+        },
+        {
+          "type": "text",
+          "text": "Functions are used in almost every software application."
+        },
+        {
+          "type": "text",
+          "text": "For example, a banking system might contain:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def check_balance():\n    pass\n\ndef deposit_money():\n    pass\n\ndef withdraw_money():\n    pass\n\ndef transfer_money():\n    pass"
+        },
+        {
+          "type": "text",
+          "text": "The `pass` keyword is temporarily used because the functions have not yet been implemented."
+        },
+        {
+          "type": "text",
+          "text": "A software developer can implement each function separately and connect them to the rest of the application."
+        },
+        {
+          "type": "heading",
+          "text": "Part 1 Summary"
+        },
+        {
+          "type": "text",
+          "text": "A function is a reusable block of code designed to perform a particular task."
+        },
+        {
+          "type": "text",
+          "text": "Python uses the `def` keyword to define functions, and the function name followed by parentheses is used to call them."
+        },
+        {
+          "type": "text",
+          "text": "**Progress: Part 1 of 4**"
+        }
+      ]
     },
     {
-      id: "python-functions-parameters-returns",
-      title: "Parameters, Arguments, and Return Values",
-      description: "Part 2 of 4 · Pass information into functions, return results, use defaults and keywords, and understand scope.",
-      blocks: [
-        { type: "heading", text: "Parameters and arguments" },
-        { type: "text", text: "A parameter is a variable named in the function definition. An argument is the actual value supplied at the call site. Parameters let one function handle many inputs rather than forcing you to create a separate function for every person, number, or record." },
-        { type: "code", language: "python", filename: "greet_learners.py", code: "def greet(learner_name):\n    print(f\"Hello, {learner_name}!\")\n\ngreet(\"Amina\")\ngreet(\"Jon\")\ngreet(\"Musa\")" },
-        { type: "code", language: "text", filename: "output", code: "Hello, Amina!\nHello, Jon!\nHello, Musa!" },
-        { type: "text", text: "learner_name is the parameter. Amina, Jon, and Musa are arguments. When a call begins, Python binds each argument to its matching parameter and runs the body with those local values." },
-        { type: "heading", text: "Multiple parameters" },
-        { type: "code", language: "python", filename: "add_numbers.py", code: "def add_numbers(first, second):\n    total = first + second\n    print(\"Sum:\", total)\n\nadd_numbers(10, 20)\nadd_numbers(5, 8)\nadd_numbers(100, 200)" },
-        { type: "text", text: "The first argument is bound to first and the second to second. The same function can be called with different values. If a required parameter is missing or too many positional arguments are supplied, Python raises TypeError; that message is evidence that the function's contract and the call do not match." },
-        { type: "heading", text: "Returning a result" },
-        { type: "code", language: "python", filename: "return_value.py", code: "def add_numbers(first, second):\n    return first + second\n\nresult = add_numbers(10, 20)\nprint(\"Stored result:\", result)\nprint(\"Can reuse it:\", result * 2)" },
-        { type: "text", text: "return sends a value from the function back to its caller. The caller can store it, compare it, pass it to another function, or include it in a larger expression. return also ends the current function immediately, so statements after a reached return are not executed." },
-        { type: "heading", text: "print() and return are different" },
-        { type: "code", language: "python", filename: "print_vs_return.py", code: "def display_calculation():\n    print(10 + 20)\n\nshown = display_calculation()\nprint(\"Value from display_calculation:\", shown)\n\ndef calculate():\n    return 10 + 20\n\nvalue = calculate()\nprint(\"Value from calculate:\", value)" },
-        { type: "code", language: "text", filename: "output", code: "30\nValue from display_calculation: None\nValue from calculate: 30" },
-        { type: "text", text: "The first function displays 30 but does not send a result to the caller, so Python returns None automatically. The second function returns 30, which can be stored and reused. Print for an intentional display; return when another part of the program needs the result." },
-        { type: "heading", text: "Default and keyword arguments" },
-        { type: "code", language: "python", filename: "argument_styles.py", code: "def welcome(name=\"Guest\", course=\"Python\"):\n    return f\"{name} is studying {course}.\"\n\nprint(welcome())\nprint(welcome(\"Amina\"))\nprint(welcome(course=\"Functions\", name=\"Musa\"))" },
-        { type: "text", text: "A default parameter supplies a value when the caller omits that argument. A keyword argument names the parameter at the call site, which can make a call clearer and allows keyword order to differ from definition order. Required parameters should normally come before parameters with defaults." },
-        { type: "heading", text: "Local and global scope" },
-        { type: "code", language: "python", filename: "scope.py", code: "course_name = \"Python\"\n\ndef describe_course():\n    lesson_count = 12\n    print(course_name, lesson_count)\n\ndescribe_course()\n# lesson_count exists only inside describe_course" },
-        { type: "text", text: "A variable created inside a function is normally local to that function. A function can read a global name, but relying heavily on global state makes behavior harder to test and reason about. Prefer parameters and return values. The global keyword can reassign a module-level variable, but it should be used deliberately because hidden shared state creates surprising dependencies." },
-        { type: "code", language: "python", filename: "global_example.py", code: "completed = 0\n\ndef record_completion():\n    global completed\n    completed += 1\n\nrecord_completion()\nprint(completed)" },
-        { type: "text", text: "This example shows how global can reassign completed, but a design using a value passed in and returned out is often easier to test. Scope questions are useful debugging clues: a local name cannot normally be accessed after its function ends, and an unassigned name raises NameError." },
-        { type: "heading", text: "Returning more than one value" },
-        { type: "code", language: "python", filename: "multiple_results.py", code: "def compare(first, second):\n    total = first + second\n    difference = first - second\n    return total, difference\n\ntotal, difference = compare(20, 10)\nprint(\"Total:\", total)\nprint(\"Difference:\", difference)" },
-        { type: "text", text: "Python packages multiple returned values into a tuple. The caller can keep the tuple or unpack its elements into separate names. Make the return shape clear so callers know what each position represents." },
-        { type: "callout", title: "Common mistake", kind: "warning", text: "A function that prints a calculation cannot be reused as the calculation's value. Return the result when the caller needs to validate, store, compare, or combine it." },
-      ],
+      "id": "python-pythonfunctions-part-2",
+      "title": "PART 2 OF 4: PARAMETERS, ARGUMENTS AND RETURN VALUES",
+      "description": "Part 2 of 4",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "1. Understanding Parameters"
+        },
+        {
+          "type": "text",
+          "text": "A parameter is a variable listed inside a function's parentheses when the function is defined."
+        },
+        {
+          "type": "text",
+          "text": "Parameters allow a function to receive information from outside."
+        },
+        {
+          "type": "text",
+          "text": "For example, consider a function that greets a person."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet(name):\n    print(\"Hello\", name)\n\ngreet(\"Brian\")"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Hello Brian"
+        },
+        {
+          "type": "text",
+          "text": "Here:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`name` is the parameter.",
+            "`\"Brian\"` is the argument.",
+            "The function uses the received information to produce a result."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Without parameters, you would have to create separate functions for different names."
+        },
+        {
+          "type": "text",
+          "text": "With parameters, one function can work with many different values."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet(name):\n    print(\"Hello\", name)\n\ngreet(\"Brian\")\ngreet(\"James\")\ngreet(\"Mary\")"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Hello Brian\nHello James\nHello Mary"
+        },
+        {
+          "type": "heading",
+          "text": "2. Understanding Arguments"
+        },
+        {
+          "type": "text",
+          "text": "An argument is the actual value passed to a function when it is called."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def welcome(student):\n    print(\"Welcome\", student)\n\nwelcome(\"Peter\")"
+        },
+        {
+          "type": "text",
+          "text": "In this example:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`student` is the parameter.",
+            "`\"Peter\"` is the argument."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Parameters are defined in the function. Arguments are supplied when calling it."
+        },
+        {
+          "type": "heading",
+          "text": "3. Functions With Multiple Parameters"
+        },
+        {
+          "type": "text",
+          "text": "A function can receive more than one parameter."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def add_numbers(a, b):\n    result = a + b\n    print(\"Sum:\", result)\n\nadd_numbers(10, 20)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Sum: 30"
+        },
+        {
+          "type": "text",
+          "text": "The function receives two values:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`a` receives 10.",
+            "`b` receives 20."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "It then adds them together."
+        },
+        {
+          "type": "text",
+          "text": "You can call the same function with different values:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "add_numbers(5, 8)\nadd_numbers(100, 200)\nadd_numbers(12, 15)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Sum: 13\nSum: 300\nSum: 27"
+        },
+        {
+          "type": "heading",
+          "text": "4. Understanding Return Values"
+        },
+        {
+          "type": "text",
+          "text": "The `return` statement allows a function to send a result back to the part of the program that called it."
+        },
+        {
+          "type": "text",
+          "text": "This is different from simply displaying information using `print()`."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def add_numbers(a, b):\n    return a + b\n\nresult = add_numbers(10, 20)\n\nprint(result)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "30"
+        },
+        {
+          "type": "text",
+          "text": "What happens?"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "The function receives 10 and 20.",
+            "It calculates their sum.",
+            "`return` sends the result back.",
+            "The result is stored in the variable `result`.",
+            "`print()` displays the stored value."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "5. Difference Between print() and return"
+        },
+        {
+          "type": "text",
+          "text": "This is one of the most important concepts when learning Python functions."
+        },
+        {
+          "type": "table",
+          "columns": [
+            "`print()`",
+            "`return`"
+          ],
+          "rows": [
+            [
+              "Displays information on the screen.",
+              "Sends a value back to the caller."
+            ],
+            [
+              "Does not automatically provide a reusable result.",
+              "Allows the result to be stored and reused."
+            ],
+            [
+              "Useful for displaying messages and debugging.",
+              "Useful for calculations and program logic."
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Example using `print()`:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate():\n    print(10 + 20)\n\nresult = calculate()\n\nprint(result)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "30\nNone"
+        },
+        {
+          "type": "text",
+          "text": "Why does it display `None`?"
+        },
+        {
+          "type": "text",
+          "text": "Because the function displays 30 but does not return a value. Python functions return `None` automatically when no explicit return value is provided."
+        },
+        {
+          "type": "text",
+          "text": "Now consider:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate():\n    return 10 + 20\n\nresult = calculate()\n\nprint(result)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "30"
+        },
+        {
+          "type": "text",
+          "text": "This time, the function returns 30, which can be stored and reused."
+        },
+        {
+          "type": "heading",
+          "text": "6. Functions With Default Parameters"
+        },
+        {
+          "type": "text",
+          "text": "A default parameter has a value that Python uses when the caller does not provide an argument for that parameter."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet(name=\"Guest\"):\n    print(\"Welcome\", name)\n\ngreet()\ngreet(\"Brian\")"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Welcome Guest\nWelcome Brian"
+        },
+        {
+          "type": "text",
+          "text": "The function uses `\"Guest\"` when no name is provided."
+        },
+        {
+          "type": "text",
+          "text": "However, when `\"Brian\"` is supplied, that value is used instead."
+        },
+        {
+          "type": "heading",
+          "text": "7. Keyword Arguments"
+        },
+        {
+          "type": "text",
+          "text": "Python allows you to specify arguments using parameter names."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def student_info(name, course):\n    print(\"Name:\", name)\n    print(\"Course:\", course)\n\nstudent_info(course=\"Software Development\", name=\"Brian\")"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Name: Brian\nCourse: Software Development"
+        },
+        {
+          "type": "text",
+          "text": "Keyword arguments allow you to provide values by name rather than relying on their position."
+        },
+        {
+          "type": "heading",
+          "text": "8. Functions Returning Multiple Values"
+        },
+        {
+          "type": "text",
+          "text": "Python allows a function to return multiple values."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate(a, b):\n    total = a + b\n    difference = a - b\n\n    return total, difference\n\nresult = calculate(20, 10)\n\nprint(result)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "(30, 10)"
+        },
+        {
+          "type": "text",
+          "text": "You can also store the returned values separately:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "total, difference = calculate(20, 10)\n\nprint(\"Total:\", total)\nprint(\"Difference:\", difference)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Total: 30\nDifference: 10"
+        },
+        {
+          "type": "text",
+          "text": "Python returns these values together as a tuple."
+        },
+        {
+          "type": "heading",
+          "text": "9. Variable Scope"
+        },
+        {
+          "type": "text",
+          "text": "Variable scope describes where a variable can be accessed in a program."
+        },
+        {
+          "type": "text",
+          "text": "Two important types are:"
+        },
+        {
+          "type": "text",
+          "text": "**Local Variables**"
+        },
+        {
+          "type": "text",
+          "text": "A local variable is created inside a function and is normally accessible only within that function."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate():\n    result = 100\n    print(result)\n\ncalculate()"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "100"
+        },
+        {
+          "type": "text",
+          "text": "The variable `result` belongs to the function."
+        },
+        {
+          "type": "text",
+          "text": "Trying to access it outside the function will produce a `NameError`:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate():\n    result = 100\n\ncalculate()\n\nprint(result)"
+        },
+        {
+          "type": "text",
+          "text": "**Global Variables**"
+        },
+        {
+          "type": "text",
+          "text": "A global variable is defined outside functions and can generally be accessed throughout the module."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "name = \"Brian\"\n\ndef greet():\n    print(\"Hello\", name)\n\ngreet()"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Hello Brian"
+        },
+        {
+          "type": "text",
+          "text": "A function can read a global variable without declaring it as `global`."
+        },
+        {
+          "type": "text",
+          "text": "To reassign a global variable from inside a function, Python requires the `global` keyword."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "count = 0\n\ndef increase():\n    global count\n    count = count + 1\n\nincrease()\n\nprint(count)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "1"
+        },
+        {
+          "type": "text",
+          "text": "Use global variables carefully. Passing information through function parameters and return values often makes programs easier to maintain."
+        },
+        {
+          "type": "heading",
+          "text": "Part 2 Summary"
+        },
+        {
+          "type": "text",
+          "text": "Functions can receive information through parameters and arguments. They can calculate results and send those results back using `return`."
+        },
+        {
+          "type": "text",
+          "text": "Understanding variable scope also helps you write functions that behave correctly."
+        },
+        {
+          "type": "text",
+          "text": "**Progress: Part 2 of 4**"
+        }
+      ]
     },
     {
-      id: "python-functions-practice",
-      title: "Practical Applications of Functions",
-      description: "Part 3 of 4 · Build greeting, calculator, grading, user-input, student-management, and stateful examples.",
-      blocks: [
-        { type: "heading", text: "Set up the project" },
-        { type: "text", text: "Create a folder named python-functions and a file named functions.py. Open a terminal in that folder and run python functions.py or python3 functions.py, depending on the command used by your system." },
-        { type: "heading", text: "Project 1: a reusable welcome" },
-        { type: "code", language: "python", filename: "functions.py", code: "def welcome():\n    print(\"Welcome to CodeLab Academy!\")\n    print(\"Keep practising Python.\")\n\nwelcome()" },
-        { type: "code", language: "text", filename: "expected-output", code: "Welcome to CodeLab Academy!\nKeep practising Python." },
-        { type: "text", text: "The function owns the welcome message and the call starts it. Extend the exercise by changing the message, calling it twice, and then changing it to accept a learner name." },
-        { type: "heading", text: "Project 2: calculator functions" },
-        { type: "code", language: "python", filename: "calculator.py", code: "def add(first, second):\n    return first + second\n\ndef subtract(first, second):\n    return first - second\n\ndef multiply(first, second):\n    return first * second\n\ndef divide(first, second):\n    if second == 0:\n        return None\n    return first / second\n\nfirst = 10\nsecond = 5\nprint(\"Addition:\", add(first, second))\nprint(\"Subtraction:\", subtract(first, second))\nprint(\"Multiplication:\", multiply(first, second))\nanswer = divide(first, second)\nprint(\"Division:\", answer if answer is not None else \"Cannot divide by zero\")" },
-        { type: "text", text: "Each operation has one responsibility. divide checks its boundary before calculating. A production calculator would also validate input types, define how invalid operations are reported, and test values such as zero, negative numbers, and decimal numbers." },
-        { type: "heading", text: "Project 3: student grading" },
-        { type: "code", language: "python", filename: "grading.py", code: "def calculate_grade(mark):\n    if mark < 0 or mark > 100:\n        return \"Invalid mark\"\n    if mark >= 70:\n        return \"A\"\n    if mark >= 60:\n        return \"B\"\n    if mark >= 50:\n        return \"C\"\n    if mark >= 40:\n        return \"D\"\n    return \"Fail\"\n\nstudent_mark = 75\nprint(\"Mark:\", student_mark)\nprint(\"Grade:\", calculate_grade(student_mark))" },
-        { type: "text", text: "The function validates the range before choosing a grade. The caller supplies the mark and displays the result. Test values at every boundary, including 0, 39, 40, 49, 50, 59, 60, 69, 70, 100, -1, and 101." },
-        { type: "heading", text: "Project 4: user input and functions" },
-        { type: "code", language: "python", filename: "greet_user.py", code: "def greet_user(name):\n    clean_name = name.strip()\n    if not clean_name:\n        return \"Please provide a name.\"\n    return f\"Hello, {clean_name}! Welcome to the application.\"\n\nusername = input(\"Enter your name: \" )\nprint(greet_user(username))" },
-        { type: "text", text: "The input belongs to the calling program, while the function cleans and interprets the value. Keeping those responsibilities separate makes the greeting function easy to call with a test string without needing interactive input." },
-        { type: "heading", text: "Project 5: student management" },
-        { type: "code", language: "python", filename: "student_manager.py", code: "students = []\n\ndef add_student(name):\n    students.append(name)\n    return f\"{name} registered.\"\n\ndef list_students():\n    return students.copy()\n\ndef count_students():\n    return len(students)\n\nprint(add_student(\"Amina\"))\nprint(add_student(\"Jon\"))\nprint(\"Registered:\", list_students())\nprint(\"Total:\", count_students())" },
-        { type: "text", text: "The three functions have distinct responsibilities: add_student changes the collection, list_students returns a view of the current names, and count_students returns a number. This is a small example of dividing an application into manageable operations." },
-        { type: "heading", text: "Project 6: state and banking boundaries" },
-        { type: "code", language: "python", filename: "account.py", code: "def deposit(balance, amount):\n    if amount <= 0:\n        return balance, \"Deposit must be positive.\"\n    return balance + amount, \"Deposit accepted.\"\n\ndef withdraw(balance, amount):\n    if amount <= 0:\n        return balance, \"Withdrawal must be positive.\"\n    if amount > balance:\n        return balance, \"Insufficient funds.\"\n    return balance - amount, \"Withdrawal accepted.\"\n\nbalance = 5000\nbalance, message = deposit(balance, 2000)\nprint(message)\nbalance, message = withdraw(balance, 1000)\nprint(message)\nprint(\"Balance:\", balance)" },
-        { type: "text", text: "Passing balance in and returning the new balance makes state changes visible to the caller and avoids a hidden global variable. This is only a learning model; real banking software needs secure identity checks, authorization, durable transactions, concurrency control, audit logs, and careful error handling." },
-        { type: "heading", text: "Function design and common mistakes" },
-        { type: "table", columns: ["Mistake", "What happens", "Better practice"], rows: [
-          ["Define but never call", "The body never runs", "Call the function at the required point"],
-          ["Write greet instead of greet()", "You refer to the function object", "Use parentheses to invoke it"],
-          ["Forget indentation", "Python raises an indentation error", "Indent the complete body consistently"],
-          ["Pass the wrong argument count", "Python raises TypeError", "Match the function contract or add a default"],
-          ["Print instead of return", "The caller receives None", "Return reusable results"],
-          ["Make one function do everything", "Testing and changes become difficult", "Give each function one clear responsibility"],
-        ] },
-        { type: "numbered", items: ["Create greet() that returns a welcome message.", "Create add(first, second) that returns a sum.", "Create check_number(number) that returns whether a number is even or odd.", "Create rectangle_area(length, width) and test several dimensions.", "Create calculate_grade(mark) with validation and boundary tests.", "Create separate calculator functions and let a user select an operation."] },
-        { type: "exercise", title: "Capstone project: learner progress application", description: "Build a program that stores learner progress and uses focused functions to add a lesson, calculate an average safely, classify progress, display a report, and handle invalid or empty input. Explain every parameter, return value, state change, and boundary case." },
-      ],
+      "id": "python-pythonfunctions-part-3",
+      "title": "PART 3 OF 4: PRACTICAL APPLICATIONS OF FUNCTIONS",
+      "description": "Part 3 of 4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In this part, you will create real Python programs using functions."
+        },
+        {
+          "type": "heading",
+          "text": "1. Setting Up Your Python Project"
+        },
+        {
+          "type": "text",
+          "text": "Follow these steps:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Open Visual Studio Code or another Python editor.",
+            "Create a folder named `python_functions`.",
+            "Create a file inside it called `functions.py`.",
+            "Write your Python code inside the file.",
+            "Save the file.",
+            "Open the terminal in the project folder."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Run your program:"
+        },
+        {
+          "type": "code",
+          "language": "bash",
+          "code": "python functions.py"
+        },
+        {
+          "type": "text",
+          "text": "If your system uses Python 3 through a separate command:"
+        },
+        {
+          "type": "code",
+          "language": "bash",
+          "code": "python3 functions.py"
+        },
+        {
+          "type": "heading",
+          "text": "2. Program One: Simple Greeting Function"
+        },
+        {
+          "type": "text",
+          "text": "Create a function that displays a welcome message."
+        },
+        {
+          "type": "text",
+          "text": "Code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def welcome():\n    print(\"Welcome to CodeLab Academy!\")\n    print(\"Learn Python Programming.\")\n\nwelcome()"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Welcome to CodeLab Academy!\nLearn Python Programming."
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`def welcome():` defines the function.",
+            "The two indented instructions belong to the function.",
+            "`welcome()` executes the function."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "3. Program Two: Calculator Using Functions"
+        },
+        {
+          "type": "text",
+          "text": "A calculator can use separate functions for different mathematical operations."
+        },
+        {
+          "type": "text",
+          "text": "Code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def add(a, b):\n    return a + b\n\ndef subtract(a, b):\n    return a - b\n\ndef multiply(a, b):\n    return a * b\n\ndef divide(a, b):\n    if b == 0:\n        return \"Cannot divide by zero\"\n\n    return a / b\n\n\nprint(\"Addition:\", add(10, 5))\nprint(\"Subtraction:\", subtract(10, 5))\nprint(\"Multiplication:\", multiply(10, 5))\nprint(\"Division:\", divide(10, 5))"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Addition: 15\nSubtraction: 5\nMultiplication: 50\nDivision: 2.0"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "text",
+          "text": "Each mathematical operation has its own function."
+        },
+        {
+          "type": "text",
+          "text": "This makes the calculator easier to organize and maintain."
+        },
+        {
+          "type": "text",
+          "text": "Notice that the division function checks whether the second number is zero before performing division."
+        },
+        {
+          "type": "heading",
+          "text": "4. Program Three: Student Grading System"
+        },
+        {
+          "type": "text",
+          "text": "Suppose you are building a university system that calculates student grades."
+        },
+        {
+          "type": "text",
+          "text": "Code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate_grade(marks):\n\n    if marks < 0 or marks > 100:\n        return \"Invalid marks\"\n\n    if marks >= 70:\n        return \"A\"\n    elif marks >= 60:\n        return \"B\"\n    elif marks >= 50:\n        return \"C\"\n    elif marks >= 40:\n        return \"D\"\n    else:\n        return \"Fail\"\n\n\nstudent_marks = 75\n\ngrade = calculate_grade(student_marks)\n\nprint(\"Marks:\", student_marks)\nprint(\"Grade:\", grade)"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Marks: 75\nGrade: A"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "`calculate_grade()` receives the student's marks.",
+            "The function checks whether the marks are valid.",
+            "It evaluates the conditions.",
+            "It returns the appropriate grade.",
+            "The returned grade is stored in `grade`."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "5. Program Four: User Input and Functions"
+        },
+        {
+          "type": "text",
+          "text": "Functions can also work with information entered by users."
+        },
+        {
+          "type": "text",
+          "text": "Code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet_user(name):\n    print(\"Hello\", name)\n    print(\"Welcome to our application!\")\n\n\nusername = input(\"Enter your name: \")\n\ngreet_user(username)"
+        },
+        {
+          "type": "text",
+          "text": "Example output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter your name: Brian\nHello Brian\nWelcome to our application!"
+        },
+        {
+          "type": "text",
+          "text": "The program collects the user's name and passes it to the function."
+        },
+        {
+          "type": "heading",
+          "text": "6. Program Five: Student Management System"
+        },
+        {
+          "type": "text",
+          "text": "Now combine several functions to create a small student management program."
+        },
+        {
+          "type": "text",
+          "text": "Code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "students = []\n\n\ndef add_student(name):\n    students.append(name)\n    print(name, \"has been registered.\")\n\n\ndef display_students():\n    print(\"\\nRegistered Students:\")\n\n    for student in students:\n        print(student)\n\n\ndef count_students():\n    return len(students)\n\n\nadd_student(\"Brian\")\nadd_student(\"James\")\nadd_student(\"Mary\")\n\ndisplay_students()\n\nprint(\"\\nTotal Students:\", count_students())"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Brian has been registered.\nJames has been registered.\nMary has been registered.\n\nRegistered Students:\nBrian\nJames\nMary\n\nTotal Students: 3"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "text",
+          "text": "This program uses three functions:"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Function",
+            "Responsibility"
+          ],
+          "rows": [
+            [
+              "`add_student()`",
+              "Adds a student to the list."
+            ],
+            [
+              "`display_students()`",
+              "Displays registered students."
+            ],
+            [
+              "`count_students()`",
+              "Returns the total number of students."
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Each function performs a specific task."
+        },
+        {
+          "type": "text",
+          "text": "This is an example of how functions help developers divide a program into manageable components."
+        },
+        {
+          "type": "heading",
+          "text": "7. Program Six: Banking Operations"
+        },
+        {
+          "type": "text",
+          "text": "Consider a basic banking application."
+        },
+        {
+          "type": "text",
+          "text": "Code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "balance = 5000\n\n\ndef check_balance():\n    print(\"Current Balance:\", balance)\n\n\ndef deposit(amount):\n    global balance\n\n    if amount <= 0:\n        print(\"Invalid deposit amount\")\n        return\n\n    balance += amount\n\n    print(\"Deposit successful\")\n\n\ndef withdraw(amount):\n    global balance\n\n    if amount <= 0:\n        print(\"Invalid withdrawal amount\")\n\n    elif amount > balance:\n        print(\"Insufficient funds\")\n\n    else:\n        balance -= amount\n        print(\"Withdrawal successful\")\n\n\ncheck_balance()\n\ndeposit(2000)\n\nwithdraw(1000)\n\ncheck_balance()"
+        },
+        {
+          "type": "text",
+          "text": "Output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Current Balance: 5000\nDeposit successful\nWithdrawal successful\nCurrent Balance: 6000"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "text",
+          "text": "The program has three main functions:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`check_balance()` displays the current balance.",
+            "`deposit()` increases the balance.",
+            "`withdraw()` reduces the balance after checking the available funds."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "This is a simplified learning example. A real banking system requires secure authentication, transaction validation, persistent storage, authorization and audit logging."
+        },
+        {
+          "type": "heading",
+          "text": "8. Understanding Function Design"
+        },
+        {
+          "type": "text",
+          "text": "When developing larger applications, functions should ideally perform clearly defined responsibilities."
+        },
+        {
+          "type": "text",
+          "text": "For example, an e-commerce application could be organized as follows:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def register_user():\n    pass\n\ndef login_user():\n    pass\n\ndef display_products():\n    pass\n\ndef add_to_cart():\n    pass\n\ndef calculate_total():\n    pass\n\ndef process_payment():\n    pass"
+        },
+        {
+          "type": "text",
+          "text": "Each function represents a separate responsibility."
+        },
+        {
+          "type": "text",
+          "text": "This makes the application easier to test, improve and maintain."
+        },
+        {
+          "type": "heading",
+          "text": "9. Common Mistakes When Using Functions"
+        },
+        {
+          "type": "text",
+          "text": "**Mistake 1: Forgetting to call a function**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet():\n    print(\"Hello\")"
+        },
+        {
+          "type": "text",
+          "text": "This defines the function but does not execute it."
+        },
+        {
+          "type": "text",
+          "text": "Correct:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet():\n    print(\"Hello\")\n\ngreet()"
+        },
+        {
+          "type": "text",
+          "text": "**Mistake 2: Forgetting parentheses when calling a function**"
+        },
+        {
+          "type": "text",
+          "text": "Incorrect:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "greet"
+        },
+        {
+          "type": "text",
+          "text": "Correct:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "greet()"
+        },
+        {
+          "type": "text",
+          "text": "**Mistake 3: Forgetting indentation**"
+        },
+        {
+          "type": "text",
+          "text": "Incorrect:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet():\nprint(\"Hello\")"
+        },
+        {
+          "type": "text",
+          "text": "Correct:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet():\n    print(\"Hello\")"
+        },
+        {
+          "type": "text",
+          "text": "**Mistake 4: Passing the wrong number of arguments**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def add(a, b):\n    return a + b\n\nadd(10)"
+        },
+        {
+          "type": "text",
+          "text": "This produces a `TypeError` because the function requires two arguments, but only one was provided."
+        },
+        {
+          "type": "text",
+          "text": "Correct:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "add(10, 20)"
+        },
+        {
+          "type": "text",
+          "text": "**Mistake 5: Confusing print() with return**"
+        },
+        {
+          "type": "text",
+          "text": "If you need to use a function's calculated result elsewhere in your program, return the result instead of only printing it."
+        },
+        {
+          "type": "heading",
+          "text": "10. Practical Exercises"
+        },
+        {
+          "type": "text",
+          "text": "Complete the following exercises independently."
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 1: Greeting Function**"
+        },
+        {
+          "type": "text",
+          "text": "Create a function called `greet()` that displays a welcome message."
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 2: Addition Function**"
+        },
+        {
+          "type": "text",
+          "text": "Create a function that accepts two numbers and returns their sum."
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 3: Even or Odd Checker**"
+        },
+        {
+          "type": "text",
+          "text": "Create a function called `check_number()` that receives a number and returns whether it is even or odd."
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 4: Area Calculator**"
+        },
+        {
+          "type": "text",
+          "text": "Create a function that accepts the length and width of a rectangle and returns its area."
+        },
+        {
+          "type": "text",
+          "text": "Formula:"
+        },
+        {
+          "type": "text",
+          "text": "Area = Length × Width"
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 5: Student Grade Calculator**"
+        },
+        {
+          "type": "text",
+          "text": "Create a function that receives student marks and returns the appropriate grade."
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 6: Simple Calculator**"
+        },
+        {
+          "type": "text",
+          "text": "Create separate functions for addition, subtraction, multiplication and division."
+        },
+        {
+          "type": "text",
+          "text": "Allow users to enter two numbers and select the operation."
+        },
+        {
+          "type": "heading",
+          "text": "Part 3 Summary"
+        },
+        {
+          "type": "text",
+          "text": "You have learned how to create practical Python programs using functions."
+        },
+        {
+          "type": "text",
+          "text": "You have also applied functions to calculators, student management systems, grading systems and basic banking operations."
+        },
+        {
+          "type": "text",
+          "text": "The main objective is to understand how separate functions can work together to build a complete application."
+        },
+        {
+          "type": "text",
+          "text": "**Progress: Part 3 of 4**"
+        }
+      ]
     },
     {
-      id: "python-functions-assessment",
-      title: "Kai Assessment",
-      description: "Part 4 of 4 · Test definitions, calls, parameters, results, scope, design, and application reasoning.",
-      blocks: [
-        { type: "heading", text: "Assessment review" },
-        { type: "text", text: "Review what a function is, why reuse and single responsibility matter, how def and calls work, built-in versus user-defined functions, parameters and arguments, return values, print versus return, default and keyword arguments, local and global scope, multiple return values, and practical design." },
-        { type: "quiz", question: "What is a function?", options: ["A reusable group of code designed to perform a task", "A database table", "An operating system", "A variable that stores numbers only"], answer: "A reusable group of code designed to perform a task", explanation: "A function gives a named, reusable responsibility to a sequence of instructions." },
-        { type: "quiz", question: "Which keyword defines a function?", options: ["function", "def", "create", "define"], answer: "def", explanation: "Python uses def before the function name and parameter list." },
-        { type: "quiz", question: "What does calling a function do?", options: ["Executes its instructions", "Deletes its definition", "Renames its parameters", "Stops Python"], answer: "Executes its instructions", explanation: "The body waits until the function is called." },
-        { type: "quiz", question: "In def greet(name):, what is name?", options: ["An argument", "A parameter", "A returned value", "A built-in function"], answer: "A parameter", explanation: "It is the input name declared in the definition; the argument is supplied by the caller." },
-        { type: "quiz", question: "What does return do?", options: ["Only display information", "Stop the computer", "Send a value back to the caller", "Define a variable"], answer: "Send a value back to the caller", explanation: "The caller can store and reuse a returned result." },
-        { type: "quiz", question: "What is printed?", options: ["5", "10", "15", "510"], answer: "15", explanation: "add returns 5 + 10, and print displays the returned value.", code: "def add(a, b):\n    return a + b\n\nresult = add(5, 10)\nprint(result)" },
-        { type: "quiz", question: "What does a function return without an explicit return?", options: ["None", "Zero", "It always crashes", "The function is deleted"], answer: "None", explanation: "Python supplies None when the function reaches its end without returning a value." },
-        { type: "quiz", question: "Why are functions valuable in large applications?", options: ["They organize code, reduce repetition, and support reuse", "They guarantee no errors", "They eliminate variables", "They replace programming languages"], answer: "They organize code, reduce repetition, and support reuse", explanation: "Functions create understandable boundaries; they do not remove the need for testing or design." },
-        { type: "heading", text: "Trace and explain" },
-        { type: "code", language: "python", filename: "assessment_trace.py", code: "def update_score(score, points=5):\n    return score + points\n\nscore = update_score(10)\nscore = update_score(score, points=2)\nprint(score)" },
-        { type: "code", language: "text", filename: "answer", code: "17" },
-        { type: "text", text: "The first call uses the default points value and returns 15. The second call supplies points by keyword and returns 17. The returned value is assigned back to score each time." },
-        { type: "heading", text: "Scenario questions" },
-        { type: "text", text: "A function prints an average, but the caller must compare it with a pass mark. Explain why the function should return the average instead. Then describe the parameters, return value, and empty-list behavior you would choose for a safe average function." },
-        { type: "text", text: "A beginner writes a deposit function that changes a global balance. Explain one problem with hidden global state and describe how passing balance in and returning the updated balance makes the change easier to test." },
-        { type: "checklist", title: "Ready to finish?", items: ["I can define and call a function with correct indentation.", "I can explain parameters and arguments.", "I can distinguish displaying from returning a result.", "I can use default and keyword arguments.", "I can explain local and global scope.", "I can return multiple values and unpack them.", "I can divide an application into focused functions.", "I can test normal, invalid, empty, and boundary cases."] },
-      ],
-    },
-  ],
+      "id": "python-pythonfunctions-part-4",
+      "title": "PART 4 OF 4: KAI ASSESSMENT",
+      "description": "Part 4 of 4",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "Lesson Review"
+        },
+        {
+          "type": "text",
+          "text": "Before taking the assessment, make sure you understand:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "The meaning of a function.",
+            "Why functions are important.",
+            "How to define and call functions.",
+            "The difference between built-in and user-defined functions.",
+            "Parameters and arguments.",
+            "Return values.",
+            "The difference between `print()` and `return`.",
+            "Default and keyword arguments.",
+            "Local and global variables.",
+            "How functions are applied in real programs."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Kai Assessment Instructions"
+        },
+        {
+          "type": "text",
+          "text": "Answer all eight questions below. Each question tests your understanding of Python functions."
+        },
+        {
+          "type": "text",
+          "text": "**Question 1: What is a function in Python?**"
+        },
+        {
+          "type": "text",
+          "text": "A. A reusable block of code designed to perform a task."
+        },
+        {
+          "type": "text",
+          "text": "B. A type of database."
+        },
+        {
+          "type": "text",
+          "text": "C. A computer operating system."
+        },
+        {
+          "type": "text",
+          "text": "D. A variable that stores numbers only."
+        },
+        {
+          "type": "text",
+          "text": "**Question 2: Which keyword is used to define a function in Python?**"
+        },
+        {
+          "type": "text",
+          "text": "A. `function`"
+        },
+        {
+          "type": "text",
+          "text": "B. `def`"
+        },
+        {
+          "type": "text",
+          "text": "C. `create`"
+        },
+        {
+          "type": "text",
+          "text": "D. `define`"
+        },
+        {
+          "type": "text",
+          "text": "**Question 3: What is the purpose of calling a function?**"
+        },
+        {
+          "type": "text",
+          "text": "A. To delete the function."
+        },
+        {
+          "type": "text",
+          "text": "B. To execute the instructions inside the function."
+        },
+        {
+          "type": "text",
+          "text": "C. To rename the function."
+        },
+        {
+          "type": "text",
+          "text": "D. To stop Python."
+        },
+        {
+          "type": "text",
+          "text": "**Question 4: In the following code, what is `name`?**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def greet(name):\n    print(\"Hello\", name)"
+        },
+        {
+          "type": "text",
+          "text": "A. An argument."
+        },
+        {
+          "type": "text",
+          "text": "B. A parameter."
+        },
+        {
+          "type": "text",
+          "text": "C. A return value."
+        },
+        {
+          "type": "text",
+          "text": "D. A built-in function."
+        },
+        {
+          "type": "text",
+          "text": "**Question 5: What is the purpose of the `return` statement?**"
+        },
+        {
+          "type": "text",
+          "text": "A. To display information only."
+        },
+        {
+          "type": "text",
+          "text": "B. To stop the computer."
+        },
+        {
+          "type": "text",
+          "text": "C. To send a value back to the caller."
+        },
+        {
+          "type": "text",
+          "text": "D. To define a variable."
+        },
+        {
+          "type": "text",
+          "text": "**Question 6: What is the output of this code?**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def add(a, b):\n    return a + b\n\nresult = add(5, 10)\n\nprint(result)"
+        },
+        {
+          "type": "text",
+          "text": "A. 5"
+        },
+        {
+          "type": "text",
+          "text": "B. 10"
+        },
+        {
+          "type": "text",
+          "text": "C. 15"
+        },
+        {
+          "type": "text",
+          "text": "D. 510"
+        },
+        {
+          "type": "text",
+          "text": "**Question 7: What happens when a function does not explicitly return a value?**"
+        },
+        {
+          "type": "text",
+          "text": "A. Python automatically returns `None`."
+        },
+        {
+          "type": "text",
+          "text": "B. Python automatically returns zero."
+        },
+        {
+          "type": "text",
+          "text": "C. The program always crashes."
+        },
+        {
+          "type": "text",
+          "text": "D. Python deletes the function."
+        },
+        {
+          "type": "text",
+          "text": "**Question 8: Why are functions important when developing large applications?**"
+        },
+        {
+          "type": "text",
+          "text": "A. They make every program run without errors."
+        },
+        {
+          "type": "text",
+          "text": "B. They eliminate the need for variables."
+        },
+        {
+          "type": "text",
+          "text": "C. They help organize code, reduce repetition and support code reuse."
+        },
+        {
+          "type": "text",
+          "text": "D. They replace programming languages."
+        },
+        {
+          "type": "heading",
+          "text": "Assessment Completion"
+        },
+        {
+          "type": "text",
+          "text": "Submit your answers to Kai for marking and feedback."
+        },
+        {
+          "type": "text",
+          "text": "Kai will evaluate your understanding, explain incorrect answers and identify concepts that need further revision."
+        },
+        {
+          "type": "text",
+          "text": "**Progress: Part 4 of 4 — Lesson Complete**"
+        }
+      ]
+    }
+  ]
 };
 
 export default delivery;
