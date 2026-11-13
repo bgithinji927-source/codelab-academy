@@ -1,142 +1,1767 @@
 const delivery = {
-  type: "authored",
-  version: 1,
-  sections: [
+  "type": "authored",
+  "version": 1,
+  "sections": [
     {
-      id: "python-basics-project-planning",
-      title: "Project Introduction and Planning",
-      description: "Part 1 of 4 · Define the problem, requirements, architecture, and development setup.",
-      blocks: [
-        { type: "heading", text: "Python Basics Project: Student Management System" },
-        { type: "text", text: "A programming project is a working application created to solve a defined problem with code. This project brings together the Python skills learned so far: variables and types, input and output, operators, decisions, repetition, lists, dictionaries, functions, file handling, and modules. Rather than studying each idea in isolation, you will use them together in one command-line application." },
-        { type: "heading", text: "The application we will build" },
-        { type: "text", text: "The Student Management System will let a user maintain student records from a terminal. A user will be able to register a learner, display all learners, find a learner by registration number, enter marks, calculate an average and grade, save records, reload them later, and leave the program safely." },
-        { type: "numbered", items: ["Register a new student with a name, registration number, and course.", "List every student currently known to the application.", "Look up one student using the registration number.", "Add marks and calculate the student's average and grade.", "Display performance information in a readable form.", "Persist records so they survive the end of the process.", "Load an earlier data set when the program starts.", "Exit after saving the current state."] },
-        { type: "code", language: "text", filename: "planned-menu", code: "========================================\n       STUDENT MANAGEMENT SYSTEM\n========================================\n\n1. Register student\n2. View all students\n3. Find a student\n4. Calculate a grade\n5. Quit\n\nChoose an option: " },
-        { type: "text", text: "The first menu sketch communicates the user experience. During implementation it will grow to include adding marks and saving records. Each choice should perform one operation and then return to the menu instead of terminating the application unexpectedly." },
-        { type: "heading", text: "Understand the problem before coding" },
-        { type: "text", text: "Imagine a lecturer responsible for a large class. Without a small tool, the lecturer might write records by hand, calculate every mark combination separately, and search through pages whenever a particular registration number is needed. The project reduces that repeated work by putting the data and operations behind a consistent interface." },
-        { type: "table", columns: ["Need in the application", "Python idea that supports it"], rows: [
-          ["Keep a student's identity", "Variables and dictionary fields"],
-          ["Ask the operator for information", "input() and string cleanup"],
-          ["Compute a mark average", "Arithmetic operators, sum(), and len()"],
-          ["Map an average to a grade", "if / elif / else"],
-          ["Keep many student records", "A list containing dictionaries"],
-          ["Keep the menu active", "A while loop"],
-          ["Give each operation a boundary", "Functions"],
-          ["Keep records after shutdown", "Text/JSON file handling"],
-          ["Separate responsibilities", "Modules and imports"]
-        ] },
-        { type: "heading", text: "Choose the project structure" },
-        { type: "text", text: "Create a folder named python_basics_project. The program is deliberately split into small files so that registration, grading, storage, and interaction do not become one tangled script." },
-        { type: "code", language: "text", filename: "project-tree", code: "python_basics_project/\n├── main.py\n├── student.py\n├── grading.py\n├── storage.py\n└── students.json" },
-        { type: "table", columns: ["File", "Responsibility"], rows: [
-          ["main.py", "Start the application, display the menu, and route choices"],
-          ["student.py", "Register, search, update, and display student records"],
-          ["grading.py", "Calculate averages and turn averages into grades"],
-          ["storage.py", "Write records to JSON and read them back"],
-          ["students.json", "Persistent student data created by the program"]
-        ] },
-        { type: "callout", title: "A data file is not source code", kind: "info", text: "students.json may not exist on the first run. The storage layer should create it when saving and should treat a missing file as an empty starting state rather than as a fatal crash." },
-        { type: "heading", text: "Prepare the development environment" },
-        { type: "bullets", items: ["Install Python on the computer.", "Use Visual Studio Code or another editor with Python support.", "Open a terminal and work from the project directory.", "Create the files and folders shown in the project tree."] },
-        { type: "code", language: "bash", filename: "check-python", code: "python --version\n# or, on systems where Python 3 uses a separate command\npython3 --version" },
-        { type: "text", text: "The output should identify a Python 3 release, although the exact minor version can differ. If the command is not found, install Python and reopen the terminal before continuing. Run commands from python_basics_project so local imports and relative data paths resolve as intended." },
-        { type: "heading", text: "Part 1 checkpoint" },
-        { type: "checklist", title: "Planning complete", items: ["I can explain the problem the application solves.", "I can list every user operation the final application must support.", "I can connect each requirement to a Python concept.", "I can explain the role of all four Python files and the JSON data file.", "I have a Python 3 interpreter, editor, terminal, and project folder ready."] },
-        { type: "exercise", title: "Planning exercise", description: "Before writing implementation code, draw the menu flow on paper. For each choice, record the function that should run, the data it reads, the data it changes, and what the user should see when the operation succeeds or fails." }
+      "id": "python-basics-project-part-1",
+      "title": "PART 1: PROJECT INTRODUCTION AND PLANNING",
+      "description": "Part 1 of 4",
+      "blocks": [
+      {
+        "type": "heading",
+        "text": "PYTHON BASICS PROJECT"
+      },
+        {
+          "type": "heading",
+          "text": "1. What Is a Programming Project?"
+        },
+        {
+          "type": "text",
+          "text": "A programming project is an application developed to solve a particular problem using programming concepts and instructions."
+        },
+        {
+          "type": "text",
+          "text": "So far, you have learned individual Python concepts, including:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Variables and data types.",
+            "Input and output.",
+            "Operators.",
+            "Conditional statements.",
+            "Loops.",
+            "Lists and dictionaries.",
+            "Functions.",
+            "File handling.",
+            "Modules."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "In this project, you will combine these concepts to build one working application."
+        },
+        {
+          "type": "heading",
+          "text": "2. Project Overview"
+        },
+        {
+          "type": "heading",
+          "text": "Project Name: Student Management System"
+        },
+        {
+          "type": "text",
+          "text": "We are going to build a simple command-line application that allows a user to manage student records."
+        },
+        {
+          "type": "text",
+          "text": "The application will allow users to:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Register new students.",
+            "View all registered students.",
+            "Search for a student.",
+            "Calculate student grades.",
+            "Display student performance.",
+            "Save student records.",
+            "Load previously saved records.",
+            "Exit the application."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Example of the application"
+        },
+        {
+          "type": "text",
+          "text": "When someone runs the program, they should see:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "================================\n     STUDENT MANAGEMENT SYSTEM\n================================\n\n1. Register Student\n2. View All Students\n3. Search Student\n4. Calculate Student Grade\n5. Exit\n\nEnter your choice:"
+        },
+        {
+          "type": "text",
+          "text": "The user selects an option, and the application performs the requested operation."
+        },
+        {
+          "type": "heading",
+          "text": "3. Understanding the Problem"
+        },
+        {
+          "type": "text",
+          "text": "Before writing code, a software developer should understand the problem being solved."
+        },
+        {
+          "type": "text",
+          "text": "Imagine a lecturer who manages 100 students."
+        },
+        {
+          "type": "text",
+          "text": "Without a management system, the lecturer might have to:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Write student information manually.",
+            "Calculate marks individually.",
+            "Search through several pages to find a student.",
+            "Recalculate grades whenever needed."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Our application will simplify these activities."
+        },
+        {
+          "type": "heading",
+          "text": "Project requirements"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Requirement",
+            "Python concept"
+          ],
+          "rows": [
+            [
+              "Store student names",
+              "Variables"
+            ],
+            [
+              "Collect user information",
+              "`input()`"
+            ],
+            [
+              "Calculate average marks",
+              "Operators"
+            ],
+            [
+              "Determine grades",
+              "`if`, `elif`, `else`"
+            ],
+            [
+              "Store multiple students",
+              "Lists and dictionaries"
+            ],
+            [
+              "Repeat the menu",
+              "Loops"
+            ],
+            [
+              "Organize operations",
+              "Functions"
+            ],
+            [
+              "Save student information",
+              "File handling"
+            ],
+            [
+              "Organize code",
+              "Modules"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "4. Designing the Project Structure"
+        },
+        {
+          "type": "text",
+          "text": "Create a folder named:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "python_basics_project/"
+        },
+        {
+          "type": "text",
+          "text": "Inside it, create:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "python_basics_project/\n│\n├── main.py\n├── student.py\n├── grading.py\n├── storage.py\n└── students.json"
+        },
+        {
+          "type": "heading",
+          "text": "What each file will do"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "File",
+            "Responsibility"
+          ],
+          "rows": [
+            [
+              "`main.py`",
+              "Runs the application and displays the menu"
+            ],
+            [
+              "`student.py`",
+              "Handles student registration and searching"
+            ],
+            [
+              "`grading.py`",
+              "Calculates averages and grades"
+            ],
+            [
+              "`storage.py`",
+              "Saves and loads student records"
+            ],
+            [
+              "`students.json`",
+              "Stores student information"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The `students.json` file will be created automatically if it does not exist."
+        },
+        {
+          "type": "heading",
+          "text": "5. Preparing Your Development Environment"
+        },
+        {
+          "type": "text",
+          "text": "You need:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Python installed on your computer.",
+            "Visual Studio Code or another Python editor.",
+            "A terminal for running your program."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Open your project folder in Visual Studio Code."
+        },
+        {
+          "type": "text",
+          "text": "To confirm that Python is installed, run:"
+        },
+        {
+          "type": "code",
+          "language": "bash",
+          "code": "python --version"
+        },
+        {
+          "type": "text",
+          "text": "You should see a Python version displayed."
+        },
+        {
+          "type": "text",
+          "text": "For example:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Python 3.x.x"
+        },
+        {
+          "type": "text",
+          "text": "Your exact version may be different."
+        },
+        {
+          "type": "heading",
+          "text": "6. Part 1 Summary"
+        },
+        {
+          "type": "text",
+          "text": "You have:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Understood what a programming project is.",
+            "Identified the problem we are solving.",
+            "Defined the application requirements.",
+            "Designed the project structure.",
+            "Prepared your development environment."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Progress: Part 1 of 4"
+        }
       ]
     },
     {
-      id: "python-basics-project-building",
-      title: "Building the Application",
-      description: "Part 2 of 4 · Create student records, grading functions, mark entry, and record display.",
-      blocks: [
-        { type: "heading", text: "Create the student registration module" },
-        { type: "text", text: "Open student.py. The module owns the in-memory collection. Each record is a dictionary, and the collection is a list so that the program can hold more than one student." },
-        { type: "code", language: "python", filename: "student.py", code: "students = []\n\ndef register_student():\n    print(\"\\n--- REGISTER STUDENT ---\")\n    name = input(\"Student name: \" ).strip()\n    registration_number = input(\"Registration number: \" ).strip()\n    course = input(\"Course: \" ).strip()\n\n    record = {\n        \"name\": name,\n        \"registration_number\": registration_number,\n        \"course\": course,\n        \"marks\": []\n    }\n\n    students.append(record)\n    print(\"Student registered successfully.\")" },
-        { type: "heading", text: "Read the registration code by responsibility" },
-        { type: "numbered", items: ["students = [] creates the shared list that holds record dictionaries.", "The function boundary makes registration a reusable operation instead of loose top-level statements.", "strip() removes accidental spaces from values typed by the user.", "The dictionary gives each piece of information a descriptive key.", "marks begins as an empty list because no results have been entered yet.", "append() places the new record at the end of the collection.", "The final message confirms that the operation reached completion."] },
-        { type: "text", text: "A dictionary is appropriate because one student has named fields with different meanings. The key \"name\" points to the entered name, \"registration_number\" identifies the record, \"course\" stores the program, and \"marks\" holds a variable-length sequence of numbers. Later improvements should reject blank values and duplicate registration numbers." },
-        { type: "heading", text: "Create the grading module" },
-        { type: "code", language: "python", filename: "grading.py", code: "def calculate_average(marks):\n    if not marks:\n        return 0\n\n    return sum(marks) / len(marks)\n\ndef calculate_grade(average):\n    if average >= 70:\n        return \"A\"\n    elif average >= 60:\n        return \"B\"\n    elif average >= 50:\n        return \"C\"\n    elif average >= 40:\n        return \"D\"\n    return \"E\"" },
-        { type: "text", text: "calculate_average first handles an empty list. That guard matters because dividing by len([]) would attempt division by zero. For [80, 70, 90], sum() produces 240 and len() produces 3, so the returned average is 80.0. calculate_grade checks thresholds from highest to lowest; once a condition matches, its return ends the function. These thresholds belong to this project and can be changed for another institution." },
-        { type: "table", columns: ["Average", "Result"], rows: [["70 or higher", "A"], ["60–69.99", "B"], ["50–59.99", "C"], ["40–49.99", "D"], ["Below 40", "E"]] },
-        { type: "heading", text: "Add marks to an existing student" },
-        { type: "code", language: "python", filename: "student.py", code: "def add_marks():\n    registration_number = input(\"Registration number: \" ).strip()\n\n    for student in students:\n        if student[\"registration_number\"] == registration_number:\n            mark = float(input(\"Mark (0-100): \" ))\n\n            if 0 <= mark <= 100:\n                student[\"marks\"].append(mark)\n                print(\"Mark added successfully.\")\n            else:\n                print(\"A mark must be from 0 through 100.\")\n            return\n\n    print(\"Student not found.\")" },
-        { type: "text", text: "The function searches the list one dictionary at a time. It converts the entered value with float() so a mark such as 72.5 is valid, then uses a chained comparison to enforce the inclusive range. append() changes only the matching student's marks list. return stops the function immediately after a match; if the loop finishes without returning, the not-found message is shown. A production version should also catch non-numeric input instead of allowing ValueError to escape." },
-        { type: "heading", text: "Display all records" },
-        { type: "code", language: "python", filename: "student.py", code: "def view_students():\n    if not students:\n        print(\"No students are registered.\")\n        return\n\n    for student in students:\n        print(\"\\n--------------------\")\n        print(\"Name:\", student[\"name\"])\n        print(\"Registration:\", student[\"registration_number\"])\n        print(\"Course:\", student[\"course\"])\n        print(\"Marks:\", student[\"marks\"])" },
-        { type: "text", text: "The empty-list guard gives the user a useful response and prevents a confusing blank screen. The for loop then visits each dictionary and prints its fields. Keep display code readable; later, the module could return records instead and let main.py control presentation." },
-        { type: "heading", text: "Part 2 checkpoint" },
-        { type: "checklist", title: "Core operations complete", items: ["I can explain why a list of dictionaries models many students.", "I can register a record with an initially empty marks list.", "I can calculate an average without dividing an empty list.", "I can apply ordered grade thresholds.", "I can find a student, validate a mark range, and append the result.", "I can display a helpful message when no records exist."] },
-        { type: "numbered", items: ["Register two different students and inspect the resulting dictionaries.", "Calculate the average of [80, 70, 90] by hand before running the function.", "Test grade boundaries at 39, 40, 49, 50, 59, 60, 69, 70, and 100.", "Try adding a mark below zero, above 100, and with decimal digits.", "Call view_students() before registering anyone and after registering at least two people."] },
-        { type: "exercise", title: "Implementation exercise", description: "Add a find_student(registration_number) helper that returns the matching dictionary or None. Refactor add_marks() and view_students() to use it where that makes the responsibilities clearer, and explain why returning a value is more reusable than printing from every helper." }
+      "id": "python-basics-project-part-2",
+      "title": "PART 2: BUILDING THE APPLICATION",
+      "description": "Part 2 of 4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In this part, we will create the main functionality of the application."
+        },
+        {
+          "type": "heading",
+          "text": "1. Creating the Student Registration Module"
+        },
+        {
+          "type": "text",
+          "text": "Open `student.py`."
+        },
+        {
+          "type": "text",
+          "text": "Add:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "students = []\n\n\ndef register_student():\n    print(\"\\n--- REGISTER STUDENT ---\")\n\n    name = input(\"Enter student name: \")\n    registration_number = input(\"Enter registration number: \")\n    course = input(\"Enter course: \")\n\n    student = {\n        \"name\": name,\n        \"registration_number\": registration_number,\n        \"course\": course,\n        \"marks\": []\n    }\n\n    students.append(student)\n\n    print(\"Student registered successfully!\")"
+        },
+        {
+          "type": "heading",
+          "text": "Understanding the code"
+        },
+        {
+          "type": "text",
+          "text": "**Line 1**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "students = []"
+        },
+        {
+          "type": "text",
+          "text": "Creates an empty list called `students`."
+        },
+        {
+          "type": "text",
+          "text": "We will use this list to store multiple student records."
+        },
+        {
+          "type": "text",
+          "text": "**Line 2**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def register_student():"
+        },
+        {
+          "type": "text",
+          "text": "Defines a function called `register_student`."
+        },
+        {
+          "type": "text",
+          "text": "A function is a reusable block of code that performs a particular task."
+        },
+        {
+          "type": "text",
+          "text": "**Line 3**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"\\n--- REGISTER STUDENT ---\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a heading for the registration section."
+        },
+        {
+          "type": "text",
+          "text": "**Line 4**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "name = input(\"Enter student name: \")"
+        },
+        {
+          "type": "text",
+          "text": "Requests the student's name and stores it in the `name` variable."
+        },
+        {
+          "type": "text",
+          "text": "**Line 5**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "registration_number = input(\"Enter registration number: \")"
+        },
+        {
+          "type": "text",
+          "text": "Requests the student's registration number."
+        },
+        {
+          "type": "text",
+          "text": "**Line 6**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "course = input(\"Enter course: \")"
+        },
+        {
+          "type": "text",
+          "text": "Requests the student's course."
+        },
+        {
+          "type": "text",
+          "text": "**Lines 7–12**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "student = {\n    \"name\": name,\n    \"registration_number\": registration_number,\n    \"course\": course,\n    \"marks\": []\n}"
+        },
+        {
+          "type": "text",
+          "text": "Creates a dictionary representing one student."
+        },
+        {
+          "type": "text",
+          "text": "A dictionary stores information using key-value pairs."
+        },
+        {
+          "type": "text",
+          "text": "For example:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`\"name\"` is a key.",
+            "`name` is its value.",
+            "`\"course\"` is another key.",
+            "`course` is its value."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The `\"marks\"` key initially contains an empty list."
+        },
+        {
+          "type": "text",
+          "text": "**Line 13**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "students.append(student)"
+        },
+        {
+          "type": "text",
+          "text": "Adds the new student's dictionary to the students list."
+        },
+        {
+          "type": "text",
+          "text": "**Line 14**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Student registered successfully!\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a confirmation message."
+        },
+        {
+          "type": "heading",
+          "text": "2. Creating the Grading Module"
+        },
+        {
+          "type": "text",
+          "text": "Open `grading.py`."
+        },
+        {
+          "type": "text",
+          "text": "Add:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate_average(marks):\n    if len(marks) == 0:\n        return 0\n\n    total = sum(marks)\n\n    average = total / len(marks)\n\n    return average\n\n\ndef calculate_grade(average):\n    if average >= 70:\n        return \"A\"\n\n    elif average >= 60:\n        return \"B\"\n\n    elif average >= 50:\n        return \"C\"\n\n    elif average >= 40:\n        return \"D\"\n\n    else:\n        return \"E\""
+        },
+        {
+          "type": "heading",
+          "text": "Understanding the code"
+        },
+        {
+          "type": "text",
+          "text": "**Function 1: calculate_average()**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate_average(marks):"
+        },
+        {
+          "type": "text",
+          "text": "Defines a function that receives a list of marks."
+        },
+        {
+          "type": "text",
+          "text": "For example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "[80, 70, 90]"
+        },
+        {
+          "type": "text",
+          "text": "**Next:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if len(marks) == 0:\n    return 0"
+        },
+        {
+          "type": "text",
+          "text": "Checks whether the marks list is empty."
+        },
+        {
+          "type": "text",
+          "text": "`len()` returns the number of items in a list."
+        },
+        {
+          "type": "text",
+          "text": "If there are no marks, the function returns zero instead of attempting division by zero."
+        },
+        {
+          "type": "text",
+          "text": "**Next:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "total = sum(marks)"
+        },
+        {
+          "type": "text",
+          "text": "Adds all the marks together."
+        },
+        {
+          "type": "text",
+          "text": "For example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "marks = [80, 70, 90]"
+        },
+        {
+          "type": "text",
+          "text": "The total becomes:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "240"
+        },
+        {
+          "type": "text",
+          "text": "**Next:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "average = total / len(marks)"
+        },
+        {
+          "type": "text",
+          "text": "Calculates the average."
+        },
+        {
+          "type": "text",
+          "text": "There are three marks, so:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "240 / 3 = 80"
+        },
+        {
+          "type": "text",
+          "text": "**Next:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "return average"
+        },
+        {
+          "type": "text",
+          "text": "Sends the calculated average back to the part of the program that called the function."
+        },
+        {
+          "type": "heading",
+          "text": "Function 2: calculate_grade()"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def calculate_grade(average):"
+        },
+        {
+          "type": "text",
+          "text": "Creates a function that receives the student's average."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if average >= 70:\n    return \"A\""
+        },
+        {
+          "type": "text",
+          "text": "If the average is 70 or above, the student receives grade A."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "elif average >= 60:\n    return \"B\""
+        },
+        {
+          "type": "text",
+          "text": "If the first condition is false, Python checks whether the average is at least 60."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "elif average >= 50:\n    return \"C\""
+        },
+        {
+          "type": "text",
+          "text": "Checks whether the average is at least 50."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "elif average >= 40:\n    return \"D\""
+        },
+        {
+          "type": "text",
+          "text": "Checks whether the average is at least 40."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "else:\n    return \"E\""
+        },
+        {
+          "type": "text",
+          "text": "If none of the previous conditions is true, the student receives grade E."
+        },
+        {
+          "type": "text",
+          "text": "These are example grading thresholds for this project. Actual grading systems may use different thresholds."
+        },
+        {
+          "type": "heading",
+          "text": "3. Adding Marks to Students"
+        },
+        {
+          "type": "text",
+          "text": "We need a way to enter student marks."
+        },
+        {
+          "type": "text",
+          "text": "Return to `student.py` and add this function below the registration function:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def add_marks():\n    registration_number = input(\"Enter registration number: \")\n\n    for student in students:\n\n        if student[\"registration_number\"] == registration_number:\n\n            mark = float(input(\"Enter student mark: \"))\n\n            if 0 <= mark <= 100:\n                student[\"marks\"].append(mark)\n                print(\"Mark added successfully!\")\n            else:\n                print(\"Mark must be between 0 and 100.\")\n\n            return\n\n    print(\"Student not found.\")"
+        },
+        {
+          "type": "heading",
+          "text": "Line-by-line explanation"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "registration_number = input(\"Enter registration number: \")"
+        },
+        {
+          "type": "text",
+          "text": "Requests the registration number of the student whose marks we want to update."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "for student in students:"
+        },
+        {
+          "type": "text",
+          "text": "Loops through all student records in the list."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if student[\"registration_number\"] == registration_number:"
+        },
+        {
+          "type": "text",
+          "text": "Checks whether the current student's registration number matches the one entered by the user."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "mark = float(input(\"Enter student mark: \"))"
+        },
+        {
+          "type": "text",
+          "text": "Requests a mark and converts it into a floating-point number."
+        },
+        {
+          "type": "text",
+          "text": "We use `float()` because marks may contain decimal values."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if 0 <= mark <= 100:"
+        },
+        {
+          "type": "text",
+          "text": "Checks whether the mark is between zero and 100, inclusive."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "student[\"marks\"].append(mark)"
+        },
+        {
+          "type": "text",
+          "text": "Adds the mark to the student's marks list."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Mark added successfully!\")"
+        },
+        {
+          "type": "text",
+          "text": "Confirms that the operation was successful."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "return"
+        },
+        {
+          "type": "text",
+          "text": "Stops the function because the correct student has been found and processed."
+        },
+        {
+          "type": "text",
+          "text": "If the loop finishes without finding a matching student:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Student not found.\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays an error message."
+        },
+        {
+          "type": "heading",
+          "text": "4. Viewing Student Records"
+        },
+        {
+          "type": "text",
+          "text": "Still inside `student.py`, add:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def view_students():\n    if len(students) == 0:\n        print(\"No students registered.\")\n        return\n\n    for student in students:\n        print(\"\\n-------------------\")\n        print(\"Name:\", student[\"name\"])\n        print(\"Registration:\", student[\"registration_number\"])\n        print(\"Course:\", student[\"course\"])\n        print(\"Marks:\", student[\"marks\"])"
+        },
+        {
+          "type": "text",
+          "text": "Explanation:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`if len(students) == 0` checks whether there are registered students.",
+            "`print()` displays a message if the list is empty.",
+            "`return` stops the function when there is nothing to display.",
+            "`for student in students` loops through each student.",
+            "The remaining statements display the student's information."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "5. Part 2 Summary"
+        },
+        {
+          "type": "text",
+          "text": "You have now created:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "A student registration function.",
+            "A grading module.",
+            "An average calculation function.",
+            "A mark registration function.",
+            "A student records display function."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Progress: Part 2 of 4"
+        }
       ]
     },
     {
-      id: "python-basics-project-integration",
-      title: "File Storage, Integration, and Testing",
-      description: "Part 3 of 4 · Persist JSON records, connect modules, run the menu, and verify behavior.",
-      blocks: [
-        { type: "heading", text: "Create the storage module" },
-        { type: "text", text: "The list in student.py disappears when Python stops. storage.py gives the application persistence by serializing the list into JSON and loading it when the next run begins." },
-        { type: "code", language: "python", filename: "storage.py", code: "import json\nfrom student import students\n\nDATA_FILE = \"students.json\"\n\ndef save_students():\n    with open(DATA_FILE, \"w\", encoding=\"utf-8\") as file:\n        json.dump(students, file, indent=4)\n    print(\"Student records saved.\")\n\ndef load_students():\n    try:\n        with open(DATA_FILE, \"r\", encoding=\"utf-8\") as file:\n            students.extend(json.load(file))\n    except FileNotFoundError:\n        print(\"No previous records found; starting with an empty list.\")" },
-        { type: "text", text: "import json provides the serializer. The imported students name refers to the same list used by registration, so loading can extend it and saving can inspect it. with open() manages the file resource and explicit UTF-8 encoding makes the text format clear. json.dump() turns Python dictionaries and lists into JSON in the file. json.load() reverses that process. FileNotFoundError is expected on a first run, so the handler chooses an empty starting state instead of stopping the application." },
-        { type: "table", columns: ["Operation", "Effect"], rows: [["json.dump(value, file, indent=4)", "Serialize Python data directly into a file"], ["json.load(file)", "Read JSON from a file into Python values"], ["open(..., \"w\")", "Create or replace the snapshot"], ["open(..., \"r\")", "Read an existing snapshot"], ["with", "Close the file when the block ends, including after an exception"]] },
-        { type: "callout", title: "Persistence design warning", kind: "warning", text: "Loading with extend() is correct when the in-memory list starts empty. If load_students() can be called more than once, clear or otherwise guard the list first to avoid duplicate records. A production application should also validate the JSON shape before trusting it." },
-        { type: "heading", text: "Connect the main application" },
-        { type: "code", language: "python", filename: "main.py", code: "from student import students, register_student, add_marks, view_students\nfrom grading import calculate_average, calculate_grade\nfrom storage import load_students, save_students\n\ndef search_student():\n    wanted = input(\"Registration number: \" ).strip()\n    for student in students:\n        if student[\"registration_number\"] == wanted:\n            print(\"Name:\", student[\"name\"])\n            print(\"Course:\", student[\"course\"])\n            print(\"Marks:\", student[\"marks\"])\n            return\n    print(\"Student not found.\")\n\ndef show_grades():\n    wanted = input(\"Registration number: \" ).strip()\n    for student in students:\n        if student[\"registration_number\"] == wanted:\n            average = calculate_average(student[\"marks\"])\n            grade = calculate_grade(average)\n            print(\"Student:\", student[\"name\"])\n            print(\"Average:\", average)\n            print(\"Grade:\", grade)\n            return\n    print(\"Student not found.\")\n\ndef main():\n    load_students()\n    while True:\n        print(\"\\n==============================\")\n        print(\"    STUDENT MANAGEMENT SYSTEM\")\n        print(\"==============================\")\n        print(\"1. Register student\")\n        print(\"2. Add marks\")\n        print(\"3. View all students\")\n        print(\"4. Search student\")\n        print(\"5. Calculate grade\")\n        print(\"6. Save records\")\n        print(\"7. Exit\")\n\n        choice = input(\"Enter your choice: \" ).strip()\n        if choice == \"1\":\n            register_student()\n        elif choice == \"2\":\n            add_marks()\n        elif choice == \"3\":\n            view_students()\n        elif choice == \"4\":\n            search_student()\n        elif choice == \"5\":\n            show_grades()\n        elif choice == \"6\":\n            save_students()\n        elif choice == \"7\":\n            save_students()\n            print(\"Thank you for using the system.\")\n            break\n        else:\n            print(\"Invalid choice. Try again.\")\n\nif __name__ == \"__main__\":\n    main()" },
-        { type: "text", text: "The students import is intentional: search_student() and show_grades() iterate over the shared collection. main() loads old data once, then keeps the interface alive with while True. Each branch delegates work to a focused function. Choice 7 saves before break, and the __name__ guard prevents the interactive loop from starting merely because another module imports main.py." },
-        { type: "heading", text: "Run and test the project" },
-        { type: "code", language: "bash", filename: "run", code: "cd python_basics_project\npython main.py" },
-        { type: "code", language: "text", filename: "menu-output", code: "==============================\n    STUDENT MANAGEMENT SYSTEM\n==============================\n1. Register student\n2. Add marks\n3. View all students\n4. Search student\n5. Calculate grade\n6. Save records\n7. Exit\nEnter your choice:" },
-        { type: "heading", text: "Verification scenarios" },
-        { type: "numbered", items: ["Choose registration, enter a name such as Amina, an identifier such as STU-014, and a course such as Python. Confirm the success message.", "Choose add marks, enter STU-014, and add 82.5. Repeat with 74 and 91. Confirm each accepted value.", "Choose calculate grade for STU-014. The average is (82.5 + 74 + 91) / 3 = 82.5, so the result should be A under this project's thresholds.", "Choose view all students and confirm the identity, course, and marks are visible.", "Search for STU-014 and then search for an identifier that does not exist. Check both paths.", "Choose save, inspect that students.json was created, stop the program, start it again, and confirm the earlier record loads.", "Try invalid menu text, an unknown registration number, a mark outside 0–100, and non-numeric mark input. Record which cases still need stronger validation."] },
-        { type: "code", language: "text", filename: "expected-grade", code: "Student: Amina\nAverage: 82.5\nGrade: A" },
-        { type: "heading", text: "Improvements beyond the beginner version" },
-        { type: "table", columns: ["Improvement", "Reason"], rows: [["Input validation", "Prevent blank names, malformed identifiers, and non-numeric marks"], ["Duplicate detection", "Avoid two records sharing one registration number"], ["Update details", "Correct a name, course, or identifier without re-registering"], ["Delete student", "Remove a record deliberately and confirm the action"], ["Broader error handling", "Report malformed JSON and permission failures clearly"], ["Database storage", "Support larger data sets and concurrent users"], ["Authentication", "Limit access to authorized operators"]] },
-        { type: "text", text: "This local JSON implementation is suitable for learning and a single-user beginner tool. A multi-user production system would need atomic writes, schema validation, backup and recovery, access control, concurrency handling, and a database designed for the workload." },
-        { type: "heading", text: "Part 3 summary" },
-        { type: "bullets", items: ["The application combines variables, strings, lists, dictionaries, and numeric values.", "Conditionals select grades and menu actions.", "Loops keep the menu active and inspect collections.", "Functions give registration, grading, searching, display, and persistence clear boundaries.", "Modules allow the files to communicate without placing every responsibility in main.py.", "JSON file handling makes records survive a restart.", "Exception handling makes a missing first-run data file expected rather than fatal."] },
-        { type: "exercise", title: "Integration exercise", description: "Add a Delete Student menu option. Ask for a registration number, locate the matching record, remove it from the list, report success, and report when no match exists. Save after a successful deletion and test that the record remains absent after restarting." }
+      "id": "python-basics-project-part-3",
+      "title": "PART 3: FILE STORAGE, INTEGRATION AND TESTING",
+      "description": "Part 3 of 4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Now we will connect the different modules and make the application save information permanently."
+        },
+        {
+          "type": "heading",
+          "text": "1. Creating the Storage Module"
+        },
+        {
+          "type": "text",
+          "text": "Open `storage.py`."
+        },
+        {
+          "type": "text",
+          "text": "Add:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import json\n\nfrom student import students\n\n\ndef save_students():\n    with open(\"students.json\", \"w\") as file:\n        json.dump(students, file, indent=4)\n\n    print(\"Student records saved.\")\n\n\ndef load_students():\n    try:\n        with open(\"students.json\", \"r\") as file:\n            saved_students = json.load(file)\n\n            students.extend(saved_students)\n\n    except FileNotFoundError:\n        print(\"No previous records found.\")"
+        },
+        {
+          "type": "heading",
+          "text": "Understanding the code"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "import json"
+        },
+        {
+          "type": "text",
+          "text": "Imports Python's JSON module."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "from student import students"
+        },
+        {
+          "type": "text",
+          "text": "Imports the student list from `student.py`."
+        },
+        {
+          "type": "text",
+          "text": "This allows the storage module to work with the same list used by the registration functions."
+        },
+        {
+          "type": "heading",
+          "text": "Saving records"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def save_students():"
+        },
+        {
+          "type": "text",
+          "text": "Defines the function responsible for saving records."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "with open(\"students.json\", \"w\") as file:"
+        },
+        {
+          "type": "text",
+          "text": "Opens the JSON file in write mode."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "json.dump(students, file, indent=4)"
+        },
+        {
+          "type": "text",
+          "text": "Converts the student list into JSON and saves it."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Student records saved.\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a confirmation message."
+        },
+        {
+          "type": "heading",
+          "text": "Loading records"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def load_students():"
+        },
+        {
+          "type": "text",
+          "text": "Defines the function for loading previously saved records."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:"
+        },
+        {
+          "type": "text",
+          "text": "Starts an exception-handling block."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "with open(\"students.json\", \"r\") as file:"
+        },
+        {
+          "type": "text",
+          "text": "Attempts to open the JSON file."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "saved_students = json.load(file)"
+        },
+        {
+          "type": "text",
+          "text": "Reads the JSON data and converts it into Python data."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "students.extend(saved_students)"
+        },
+        {
+          "type": "text",
+          "text": "Adds the loaded records to the existing students list."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "except FileNotFoundError:"
+        },
+        {
+          "type": "text",
+          "text": "Handles the situation where the JSON file does not exist."
+        },
+        {
+          "type": "text",
+          "text": "The application can therefore start without previous records."
+        },
+        {
+          "type": "heading",
+          "text": "2. Creating the Main Application"
+        },
+        {
+          "type": "text",
+          "text": "Open `main.py`."
+        },
+        {
+          "type": "text",
+          "text": "Add:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "from student import register_student, add_marks, view_students\nfrom grading import calculate_average, calculate_grade\nfrom storage import save_students, load_students\n\n\ndef search_student():\n    registration_number = input(\"Enter registration number: \")\n\n    for student in students:\n        if student[\"registration_number\"] == registration_number:\n            print(\"Name:\", student[\"name\"])\n            print(\"Course:\", student[\"course\"])\n            print(\"Marks:\", student[\"marks\"])\n            return\n\n    print(\"Student not found.\")\n\n\ndef show_grades():\n    registration_number = input(\"Enter registration number: \")\n\n    for student in students:\n        if student[\"registration_number\"] == registration_number:\n\n            average = calculate_average(student[\"marks\"])\n\n            grade = calculate_grade(average)\n\n            print(\"Student:\", student[\"name\"])\n            print(\"Average:\", average)\n            print(\"Grade:\", grade)\n\n            return\n\n    print(\"Student not found.\")\n\n\ndef main():\n    load_students()\n\n    while True:\n        print(\"\\n==============================\")\n        print(\"    STUDENT MANAGEMENT SYSTEM\")\n        print(\"==============================\")\n        print(\"1. Register Student\")\n        print(\"2. Add Student Marks\")\n        print(\"3. View All Students\")\n        print(\"4. Search Student\")\n        print(\"5. Calculate Student Grade\")\n        print(\"6. Save Records\")\n        print(\"7. Exit\")\n\n        choice = input(\"Enter your choice: \")\n\n        if choice == \"1\":\n            register_student()\n\n        elif choice == \"2\":\n            add_marks()\n\n        elif choice == \"3\":\n            view_students()\n\n        elif choice == \"4\":\n            search_student()\n\n        elif choice == \"5\":\n            show_grades()\n\n        elif choice == \"6\":\n            save_students()\n\n        elif choice == \"7\":\n            save_students()\n            print(\"Thank you for using the system.\")\n            break\n\n        else:\n            print(\"Invalid choice. Try again.\")\n\n\nif __name__ == \"__main__\":\n    main()"
+        },
+        {
+          "type": "heading",
+          "text": "Important: Add the missing students import"
+        },
+        {
+          "type": "text",
+          "text": "The two functions `search_student()` and `show_grades()` use the `students` list."
+        },
+        {
+          "type": "text",
+          "text": "Therefore, add `students` to the first import statement:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "from student import students, register_student, add_marks, view_students"
+        },
+        {
+          "type": "text",
+          "text": "Use this updated import statement in `main.py`."
+        },
+        {
+          "type": "heading",
+          "text": "Understanding the main application"
+        },
+        {
+          "type": "text",
+          "text": "**Importing functionality**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "from student import students, register_student, add_marks, view_students"
+        },
+        {
+          "type": "text",
+          "text": "Imports the student list and the functions needed from `student.py`."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "from grading import calculate_average, calculate_grade"
+        },
+        {
+          "type": "text",
+          "text": "Imports the two grading functions."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "from storage import save_students, load_students"
+        },
+        {
+          "type": "text",
+          "text": "Imports the functions responsible for saving and loading student records."
+        },
+        {
+          "type": "text",
+          "text": "**Searching for students**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def search_student():"
+        },
+        {
+          "type": "text",
+          "text": "Creates a function for searching."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "registration_number = input(\"Enter registration number: \")"
+        },
+        {
+          "type": "text",
+          "text": "Collects the registration number."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "for student in students:"
+        },
+        {
+          "type": "text",
+          "text": "Checks each student in the list."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if student[\"registration_number\"] == registration_number:"
+        },
+        {
+          "type": "text",
+          "text": "Compares the entered registration number with the stored one."
+        },
+        {
+          "type": "text",
+          "text": "If they match, the application displays the student's information."
+        },
+        {
+          "type": "text",
+          "text": "**Calculating grades**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def show_grades():"
+        },
+        {
+          "type": "text",
+          "text": "Creates the grade display function."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "average = calculate_average(student[\"marks\"])"
+        },
+        {
+          "type": "text",
+          "text": "Calls the average calculation function from `grading.py`."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "grade = calculate_grade(average)"
+        },
+        {
+          "type": "text",
+          "text": "Uses the calculated average to determine the grade."
+        },
+        {
+          "type": "text",
+          "text": "The next statements display the student's name, average and grade."
+        },
+        {
+          "type": "text",
+          "text": "**The main function**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "def main():"
+        },
+        {
+          "type": "text",
+          "text": "Defines the main function that controls the application."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "load_students()"
+        },
+        {
+          "type": "text",
+          "text": "Loads previous records when the application starts."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "while True:"
+        },
+        {
+          "type": "text",
+          "text": "Creates an infinite loop."
+        },
+        {
+          "type": "text",
+          "text": "This keeps displaying the menu until the user chooses to exit."
+        },
+        {
+          "type": "text",
+          "text": "**The menu**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "choice = input(\"Enter your choice: \")"
+        },
+        {
+          "type": "text",
+          "text": "Collects the user's selection."
+        },
+        {
+          "type": "text",
+          "text": "The `if`, `elif` and `else` statements determine which operation should execute."
+        },
+        {
+          "type": "text",
+          "text": "For example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if choice == \"1\":\n    register_student()"
+        },
+        {
+          "type": "text",
+          "text": "If the user enters 1, the registration function runs."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "elif choice == \"2\":\n    add_marks()"
+        },
+        {
+          "type": "text",
+          "text": "If the user enters 2, the application allows them to add marks."
+        },
+        {
+          "type": "text",
+          "text": "The remaining options work in the same way."
+        },
+        {
+          "type": "text",
+          "text": "**Exiting the application**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "elif choice == \"7\":\n    save_students()\n    print(\"Thank you for using the system.\")\n    break"
+        },
+        {
+          "type": "text",
+          "text": "This saves the records, displays a message and stops the menu loop."
+        },
+        {
+          "type": "text",
+          "text": "Finally:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if __name__ == \"__main__\":\n    main()"
+        },
+        {
+          "type": "text",
+          "text": "This checks whether `main.py` is being executed directly."
+        },
+        {
+          "type": "text",
+          "text": "If it is, Python calls the `main()` function."
+        },
+        {
+          "type": "heading",
+          "text": "3. Running the Project"
+        },
+        {
+          "type": "text",
+          "text": "Open the terminal in your project directory."
+        },
+        {
+          "type": "text",
+          "text": "Run:"
+        },
+        {
+          "type": "code",
+          "language": "bash",
+          "code": "python main.py"
+        },
+        {
+          "type": "text",
+          "text": "You should see:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "==============================\n    STUDENT MANAGEMENT SYSTEM\n==============================\n1. Register Student\n2. Add Student Marks\n3. View All Students\n4. Search Student\n5. Calculate Student Grade\n6. Save Records\n7. Exit\n\nEnter your choice:"
+        },
+        {
+          "type": "heading",
+          "text": "Test 1: Register a student"
+        },
+        {
+          "type": "text",
+          "text": "Enter:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "1"
+        },
+        {
+          "type": "text",
+          "text": "Then:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter student name: Brian\nEnter registration number: BBIT001\nEnter course: BBIT"
+        },
+        {
+          "type": "text",
+          "text": "Expected response:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Student registered successfully!"
+        },
+        {
+          "type": "heading",
+          "text": "Test 2: Add marks"
+        },
+        {
+          "type": "text",
+          "text": "Enter:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "2"
+        },
+        {
+          "type": "text",
+          "text": "Then:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter registration number: BBIT001\nEnter student mark: 80"
+        },
+        {
+          "type": "text",
+          "text": "Expected response:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Mark added successfully!"
+        },
+        {
+          "type": "text",
+          "text": "Repeat the process to add two more marks:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "70\n90"
+        },
+        {
+          "type": "heading",
+          "text": "Test 3: Calculate the grade"
+        },
+        {
+          "type": "text",
+          "text": "Select:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "5"
+        },
+        {
+          "type": "text",
+          "text": "Enter:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "BBIT001"
+        },
+        {
+          "type": "text",
+          "text": "Expected output:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Student: Brian\nAverage: 80.0\nGrade: A"
+        },
+        {
+          "type": "text",
+          "text": "The calculation is:"
+        },
+        {
+          "type": "text",
+          "text": "(80 + 70 + 90) / 3 = 80"
+        },
+        {
+          "type": "text",
+          "text": "Since 80 is greater than or equal to 70, the student receives grade A."
+        },
+        {
+          "type": "heading",
+          "text": "Test 4: View students"
+        },
+        {
+          "type": "text",
+          "text": "Select:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "3"
+        },
+        {
+          "type": "text",
+          "text": "The application should display the registered student and their information."
+        },
+        {
+          "type": "heading",
+          "text": "Test 5: Save and reload records"
+        },
+        {
+          "type": "text",
+          "text": "Select:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "6"
+        },
+        {
+          "type": "text",
+          "text": "The application saves the student records in `students.json`."
+        },
+        {
+          "type": "text",
+          "text": "You can now close the program and run it again."
+        },
+        {
+          "type": "text",
+          "text": "The application should load the previously saved student records."
+        },
+        {
+          "type": "heading",
+          "text": "4. Important Improvements to Consider"
+        },
+        {
+          "type": "text",
+          "text": "Our application works as a beginner project, but a professional application would require additional improvements."
+        },
+        {
+          "type": "text",
+          "text": "Consider these enhancements:"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Improvement",
+            "Purpose"
+          ],
+          "rows": [
+            [
+              "Input validation",
+              "Prevent invalid information"
+            ],
+            [
+              "Duplicate checking",
+              "Prevent duplicate registration numbers"
+            ],
+            [
+              "Update student details",
+              "Allow users to correct information"
+            ],
+            [
+              "Delete student",
+              "Remove unwanted records"
+            ],
+            [
+              "Better error handling",
+              "Prevent unexpected crashes"
+            ],
+            [
+              "Database integration",
+              "Manage larger amounts of information"
+            ],
+            [
+              "Authentication",
+              "Restrict access to authorized users"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Also note that this beginner implementation uses a JSON file and is designed for a single local application. A larger multi-user system would need stronger data validation, safer file updates and a database."
+        },
+        {
+          "type": "heading",
+          "text": "5. Part 3 Summary"
+        },
+        {
+          "type": "text",
+          "text": "You have successfully combined:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Variables and data types.",
+            "User input and output.",
+            "Dictionaries and lists.",
+            "Conditional statements.",
+            "Loops.",
+            "Functions.",
+            "Modules.",
+            "JSON file handling.",
+            "Exception handling."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "You have built a working command-line student management application."
+        },
+        {
+          "type": "text",
+          "text": "Progress: Part 3 of 4"
+        }
       ]
     },
     {
-      id: "python-basics-project-assessment",
-      title: "Kai Project Assessment",
-      description: "Part 4 of 4 · Demonstrate fundamentals, application design, testing, and a practical extension.",
-      blocks: [
-        { type: "heading", text: "Assessment instructions" },
-        { type: "text", text: "This assessment checks both Python knowledge and your ability to reason about a multi-file application. Explain your choices rather than selecting answers by pattern. For the practical task, submit code that runs and describe how you tested normal, invalid, empty, and boundary cases." },
-        { type: "heading", text: "Section A: Python fundamentals" },
-        { type: "quiz", question: "Which structure holds the collection of student records?", options: ["An integer", "A list", "A Boolean", "A string"], answer: "A list", explanation: "The list can contain zero, one, or many record dictionaries." },
-        { type: "quiz", question: "What does append() do in this project?", options: ["Removes a record", "Adds one item to a list", "Sorts every value", "Deletes a file"], answer: "Adds one item to a list", explanation: "Registration appends the new student dictionary to students." },
-        { type: "quiz", question: "Why is each student represented by a dictionary?", options: ["It groups related fields under named keys", "It automatically runs the menu", "It creates a Python file", "It performs every calculation automatically"], answer: "It groups related fields under named keys", explanation: "Name, registration number, course, and marks have different meanings but belong to one record." },
-        { type: "quiz", question: "What is the effect of while True in main()?", options: ["It runs the menu one time", "It repeats until a branch breaks the loop", "It removes the current function", "It closes the application immediately"], answer: "It repeats until a branch breaks the loop", explanation: "The menu continues to accept choices until the exit path executes break." },
-        { type: "heading", text: "Section B: Application development" },
-        { type: "quiz", question: "What is grading.py responsible for?", options: ["Writing JSON files", "Printing the menu", "Computing averages and grade labels", "Registering names"], answer: "Computing averages and grade labels", explanation: "The grading module keeps calculation policy separate from interaction and persistence." },
-        { type: "quiz", question: "What does json.dump() do here?", options: ["Writes Python data to an open JSON file", "Deletes a student", "Imports a module", "Calculates an average"], answer: "Writes Python data to an open JSON file", explanation: "It serializes the list of dictionaries into the file object." },
-        { type: "quiz", question: "Why use the __name__ guard around main()?", options: ["It deletes main.py", "It starts the interactive program when main.py is run directly", "It creates a dictionary", "It imports every module"], answer: "It starts the interactive program when main.py is run directly", explanation: "Importing main.py should not unexpectedly launch the user interface." },
-        { type: "quiz", question: "What happens when calculate_average receives an empty marks list in this project?", options: ["It returns 0", "It always returns 100", "It deletes the student", "It imports json"], answer: "It returns 0", explanation: "The empty-list guard avoids division by zero and gives the caller a defined result." },
-        { type: "heading", text: "Code tracing task" },
-        { type: "code", language: "python", filename: "trace.py", code: "def average(values):\n    if not values:\n        return 0\n    return sum(values) / len(values)\n\nmarks = [80, 70, 90]\nprint(average(marks))" },
-        { type: "code", language: "text", filename: "trace-answer", code: "80.0" },
-        { type: "text", text: "The list contains three marks whose total is 240. Dividing by the length 3 produces 80.0. Explain why the guard is still needed even though this particular call has values, and identify the input that would otherwise produce a division-by-zero failure." },
-        { type: "heading", text: "Scenario questions" },
-        { type: "text", text: "A newly registered student disappears after the next student is saved. Identify the likely cause: opening the data file in write mode at the wrong time or overwriting the in-memory list during loading. Explain how you would test that earlier records remain after a second save and a restart." },
-        { type: "text", text: "A teammate puts registration, grading, JSON access, and every print statement into main.py. Explain at least two maintenance problems this creates. Then propose which responsibility should move to student.py, grading.py, and storage.py, and explain how imports establish those boundaries." },
-        { type: "text", text: "A user types letters when the program asks for a mark. Decide which exception is expected, where a focused try/except should be placed, and what message the user should receive. Do not catch every exception indiscriminately, because that would hide programming defects." },
-        { type: "heading", text: "Practical programming challenge: Delete Student" },
-        { type: "exercise", title: "Implement the delete feature", description: "Extend the application with Delete Student. The operation must ask for a registration number, search through the student records, identify the matching dictionary, remove it from the list, display a clear success message, and display an appropriate not-found message when there is no match. Add the option to the menu, save the changed collection, and test deletion with an existing record, a missing identifier, an empty collection, and a restart." },
-        { type: "code", language: "python", filename: "delete-student-hint", code: "def delete_student():\n    wanted = input(\"Registration number to delete: \" ).strip()\n    for index, student in enumerate(students):\n        if student[\"registration_number\"] == wanted:\n            del students[index]\n            print(\"Student deleted.\")\n            return\n    print(\"Student not found.\")" },
-        { type: "text", text: "The hint uses enumerate() to obtain both a record and its position. Removing by index changes the same list that the other modules use. You still need to connect the function to a menu choice and decide when save_students() should run." },
-        { type: "heading", text: "Project completion criteria" },
-        { type: "checklist", title: "Project complete when all are true", items: ["I can register more than one student.", "I can enter several marks and reject values outside the allowed range.", "I can view every stored student and search by registration number.", "I can calculate averages and map them to grades.", "I can save records and see students.json appear.", "I can stop and restart the program without losing saved records.", "I can explain how main.py, student.py, grading.py, and storage.py communicate.", "I can explain what happens for missing files, unknown students, empty marks, invalid input, and malformed operations.", "I implemented and tested the Delete Student extension."] },
-        { type: "heading", text: "What you have accomplished" },
-        { type: "text", text: "You have moved from isolated Python statements to an application with a data model, reusable functions, multiple modules, a command-line interface, JSON persistence, and explicit tests. The same habits scale to larger projects: define the problem, separate responsibilities, validate boundaries, preserve data deliberately, and verify behavior with repeatable scenarios." },
-        { type: "callout", title: "Next project", kind: "info", text: "A natural follow-up is an Expense Tracker. It can record income and expenses, calculate a balance, persist transactions, and produce spending summaries while reusing the same ideas of dictionaries, functions, modules, validation, and file storage." },
-        { type: "text", text: "Part 4 of 4 — Project complete. Submit the source files and your explanation to Kai for review." }
+      "id": "python-basics-project-part-4",
+      "title": "PART 4: KAI PROJECT ASSESSMENT",
+      "description": "Part 4 of 4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "This assessment tests your understanding of the Python concepts used to build the project."
+        },
+        {
+          "type": "heading",
+          "text": "Section A: Python Fundamentals"
+        },
+        {
+          "type": "heading",
+          "text": "Question 1"
+        },
+        {
+          "type": "text",
+          "text": "Which Python data structure did we use to store multiple student records?"
+        },
+        {
+          "type": "text",
+          "text": "A. Integer"
+        },
+        {
+          "type": "text",
+          "text": "B. List"
+        },
+        {
+          "type": "text",
+          "text": "C. Boolean"
+        },
+        {
+          "type": "text",
+          "text": "D. String"
+        },
+        {
+          "type": "heading",
+          "text": "Question 2"
+        },
+        {
+          "type": "text",
+          "text": "What is the purpose of the `append()` method?"
+        },
+        {
+          "type": "text",
+          "text": "A. To remove an item from a list."
+        },
+        {
+          "type": "text",
+          "text": "B. To add an item to a list."
+        },
+        {
+          "type": "text",
+          "text": "C. To sort a list."
+        },
+        {
+          "type": "text",
+          "text": "D. To delete a file."
+        },
+        {
+          "type": "heading",
+          "text": "Question 3"
+        },
+        {
+          "type": "text",
+          "text": "Why did we use a dictionary to represent each student?"
+        },
+        {
+          "type": "text",
+          "text": "A. To store related student information using key-value pairs."
+        },
+        {
+          "type": "text",
+          "text": "B. To execute a loop."
+        },
+        {
+          "type": "text",
+          "text": "C. To create a new Python file."
+        },
+        {
+          "type": "text",
+          "text": "D. To calculate mathematical operations automatically."
+        },
+        {
+          "type": "heading",
+          "text": "Question 4"
+        },
+        {
+          "type": "text",
+          "text": "What does `while True` do?"
+        },
+        {
+          "type": "text",
+          "text": "A. Executes the code exactly once."
+        },
+        {
+          "type": "text",
+          "text": "B. Creates a loop that continues until it is stopped."
+        },
+        {
+          "type": "text",
+          "text": "C. Deletes the current function."
+        },
+        {
+          "type": "text",
+          "text": "D. Automatically closes the application."
+        },
+        {
+          "type": "heading",
+          "text": "Section B: Application Development"
+        },
+        {
+          "type": "heading",
+          "text": "Question 5"
+        },
+        {
+          "type": "text",
+          "text": "In our project, what is the responsibility of `grading.py`?"
+        },
+        {
+          "type": "text",
+          "text": "A. Saving student records."
+        },
+        {
+          "type": "text",
+          "text": "B. Displaying the menu."
+        },
+        {
+          "type": "text",
+          "text": "C. Calculating student averages and grades."
+        },
+        {
+          "type": "text",
+          "text": "D. Registering student names."
+        },
+        {
+          "type": "heading",
+          "text": "Question 6"
+        },
+        {
+          "type": "text",
+          "text": "What is the purpose of `json.dump()` in our project?"
+        },
+        {
+          "type": "text",
+          "text": "A. To save Python data into a JSON file."
+        },
+        {
+          "type": "text",
+          "text": "B. To delete student information."
+        },
+        {
+          "type": "text",
+          "text": "C. To import a module."
+        },
+        {
+          "type": "text",
+          "text": "D. To calculate grades."
+        },
+        {
+          "type": "heading",
+          "text": "Question 7"
+        },
+        {
+          "type": "text",
+          "text": "What is the purpose of this statement?"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if __name__ == \"__main__\":\n    main()"
+        },
+        {
+          "type": "text",
+          "text": "A. It deletes the main file."
+        },
+        {
+          "type": "text",
+          "text": "B. It runs the main function when the file is executed directly."
+        },
+        {
+          "type": "text",
+          "text": "C. It creates a dictionary."
+        },
+        {
+          "type": "text",
+          "text": "D. It imports every Python module."
+        },
+        {
+          "type": "heading",
+          "text": "Question 8: Practical Programming Challenge"
+        },
+        {
+          "type": "text",
+          "text": "Modify the student management system to include a new feature called **Delete Student**."
+        },
+        {
+          "type": "text",
+          "text": "Your function should:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Request a student's registration number.",
+            "Search through the student records.",
+            "Identify the matching student.",
+            "Remove the student from the list.",
+            "Display a success message.",
+            "Display an appropriate message if the student does not exist."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Submit your code to Kai for review."
+        },
+        {
+          "type": "heading",
+          "text": "Project Completion Criteria"
+        },
+        {
+          "type": "text",
+          "text": "Before considering the project complete, verify that you can:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Register multiple students.",
+            "Add marks to students.",
+            "View all registered students.",
+            "Search for a student.",
+            "Calculate averages and grades.",
+            "Save student records.",
+            "Reload saved records after restarting the application.",
+            "Explain how the different modules communicate."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Part 4 of 4 — Project Complete**"
+        },
+        {
+          "type": "heading",
+          "text": "What You Have Accomplished"
+        },
+        {
+          "type": "text",
+          "text": "You have moved beyond writing isolated Python examples."
+        },
+        {
+          "type": "text",
+          "text": "You have used Python fundamentals to develop an application with multiple files, reusable functions, structured data and persistent storage."
+        },
+        {
+          "type": "text",
+          "text": "**Recommended next project:** Python Expense Tracker — an application for recording income, expenses, calculating balances and generating spending summaries."
+        }
       ]
     }
   ]
