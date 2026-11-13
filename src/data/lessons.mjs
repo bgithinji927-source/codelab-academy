@@ -24,6 +24,7 @@ import javascriptInputOutputMarkdown from "./javascriptInputOutputLessonContent.
 import javascriptConditionalsMarkdown from "./javascriptConditionalsLessonContent.mjs";
 import javascriptLoopsMarkdown from "./javascriptLoopsLessonContent.mjs";
 import javascriptFunctionsMarkdown from "./javascriptFunctionsLessonContent.mjs";
+import javascriptStringsMarkdown from "./javascriptStringsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1580,6 +1581,12 @@ const javascriptFunctionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "A complete, four-part lesson on function declarations and expressions, parameters, return values, arrow functions, callbacks, higher-order functions, scope, and practical applications.",
   { 1: "B", 2: "C", 3: "B", 4: "A", 5: "B", 6: "B", 7: "B", 8: "B" }
 );
+const javascriptStringsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javascriptStringsMarkdown,
+  "javascript-strings",
+  "A complete, four-part lesson on JavaScript strings, indexing, immutability, template literals, string methods, regular expressions, and practical text-processing projects.",
+  { 1: "B", 2: "C", 3: "C", 4: "B", 5: "B", 6: "C", 7: "A", 8: "B" }
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
@@ -2521,6 +2528,14 @@ for (const lesson of lessons.javascript) {
   if (lesson.id === "javascript-roadmap-functions") {
     lesson.title = "JavaScript: Functions";
     lesson.delivery = javascriptFunctionsAuthoredDelivery;
+    break;
+  }
+}
+
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "javascript-roadmap-strings-and-string-methods") {
+    lesson.title = "JavaScript: Strings and String Methods";
+    lesson.delivery = javascriptStringsAuthoredDelivery;
     break;
   }
 }
