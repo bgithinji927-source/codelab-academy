@@ -230,14 +230,17 @@ function InteractiveQuiz({ block, onChoice, assessmentActive = false }) {
   const [submitted, setSubmitted] = useState(false);
   const options = Array.isArray(block.options) ? block.options.map((option) => typeof option === "string" ? option : String(option.text || option.label || "")) : [];
   const answerKey = String(block.correctAnswer ?? block.answerKey ?? block.answer ?? "").trim();
-  const isCorrect = answerKey && selected.trim().toLowerCase() === answerKey.toLowerCase();
+  const selectedLetter = selected.match(/^\s*([A-D])[.)]\s*/i)?.[1]?.toUpperCase();
+  const answerLetter = answerKey.match(/^\s*([A-D])[.)]\s*/i)?.[1]?.toUpperCase() || answerKey.toUpperCase();
+  const isCorrect = answerKey && (selectedLetter === answerLetter || selected.trim().toLowerCase() === answerKey.toLowerCase());
+  const correctOption = options.find((option) => option.match(/^\s*([A-D])[.)]/i)?.[1]?.toUpperCase() === answerLetter) || answerKey;
   return <section className="kai-rich-quiz" aria-live="polite">
     <div className="kai-rich-quiz-kicker">QUICK CHECK</div>
-    <h3>{block.question || block.title || "Check your understanding"}</h3>
+    <div className="kai-rich-quiz-question"><TextBlock value={block.question || block.title || "Check your understanding"} /></div>
     <div className="kai-choice-options">{options.map((option) => <button type="button" key={option} disabled={submitted || assessmentActive} className={`${selected === option ? "selected" : ""}${submitted && selected === option ? (isCorrect ? " is-correct" : " is-incorrect") : ""}`} onClick={() => setSelected(option)}>{option}</button>)}</div>
     {assessmentActive && <p className="kai-interaction-paused" role="status">Paused while you complete the lesson readiness check.</p>}
     {!submitted ? <button type="button" className="kai-rich-quiz-submit" disabled={!selected || assessmentActive} onClick={() => { setSubmitted(true); onChoice?.(`For the question “${block.question || block.title || "Check your understanding"}”, I chose “${selected}”. Please respond to my answer and continue teaching from here.`); }}>{block.submitLabel || "Check my answer"}</button> : <div className={`kai-rich-quiz-feedback ${answerKey ? (isCorrect ? "is-correct" : "is-incorrect") : ""}`}>
-      <strong>{answerKey ? (isCorrect ? "Correct" : `Not quite — the answer is ${answerKey}`) : "Answer sent to Kai"}</strong>
+      <strong>{answerKey ? (isCorrect ? "Correct" : `Not quite — the correct answer is ${correctOption}`) : "Answer sent to Kai"}</strong>
       {block.explanation && <p>{block.explanation}</p>}
       {!answerKey && <p>Kai will use your choice to guide the next explanation.</p>}
     </div>}

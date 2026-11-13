@@ -1374,7 +1374,7 @@ function splitAuthoredLessonParts(markdown) {
   }));
 }
 
-function parseAuthoredMarkdownBlocks(markdown) {
+function parseAuthoredMarkdownBlocks(markdown, quizAnswers = {}) {
   const lines = markdown.replace(/\r/g, "").split("\n");
   const blocks = [];
   let index = 0;
@@ -1384,6 +1384,49 @@ function parseAuthoredMarkdownBlocks(markdown) {
   while (index < lines.length) {
     const line = lines[index];
     if (!line.trim()) { index += 1; continue; }
+
+    const questionHeader = line.match(/^\s*(?:#{1,6}\s*)?(?:\*\*)?Question\s+(\d+)(?:\s*:[^*]*)?(?:\*\*)?\s*$/i);
+    if (questionHeader) {
+      const promptLines = [];
+      const options = [];
+      let scan = index + 1;
+      let insideFence = false;
+      while (scan < lines.length && options.length < 4) {
+        const current = lines[scan];
+        if (!insideFence && /^\s*(?:#{1,6}\s*)?(?:\*\*)?Question\s+\d+/i.test(current)) break;
+        if (/^\s*```/.test(current)) {
+          insideFence = !insideFence;
+          promptLines.push(current);
+          scan += 1;
+          continue;
+        }
+        const option = !insideFence && current.match(/^\s*([A-D])[.)]\s+(.+?)\s*$/i);
+        if (option) {
+          options.push(`${option[1].toUpperCase()}. ${option[2]}`);
+          scan += 1;
+          continue;
+        }
+        if (options.length) {
+          if (!current.trim()) { scan += 1; continue; }
+          break;
+        }
+        promptLines.push(current);
+        scan += 1;
+      }
+      if (options.length === 4 && options.map((option) => option[0]).join("") === "ABCD") {
+        const label = line.replace(/^\s*#{1,6}\s*/, "").replace(/^\*\*|\*\*$/g, "").trim();
+        const prompt = promptLines.join("\n").trim();
+        blocks.push({
+          type: "quiz",
+          question: [label, prompt].filter(Boolean).join("\n\n"),
+          options,
+          answer: options.find((option) => option.startsWith(`${quizAnswers[questionHeader[1]]}.`)) || "",
+          explanation: quizAnswers[questionHeader[1]] ? "Compare the feedback with the lesson section that covers this concept." : "Review the relevant lesson section after choosing an answer.",
+        });
+        index = scan;
+        continue;
+      }
+    }
 
     const fence = line.match(/^\s*```([\w+-]*)\s*$/);
     if (fence) {
@@ -1455,7 +1498,7 @@ function parseAuthoredMarkdownBlocks(markdown) {
   return blocks;
 }
 
-function makeAuthoredMarkdownDelivery(markdown, lessonId, intro) {
+function makeAuthoredMarkdownDelivery(markdown, lessonId, intro, quizAnswers = {}) {
   const parts = splitAuthoredLessonParts(markdown);
   const opening = parts.length ? markdown.slice(0, parts[0].start).trim() : markdown.trim();
   return {
@@ -1469,7 +1512,7 @@ function makeAuthoredMarkdownDelivery(markdown, lessonId, intro) {
         id: `${lessonId}-part-${part.number}`,
         title: part.title,
         description: `Part ${part.number} of 4 — ${part.title}`,
-        blocks: parseAuthoredMarkdownBlocks(content),
+        blocks: parseAuthoredMarkdownBlocks(content, quizAnswers),
       };
     }),
   };
@@ -1478,22 +1521,26 @@ function makeAuthoredMarkdownDelivery(markdown, lessonId, intro) {
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
   javascriptIntroductionMarkdown,
   "javascript-introduction",
-  "A complete, four-part JavaScript introduction with structured explanations, comparison tables, code examples, exercises, assessment, and completion checklist."
+  "A complete, four-part JavaScript introduction with structured explanations, comparison tables, code examples, exercises, assessment, and completion checklist.",
+  { 1: "B", 2: "C", 3: "C", 4: "B", 5: "C", 6: "B" }
 );
 const javascriptVariablesAuthoredDelivery = makeAuthoredMarkdownDelivery(
   javascriptVariablesMarkdown,
   "javascript-variables",
-  "A complete, four-part lesson on JavaScript variables, declaration keywords, scope, hoisting, practical applications, exercises, and assessment."
+  "A complete, four-part lesson on JavaScript variables, declaration keywords, scope, hoisting, practical applications, exercises, and assessment.",
+  { 1: "B", 2: "B", 3: "C", 4: "C", 5: "B", 6: "B" }
 );
 const javascriptOperatorsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   javascriptOperatorsMarkdown,
   "javascript-operators",
-  "A complete, four-part lesson covering JavaScript arithmetic, assignment, comparison, logical, string, ternary, and type operators, with practical projects and assessment."
+  "A complete, four-part lesson covering JavaScript arithmetic, assignment, comparison, logical, string, ternary, and type operators, with practical projects and assessment.",
+  { 1: "B", 2: "C", 3: "C", 4: "B", 5: "C" }
 );
 const javascriptInputOutputAuthoredDelivery = makeAuthoredMarkdownDelivery(
   javascriptInputOutputMarkdown,
   "javascript-input-output",
-  "A complete, four-part lesson on the Input–Process–Output cycle, browser and Node.js input/output, data conversion, validation, and practical projects."
+  "A complete, four-part lesson on the Input–Process–Output cycle, browser and Node.js input/output, data conversion, validation, and practical projects.",
+  { 1: "B", 2: "C", 3: "A", 4: "C", 5: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {

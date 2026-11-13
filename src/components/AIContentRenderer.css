@@ -194,6 +194,8 @@
 .kai-rich-quiz,.kai-rich-learning-path,.kai-rich-tutorial,.kai-sim-terminal{border:1px solid rgba(151,142,255,.28);border-radius:14px;background:linear-gradient(145deg,rgba(27,29,50,.94),rgba(16,18,30,.98));padding:1rem 1.1rem;color:#eef0ff}
 .kai-rich-quiz-kicker,.kai-rich-learning-path-heading>span,.kai-rich-tutorial>header>span{font-size:.68rem;font-weight:800;letter-spacing:.12em;color:#b7afff}
 .kai-rich-quiz h3,.kai-rich-learning-path h3,.kai-rich-tutorial h3{margin:.35rem 0 .8rem;color:#fff}
+.kai-rich-quiz-question .kai-rich-text{margin:.35rem 0;color:#eef0ff}
+.kai-rich-quiz-question .kai-rich-code{margin:.55rem 0}
 .kai-rich-quiz-submit,.kai-learning-path-detail button,.kai-rich-tutorial>button,.kai-rich-tutorial footer button,.kai-sim-terminal form button,.kai-sim-terminal-ask{display:inline-flex;align-items:center;gap:.4rem;border:1px solid rgba(170,160,255,.4);border-radius:8px;padding:.55rem .8rem;background:rgba(126,112,255,.16);color:#f2f0ff;cursor:pointer;font:inherit;font-weight:700}
 .kai-rich-quiz-submit:disabled,.kai-rich-tutorial footer button:disabled,.kai-sim-terminal-ask:disabled{opacity:.45;cursor:not-allowed}
 .kai-rich-quiz-submit{margin-top:.8rem}
