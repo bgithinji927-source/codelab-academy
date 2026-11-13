@@ -22,7 +22,7 @@ const SAFE_ACTIONS = new Set([
 
 function InlineText({ children }) {
   const value = String(children || "");
-  const tokenPattern = /(`[^`\n]+`|(\*\*\*|___)(?=\S)([\s\S]*?\S)\2|(\*\*|__)(?=\S)([\s\S]*?\S)\4|(?<!\w)(\*|_)(?=\S)([^*_\n]*?\S)\6(?!\w))/g;
+  const tokenPattern = /(`[^`\n]+`|https?:\/\/[^\s<>()]+|(\*\*\*|___)(?=\S)([\s\S]*?\S)\2|(\*\*|__)(?=\S)([\s\S]*?\S)\4|(?<!\w)(\*|_)(?=\S)([^*_\n]*?\S)\6(?!\w))/gi;
   const parts = [];
   let cursor = 0;
   let match;
@@ -30,6 +30,12 @@ function InlineText({ children }) {
   while ((match = tokenPattern.exec(value))) {
     if (match.index > cursor) parts.push(<span key={`text-${index++}`}>{value.slice(cursor, match.index)}</span>);
     if (match[0].startsWith("`")) parts.push(<code key={`code-${index++}`}>{match[0].slice(1, -1)}</code>);
+    else if (/^https?:\/\//i.test(match[0])) {
+      const url = match[0].replace(/[.,!?;:]+$/, "");
+      const punctuation = match[0].slice(url.length);
+      parts.push(<a key={`link-${index++}`} href={url} target="_blank" rel="noreferrer">{url}</a>);
+      if (punctuation) parts.push(<span key={`punctuation-${index++}`}>{punctuation}</span>);
+    }
     else if (match[2]) parts.push(<strong key={`bold-italic-${index++}`}><em>{match[3]}</em></strong>);
     else if (match[4]) parts.push(<strong key={`bold-${index++}`}>{match[5]}</strong>);
     else if (match[6]) parts.push(<em key={`italic-${index++}`}>{match[7]}</em>);
