@@ -23,6 +23,7 @@ import javascriptOperatorsMarkdown from "./javascriptOperatorsLessonContent.mjs"
 import javascriptInputOutputMarkdown from "./javascriptInputOutputLessonContent.mjs";
 import javascriptConditionalsMarkdown from "./javascriptConditionalsLessonContent.mjs";
 import javascriptLoopsMarkdown from "./javascriptLoopsLessonContent.mjs";
+import javascriptFunctionsMarkdown from "./javascriptFunctionsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1390,37 +1391,50 @@ function parseAuthoredMarkdownBlocks(markdown, quizAnswers = {}) {
     const questionHeader = line.match(/^\s*(?:#{1,6}\s*)?(?:\*\*)?Question\s+(\d+)(?:\s*:[^*]*)?(?:\*\*)?\s*$/i);
     if (questionHeader) {
       const promptLines = [];
-      const options = [];
+      const optionEntries = [];
+      let currentOption = null;
       let scan = index + 1;
       let insideFence = false;
-      while (scan < lines.length && options.length < 4) {
+      while (scan < lines.length) {
         const current = lines[scan];
         if (!insideFence && /^\s*(?:#{1,6}\s*)?(?:\*\*)?Question\s+\d+/i.test(current)) break;
+        if (optionEntries.length === 4 && !insideFence) {
+          if (!current.trim() && /^\s*```/.test(lines[scan + 1] || "")) {
+            currentOption?.lines.push(current);
+            scan += 1;
+            continue;
+          }
+          if (!/^\s*```/.test(current)) break;
+        }
         if (/^\s*```/.test(current)) {
           insideFence = !insideFence;
-          promptLines.push(current);
+          (currentOption ? currentOption.lines : promptLines).push(current);
           scan += 1;
           continue;
         }
-        const option = !insideFence && current.match(/^\s*([A-D])[.)]\s+(.+?)\s*$/i);
+        const option = !insideFence && current.match(/^\s*([A-D])[.)](?:\s*(.*))?$/i);
         if (option) {
-          options.push(`${option[1].toUpperCase()}. ${option[2]}`);
+          currentOption = { letter: option[1].toUpperCase(), lines: option[2] ? [option[2]] : [] };
+          optionEntries.push(currentOption);
           scan += 1;
           continue;
         }
-        if (options.length) {
-          if (!current.trim()) { scan += 1; continue; }
-          break;
-        }
-        promptLines.push(current);
+        (currentOption ? currentOption.lines : promptLines).push(current);
         scan += 1;
       }
-      if (options.length === 4 && options.map((option) => option[0]).join("") === "ABCD") {
+      if (optionEntries.length === 4 && optionEntries.map((option) => option.letter).join("") === "ABCD") {
         const label = line.replace(/^\s*#{1,6}\s*/, "").replace(/^\*\*|\*\*$/g, "").trim();
         const prompt = promptLines.join("\n").trim();
+        const hasCodeChoices = optionEntries.some((option) => option.lines.some((part) => /^\s*```/.test(part)));
+        const options = hasCodeChoices
+          ? optionEntries.map((option) => `${option.letter}.`)
+          : optionEntries.map((option) => `${option.letter}. ${option.lines.join(" ").trim()}`);
+        const codeChoiceMarkdown = hasCodeChoices
+          ? optionEntries.map((option) => `${option.letter}.\n\n${option.lines.join("\n").trim()}`).join("\n\n")
+          : "";
         blocks.push({
           type: "quiz",
-          question: [label, prompt].filter(Boolean).join("\n\n"),
+          question: [label, prompt, codeChoiceMarkdown].filter(Boolean).join("\n\n"),
           options,
           answer: options.find((option) => option.startsWith(`${quizAnswers[questionHeader[1]]}.`)) || "",
           explanation: quizAnswers[questionHeader[1]] ? "Compare the feedback with the lesson section that covers this concept." : "Review the relevant lesson section after choosing an answer.",
@@ -1559,6 +1573,12 @@ const javascriptLoopsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "javascript-loops",
   "A complete, four-part lesson on for, while, do...while, for...of, and for...in loops, loop control, nested loops, practical projects, and assessment.",
   { 1: "B", 2: "A", 3: "C", 4: "D", 5: "A", 6: "B", 7: "C", 8: "B" }
+);
+const javascriptFunctionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javascriptFunctionsMarkdown,
+  "javascript-functions",
+  "A complete, four-part lesson on function declarations and expressions, parameters, return values, arrow functions, callbacks, higher-order functions, scope, and practical applications.",
+  { 1: "B", 2: "C", 3: "B", 4: "A", 5: "B", 6: "B", 7: "B", 8: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -2493,6 +2513,14 @@ for (const lesson of lessons.javascript) {
   if (lesson.id === "javascript-roadmap-loops-for-while-for-of-for-in") {
     lesson.title = "JavaScript: Loops (`for`, `while`, `for...of`, `for...in`)";
     lesson.delivery = javascriptLoopsAuthoredDelivery;
+    break;
+  }
+}
+
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "javascript-roadmap-functions") {
+    lesson.title = "JavaScript: Functions";
+    lesson.delivery = javascriptFunctionsAuthoredDelivery;
     break;
   }
 }
