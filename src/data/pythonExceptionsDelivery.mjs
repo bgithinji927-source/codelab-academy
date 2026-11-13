@@ -1778,176 +1778,116 @@ const delivery = {
           "text": "Question 1: Understanding Exceptions"
         },
         {
-          "type": "text",
-          "text": "What is an exception in Python?"
-        },
-        {
-          "type": "text",
-          "text": "A. A command used to create variables."
-        },
-        {
-          "type": "text",
-          "text": "B. An event that interrupts the normal execution of a program."
-        },
-        {
-          "type": "text",
-          "text": "C. A function used to display output."
-        },
-        {
-          "type": "text",
-          "text": "D. A method of creating Python packages."
+          "type": "quiz",
+          "question": "What is an exception in Python?",
+          "options": [
+            "A. A command used to create variables.",
+            "B. An event that interrupts the normal execution of a program.",
+            "C. A function used to display output.",
+            "D. A method of creating Python packages."
+          ],
+          "answer": "B. An event that interrupts the normal execution of a program.",
+          "explanation": "Use the exception-handling rule taught in the lesson to choose the answer, then read Kai's feedback after submitting."
         },
         {
           "type": "heading",
           "text": "Question 2: The try Block"
         },
         {
-          "type": "text",
-          "text": "What is the main purpose of the `try` block?"
-        },
-        {
-          "type": "text",
-          "text": "A. To define a class."
-        },
-        {
-          "type": "text",
-          "text": "B. To repeat code."
-        },
-        {
-          "type": "text",
-          "text": "C. To contain code that might produce an exception."
-        },
-        {
-          "type": "text",
-          "text": "D. To automatically delete errors."
+          "type": "quiz",
+          "question": "What is the main purpose of the `try` block?",
+          "options": [
+            "A. To define a class.",
+            "B. To repeat code.",
+            "C. To contain code that might produce an exception.",
+            "D. To automatically delete errors."
+          ],
+          "answer": "C. To contain code that might produce an exception.",
+          "explanation": "Use the exception-handling rule taught in the lesson to choose the answer, then read Kai's feedback after submitting."
         },
         {
           "type": "heading",
           "text": "Question 3: Specific Exceptions"
         },
         {
-          "type": "text",
-          "text": "Which exception occurs when a program attempts to divide a number by zero?"
-        },
-        {
-          "type": "text",
-          "text": "A. `ValueError`"
-        },
-        {
-          "type": "text",
-          "text": "B. `TypeError`"
-        },
-        {
-          "type": "text",
-          "text": "C. `ZeroDivisionError`"
-        },
-        {
-          "type": "text",
-          "text": "D. `NameError`"
+          "type": "quiz",
+          "question": "Which exception occurs when a program attempts to divide a number by zero?",
+          "options": [
+            "A. `ValueError`",
+            "B. `TypeError`",
+            "C. `ZeroDivisionError`",
+            "D. `NameError`"
+          ],
+          "answer": "C. `ZeroDivisionError`",
+          "explanation": "Use the exception-handling rule taught in the lesson to choose the answer, then read Kai's feedback after submitting."
         },
         {
           "type": "heading",
           "text": "Question 4: Handling Invalid Input"
         },
         {
-          "type": "text",
-          "text": "What exception is commonly produced when converting `\"hello\"` into an integer using `int()`?"
-        },
-        {
-          "type": "text",
-          "text": "A. `ValueError`"
-        },
-        {
-          "type": "text",
-          "text": "B. `IndexError`"
-        },
-        {
-          "type": "text",
-          "text": "C. `KeyError`"
-        },
-        {
-          "type": "text",
-          "text": "D. `FileNotFoundError`"
+          "type": "quiz",
+          "question": "What exception is commonly produced when converting `\"hello\"` into an integer using `int()`?",
+          "options": [
+            "A. `ValueError`",
+            "B. `IndexError`",
+            "C. `KeyError`",
+            "D. `FileNotFoundError`"
+          ],
+          "answer": "A. `ValueError`",
+          "explanation": "Use the exception-handling rule taught in the lesson to choose the answer, then read Kai's feedback after submitting."
         },
         {
           "type": "heading",
           "text": "Question 5: Understanding else"
         },
         {
-          "type": "text",
-          "text": "When does the `else` block execute in a try-except structure?"
-        },
-        {
-          "type": "text",
-          "text": "A. Whenever an exception occurs."
-        },
-        {
-          "type": "text",
-          "text": "B. Only when no exception occurs in the `try` block."
-        },
-        {
-          "type": "text",
-          "text": "C. Before the `try` block."
-        },
-        {
-          "type": "text",
-          "text": "D. Whenever Python starts."
+          "type": "quiz",
+          "question": "When does the `else` block execute in a try-except structure?",
+          "options": [
+            "A. Whenever an exception occurs.",
+            "B. Only when no exception occurs in the `try` block.",
+            "C. Before the `try` block.",
+            "D. Whenever Python starts."
+          ],
+          "answer": "B. Only when no exception occurs in the `try` block.",
+          "explanation": "Use the exception-handling rule taught in the lesson to choose the answer, then read Kai's feedback after submitting."
         },
         {
           "type": "heading",
           "text": "Question 6: Understanding finally"
         },
         {
-          "type": "text",
-          "text": "What is the purpose of the `finally` block?"
-        },
-        {
-          "type": "text",
-          "text": "A. It executes only when a `ValueError` occurs."
-        },
-        {
-          "type": "text",
-          "text": "B. It executes only when the program crashes."
-        },
-        {
-          "type": "text",
-          "text": "C. It executes after the try-except process whether an exception occurs or not."
-        },
-        {
-          "type": "text",
-          "text": "D. It creates custom exceptions."
+          "type": "quiz",
+          "question": "What is the purpose of the `finally` block?",
+          "options": [
+            "A. It executes only when a `ValueError` occurs.",
+            "B. It executes only when the program crashes.",
+            "C. It executes after the try-except process whether an exception occurs or not.",
+            "D. It creates custom exceptions."
+          ],
+          "answer": "C. It executes after the try-except process whether an exception occurs or not.",
+          "explanation": "Use the exception-handling rule taught in the lesson to choose the answer, then read Kai's feedback after submitting."
         },
         {
           "type": "heading",
           "text": "Question 7: The raise Keyword"
         },
         {
-          "type": "text",
-          "text": "What does the `raise` keyword do?"
-        },
-        {
-          "type": "text",
-          "text": "A. Displays a variable."
-        },
-        {
-          "type": "text",
-          "text": "B. Creates a loop."
-        },
-        {
-          "type": "text",
-          "text": "C. Manually generates an exception."
-        },
-        {
-          "type": "text",
-          "text": "D. Imports a module."
+          "type": "quiz",
+          "question": "What does the `raise` keyword do?",
+          "options": [
+            "A. Displays a variable.",
+            "B. Creates a loop.",
+            "C. Manually generates an exception.",
+            "D. Imports a module."
+          ],
+          "answer": "C. Manually generates an exception.",
+          "explanation": "Use the exception-handling rule taught in the lesson to choose the answer, then read Kai's feedback after submitting."
         },
         {
           "type": "heading",
           "text": "Question 8: Practical Programming"
-        },
-        {
-          "type": "text",
-          "text": "Study this code:"
         },
         {
           "type": "code",
@@ -1955,24 +1895,16 @@ const delivery = {
           "code": "try:\n    age = int(input(\"Enter age: \"))\n\nexcept ValueError:\n    print(\"Invalid age.\")\n\nelse:\n    print(\"Your age is:\", age)\n\nfinally:\n    print(\"Program finished.\")"
         },
         {
-          "type": "text",
-          "text": "If the user enters `twenty`, what will happen?"
-        },
-        {
-          "type": "text",
-          "text": "A. The program displays the age as twenty."
-        },
-        {
-          "type": "text",
-          "text": "B. The program displays `Invalid age.` followed by `Program finished.`"
-        },
-        {
-          "type": "text",
-          "text": "C. The program displays only `Program finished.`"
-        },
-        {
-          "type": "text",
-          "text": "D. The program automatically converts twenty into 20."
+          "type": "quiz",
+          "question": "If the user enters `twenty`, what will happen?",
+          "options": [
+            "A. The program displays the age as twenty.",
+            "B. The program displays `Invalid age.` followed by `Program finished.`",
+            "C. The program displays only `Program finished.`",
+            "D. The program automatically converts twenty into 20."
+          ],
+          "answer": "B. The program displays `Invalid age.` followed by `Program finished.`",
+          "explanation": "When conversion raises ValueError, the except block prints Invalid age. The finally block still runs, so Program finished. is printed too."
         },
         {
           "type": "heading",
