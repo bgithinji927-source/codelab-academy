@@ -1,49 +1,2036 @@
 const delivery = {
   "type": "authored",
   "version": 1,
-  "intro": "The complete Python Exception Handling curriculum, arranged into four sequential parts.",
+  "intro": "PYTHON: EXCEPTION HANDLING",
   "sections": [
     {
-      "id": "python-exception-handling-pasted-part-1",
+      "id": "python-exception-handling-part-1",
       "title": "PART 1 OF 4: UNDERSTANDING EXCEPTION HANDLING",
-      "description": "Part 1 of 4 · Complete pasted curriculum content preserved verbatim.",
+      "description": "Part 1 of 4 · Complete curriculum arranged into native lesson blocks.",
       "blocks": [
         {
+          "type": "heading",
+          "text": "PART 1 OF 4: UNDERSTANDING EXCEPTION HANDLING"
+        },
+        {
+          "type": "heading",
+          "text": "1. What Is Exception Handling?"
+        },
+        {
           "type": "text",
-          "text": "# PYTHON: EXCEPTION HANDLING\n\n## PART 1 OF 4: UNDERSTANDING EXCEPTION HANDLING\n\n### 1. What Is Exception Handling?\n\nException handling is a Python programming technique used to detect and manage errors that occur while a program is running.\n\nAn exception is an event that interrupts the normal execution of a program because something unexpected has happened.\n\nFor example, imagine creating a calculator that asks users to divide two numbers.\n\nIf someone enters:\n\n- First number: 20\n- Second number: 0\n\nPython will produce a `ZeroDivisionError` because division by zero is not allowed.\n\nWithout exception handling, the program may terminate unexpectedly.\n\nException handling allows us to detect this problem and display a meaningful message instead of allowing the program to crash.\n\n### 2. Why Is Exception Handling Important?\n\nException handling is important because real-world applications interact with unpredictable situations.\n\nConsider these examples:\n\n| Application | Possible problem | How exception handling helps |\n|---|---|---|\n| Banking system | Invalid withdrawal amount | Displays an appropriate error |\n| Login system | Missing or invalid input | Requests valid information |\n| File management system | File does not exist | Handles the missing file |\n| E-commerce system | Invalid product quantity | Prevents unexpected termination |\n| Student management system | Invalid marks entered | Requests correct input |\n\nWithout proper exception handling, one unexpected error could interrupt an entire application.\n\n### 3. Understanding Exceptions Through an Example\n\nConsider this program:\n\n```python\nnumber1 = 20\nnumber2 = 0\n\nresult = number1 / number2\n\nprint(result)\n```\n\n**Explanation line by line:**\n\n**Line 1:**\n```python\nnumber1 = 20\n```\nCreates a variable called `number1` and stores the value `20`.\n\n**Line 2:**\n```python\nnumber2 = 0\n```\nCreates another variable and stores `0`.\n\n**Line 3:**\n```python\nresult = number1 / number2\n```\nAttempts to divide 20 by 0.\n\nThis operation is invalid in Python, so an exception occurs.\n\n**Line 4:**\n```python\nprint(result)\n```\nThis line is never executed because the exception interrupts the program before Python reaches it.\n\n**Error produced:**\n```text\nZeroDivisionError: division by zero\n```\n\n### 4. The Main Exception Handling Keywords\n\nPython provides several keywords for handling exceptions.\n\n| Keyword | Purpose |\n|---|---|\n| `try` | Contains code that might produce an exception |\n| `except` | Handles an exception when it occurs |\n| `else` | Executes when no exception occurs in the `try` block |\n| `finally` | Executes whether an exception occurs or not |\n| `raise` | Manually generates an exception |\n\nWe will study each keyword in detail.\n\n### 5. The Basic Structure of Exception Handling\n\nThe basic syntax is:\n\n```python\ntry:\n    # Code that might produce an exception\n\nexcept:\n    # Code that handles the exception\n```\n\nThe `try` block contains statements that might fail.\n\nThe `except` block contains instructions that Python should execute if an exception occurs.\n\nLet's correct our division example.\n\n```python\ntry:\n    number1 = 20\n    number2 = 0\n\n    result = number1 / number2\n\n    print(result)\n\nexcept:\n    print(\"Something went wrong!\")\n```\n\n**Explanation:**\n\n1. Python enters the `try` block.\n2. It creates the two variables.\n3. It attempts to divide 20 by 0.\n4. A `ZeroDivisionError` occurs.\n5. Python stops executing the remaining statements inside the `try` block.\n6. Python moves to the `except` block.\n7. The error message is displayed.\n\n**Expected output:**\n\n```text\nSomething went wrong!\n```\n\nNotice that the application does not terminate with an unhandled exception.\n\nHowever, using a general `except` without specifying the error type is not always recommended. It can hide unexpected problems.\n\nWe will learn how to handle specific exceptions in Part 2.\n\n### 6. Important Rules About try and except\n\n- A `try` block must be followed by at least one `except` block or a `finally` block.\n- The `except` block executes only when a matching exception occurs.\n- If no exception occurs, Python skips the `except` block.\n- Once an exception occurs inside a `try` block, the remaining statements in that block are skipped.\n\n### Real-World Application\n\nImagine a mobile banking application.\n\nA user wants to withdraw KSh 5,000 but accidentally enters letters instead of numbers.\n\nWithout exception handling, the application may produce an error and stop processing.\n\nWith exception handling, it can display:\n\n```text\nInvalid amount. Please enter numbers only.\n```\n\nThis makes the application easier and safer to use.\n\n**Part 1 Progress: 1 of 4**\n\n---\n"
+          "text": "Exception handling is a Python programming technique used to detect and manage errors that occur while a program is running."
+        },
+        {
+          "type": "text",
+          "text": "An exception is an event that interrupts the normal execution of a program because something unexpected has happened."
+        },
+        {
+          "type": "text",
+          "text": "For example, imagine creating a calculator that asks users to divide two numbers."
+        },
+        {
+          "type": "text",
+          "text": "If someone enters:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "First number: 20",
+            "Second number: 0"
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Python will produce a `ZeroDivisionError` because division by zero is not allowed."
+        },
+        {
+          "type": "text",
+          "text": "Without exception handling, the program may terminate unexpectedly."
+        },
+        {
+          "type": "text",
+          "text": "Exception handling allows us to detect this problem and display a meaningful message instead of allowing the program to crash."
+        },
+        {
+          "type": "heading",
+          "text": "2. Why Is Exception Handling Important?"
+        },
+        {
+          "type": "text",
+          "text": "Exception handling is important because real-world applications interact with unpredictable situations."
+        },
+        {
+          "type": "text",
+          "text": "Consider these examples:"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Application",
+            "Possible problem",
+            "How exception handling helps"
+          ],
+          "rows": [
+            [
+              "Banking system",
+              "Invalid withdrawal amount",
+              "Displays an appropriate error"
+            ],
+            [
+              "Login system",
+              "Missing or invalid input",
+              "Requests valid information"
+            ],
+            [
+              "File management system",
+              "File does not exist",
+              "Handles the missing file"
+            ],
+            [
+              "E-commerce system",
+              "Invalid product quantity",
+              "Prevents unexpected termination"
+            ],
+            [
+              "Student management system",
+              "Invalid marks entered",
+              "Requests correct input"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Without proper exception handling, one unexpected error could interrupt an entire application."
+        },
+        {
+          "type": "heading",
+          "text": "3. Understanding Exceptions Through an Example"
+        },
+        {
+          "type": "text",
+          "text": "Consider this program:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "number1 = 20\nnumber2 = 0\n\nresult = number1 / number2\n\nprint(result)"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation line by line:**"
+        },
+        {
+          "type": "text",
+          "text": "**Line 1:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "number1 = 20"
+        },
+        {
+          "type": "text",
+          "text": "Creates a variable called `number1` and stores the value `20`."
+        },
+        {
+          "type": "text",
+          "text": "**Line 2:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "number2 = 0"
+        },
+        {
+          "type": "text",
+          "text": "Creates another variable and stores `0`."
+        },
+        {
+          "type": "text",
+          "text": "**Line 3:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "result = number1 / number2"
+        },
+        {
+          "type": "text",
+          "text": "Attempts to divide 20 by 0."
+        },
+        {
+          "type": "text",
+          "text": "This operation is invalid in Python, so an exception occurs."
+        },
+        {
+          "type": "text",
+          "text": "**Line 4:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(result)"
+        },
+        {
+          "type": "text",
+          "text": "This line is never executed because the exception interrupts the program before Python reaches it."
+        },
+        {
+          "type": "text",
+          "text": "**Error produced:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "ZeroDivisionError: division by zero"
+        },
+        {
+          "type": "heading",
+          "text": "4. The Main Exception Handling Keywords"
+        },
+        {
+          "type": "text",
+          "text": "Python provides several keywords for handling exceptions."
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Keyword",
+            "Purpose"
+          ],
+          "rows": [
+            [
+              "`try`",
+              "Contains code that might produce an exception"
+            ],
+            [
+              "`except`",
+              "Handles an exception when it occurs"
+            ],
+            [
+              "`else`",
+              "Executes when no exception occurs in the `try` block"
+            ],
+            [
+              "`finally`",
+              "Executes whether an exception occurs or not"
+            ],
+            [
+              "`raise`",
+              "Manually generates an exception"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "We will study each keyword in detail."
+        },
+        {
+          "type": "heading",
+          "text": "5. The Basic Structure of Exception Handling"
+        },
+        {
+          "type": "text",
+          "text": "The basic syntax is:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    # Code that might produce an exception\n\nexcept:\n    # Code that handles the exception"
+        },
+        {
+          "type": "text",
+          "text": "The `try` block contains statements that might fail."
+        },
+        {
+          "type": "text",
+          "text": "The `except` block contains instructions that Python should execute if an exception occurs."
+        },
+        {
+          "type": "text",
+          "text": "Let's correct our division example."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number1 = 20\n    number2 = 0\n\n    result = number1 / number2\n\n    print(result)\n\nexcept:\n    print(\"Something went wrong!\")"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation:**"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Python enters the `try` block.",
+            "It creates the two variables.",
+            "It attempts to divide 20 by 0.",
+            "A `ZeroDivisionError` occurs.",
+            "Python stops executing the remaining statements inside the `try` block.",
+            "Python moves to the `except` block.",
+            "The error message is displayed."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Expected output:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Something went wrong!"
+        },
+        {
+          "type": "text",
+          "text": "Notice that the application does not terminate with an unhandled exception."
+        },
+        {
+          "type": "text",
+          "text": "However, using a general `except` without specifying the error type is not always recommended. It can hide unexpected problems."
+        },
+        {
+          "type": "text",
+          "text": "We will learn how to handle specific exceptions in Part 2."
+        },
+        {
+          "type": "heading",
+          "text": "6. Important Rules About try and except"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "A `try` block must be followed by at least one `except` block or a `finally` block.",
+            "The `except` block executes only when a matching exception occurs.",
+            "If no exception occurs, Python skips the `except` block.",
+            "Once an exception occurs inside a `try` block, the remaining statements in that block are skipped."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Real-World Application"
+        },
+        {
+          "type": "text",
+          "text": "Imagine a mobile banking application."
+        },
+        {
+          "type": "text",
+          "text": "A user wants to withdraw KSh 5,000 but accidentally enters letters instead of numbers."
+        },
+        {
+          "type": "text",
+          "text": "Without exception handling, the application may produce an error and stop processing."
+        },
+        {
+          "type": "text",
+          "text": "With exception handling, it can display:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Invalid amount. Please enter numbers only."
+        },
+        {
+          "type": "text",
+          "text": "This makes the application easier and safer to use."
+        },
+        {
+          "type": "text",
+          "text": "**Part 1 Progress: 1 of 4**"
+        },
+        {
+          "type": "text",
+          "text": "---"
         }
       ]
     },
     {
-      "id": "python-exception-handling-pasted-part-2",
+      "id": "python-exception-handling-part-2",
       "title": "PART 2 OF 4: TYPES OF EXCEPTIONS AND ADVANCED HANDLING",
-      "description": "Part 2 of 4 · Complete pasted curriculum content preserved verbatim.",
+      "description": "Part 2 of 4 · Complete curriculum arranged into native lesson blocks.",
       "blocks": [
         {
+          "type": "heading",
+          "text": "PART 2 OF 4: TYPES OF EXCEPTIONS AND ADVANCED HANDLING"
+        },
+        {
+          "type": "heading",
+          "text": "1. Understanding Specific Exceptions"
+        },
+        {
           "type": "text",
-          "text": "\n## PART 2 OF 4: TYPES OF EXCEPTIONS AND ADVANCED HANDLING\n\n### 1. Understanding Specific Exceptions\n\nPython has different exception types for different problems.\n\nInstead of using one general `except` block, we can identify the exact exception and handle it appropriately.\n\nHere are common Python exceptions:\n\n| Exception | Meaning | Example |\n|---|---|---|\n| `ZeroDivisionError` | Dividing a number by zero | `10 / 0` |\n| `ValueError` | A value has an inappropriate format | `int(\"hello\")` |\n| `TypeError` | An operation uses an incompatible data type | `\"5\" + 5` |\n| `NameError` | Using a variable that has not been defined | `print(age)` when `age` does not exist |\n| `IndexError` | Accessing a list position that does not exist | `numbers[10]` |\n| `KeyError` | Accessing a dictionary key that does not exist | `student[\"age\"]` when the key is missing |\n| `FileNotFoundError` | Trying to open a file that does not exist | Opening a missing file |\n\nLet's examine some of them.\n\n### 2. Handling ZeroDivisionError\n\nConsider:\n\n```python\ntry:\n    result = 50 / 0\n\nexcept ZeroDivisionError:\n    print(\"You cannot divide by zero.\")\n```\n\n**Explanation:**\n\n- `try:` tells Python that the following code may produce an exception.\n- `result = 50 / 0` attempts an invalid division.\n- `except ZeroDivisionError:` catches that particular exception.\n- `print()` displays a helpful message.\n\n**Expected output:**\n\n```text\nYou cannot divide by zero.\n```\n\n### 3. Handling ValueError\n\nA `ValueError` occurs when a function receives a value of the correct general type but an inappropriate value.\n\nFor example:\n\n```python\nage = int(\"hello\")\n```\n\nThe `int()` function converts a value into an integer.\n\nHowever, `\"hello\"` cannot be converted into an integer.\n\nLet's handle it:\n\n```python\ntry:\n    age = int(\"hello\")\n    print(age)\n\nexcept ValueError:\n    print(\"Please enter a valid number.\")\n```\n\n**Explanation:**\n\n- Python attempts to convert `\"hello\"` into an integer.\n- The conversion fails.\n- A `ValueError` occurs.\n- The `except` block catches it.\n- A meaningful message is displayed.\n\n**Expected output:**\n\n```text\nPlease enter a valid number.\n```\n\n### 4. Handling Multiple Exceptions\n\nSometimes a program can produce different types of exceptions.\n\nFor example, a calculator can encounter:\n\n- `ValueError` when the user enters letters instead of numbers.\n- `ZeroDivisionError` when the user divides by zero.\n\nPython allows us to use multiple `except` blocks.\n\n```python\ntry:\n    number1 = int(input(\"Enter first number: \"))\n    number2 = int(input(\"Enter second number: \"))\n\n    result = number1 / number2\n\n    print(\"Result:\", result)\n\nexcept ValueError:\n    print(\"Please enter numbers only.\")\n\nexcept ZeroDivisionError:\n    print(\"You cannot divide by zero.\")\n```\n\n**Explanation line by line:**\n\n**Line 1:**\n```python\ntry:\n```\nBegins the block containing operations that might fail.\n\n**Line 2:**\n```python\nnumber1 = int(input(\"Enter first number: \"))\n```\nRequests the first number from the user.\n\n`input()` receives text, while `int()` attempts to convert that text into an integer.\n\n**Line 3:**\n```python\nnumber2 = int(input(\"Enter second number: \"))\n```\nRequests the second number and converts it into an integer.\n\n**Line 4:**\n```python\nresult = number1 / number2\n```\nDivides the first number by the second.\n\n**Line 5:**\n```python\nprint(\"Result:\", result)\n```\nDisplays the calculation result if the operation succeeds.\n\n**Line 6:**\n```python\nexcept ValueError:\n```\nHandles invalid numeric input.\n\n**Line 7:**\n```python\nprint(\"Please enter numbers only.\")\n```\nDisplays a message when the user enters something that cannot be converted into an integer.\n\n**Line 8:**\n```python\nexcept ZeroDivisionError:\n```\nHandles division by zero.\n\n**Line 9:**\n```python\nprint(\"You cannot divide by zero.\")\n```\nDisplays a message explaining the problem.\n\n**Example execution 1:**\n\n```text\nEnter first number: 20\nEnter second number: 5\nResult: 4.0\n```\n\n**Example execution 2:**\n\n```text\nEnter first number: twenty\nPlease enter numbers only.\n```\n\n**Example execution 3:**\n\n```text\nEnter first number: 20\nEnter second number: 0\nYou cannot divide by zero.\n```\n\n### 5. Understanding the else Block\n\nThe `else` block executes only when the `try` block completes without an exception.\n\nExample:\n\n```python\ntry:\n    number = int(input(\"Enter a number: \"))\n\nexcept ValueError:\n    print(\"Invalid input.\")\n\nelse:\n    print(\"You entered:\", number)\n```\n\n**Explanation:**\n\n- Python requests a number.\n- If conversion fails, the `except` block executes.\n- If conversion succeeds, the `else` block executes.\n- The program displays the entered number.\n\n**Example output:**\n\n```text\nEnter a number: 25\nYou entered: 25\n```\n\nThe `else` block helps separate successful operations from error-handling instructions.\n\n### 6. Understanding the finally Block\n\nThe `finally` block executes whether an exception occurs or not.\n\nIt is commonly used for cleanup operations, such as closing files or releasing resources.\n\nExample:\n\n```python\ntry:\n    number = int(input(\"Enter a number: \"))\n\nexcept ValueError:\n    print(\"Invalid number.\")\n\nfinally:\n    print(\"Program execution completed.\")\n```\n\n**Explanation:**\n\n- The `try` block attempts to convert the input into an integer.\n- If the conversion fails, the `except` block handles the problem.\n- The `finally` block executes regardless of whether the conversion succeeds or fails.\n\n**Example output when the user enters text:**\n\n```text\nEnter a number: hello\nInvalid number.\nProgram execution completed.\n```\n\n**Example output when the user enters a number:**\n\n```text\nEnter a number: 15\nProgram execution completed.\n```\n\n### 7. Combining try, except, else and finally\n\nAll four structures can be used together.\n\n```python\ntry:\n    number1 = int(input(\"Enter first number: \"))\n    number2 = int(input(\"Enter second number: \"))\n\n    result = number1 / number2\n\nexcept ValueError:\n    print(\"Invalid input. Enter numbers only.\")\n\nexcept ZeroDivisionError:\n    print(\"Division by zero is not allowed.\")\n\nelse:\n    print(\"The result is:\", result)\n\nfinally:\n    print(\"Thank you for using the calculator.\")\n```\n\n**How the program works:**\n\n1. The `try` block collects two numbers and performs division.\n2. The first `except` handles invalid numeric input.\n3. The second `except` handles division by zero.\n4. The `else` block displays the result if no exception occurs.\n5. The `finally` block displays its message regardless of the outcome.\n\n### 8. Understanding the raise Keyword\n\nThe `raise` keyword allows a programmer to deliberately generate an exception when a particular condition is not met.\n\nFor example, imagine a student registration system where a student's age must be at least 16.\n\n```python\nage = 14\n\nif age < 16:\n    raise ValueError(\"Student must be at least 16 years old.\")\n\nprint(\"Registration successful.\")\n```\n\n**Explanation:**\n\n**Line 1:**\n```python\nage = 14\n```\nStores the student's age.\n\n**Line 2:**\n```python\nif age < 16:\n```\nChecks whether the age is below the minimum requirement.\n\n**Line 3:**\n```python\nraise ValueError(\"Student must be at least 16 years old.\")\n```\nManually raises a `ValueError` because the condition is not satisfied.\n\n**Line 4:**\n```python\nprint(\"Registration successful.\")\n```\nThis line will not execute because the exception is raised first.\n\n**Expected output:**\n\n```text\nValueError: Student must be at least 16 years old.\n```\n\nYou can also combine `raise` with `try` and `except`:\n\n```python\ntry:\n    age = 14\n\n    if age < 16:\n        raise ValueError(\"Age requirement not met.\")\n\nexcept ValueError as error:\n    print(\"Registration failed:\", error)\n```\n\nHere, `as error` stores the exception object in a variable called `error`, allowing us to display its message.\n\n**Expected output:**\n\n```text\nRegistration failed: Age requirement not met.\n```\n\n### 9. What Is a Custom Exception?\n\nPython allows developers to create their own exception classes.\n\nThis is useful when building applications with rules that require specific error types.\n\nExample:\n\n```python\nclass InsufficientBalanceError(Exception):\n    pass\n```\n\n**Explanation:**\n\n- `class` defines a new class.\n- `InsufficientBalanceError` is the name of our custom exception.\n- `(Exception)` means our class inherits from Python's built-in exception class.\n- `pass` means the class currently has no additional implementation.\n\nWe can now use this custom exception:\n\n```python\nbalance = 1000\nwithdrawal = 1500\n\ntry:\n    if withdrawal > balance:\n        raise InsufficientBalanceError(\"Insufficient account balance.\")\n\nexcept InsufficientBalanceError as error:\n    print(error)\n```\n\n**Expected output:**\n\n```text\nInsufficient account balance.\n```\n\nCustom exceptions make large applications easier to understand because they allow developers to identify application-specific problems.\n\n### 10. Important Exception Handling Practices\n\n1. Catch specific exceptions whenever possible.\n2. Avoid empty `except` blocks.\n3. Do not use exceptions to replace ordinary condition checks.\n4. Display messages that help users understand what went wrong.\n5. Avoid exposing passwords, private information, or sensitive system details in error messages.\n6. Use `finally` or appropriate resource-management tools to clean up resources.\n\n**Part 2 Progress: 2 of 4**\n\n---\n"
+          "text": "Python has different exception types for different problems."
+        },
+        {
+          "type": "text",
+          "text": "Instead of using one general `except` block, we can identify the exact exception and handle it appropriately."
+        },
+        {
+          "type": "text",
+          "text": "Here are common Python exceptions:"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Exception",
+            "Meaning",
+            "Example"
+          ],
+          "rows": [
+            [
+              "`ZeroDivisionError`",
+              "Dividing a number by zero",
+              "`10 / 0`"
+            ],
+            [
+              "`ValueError`",
+              "A value has an inappropriate format",
+              "`int(\"hello\")`"
+            ],
+            [
+              "`TypeError`",
+              "An operation uses an incompatible data type",
+              "`\"5\" + 5`"
+            ],
+            [
+              "`NameError`",
+              "Using a variable that has not been defined",
+              "`print(age)` when `age` does not exist"
+            ],
+            [
+              "`IndexError`",
+              "Accessing a list position that does not exist",
+              "`numbers[10]`"
+            ],
+            [
+              "`KeyError`",
+              "Accessing a dictionary key that does not exist",
+              "`student[\"age\"]` when the key is missing"
+            ],
+            [
+              "`FileNotFoundError`",
+              "Trying to open a file that does not exist",
+              "Opening a missing file"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Let's examine some of them."
+        },
+        {
+          "type": "heading",
+          "text": "2. Handling ZeroDivisionError"
+        },
+        {
+          "type": "text",
+          "text": "Consider:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    result = 50 / 0\n\nexcept ZeroDivisionError:\n    print(\"You cannot divide by zero.\")"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation:**"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`try:` tells Python that the following code may produce an exception.",
+            "`result = 50 / 0` attempts an invalid division.",
+            "`except ZeroDivisionError:` catches that particular exception.",
+            "`print()` displays a helpful message."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Expected output:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "You cannot divide by zero."
+        },
+        {
+          "type": "heading",
+          "text": "3. Handling ValueError"
+        },
+        {
+          "type": "text",
+          "text": "A `ValueError` occurs when a function receives a value of the correct general type but an inappropriate value."
+        },
+        {
+          "type": "text",
+          "text": "For example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "age = int(\"hello\")"
+        },
+        {
+          "type": "text",
+          "text": "The `int()` function converts a value into an integer."
+        },
+        {
+          "type": "text",
+          "text": "However, `\"hello\"` cannot be converted into an integer."
+        },
+        {
+          "type": "text",
+          "text": "Let's handle it:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    age = int(\"hello\")\n    print(age)\n\nexcept ValueError:\n    print(\"Please enter a valid number.\")"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation:**"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Python attempts to convert `\"hello\"` into an integer.",
+            "The conversion fails.",
+            "A `ValueError` occurs.",
+            "The `except` block catches it.",
+            "A meaningful message is displayed."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Expected output:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Please enter a valid number."
+        },
+        {
+          "type": "heading",
+          "text": "4. Handling Multiple Exceptions"
+        },
+        {
+          "type": "text",
+          "text": "Sometimes a program can produce different types of exceptions."
+        },
+        {
+          "type": "text",
+          "text": "For example, a calculator can encounter:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`ValueError` when the user enters letters instead of numbers.",
+            "`ZeroDivisionError` when the user divides by zero."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Python allows us to use multiple `except` blocks."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number1 = int(input(\"Enter first number: \"))\n    number2 = int(input(\"Enter second number: \"))\n\n    result = number1 / number2\n\n    print(\"Result:\", result)\n\nexcept ValueError:\n    print(\"Please enter numbers only.\")\n\nexcept ZeroDivisionError:\n    print(\"You cannot divide by zero.\")"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation line by line:**"
+        },
+        {
+          "type": "text",
+          "text": "**Line 1:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:"
+        },
+        {
+          "type": "text",
+          "text": "Begins the block containing operations that might fail."
+        },
+        {
+          "type": "text",
+          "text": "**Line 2:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "number1 = int(input(\"Enter first number: \"))"
+        },
+        {
+          "type": "text",
+          "text": "Requests the first number from the user."
+        },
+        {
+          "type": "text",
+          "text": "`input()` receives text, while `int()` attempts to convert that text into an integer."
+        },
+        {
+          "type": "text",
+          "text": "**Line 3:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "number2 = int(input(\"Enter second number: \"))"
+        },
+        {
+          "type": "text",
+          "text": "Requests the second number and converts it into an integer."
+        },
+        {
+          "type": "text",
+          "text": "**Line 4:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "result = number1 / number2"
+        },
+        {
+          "type": "text",
+          "text": "Divides the first number by the second."
+        },
+        {
+          "type": "text",
+          "text": "**Line 5:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Result:\", result)"
+        },
+        {
+          "type": "text",
+          "text": "Displays the calculation result if the operation succeeds."
+        },
+        {
+          "type": "text",
+          "text": "**Line 6:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "except ValueError:"
+        },
+        {
+          "type": "text",
+          "text": "Handles invalid numeric input."
+        },
+        {
+          "type": "text",
+          "text": "**Line 7:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Please enter numbers only.\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a message when the user enters something that cannot be converted into an integer."
+        },
+        {
+          "type": "text",
+          "text": "**Line 8:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "except ZeroDivisionError:"
+        },
+        {
+          "type": "text",
+          "text": "Handles division by zero."
+        },
+        {
+          "type": "text",
+          "text": "**Line 9:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"You cannot divide by zero.\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a message explaining the problem."
+        },
+        {
+          "type": "text",
+          "text": "**Example execution 1:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter first number: 20\nEnter second number: 5\nResult: 4.0"
+        },
+        {
+          "type": "text",
+          "text": "**Example execution 2:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter first number: twenty\nPlease enter numbers only."
+        },
+        {
+          "type": "text",
+          "text": "**Example execution 3:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter first number: 20\nEnter second number: 0\nYou cannot divide by zero."
+        },
+        {
+          "type": "heading",
+          "text": "5. Understanding the else Block"
+        },
+        {
+          "type": "text",
+          "text": "The `else` block executes only when the `try` block completes without an exception."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number = int(input(\"Enter a number: \"))\n\nexcept ValueError:\n    print(\"Invalid input.\")\n\nelse:\n    print(\"You entered:\", number)"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation:**"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Python requests a number.",
+            "If conversion fails, the `except` block executes.",
+            "If conversion succeeds, the `else` block executes.",
+            "The program displays the entered number."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Example output:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter a number: 25\nYou entered: 25"
+        },
+        {
+          "type": "text",
+          "text": "The `else` block helps separate successful operations from error-handling instructions."
+        },
+        {
+          "type": "heading",
+          "text": "6. Understanding the finally Block"
+        },
+        {
+          "type": "text",
+          "text": "The `finally` block executes whether an exception occurs or not."
+        },
+        {
+          "type": "text",
+          "text": "It is commonly used for cleanup operations, such as closing files or releasing resources."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number = int(input(\"Enter a number: \"))\n\nexcept ValueError:\n    print(\"Invalid number.\")\n\nfinally:\n    print(\"Program execution completed.\")"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation:**"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "The `try` block attempts to convert the input into an integer.",
+            "If the conversion fails, the `except` block handles the problem.",
+            "The `finally` block executes regardless of whether the conversion succeeds or fails."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Example output when the user enters text:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter a number: hello\nInvalid number.\nProgram execution completed."
+        },
+        {
+          "type": "text",
+          "text": "**Example output when the user enters a number:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter a number: 15\nProgram execution completed."
+        },
+        {
+          "type": "heading",
+          "text": "7. Combining try, except, else and finally"
+        },
+        {
+          "type": "text",
+          "text": "All four structures can be used together."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number1 = int(input(\"Enter first number: \"))\n    number2 = int(input(\"Enter second number: \"))\n\n    result = number1 / number2\n\nexcept ValueError:\n    print(\"Invalid input. Enter numbers only.\")\n\nexcept ZeroDivisionError:\n    print(\"Division by zero is not allowed.\")\n\nelse:\n    print(\"The result is:\", result)\n\nfinally:\n    print(\"Thank you for using the calculator.\")"
+        },
+        {
+          "type": "text",
+          "text": "**How the program works:**"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "The `try` block collects two numbers and performs division.",
+            "The first `except` handles invalid numeric input.",
+            "The second `except` handles division by zero.",
+            "The `else` block displays the result if no exception occurs.",
+            "The `finally` block displays its message regardless of the outcome."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "8. Understanding the raise Keyword"
+        },
+        {
+          "type": "text",
+          "text": "The `raise` keyword allows a programmer to deliberately generate an exception when a particular condition is not met."
+        },
+        {
+          "type": "text",
+          "text": "For example, imagine a student registration system where a student's age must be at least 16."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "age = 14\n\nif age < 16:\n    raise ValueError(\"Student must be at least 16 years old.\")\n\nprint(\"Registration successful.\")"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation:**"
+        },
+        {
+          "type": "text",
+          "text": "**Line 1:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "age = 14"
+        },
+        {
+          "type": "text",
+          "text": "Stores the student's age."
+        },
+        {
+          "type": "text",
+          "text": "**Line 2:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if age < 16:"
+        },
+        {
+          "type": "text",
+          "text": "Checks whether the age is below the minimum requirement."
+        },
+        {
+          "type": "text",
+          "text": "**Line 3:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "raise ValueError(\"Student must be at least 16 years old.\")"
+        },
+        {
+          "type": "text",
+          "text": "Manually raises a `ValueError` because the condition is not satisfied."
+        },
+        {
+          "type": "text",
+          "text": "**Line 4:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Registration successful.\")"
+        },
+        {
+          "type": "text",
+          "text": "This line will not execute because the exception is raised first."
+        },
+        {
+          "type": "text",
+          "text": "**Expected output:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "ValueError: Student must be at least 16 years old."
+        },
+        {
+          "type": "text",
+          "text": "You can also combine `raise` with `try` and `except`:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    age = 14\n\n    if age < 16:\n        raise ValueError(\"Age requirement not met.\")\n\nexcept ValueError as error:\n    print(\"Registration failed:\", error)"
+        },
+        {
+          "type": "text",
+          "text": "Here, `as error` stores the exception object in a variable called `error`, allowing us to display its message."
+        },
+        {
+          "type": "text",
+          "text": "**Expected output:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Registration failed: Age requirement not met."
+        },
+        {
+          "type": "heading",
+          "text": "9. What Is a Custom Exception?"
+        },
+        {
+          "type": "text",
+          "text": "Python allows developers to create their own exception classes."
+        },
+        {
+          "type": "text",
+          "text": "This is useful when building applications with rules that require specific error types."
+        },
+        {
+          "type": "text",
+          "text": "Example:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "class InsufficientBalanceError(Exception):\n    pass"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation:**"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`class` defines a new class.",
+            "`InsufficientBalanceError` is the name of our custom exception.",
+            "`(Exception)` means our class inherits from Python's built-in exception class.",
+            "`pass` means the class currently has no additional implementation."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "We can now use this custom exception:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "balance = 1000\nwithdrawal = 1500\n\ntry:\n    if withdrawal > balance:\n        raise InsufficientBalanceError(\"Insufficient account balance.\")\n\nexcept InsufficientBalanceError as error:\n    print(error)"
+        },
+        {
+          "type": "text",
+          "text": "**Expected output:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Insufficient account balance."
+        },
+        {
+          "type": "text",
+          "text": "Custom exceptions make large applications easier to understand because they allow developers to identify application-specific problems."
+        },
+        {
+          "type": "heading",
+          "text": "10. Important Exception Handling Practices"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Catch specific exceptions whenever possible.",
+            "Avoid empty `except` blocks.",
+            "Do not use exceptions to replace ordinary condition checks.",
+            "Display messages that help users understand what went wrong.",
+            "Avoid exposing passwords, private information, or sensitive system details in error messages.",
+            "Use `finally` or appropriate resource-management tools to clean up resources."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Part 2 Progress: 2 of 4**"
+        },
+        {
+          "type": "text",
+          "text": "---"
         }
       ]
     },
     {
-      "id": "python-exception-handling-pasted-part-3",
+      "id": "python-exception-handling-part-3",
       "title": "PART 3 OF 4: PRACTICAL PYTHON EXCEPTION HANDLING",
-      "description": "Part 3 of 4 · Complete pasted curriculum content preserved verbatim.",
+      "description": "Part 3 of 4 · Complete curriculum arranged into native lesson blocks.",
       "blocks": [
         {
+          "type": "heading",
+          "text": "PART 3 OF 4: PRACTICAL PYTHON EXCEPTION HANDLING"
+        },
+        {
           "type": "text",
-          "text": "\n## PART 3 OF 4: PRACTICAL PYTHON EXCEPTION HANDLING\n\nIn this part, we will build practical programs that demonstrate how exception handling works in real applications.\n\n### 1. Prepare Your Development Environment\n\nCreate a folder named:\n\n```text\npython_exception_handling\n```\n\nInside it, create a Python file:\n\n```text\nmain.py\n```\n\nYou can use Visual Studio Code or another Python editor.\n\nOpen the terminal inside the project folder.\n\nTo run your program, use:\n\n```bash\npython main.py\n```\n\nOn some Windows installations, you may need:\n\n```bash\npy main.py\n```\n\n### 2. Practical Example: Safe Calculator\n\nWe will build a calculator that accepts two numbers and performs division without crashing when the user enters invalid input.\n\n**Code:**\n\n```python\ntry:\n    first_number = float(input(\"Enter first number: \"))\n    second_number = float(input(\"Enter second number: \"))\n\n    result = first_number / second_number\n\nexcept ValueError:\n    print(\"Error: Please enter valid numbers.\")\n\nexcept ZeroDivisionError:\n    print(\"Error: You cannot divide by zero.\")\n\nelse:\n    print(\"Calculation successful!\")\n    print(\"Result:\", result)\n\nfinally:\n    print(\"Calculator operation finished.\")\n```\n\n**Detailed explanation:**\n\n```python\ntry:\n```\nBegins the section containing operations that might produce exceptions.\n\n```python\nfirst_number = float(input(\"Enter first number: \"))\n```\nRequests the first number.\n\nWe use `float()` rather than `int()` because the calculator should accept decimal numbers such as `10.5`.\n\n```python\nsecond_number = float(input(\"Enter second number: \"))\n```\nRequests the second number and converts it into a decimal-compatible numeric value.\n\n```python\nresult = first_number / second_number\n```\nPerforms division and stores the answer in `result`.\n\n```python\nexcept ValueError:\n```\nCatches an exception if the user enters something that cannot be converted into a number.\n\n```python\nprint(\"Error: Please enter valid numbers.\")\n```\nDisplays a helpful error message.\n\n```python\nexcept ZeroDivisionError:\n```\nCatches the exception that occurs when the second number is zero.\n\n```python\nprint(\"Error: You cannot divide by zero.\")\n```\nExplains why the calculation could not be completed.\n\n```python\nelse:\n```\nRuns only when no exception occurred.\n\n```python\nprint(\"Calculation successful!\")\nprint(\"Result:\", result)\n```\nDisplays the successful calculation and its result.\n\n```python\nfinally:\n```\nIntroduces instructions that must run regardless of the outcome.\n\n```python\nprint(\"Calculator operation finished.\")\n```\nDisplays a completion message.\n\n**Example successful output:**\n\n```text\nEnter first number: 50\nEnter second number: 5\nCalculation successful!\nResult: 10.0\nCalculator operation finished.\n```\n\n### 3. Practical Example: Student Marks Management\n\nImagine creating a student management system.\n\nThe application should accept marks between 0 and 100.\n\nHowever, users might:\n\n- Enter letters instead of numbers.\n- Enter negative marks.\n- Enter marks above 100.\n\nWe can use exception handling and conditional validation to manage these situations.\n\n**Code:**\n\n```python\ntry:\n    marks = float(input(\"Enter student marks: \"))\n\n    if marks < 0 or marks > 100:\n        raise ValueError(\"Marks must be between 0 and 100.\")\n\nexcept ValueError as error:\n    print(\"Invalid marks:\", error)\n\nelse:\n    print(\"Marks recorded successfully.\")\n\n    if marks >= 70:\n        print(\"Grade: A\")\n\n    elif marks >= 60:\n        print(\"Grade: B\")\n\n    elif marks >= 50:\n        print(\"Grade: C\")\n\n    elif marks >= 40:\n        print(\"Grade: D\")\n\n    else:\n        print(\"Grade: E\")\n```\n\n**Explanation of the important sections:**\n\n```python\nmarks = float(input(\"Enter student marks: \"))\n```\nAccepts the student's marks and converts them into a number.\n\n```python\nif marks < 0 or marks > 100:\n```\nChecks whether the marks are outside the permitted range.\n\nThe `or` operator means either condition can make the entire expression true.\n\n```python\nraise ValueError(\"Marks must be between 0 and 100.\")\n```\nGenerates an exception when the marks are invalid.\n\n```python\nexcept ValueError as error:\n```\nCatches invalid numeric input and the custom validation error raised by our program.\n\n```python\nelse:\n```\nAllows the grading process to continue only if the marks are valid.\n\nThe remaining `if`, `elif` and `else` statements determine the student's grade.\n\n**Example output 1:**\n\n```text\nEnter student marks: 85\nMarks recorded successfully.\nGrade: A\n```\n\n**Example output 2:**\n\n```text\nEnter student marks: 120\nInvalid marks: Marks must be between 0 and 100.\n```\n\n**Example output 3:**\n\n```text\nEnter student marks: hello\nInvalid marks: could not convert string to float: 'hello'\n```\n\nNotice that the application handles both conversion errors and invalid marks.\n\n### 4. Practical Example: Handling Missing Files\n\nSuppose you are developing an application that reads student records from a file.\n\nWhat happens if the file does not exist?\n\nPython produces a `FileNotFoundError`.\n\nWe can handle it:\n\n```python\ntry:\n    file = open(\"students.txt\", \"r\")\n\n    content = file.read()\n\n    print(content)\n\n    file.close()\n\nexcept FileNotFoundError:\n    print(\"The student records file was not found.\")\n```\n\n**Explanation:**\n\n```python\nfile = open(\"students.txt\", \"r\")\n```\nAttempts to open a file named `students.txt`.\n\nThe `\"r\"` means read mode.\n\n```python\ncontent = file.read()\n```\nReads the contents of the file.\n\n```python\nprint(content)\n```\nDisplays the information.\n\n```python\nfile.close()\n```\nCloses the file after reading.\n\n```python\nexcept FileNotFoundError:\n```\nHandles the situation where the requested file does not exist.\n\n**Expected output if the file is missing:**\n\n```text\nThe student records file was not found.\n```\n\n**A better approach: Using with**\n\nPython provides the `with` statement for managing files.\n\nIt automatically closes the file when the block finishes, even if an exception occurs.\n\n```python\ntry:\n    with open(\"students.txt\", \"r\") as file:\n        content = file.read()\n        print(content)\n\nexcept FileNotFoundError:\n    print(\"The student records file was not found.\")\n```\n\nHere:\n\n- `with` manages the file resource.\n- `open()` opens the file.\n- `as file` assigns the opened file to a variable.\n- `file.read()` retrieves its contents.\n- Python automatically closes the file when execution leaves the `with` block.\n\nThis is generally preferred over manually calling `close()`.\n\n### 5. Practical Example: Banking Withdrawal System\n\nLet's create a simple banking program that prevents invalid withdrawals.\n\n**Code:**\n\n```python\nclass InsufficientBalanceError(Exception):\n    pass\n\n\nbalance = 5000\n\ntry:\n    amount = float(input(\"Enter withdrawal amount: \"))\n\n    if amount <= 0:\n        raise ValueError(\"Withdrawal amount must be greater than zero.\")\n\n    if amount > balance:\n        raise InsufficientBalanceError(\"Insufficient balance.\")\n\n    balance -= amount\n\nexcept ValueError as error:\n    print(\"Invalid withdrawal:\", error)\n\nexcept InsufficientBalanceError as error:\n    print(\"Transaction failed:\", error)\n\nelse:\n    print(\"Withdrawal successful.\")\n    print(\"Remaining balance:\", balance)\n\nfinally:\n    print(\"Thank you for banking with us.\")\n```\n\n**Understanding the program:**\n\n```python\nclass InsufficientBalanceError(Exception):\n    pass\n```\nCreates a custom exception for situations where a customer attempts to withdraw more money than their available balance.\n\n```python\nbalance = 5000\n```\nStores the customer's starting balance.\n\n```python\namount = float(input(\"Enter withdrawal amount: \"))\n```\nRequests the withdrawal amount.\n\n```python\nif amount <= 0:\n```\nChecks whether the requested withdrawal is zero or negative.\n\n```python\nraise ValueError(\"Withdrawal amount must be greater than zero.\")\n```\nRejects invalid withdrawal amounts.\n\n```python\nif amount > balance:\n```\nChecks whether the customer is requesting more money than is available.\n\n```python\nraise InsufficientBalanceError(\"Insufficient balance.\")\n```\nRaises our custom banking exception.\n\n```python\nbalance -= amount\n```\nSubtracts the withdrawal amount from the available balance.\n\nThis is shorthand for:\n\n```python\nbalance = balance - amount\n```\n\nThe `except` blocks handle the two different problems.\n\nThe `else` block confirms the transaction only if all operations succeed.\n\nThe `finally` block displays a closing message.\n\n**Example output:**\n\n```text\nEnter withdrawal amount: 2000\nWithdrawal successful.\nRemaining balance: 3000.0\nThank you for banking with us.\n```\n\nIf the user enters `7000`, the output becomes:\n\n```text\nEnter withdrawal amount: 7000\nTransaction failed: Insufficient balance.\nThank you for banking with us.\n```\n\n**Important:** This is an educational example. A real banking application would also need secure authentication, database transactions, concurrent balance protection, audit records and additional financial controls.\n\n### 6. Common Exception Handling Mistakes\n\n**Mistake 1: Using the wrong exception type**\n\n```python\ntry:\n    number = int(\"hello\")\n\nexcept ZeroDivisionError:\n    print(\"Error occurred.\")\n```\n\nProblem: The program produces a `ValueError`, not a `ZeroDivisionError`.\n\nCorrect version:\n\n```python\ntry:\n    number = int(\"hello\")\n\nexcept ValueError:\n    print(\"Please enter a valid integer.\")\n```\n\n**Mistake 2: Putting important code outside the try block**\n\n```python\ntry:\n    number = int(input(\"Enter number: \"))\n\nexcept ValueError:\n    print(\"Invalid input.\")\n\nresult = 100 / number\n```\n\nProblem: If conversion fails, `number` may never be created. The division outside the `try` block can then produce another exception.\n\nThe division should also be protected where appropriate.\n\n**Mistake 3: Using an empty except block**\n\n```python\ntry:\n    number = int(input(\"Enter number: \"))\n\nexcept:\n    pass\n```\n\nProblem: The application silently ignores the error. This makes problems difficult to identify.\n\nBetter:\n\n```python\ntry:\n    number = int(input(\"Enter number: \"))\n\nexcept ValueError:\n    print(\"Please enter a valid integer.\")\n```\n\n### 7. Practical Exercises\n\nComplete these exercises in your `main.py` file or create separate Python files for each task.\n\n**Exercise 1: Age Validation**\n\nWrite a program that:\n\n1. Requests a user's age.\n2. Converts the input into an integer.\n3. Handles invalid input.\n4. Rejects negative ages.\n5. Displays the age if it is valid.\n\n**Exercise 2: Division Calculator**\n\nWrite a program that:\n\n1. Requests two numbers.\n2. Divides the first number by the second.\n3. Handles `ValueError`.\n4. Handles `ZeroDivisionError`.\n5. Displays the result when successful.\n\n**Exercise 3: File Management**\n\nWrite a program that attempts to open a file called `records.txt`.\n\nIf the file does not exist, display an appropriate error message.\n\nIf it exists, display its contents.\n\n**Exercise 4: Banking Validation**\n\nCreate a program that starts with a balance of KSh 10,000.\n\nAllow the user to withdraw money.\n\nYour program should:\n\n- Reject negative withdrawal amounts.\n- Reject zero withdrawal amounts.\n- Reject withdrawals greater than the balance.\n- Use a custom exception for insufficient balance.\n- Display the remaining balance after a successful withdrawal.\n\n**Part 3 Progress: 3 of 4**\n\n---\n"
+          "text": "In this part, we will build practical programs that demonstrate how exception handling works in real applications."
+        },
+        {
+          "type": "heading",
+          "text": "1. Prepare Your Development Environment"
+        },
+        {
+          "type": "text",
+          "text": "Create a folder named:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "python_exception_handling"
+        },
+        {
+          "type": "text",
+          "text": "Inside it, create a Python file:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "main.py"
+        },
+        {
+          "type": "text",
+          "text": "You can use Visual Studio Code or another Python editor."
+        },
+        {
+          "type": "text",
+          "text": "Open the terminal inside the project folder."
+        },
+        {
+          "type": "text",
+          "text": "To run your program, use:"
+        },
+        {
+          "type": "code",
+          "language": "bash",
+          "code": "python main.py"
+        },
+        {
+          "type": "text",
+          "text": "On some Windows installations, you may need:"
+        },
+        {
+          "type": "code",
+          "language": "bash",
+          "code": "py main.py"
+        },
+        {
+          "type": "heading",
+          "text": "2. Practical Example: Safe Calculator"
+        },
+        {
+          "type": "text",
+          "text": "We will build a calculator that accepts two numbers and performs division without crashing when the user enters invalid input."
+        },
+        {
+          "type": "text",
+          "text": "**Code:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    first_number = float(input(\"Enter first number: \"))\n    second_number = float(input(\"Enter second number: \"))\n\n    result = first_number / second_number\n\nexcept ValueError:\n    print(\"Error: Please enter valid numbers.\")\n\nexcept ZeroDivisionError:\n    print(\"Error: You cannot divide by zero.\")\n\nelse:\n    print(\"Calculation successful!\")\n    print(\"Result:\", result)\n\nfinally:\n    print(\"Calculator operation finished.\")"
+        },
+        {
+          "type": "text",
+          "text": "**Detailed explanation:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:"
+        },
+        {
+          "type": "text",
+          "text": "Begins the section containing operations that might produce exceptions."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "first_number = float(input(\"Enter first number: \"))"
+        },
+        {
+          "type": "text",
+          "text": "Requests the first number."
+        },
+        {
+          "type": "text",
+          "text": "We use `float()` rather than `int()` because the calculator should accept decimal numbers such as `10.5`."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "second_number = float(input(\"Enter second number: \"))"
+        },
+        {
+          "type": "text",
+          "text": "Requests the second number and converts it into a decimal-compatible numeric value."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "result = first_number / second_number"
+        },
+        {
+          "type": "text",
+          "text": "Performs division and stores the answer in `result`."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "except ValueError:"
+        },
+        {
+          "type": "text",
+          "text": "Catches an exception if the user enters something that cannot be converted into a number."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Error: Please enter valid numbers.\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a helpful error message."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "except ZeroDivisionError:"
+        },
+        {
+          "type": "text",
+          "text": "Catches the exception that occurs when the second number is zero."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Error: You cannot divide by zero.\")"
+        },
+        {
+          "type": "text",
+          "text": "Explains why the calculation could not be completed."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "else:"
+        },
+        {
+          "type": "text",
+          "text": "Runs only when no exception occurred."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Calculation successful!\")\nprint(\"Result:\", result)"
+        },
+        {
+          "type": "text",
+          "text": "Displays the successful calculation and its result."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "finally:"
+        },
+        {
+          "type": "text",
+          "text": "Introduces instructions that must run regardless of the outcome."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(\"Calculator operation finished.\")"
+        },
+        {
+          "type": "text",
+          "text": "Displays a completion message."
+        },
+        {
+          "type": "text",
+          "text": "**Example successful output:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter first number: 50\nEnter second number: 5\nCalculation successful!\nResult: 10.0\nCalculator operation finished."
+        },
+        {
+          "type": "heading",
+          "text": "3. Practical Example: Student Marks Management"
+        },
+        {
+          "type": "text",
+          "text": "Imagine creating a student management system."
+        },
+        {
+          "type": "text",
+          "text": "The application should accept marks between 0 and 100."
+        },
+        {
+          "type": "text",
+          "text": "However, users might:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Enter letters instead of numbers.",
+            "Enter negative marks.",
+            "Enter marks above 100."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "We can use exception handling and conditional validation to manage these situations."
+        },
+        {
+          "type": "text",
+          "text": "**Code:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    marks = float(input(\"Enter student marks: \"))\n\n    if marks < 0 or marks > 100:\n        raise ValueError(\"Marks must be between 0 and 100.\")\n\nexcept ValueError as error:\n    print(\"Invalid marks:\", error)\n\nelse:\n    print(\"Marks recorded successfully.\")\n\n    if marks >= 70:\n        print(\"Grade: A\")\n\n    elif marks >= 60:\n        print(\"Grade: B\")\n\n    elif marks >= 50:\n        print(\"Grade: C\")\n\n    elif marks >= 40:\n        print(\"Grade: D\")\n\n    else:\n        print(\"Grade: E\")"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation of the important sections:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "marks = float(input(\"Enter student marks: \"))"
+        },
+        {
+          "type": "text",
+          "text": "Accepts the student's marks and converts them into a number."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if marks < 0 or marks > 100:"
+        },
+        {
+          "type": "text",
+          "text": "Checks whether the marks are outside the permitted range."
+        },
+        {
+          "type": "text",
+          "text": "The `or` operator means either condition can make the entire expression true."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "raise ValueError(\"Marks must be between 0 and 100.\")"
+        },
+        {
+          "type": "text",
+          "text": "Generates an exception when the marks are invalid."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "except ValueError as error:"
+        },
+        {
+          "type": "text",
+          "text": "Catches invalid numeric input and the custom validation error raised by our program."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "else:"
+        },
+        {
+          "type": "text",
+          "text": "Allows the grading process to continue only if the marks are valid."
+        },
+        {
+          "type": "text",
+          "text": "The remaining `if`, `elif` and `else` statements determine the student's grade."
+        },
+        {
+          "type": "text",
+          "text": "**Example output 1:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter student marks: 85\nMarks recorded successfully.\nGrade: A"
+        },
+        {
+          "type": "text",
+          "text": "**Example output 2:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter student marks: 120\nInvalid marks: Marks must be between 0 and 100."
+        },
+        {
+          "type": "text",
+          "text": "**Example output 3:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter student marks: hello\nInvalid marks: could not convert string to float: 'hello'"
+        },
+        {
+          "type": "text",
+          "text": "Notice that the application handles both conversion errors and invalid marks."
+        },
+        {
+          "type": "heading",
+          "text": "4. Practical Example: Handling Missing Files"
+        },
+        {
+          "type": "text",
+          "text": "Suppose you are developing an application that reads student records from a file."
+        },
+        {
+          "type": "text",
+          "text": "What happens if the file does not exist?"
+        },
+        {
+          "type": "text",
+          "text": "Python produces a `FileNotFoundError`."
+        },
+        {
+          "type": "text",
+          "text": "We can handle it:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    file = open(\"students.txt\", \"r\")\n\n    content = file.read()\n\n    print(content)\n\n    file.close()\n\nexcept FileNotFoundError:\n    print(\"The student records file was not found.\")"
+        },
+        {
+          "type": "text",
+          "text": "**Explanation:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file = open(\"students.txt\", \"r\")"
+        },
+        {
+          "type": "text",
+          "text": "Attempts to open a file named `students.txt`."
+        },
+        {
+          "type": "text",
+          "text": "The `\"r\"` means read mode."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "content = file.read()"
+        },
+        {
+          "type": "text",
+          "text": "Reads the contents of the file."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "print(content)"
+        },
+        {
+          "type": "text",
+          "text": "Displays the information."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "file.close()"
+        },
+        {
+          "type": "text",
+          "text": "Closes the file after reading."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "except FileNotFoundError:"
+        },
+        {
+          "type": "text",
+          "text": "Handles the situation where the requested file does not exist."
+        },
+        {
+          "type": "text",
+          "text": "**Expected output if the file is missing:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "The student records file was not found."
+        },
+        {
+          "type": "text",
+          "text": "**A better approach: Using with**"
+        },
+        {
+          "type": "text",
+          "text": "Python provides the `with` statement for managing files."
+        },
+        {
+          "type": "text",
+          "text": "It automatically closes the file when the block finishes, even if an exception occurs."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    with open(\"students.txt\", \"r\") as file:\n        content = file.read()\n        print(content)\n\nexcept FileNotFoundError:\n    print(\"The student records file was not found.\")"
+        },
+        {
+          "type": "text",
+          "text": "Here:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "`with` manages the file resource.",
+            "`open()` opens the file.",
+            "`as file` assigns the opened file to a variable.",
+            "`file.read()` retrieves its contents.",
+            "Python automatically closes the file when execution leaves the `with` block."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "This is generally preferred over manually calling `close()`."
+        },
+        {
+          "type": "heading",
+          "text": "5. Practical Example: Banking Withdrawal System"
+        },
+        {
+          "type": "text",
+          "text": "Let's create a simple banking program that prevents invalid withdrawals."
+        },
+        {
+          "type": "text",
+          "text": "**Code:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "class InsufficientBalanceError(Exception):\n    pass\n\n\nbalance = 5000\n\ntry:\n    amount = float(input(\"Enter withdrawal amount: \"))\n\n    if amount <= 0:\n        raise ValueError(\"Withdrawal amount must be greater than zero.\")\n\n    if amount > balance:\n        raise InsufficientBalanceError(\"Insufficient balance.\")\n\n    balance -= amount\n\nexcept ValueError as error:\n    print(\"Invalid withdrawal:\", error)\n\nexcept InsufficientBalanceError as error:\n    print(\"Transaction failed:\", error)\n\nelse:\n    print(\"Withdrawal successful.\")\n    print(\"Remaining balance:\", balance)\n\nfinally:\n    print(\"Thank you for banking with us.\")"
+        },
+        {
+          "type": "text",
+          "text": "**Understanding the program:**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "class InsufficientBalanceError(Exception):\n    pass"
+        },
+        {
+          "type": "text",
+          "text": "Creates a custom exception for situations where a customer attempts to withdraw more money than their available balance."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "balance = 5000"
+        },
+        {
+          "type": "text",
+          "text": "Stores the customer's starting balance."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "amount = float(input(\"Enter withdrawal amount: \"))"
+        },
+        {
+          "type": "text",
+          "text": "Requests the withdrawal amount."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if amount <= 0:"
+        },
+        {
+          "type": "text",
+          "text": "Checks whether the requested withdrawal is zero or negative."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "raise ValueError(\"Withdrawal amount must be greater than zero.\")"
+        },
+        {
+          "type": "text",
+          "text": "Rejects invalid withdrawal amounts."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "if amount > balance:"
+        },
+        {
+          "type": "text",
+          "text": "Checks whether the customer is requesting more money than is available."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "raise InsufficientBalanceError(\"Insufficient balance.\")"
+        },
+        {
+          "type": "text",
+          "text": "Raises our custom banking exception."
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "balance -= amount"
+        },
+        {
+          "type": "text",
+          "text": "Subtracts the withdrawal amount from the available balance."
+        },
+        {
+          "type": "text",
+          "text": "This is shorthand for:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "balance = balance - amount"
+        },
+        {
+          "type": "text",
+          "text": "The `except` blocks handle the two different problems."
+        },
+        {
+          "type": "text",
+          "text": "The `else` block confirms the transaction only if all operations succeed."
+        },
+        {
+          "type": "text",
+          "text": "The `finally` block displays a closing message."
+        },
+        {
+          "type": "text",
+          "text": "**Example output:**"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter withdrawal amount: 2000\nWithdrawal successful.\nRemaining balance: 3000.0\nThank you for banking with us."
+        },
+        {
+          "type": "text",
+          "text": "If the user enters `7000`, the output becomes:"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Enter withdrawal amount: 7000\nTransaction failed: Insufficient balance.\nThank you for banking with us."
+        },
+        {
+          "type": "text",
+          "text": "**Important:** This is an educational example. A real banking application would also need secure authentication, database transactions, concurrent balance protection, audit records and additional financial controls."
+        },
+        {
+          "type": "heading",
+          "text": "6. Common Exception Handling Mistakes"
+        },
+        {
+          "type": "text",
+          "text": "**Mistake 1: Using the wrong exception type**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number = int(\"hello\")\n\nexcept ZeroDivisionError:\n    print(\"Error occurred.\")"
+        },
+        {
+          "type": "text",
+          "text": "Problem: The program produces a `ValueError`, not a `ZeroDivisionError`."
+        },
+        {
+          "type": "text",
+          "text": "Correct version:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number = int(\"hello\")\n\nexcept ValueError:\n    print(\"Please enter a valid integer.\")"
+        },
+        {
+          "type": "text",
+          "text": "**Mistake 2: Putting important code outside the try block**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number = int(input(\"Enter number: \"))\n\nexcept ValueError:\n    print(\"Invalid input.\")\n\nresult = 100 / number"
+        },
+        {
+          "type": "text",
+          "text": "Problem: If conversion fails, `number` may never be created. The division outside the `try` block can then produce another exception."
+        },
+        {
+          "type": "text",
+          "text": "The division should also be protected where appropriate."
+        },
+        {
+          "type": "text",
+          "text": "**Mistake 3: Using an empty except block**"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number = int(input(\"Enter number: \"))\n\nexcept:\n    pass"
+        },
+        {
+          "type": "text",
+          "text": "Problem: The application silently ignores the error. This makes problems difficult to identify."
+        },
+        {
+          "type": "text",
+          "text": "Better:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    number = int(input(\"Enter number: \"))\n\nexcept ValueError:\n    print(\"Please enter a valid integer.\")"
+        },
+        {
+          "type": "heading",
+          "text": "7. Practical Exercises"
+        },
+        {
+          "type": "text",
+          "text": "Complete these exercises in your `main.py` file or create separate Python files for each task."
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 1: Age Validation**"
+        },
+        {
+          "type": "text",
+          "text": "Write a program that:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Requests a user's age.",
+            "Converts the input into an integer.",
+            "Handles invalid input.",
+            "Rejects negative ages.",
+            "Displays the age if it is valid."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 2: Division Calculator**"
+        },
+        {
+          "type": "text",
+          "text": "Write a program that:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Requests two numbers.",
+            "Divides the first number by the second.",
+            "Handles `ValueError`.",
+            "Handles `ZeroDivisionError`.",
+            "Displays the result when successful."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 3: File Management**"
+        },
+        {
+          "type": "text",
+          "text": "Write a program that attempts to open a file called `records.txt`."
+        },
+        {
+          "type": "text",
+          "text": "If the file does not exist, display an appropriate error message."
+        },
+        {
+          "type": "text",
+          "text": "If it exists, display its contents."
+        },
+        {
+          "type": "text",
+          "text": "**Exercise 4: Banking Validation**"
+        },
+        {
+          "type": "text",
+          "text": "Create a program that starts with a balance of KSh 10,000."
+        },
+        {
+          "type": "text",
+          "text": "Allow the user to withdraw money."
+        },
+        {
+          "type": "text",
+          "text": "Your program should:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Reject negative withdrawal amounts.",
+            "Reject zero withdrawal amounts.",
+            "Reject withdrawals greater than the balance.",
+            "Use a custom exception for insufficient balance.",
+            "Display the remaining balance after a successful withdrawal."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Part 3 Progress: 3 of 4**"
+        },
+        {
+          "type": "text",
+          "text": "---"
         }
       ]
     },
     {
-      "id": "python-exception-handling-pasted-part-4",
+      "id": "python-exception-handling-part-4",
       "title": "PART 4 OF 4: KAI ASSESSMENT",
-      "description": "Part 4 of 4 · Complete pasted curriculum content preserved verbatim.",
+      "description": "Part 4 of 4 · Complete curriculum arranged into native lesson blocks.",
       "blocks": [
         {
+          "type": "heading",
+          "text": "PART 4 OF 4: KAI ASSESSMENT"
+        },
+        {
           "type": "text",
-          "text": "\n## PART 4 OF 4: KAI ASSESSMENT\n\nYou have completed the lesson on Python Exception Handling.\n\nBefore moving to the next topic, demonstrate your understanding through this assessment.\n\n### Assessment Instructions\n\n- Answer all eight questions.\n- Read each question carefully.\n- Use your understanding of the lesson rather than guessing.\n- Submit your answers to Kai for marking and feedback.\n\n### Question 1: Understanding Exceptions\n\nWhat is an exception in Python?\n\nA. A command used to create variables.\n\nB. An event that interrupts the normal execution of a program.\n\nC. A function used to display output.\n\nD. A method of creating Python packages.\n\n### Question 2: The try Block\n\nWhat is the main purpose of the `try` block?\n\nA. To define a class.\n\nB. To repeat code.\n\nC. To contain code that might produce an exception.\n\nD. To automatically delete errors.\n\n### Question 3: Specific Exceptions\n\nWhich exception occurs when a program attempts to divide a number by zero?\n\nA. `ValueError`\n\nB. `TypeError`\n\nC. `ZeroDivisionError`\n\nD. `NameError`\n\n### Question 4: Handling Invalid Input\n\nWhat exception is commonly produced when converting `\"hello\"` into an integer using `int()`?\n\nA. `ValueError`\n\nB. `IndexError`\n\nC. `KeyError`\n\nD. `FileNotFoundError`\n\n### Question 5: Understanding else\n\nWhen does the `else` block execute in a try-except structure?\n\nA. Whenever an exception occurs.\n\nB. Only when no exception occurs in the `try` block.\n\nC. Before the `try` block.\n\nD. Whenever Python starts.\n\n### Question 6: Understanding finally\n\nWhat is the purpose of the `finally` block?\n\nA. It executes only when a `ValueError` occurs.\n\nB. It executes only when the program crashes.\n\nC. It executes after the try-except process whether an exception occurs or not.\n\nD. It creates custom exceptions.\n\n### Question 7: The raise Keyword\n\nWhat does the `raise` keyword do?\n\nA. Displays a variable.\n\nB. Creates a loop.\n\nC. Manually generates an exception.\n\nD. Imports a module.\n\n### Question 8: Practical Programming\n\nStudy this code:\n\n```python\ntry:\n    age = int(input(\"Enter age: \"))\n\nexcept ValueError:\n    print(\"Invalid age.\")\n\nelse:\n    print(\"Your age is:\", age)\n\nfinally:\n    print(\"Program finished.\")\n```\n\nIf the user enters `twenty`, what will happen?\n\nA. The program displays the age as twenty.\n\nB. The program displays `Invalid age.` followed by `Program finished.`\n\nC. The program displays only `Program finished.`\n\nD. The program automatically converts twenty into 20.\n\n### Practical Challenge: Build a Registration Validator\n\nCreate a Python program that registers a student.\n\nYour program should:\n\n1. Request the student's name.\n2. Request the student's age.\n3. Convert the age into an integer.\n4. Reject ages below 16.\n5. Reject empty names.\n6. Use exception handling to manage invalid input.\n7. Display a registration success message when all information is valid.\n8. Use `finally` to display a completion message.\n\n**Submit your eight assessment answers and practical challenge to Kai for marking, corrections and feedback.**\n\n### LESSON COMPLETE\n\nYou have now covered:\n\n- Meaning and importance of exception handling.\n- The `try` and `except` blocks.\n- Common Python exception types.\n- Handling multiple exceptions.\n- The `else` and `finally` blocks.\n- The `raise` keyword.\n- Creating custom exceptions.\n- Practical exception handling in calculators, student systems, file management and banking applications.\n\n**Part 4 of 4 — Lesson Complete**\n\n**Recommended next lesson:** Python Lambda Functions."
+          "text": "You have completed the lesson on Python Exception Handling."
+        },
+        {
+          "type": "text",
+          "text": "Before moving to the next topic, demonstrate your understanding through this assessment."
+        },
+        {
+          "type": "heading",
+          "text": "Assessment Instructions"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Answer all eight questions.",
+            "Read each question carefully.",
+            "Use your understanding of the lesson rather than guessing.",
+            "Submit your answers to Kai for marking and feedback."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Question 1: Understanding Exceptions"
+        },
+        {
+          "type": "text",
+          "text": "What is an exception in Python?"
+        },
+        {
+          "type": "text",
+          "text": "A. A command used to create variables."
+        },
+        {
+          "type": "text",
+          "text": "B. An event that interrupts the normal execution of a program."
+        },
+        {
+          "type": "text",
+          "text": "C. A function used to display output."
+        },
+        {
+          "type": "text",
+          "text": "D. A method of creating Python packages."
+        },
+        {
+          "type": "heading",
+          "text": "Question 2: The try Block"
+        },
+        {
+          "type": "text",
+          "text": "What is the main purpose of the `try` block?"
+        },
+        {
+          "type": "text",
+          "text": "A. To define a class."
+        },
+        {
+          "type": "text",
+          "text": "B. To repeat code."
+        },
+        {
+          "type": "text",
+          "text": "C. To contain code that might produce an exception."
+        },
+        {
+          "type": "text",
+          "text": "D. To automatically delete errors."
+        },
+        {
+          "type": "heading",
+          "text": "Question 3: Specific Exceptions"
+        },
+        {
+          "type": "text",
+          "text": "Which exception occurs when a program attempts to divide a number by zero?"
+        },
+        {
+          "type": "text",
+          "text": "A. `ValueError`"
+        },
+        {
+          "type": "text",
+          "text": "B. `TypeError`"
+        },
+        {
+          "type": "text",
+          "text": "C. `ZeroDivisionError`"
+        },
+        {
+          "type": "text",
+          "text": "D. `NameError`"
+        },
+        {
+          "type": "heading",
+          "text": "Question 4: Handling Invalid Input"
+        },
+        {
+          "type": "text",
+          "text": "What exception is commonly produced when converting `\"hello\"` into an integer using `int()`?"
+        },
+        {
+          "type": "text",
+          "text": "A. `ValueError`"
+        },
+        {
+          "type": "text",
+          "text": "B. `IndexError`"
+        },
+        {
+          "type": "text",
+          "text": "C. `KeyError`"
+        },
+        {
+          "type": "text",
+          "text": "D. `FileNotFoundError`"
+        },
+        {
+          "type": "heading",
+          "text": "Question 5: Understanding else"
+        },
+        {
+          "type": "text",
+          "text": "When does the `else` block execute in a try-except structure?"
+        },
+        {
+          "type": "text",
+          "text": "A. Whenever an exception occurs."
+        },
+        {
+          "type": "text",
+          "text": "B. Only when no exception occurs in the `try` block."
+        },
+        {
+          "type": "text",
+          "text": "C. Before the `try` block."
+        },
+        {
+          "type": "text",
+          "text": "D. Whenever Python starts."
+        },
+        {
+          "type": "heading",
+          "text": "Question 6: Understanding finally"
+        },
+        {
+          "type": "text",
+          "text": "What is the purpose of the `finally` block?"
+        },
+        {
+          "type": "text",
+          "text": "A. It executes only when a `ValueError` occurs."
+        },
+        {
+          "type": "text",
+          "text": "B. It executes only when the program crashes."
+        },
+        {
+          "type": "text",
+          "text": "C. It executes after the try-except process whether an exception occurs or not."
+        },
+        {
+          "type": "text",
+          "text": "D. It creates custom exceptions."
+        },
+        {
+          "type": "heading",
+          "text": "Question 7: The raise Keyword"
+        },
+        {
+          "type": "text",
+          "text": "What does the `raise` keyword do?"
+        },
+        {
+          "type": "text",
+          "text": "A. Displays a variable."
+        },
+        {
+          "type": "text",
+          "text": "B. Creates a loop."
+        },
+        {
+          "type": "text",
+          "text": "C. Manually generates an exception."
+        },
+        {
+          "type": "text",
+          "text": "D. Imports a module."
+        },
+        {
+          "type": "heading",
+          "text": "Question 8: Practical Programming"
+        },
+        {
+          "type": "text",
+          "text": "Study this code:"
+        },
+        {
+          "type": "code",
+          "language": "python",
+          "code": "try:\n    age = int(input(\"Enter age: \"))\n\nexcept ValueError:\n    print(\"Invalid age.\")\n\nelse:\n    print(\"Your age is:\", age)\n\nfinally:\n    print(\"Program finished.\")"
+        },
+        {
+          "type": "text",
+          "text": "If the user enters `twenty`, what will happen?"
+        },
+        {
+          "type": "text",
+          "text": "A. The program displays the age as twenty."
+        },
+        {
+          "type": "text",
+          "text": "B. The program displays `Invalid age.` followed by `Program finished.`"
+        },
+        {
+          "type": "text",
+          "text": "C. The program displays only `Program finished.`"
+        },
+        {
+          "type": "text",
+          "text": "D. The program automatically converts twenty into 20."
+        },
+        {
+          "type": "heading",
+          "text": "Practical Challenge: Build a Registration Validator"
+        },
+        {
+          "type": "text",
+          "text": "Create a Python program that registers a student."
+        },
+        {
+          "type": "text",
+          "text": "Your program should:"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Request the student's name.",
+            "Request the student's age.",
+            "Convert the age into an integer.",
+            "Reject ages below 16.",
+            "Reject empty names.",
+            "Use exception handling to manage invalid input.",
+            "Display a registration success message when all information is valid.",
+            "Use `finally` to display a completion message."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Submit your eight assessment answers and practical challenge to Kai for marking, corrections and feedback.**"
+        },
+        {
+          "type": "heading",
+          "text": "LESSON COMPLETE"
+        },
+        {
+          "type": "text",
+          "text": "You have now covered:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Meaning and importance of exception handling.",
+            "The `try` and `except` blocks.",
+            "Common Python exception types.",
+            "Handling multiple exceptions.",
+            "The `else` and `finally` blocks.",
+            "The `raise` keyword.",
+            "Creating custom exceptions.",
+            "Practical exception handling in calculators, student systems, file management and banking applications."
+          ]
+        },
+        {
+          "type": "text",
+          "text": "**Part 4 of 4 — Lesson Complete**"
+        },
+        {
+          "type": "text",
+          "text": "**Recommended next lesson:** Python Lambda Functions."
         }
       ]
     }
