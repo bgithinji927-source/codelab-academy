@@ -22,6 +22,7 @@ import javascriptVariablesMarkdown from "./javascriptVariablesLessonContent.mjs"
 import javascriptOperatorsMarkdown from "./javascriptOperatorsLessonContent.mjs";
 import javascriptInputOutputMarkdown from "./javascriptInputOutputLessonContent.mjs";
 import javascriptConditionalsMarkdown from "./javascriptConditionalsLessonContent.mjs";
+import javascriptLoopsMarkdown from "./javascriptLoopsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1440,7 +1441,11 @@ function parseAuthoredMarkdownBlocks(markdown, quizAnswers = {}) {
       if (["javascript", "js"].includes(codeLanguage.toLowerCase()) && !/(^|\n)\s*(import|export)\b|\bawait\b/.test(snippet)) {
         try { new Function(snippet); } catch { codeLanguage = "text"; }
       }
-      blocks.push({ type: "code", language: codeLanguage, code: snippet });
+      if (snippet.trim()) {
+        blocks.push({ type: "code", language: codeLanguage, code: snippet });
+      } else {
+        blocks.push({ type: "text", text: `\`\`\`${codeLanguage}\n\`\`\`` });
+      }
       continue;
     }
 
@@ -1548,6 +1553,12 @@ const javascriptConditionalsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "javascript-conditionals",
   "A complete, four-part lesson on if/else logic, nested conditions, switch statements, truthy and falsy values, practical projects, and assessment.",
   { 1: "B", 2: "C", 3: "B", 4: "A", 5: "B" }
+);
+const javascriptLoopsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javascriptLoopsMarkdown,
+  "javascript-loops",
+  "A complete, four-part lesson on for, while, do...while, for...of, and for...in loops, loop control, nested loops, practical projects, and assessment.",
+  { 1: "B", 2: "A", 3: "C", 4: "D", 5: "A", 6: "B", 7: "C", 8: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -2474,6 +2485,14 @@ for (const lesson of lessons.javascript) {
   if (lesson.id === "javascript-roadmap-conditional-statements-if-else-switch") {
     lesson.title = "JavaScript: Conditional Statements";
     lesson.delivery = javascriptConditionalsAuthoredDelivery;
+    break;
+  }
+}
+
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "javascript-roadmap-loops-for-while-for-of-for-in") {
+    lesson.title = "JavaScript: Loops (`for`, `while`, `for...of`, `for...in`)";
+    lesson.delivery = javascriptLoopsAuthoredDelivery;
     break;
   }
 }
