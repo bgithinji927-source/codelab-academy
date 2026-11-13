@@ -11,6 +11,7 @@ import pythonFilesModulesDelivery from "./pythonFilesModulesDelivery.mjs";
 import pythonBasicsProjectDelivery from "./pythonBasicsProjectDelivery.mjs";
 import pythonListComprehensionsDelivery from "./pythonListComprehensionsDelivery.mjs";
 import pythonModulesPackagesRoadmapDelivery from "./pythonModulesPackagesRoadmapDelivery.mjs";
+import pythonExceptionsDelivery from "./pythonExceptionsDelivery.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -3316,6 +3317,7 @@ lessons.python.forEach((lesson) => {
   else if (lesson.id === "python-basics-project") lesson.delivery = pythonBasicsProjectDelivery;
   else if (lesson.id === "python-list-comprehensions") lesson.delivery = pythonListComprehensionsDelivery;
   else if (lesson.id === "python-modules-packages-roadmap") lesson.delivery = pythonModulesPackagesRoadmapDelivery;
+  else if (lesson.id === "python-exception-handling") lesson.delivery = pythonExceptionsDelivery;
   else if (!lesson.delivery || lesson.delivery.type !== "authored") lesson.delivery = makePythonAuthoredDelivery(lesson);
 });
 
