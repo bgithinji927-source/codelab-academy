@@ -10,6 +10,7 @@ import pythonErrorsDebuggingDelivery from "./pythonErrorsDebuggingDelivery.mjs";
 import pythonFilesModulesDelivery from "./pythonFilesModulesDelivery.mjs";
 import pythonFileHandlingDelivery from "./pythonFileHandlingDelivery.mjs";
 import pythonObjectOrientedDelivery from "./pythonObjectOrientedDelivery.mjs";
+import pythonIteratorsGeneratorsDelivery from "./pythonIteratorsGeneratorsDelivery.mjs";
 import pythonBasicsProjectDelivery from "./pythonBasicsProjectDelivery.mjs";
 import pythonListComprehensionsDelivery from "./pythonListComprehensionsDelivery.mjs";
 import pythonModulesPackagesRoadmapDelivery from "./pythonModulesPackagesRoadmapDelivery.mjs";
@@ -3318,6 +3319,7 @@ lessons.python.forEach((lesson) => {
   else if (lesson.id === "python-files-modules") lesson.delivery = pythonFilesModulesDelivery;
   else if (lesson.id === "python-file-handling") lesson.delivery = pythonFileHandlingDelivery;
   else if (lesson.id === "python-object-oriented-programming") lesson.delivery = pythonObjectOrientedDelivery;
+  else if (lesson.id === "python-iterators") lesson.delivery = pythonIteratorsGeneratorsDelivery;
   else if (lesson.id === "python-basics-project") lesson.delivery = pythonBasicsProjectDelivery;
   else if (lesson.id === "python-list-comprehensions") lesson.delivery = pythonListComprehensionsDelivery;
   else if (lesson.id === "python-modules-packages-roadmap") lesson.delivery = pythonModulesPackagesRoadmapDelivery;
