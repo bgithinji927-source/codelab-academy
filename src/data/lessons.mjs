@@ -25,6 +25,7 @@ import javascriptConditionalsMarkdown from "./javascriptConditionalsLessonConten
 import javascriptLoopsMarkdown from "./javascriptLoopsLessonContent.mjs";
 import javascriptFunctionsMarkdown from "./javascriptFunctionsLessonContent.mjs";
 import javascriptStringsMarkdown from "./javascriptStringsLessonContent.mjs";
+import javascriptArraysMarkdown from "./javascriptArraysLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1368,7 +1369,7 @@ The working rule is to define the input and expected result first, apply the con
 }
 
 function splitAuthoredLessonParts(markdown) {
-  const headings = [...markdown.matchAll(/^#{1,3}\s*PART ([1-4]) OF 4\s*[—:-]\s*(.+)$/gim)];
+  const headings = [...markdown.matchAll(/^#{1,3}\s*PART ([1-4])(?:\s+OF 4)?\s*[—:-]\s*(.+)$/gim)];
   return headings.map((match, index) => ({
     number: match[1],
     title: match[2].trim(),
@@ -1586,6 +1587,12 @@ const javascriptStringsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "javascript-strings",
   "A complete, four-part lesson on JavaScript strings, indexing, immutability, template literals, string methods, regular expressions, and practical text-processing projects.",
   { 1: "B", 2: "C", 3: "C", 4: "B", 5: "B", 6: "C", 7: "A", 8: "B" }
+);
+const javascriptArraysAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javascriptArraysMarkdown,
+  "javascript-arrays",
+  "A complete, four-part lesson on JavaScript arrays, indexing, mutation, essential and advanced array methods, data transformations, and practical projects.",
+  { 1: "B", 2: "C", 3: "B", 4: "C", 5: "A", 6: "B", 7: "B", 8: "C", 9: "C", 10: "C" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -2536,6 +2543,14 @@ for (const lesson of lessons.javascript) {
   if (lesson.id === "javascript-roadmap-strings-and-string-methods") {
     lesson.title = "JavaScript: Strings and String Methods";
     lesson.delivery = javascriptStringsAuthoredDelivery;
+    break;
+  }
+}
+
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "javascript-roadmap-arrays-and-array-methods") {
+    lesson.title = "JavaScript: Arrays and Array Methods";
+    lesson.delivery = javascriptArraysAuthoredDelivery;
     break;
   }
 }
