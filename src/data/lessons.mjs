@@ -28,6 +28,7 @@ import javascriptStringsMarkdown from "./javascriptStringsLessonContent.mjs";
 import javascriptArraysMarkdown from "./javascriptArraysLessonContent.mjs";
 import javaSyntaxMarkdown from "./javaSyntaxLessonContent.mjs";
 import javaVariablesMarkdown from "./javaVariablesLessonContent.mjs";
+import javaControlFlowMarkdown from "./javaControlFlowLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1608,6 +1609,12 @@ const javaVariablesAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "A complete, four-part lesson on Java variables, scope, primitive and reference types, conversions, wrappers, constants, and practical programs.",
   { 1: "B", 2: "A", 3: "C", 4: "B", 5: "C", 6: "D", 7: "C", 8: "B", 9: "C", 10: "B" }
 );
+const javaControlFlowAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javaControlFlowMarkdown,
+  "java-control-flow",
+  "A complete, four-part lesson on Java decisions, switch statements, loops, nested iteration, loop control, and practical console programs.",
+  { 1: "B", 2: "C", 3: "B", 4: "A", 5: "C", 6: "B", 7: "A", 8: "C" }
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
@@ -2524,6 +2531,20 @@ lessons.java = [{
     "Use wrapper classes and final constants",
   ],
   delivery: javaVariablesAuthoredDelivery,
+}, {
+  id: "java-control-flow",
+  title: "Java: Control Flow",
+  description: "Use conditional statements, switch, loops, and loop-control statements to build practical Java programs.",
+  level: "Beginner",
+  estimatedTime: "75 min",
+  objectives: [
+    "Use if, else-if, nested conditions, and logical operators",
+    "Select between alternatives with switch statements",
+    "Use for, while, do-while, and enhanced for loops",
+    "Control iterations with break and continue",
+    "Build practical menu-driven Java programs",
+  ],
+  delivery: javaControlFlowAuthoredDelivery,
 }];
 
 // Apply the supplied full authored lesson to the matching roadmap entry while
