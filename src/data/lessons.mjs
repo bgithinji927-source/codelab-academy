@@ -26,6 +26,7 @@ import javascriptLoopsMarkdown from "./javascriptLoopsLessonContent.mjs";
 import javascriptFunctionsMarkdown from "./javascriptFunctionsLessonContent.mjs";
 import javascriptStringsMarkdown from "./javascriptStringsLessonContent.mjs";
 import javascriptArraysMarkdown from "./javascriptArraysLessonContent.mjs";
+import javaSyntaxMarkdown from "./javaSyntaxLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1594,6 +1595,12 @@ const javascriptArraysAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "A complete, four-part lesson on JavaScript arrays, indexing, mutation, essential and advanced array methods, data transformations, and practical projects.",
   { 1: "B", 2: "C", 3: "B", 4: "C", 5: "A", 6: "B", 7: "B", 8: "C", 9: "C", 10: "C" }
 );
+const javaSyntaxAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javaSyntaxMarkdown,
+  "java-syntax-and-program-structure",
+  "A complete, four-part introduction to Java, its execution environment, syntax, program structure, output, variables, multiple classes, and debugging.",
+  { 1: "B", 2: "C", 3: "B", 4: "B", 5: "C", 6: "C", 7: "B", 8: "B" }
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
@@ -2480,6 +2487,23 @@ lessons.javascript = [
   ]),
   ...javascriptMasteryLessonPlans.map(makeJavaScriptMasteryLesson),
 ];
+
+// Java is already present in the course catalog; begin its lesson path with the supplied authored syntax lesson.
+lessons.java = [{
+  id: "java-syntax-and-program-structure",
+  title: "Java: Syntax and Program Structure",
+  description: "Learn what Java is, how Java programs compile and run, and how to write and structure beginner Java applications.",
+  level: "Beginner",
+  estimatedTime: "60 min",
+  objectives: [
+    "Understand Java, the JDK, JRE, and JVM",
+    "Compile and run a Java program",
+    "Explain Java syntax and basic program structure",
+    "Use output methods, comments, and naming conventions",
+    "Create programs with multiple classes and correct common errors",
+  ],
+  delivery: javaSyntaxAuthoredDelivery,
+}];
 
 // Apply the supplied full authored lesson to the matching roadmap entry while
 // keeping its existing ID, title, position, and all other lessons unchanged.
