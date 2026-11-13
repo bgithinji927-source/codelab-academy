@@ -19,6 +19,7 @@ import pythonModulesPackagesRoadmapDelivery from "./pythonModulesPackagesRoadmap
 import pythonExceptionsDelivery from "./pythonExceptionsDelivery.mjs";
 import javascriptIntroductionMarkdown from "./javascriptIntroductionLessonContent.mjs";
 import javascriptVariablesMarkdown from "./javascriptVariablesLessonContent.mjs";
+import javascriptOperatorsMarkdown from "./javascriptOperatorsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1410,6 +1411,30 @@ const javascriptVariablesAuthoredDelivery = (() => {
   };
 })();
 
+const javascriptOperatorsAuthoredDelivery = (() => {
+  const headings = [...javascriptOperatorsMarkdown.matchAll(/^#{1,3}\s*PART ([1-4]) OF 4\s*[—:-]\s*(.+)$/gim)];
+  const sections = headings.map((match, index) => {
+    const start = match.index;
+    const end = headings[index + 1]?.index ?? javascriptOperatorsMarkdown.length;
+    return {
+      id: `javascript-operators-part-${match[1]}`,
+      title: match[2].trim(),
+      description: `Part ${match[1]} of 4 — ${match[2].trim()}`,
+      blocks: [{ type: "text", text: javascriptOperatorsMarkdown.slice(start, end).trim() }],
+    };
+  });
+  if (sections.length) {
+    const opening = javascriptOperatorsMarkdown.slice(0, headings[0].index).trim();
+    if (opening) sections[0].blocks[0].text = `${opening}\n\n${sections[0].blocks[0].text}`;
+  }
+  return {
+    type: "authored",
+    version: 1,
+    intro: "A complete, four-part authored lesson covering JavaScript arithmetic, assignment, comparison, logical, string, ternary, and type operators, with practical projects and assessment.",
+    sections,
+  };
+})();
+
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
     id,
@@ -2310,6 +2335,14 @@ for (const lesson of lessons.javascript) {
   if (lesson.id === "javascript-roadmap-variables-let-const-var") {
     lesson.title = "Variables (`let`, `const`, `var`)";
     lesson.delivery = javascriptVariablesAuthoredDelivery;
+    break;
+  }
+}
+
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "javascript-roadmap-operators") {
+    lesson.title = "JavaScript: Operators";
+    lesson.delivery = javascriptOperatorsAuthoredDelivery;
     break;
   }
 }
