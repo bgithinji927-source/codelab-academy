@@ -21,6 +21,7 @@ import javascriptIntroductionMarkdown from "./javascriptIntroductionLessonConten
 import javascriptVariablesMarkdown from "./javascriptVariablesLessonContent.mjs";
 import javascriptOperatorsMarkdown from "./javascriptOperatorsLessonContent.mjs";
 import javascriptInputOutputMarkdown from "./javascriptInputOutputLessonContent.mjs";
+import javascriptConditionalsMarkdown from "./javascriptConditionalsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1542,6 +1543,12 @@ const javascriptInputOutputAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "A complete, four-part lesson on the Input–Process–Output cycle, browser and Node.js input/output, data conversion, validation, and practical projects.",
   { 1: "B", 2: "C", 3: "A", 4: "C", 5: "B" }
 );
+const javascriptConditionalsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javascriptConditionalsMarkdown,
+  "javascript-conditionals",
+  "A complete, four-part lesson on if/else logic, nested conditions, switch statements, truthy and falsy values, practical projects, and assessment.",
+  { 1: "B", 2: "C", 3: "B", 4: "A", 5: "B" }
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
@@ -2459,6 +2466,14 @@ for (const lesson of lessons.javascript) {
   if (lesson.id === "javascript-roadmap-input-and-output") {
     lesson.title = "JavaScript: Input and Output";
     lesson.delivery = javascriptInputOutputAuthoredDelivery;
+    break;
+  }
+}
+
+for (const lesson of lessons.javascript) {
+  if (lesson.id === "javascript-roadmap-conditional-statements-if-else-switch") {
+    lesson.title = "JavaScript: Conditional Statements";
+    lesson.delivery = javascriptConditionalsAuthoredDelivery;
     break;
   }
 }
