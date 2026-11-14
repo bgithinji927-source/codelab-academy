@@ -34,6 +34,7 @@ import javaCollectionsMarkdown from "./javaCollectionsLessonContent.mjs";
 import javaModulesPackagesMarkdown from "./javaModulesPackagesLessonContent.mjs";
 import javaIntermediatePatternsMarkdown from "./javaIntermediatePatternsLessonContent.mjs";
 import javaInputValidationMarkdown from "./javaInputValidationLessonContent.mjs";
+import javaTestingDebuggingMarkdown from "./javaTestingDebuggingLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1649,6 +1650,12 @@ const javaInputValidationAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "java-mastery-02-input-validation-and-failure-cases",
   "A complete, four-part lesson on validating strings and numbers, handling Java exceptions, writing defensive code, and building reliable applications.",
   { 1: "B", 2: "B", 3: "C", 4: "C", 5: "B", 6: "C", 7: "D", 8: "B", 9: "B", 10: "A" }
+);
+const javaTestingDebuggingAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javaTestingDebuggingMarkdown.replace(/^# PART 4 OF 4 — LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "java-mastery-03-testing-strategies-and-debugging",
+  "A complete, four-part lesson on software testing, Java debugging, assertions, JUnit, test-driven development, and practical test strategies.",
+  { 1: "B", 2: "C", 3: "B", 4: "C", 5: "A", 6: "B", 7: "B", 8: "C" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3834,6 +3841,17 @@ for (const lesson of lessons.java) {
     lesson.title = "Java: Input Validation and Failure Cases";
     lesson.description = "Validate input and handle errors safely with Java exceptions and defensive programming.";
     lesson.delivery = javaInputValidationAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated Java placeholder with the supplied authored lesson,
+// preserving its existing course ID and position in the learner path.
+for (const lesson of lessons.java) {
+  if (lesson.id === "java-mastery-03-testing-strategies-and-debugging") {
+    lesson.title = "Java: Testing Strategies and Debugging";
+    lesson.description = "Learn systematic Java testing and debugging using manual tests, JUnit, assertions, and practical strategies.";
+    lesson.delivery = javaTestingDebuggingAuthoredDelivery;
     break;
   }
 }
