@@ -29,6 +29,7 @@ import javascriptArraysMarkdown from "./javascriptArraysLessonContent.mjs";
 import javaSyntaxMarkdown from "./javaSyntaxLessonContent.mjs";
 import javaVariablesMarkdown from "./javaVariablesLessonContent.mjs";
 import javaControlFlowMarkdown from "./javaControlFlowLessonContent.mjs";
+import javaFunctionsMarkdown from "./javaFunctionsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1615,6 +1616,12 @@ const javaControlFlowAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "A complete, four-part lesson on Java decisions, switch statements, loops, nested iteration, loop control, and practical console programs.",
   { 1: "B", 2: "C", 3: "B", 4: "A", 5: "C", 6: "B", 7: "A", 8: "C" }
 );
+const javaFunctionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javaFunctionsMarkdown,
+  "java-functions-and-reusable-logic",
+  "A complete, four-part lesson on Java methods, parameters, return values, overloading, scope, recursion, varargs, documentation, and reusable applications.",
+  { 1: "B", 2: "C", 3: "B", 4: "C", 5: "B", 6: "B", 7: "A", 8: "B" }
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
@@ -2545,6 +2552,20 @@ lessons.java = [{
     "Build practical menu-driven Java programs",
   ],
   delivery: javaControlFlowAuthoredDelivery,
+}, {
+  id: "java-functions-and-reusable-logic",
+  title: "Java: Functions and Reusable Logic",
+  description: "Create reusable Java methods with parameters and return values, and apply overloading, scope, recursion, and varargs.",
+  level: "Beginner",
+  estimatedTime: "80 min",
+  objectives: [
+    "Define, call, and document Java methods",
+    "Use parameters, arguments, and return values appropriately",
+    "Distinguish static and instance methods",
+    "Apply method overloading, recursion, and varargs",
+    "Organize practical applications into reusable methods",
+  ],
+  delivery: javaFunctionsAuthoredDelivery,
 }];
 
 // Apply the supplied full authored lesson to the matching roadmap entry while
