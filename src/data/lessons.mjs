@@ -38,6 +38,7 @@ import javaTestingDebuggingMarkdown from "./javaTestingDebuggingLessonContent.mj
 import cppSyntaxMarkdown from "./cppSyntaxLessonContent.mjs";
 import cppVariablesMarkdown from "./cppVariablesLessonContent.mjs";
 import cppControlFlowMarkdown from "./cppControlFlowLessonContent.mjs";
+import cppFunctionsMarkdown from "./cppFunctionsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1677,6 +1678,12 @@ const cppControlFlowAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cpp-03-control-flow",
   "A complete, four-part lesson on C++ conditionals, switch statements, loops, logical operators, loop control, and practical control-flow programs.",
   { 1: "B", 2: "C", 3: "B", 4: "B", 5: "C", 6: "A", 7: "C", 8: "C", 9: "B", 10: "A" }
+);
+const cppFunctionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cppFunctionsMarkdown.replace(/^\*\*Part 4 of 4 — Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "cpp-04-functions-and-reusable-logic",
+  "A complete, four-part lesson on C++ functions, parameters, return values, scope, references, overloading, recursion, and multi-file organization.",
+  { 1: "B", 2: "C", 3: "B", 4: "B", 5: "B", 6: "C", 7: "B", 8: "C", 9: "B", 10: "A", 11: "B", 12: "C" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3906,6 +3913,17 @@ for (const lesson of lessons.cpp) {
     lesson.title = "C++: Control Flow";
     lesson.description = "Learn C++ conditionals, switch statements, loops, logical operators, and loop-control techniques.";
     lesson.delivery = cppControlFlowAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C++ placeholder with the supplied authored lesson,
+// preserving its existing course ID and position in the learner path.
+for (const lesson of lessons.cpp) {
+  if (lesson.id === "cpp-04-functions-and-reusable-logic") {
+    lesson.title = "C++: Functions and Reusable Logic";
+    lesson.description = "Learn reusable C++ functions, parameters, return values, references, overloading, recursion, and program organization.";
+    lesson.delivery = cppFunctionsAuthoredDelivery;
     break;
   }
 }
