@@ -30,6 +30,7 @@ import javaSyntaxMarkdown from "./javaSyntaxLessonContent.mjs";
 import javaVariablesMarkdown from "./javaVariablesLessonContent.mjs";
 import javaControlFlowMarkdown from "./javaControlFlowLessonContent.mjs";
 import javaFunctionsMarkdown from "./javaFunctionsLessonContent.mjs";
+import javaCollectionsMarkdown from "./javaCollectionsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1622,6 +1623,12 @@ const javaFunctionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "A complete, four-part lesson on Java methods, parameters, return values, overloading, scope, recursion, varargs, documentation, and reusable applications.",
   { 1: "B", 2: "C", 3: "B", 4: "C", 5: "B", 6: "B", 7: "A", 8: "B" }
 );
+const javaCollectionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javaCollectionsMarkdown,
+  "java-collections-and-data",
+  "A complete, four-part lesson on Java collections, lists, sets, maps, queues, generics, iteration, sorting, streams, and practical data applications.",
+  { 1: "B", 2: "C", 3: "B", 4: "C", 5: "B", 6: "C", 7: "A", 8: "B", 9: "B", 10: "B" }
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
@@ -2566,6 +2573,20 @@ lessons.java = [{
     "Organize practical applications into reusable methods",
   ],
   delivery: javaFunctionsAuthoredDelivery,
+}, {
+  id: "java-collections-and-data",
+  title: "Java: Collections and Data",
+  description: "Store, organize, search, sort, and process groups of objects using the Java Collections Framework.",
+  level: "Beginner",
+  estimatedTime: "90 min",
+  objectives: [
+    "Use List, Set, Map, Queue, and Deque concepts",
+    "Choose suitable collection implementations such as ArrayList, HashSet, and HashMap",
+    "Apply generics for type-safe collections",
+    "Iterate, search, and sort collection data",
+    "Build a practical application using multiple collection types",
+  ],
+  delivery: javaCollectionsAuthoredDelivery,
 }];
 
 // Apply the supplied full authored lesson to the matching roadmap entry while
