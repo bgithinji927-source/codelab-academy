@@ -31,6 +31,7 @@ import javaVariablesMarkdown from "./javaVariablesLessonContent.mjs";
 import javaControlFlowMarkdown from "./javaControlFlowLessonContent.mjs";
 import javaFunctionsMarkdown from "./javaFunctionsLessonContent.mjs";
 import javaCollectionsMarkdown from "./javaCollectionsLessonContent.mjs";
+import javaModulesPackagesMarkdown from "./javaModulesPackagesLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1629,6 +1630,12 @@ const javaCollectionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "A complete, four-part lesson on Java collections, lists, sets, maps, queues, generics, iteration, sorting, streams, and practical data applications.",
   { 1: "B", 2: "C", 3: "B", 4: "C", 5: "B", 6: "C", 7: "A", 8: "B", 9: "B", 10: "B" }
 );
+const javaModulesPackagesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javaModulesPackagesMarkdown.replace(/^# PART 4 OF 4 — LESSON COMPLETE\s*$/m, "## LESSON COMPLETE"),
+  "java-modules-and-packages",
+  "A complete, four-part lesson on Java packages, imports, access control, JPMS modules, module descriptors, and modular applications.",
+  { 1: "B", 2: "C", 3: "B", 4: "C", 5: "D", 6: "B", 7: "D", 8: "B", 9: "C", 10: "B" }
+);
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
   return makeLesson({
@@ -2587,6 +2594,20 @@ lessons.java = [{
     "Build a practical application using multiple collection types",
   ],
   delivery: javaCollectionsAuthoredDelivery,
+}, {
+  id: "java-modules-and-packages",
+  title: "Java: Modules and Packages",
+  description: "Organize Java applications with packages, imports, access modifiers, named modules, and module dependencies.",
+  level: "Beginner",
+  estimatedTime: "75 min",
+  objectives: [
+    "Create and organize Java packages",
+    "Import and use types across packages",
+    "Apply Java access modifiers appropriately",
+    "Explain JPMS modules and module-info.java",
+    "Build, compile, and run a modular Java application",
+  ],
+  delivery: javaModulesPackagesAuthoredDelivery,
 }];
 
 // Apply the supplied full authored lesson to the matching roadmap entry while
