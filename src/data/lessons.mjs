@@ -37,6 +37,7 @@ import javaInputValidationMarkdown from "./javaInputValidationLessonContent.mjs"
 import javaTestingDebuggingMarkdown from "./javaTestingDebuggingLessonContent.mjs";
 import cppSyntaxMarkdown from "./cppSyntaxLessonContent.mjs";
 import cppVariablesMarkdown from "./cppVariablesLessonContent.mjs";
+import cppControlFlowMarkdown from "./cppControlFlowLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1670,6 +1671,12 @@ const cppVariablesAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cpp-02-variables-and-types",
   "A complete, four-part lesson on C++ variables, fundamental data types, initialization, type conversion, constants, user input, and practical programs.",
   { 1: "B", 2: "C", 3: "B", 4: "B", 5: "C", 6: "C", 7: "B", 8: "A", 9: "C", 10: "C" }
+);
+const cppControlFlowAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cppControlFlowMarkdown.replace(/^\*\*Part 4 of 4 — Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "cpp-03-control-flow",
+  "A complete, four-part lesson on C++ conditionals, switch statements, loops, logical operators, loop control, and practical control-flow programs.",
+  { 1: "B", 2: "C", 3: "B", 4: "B", 5: "C", 6: "A", 7: "C", 8: "C", 9: "B", 10: "A" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3888,6 +3895,17 @@ for (const lesson of lessons.cpp) {
     lesson.title = "C++: Variables and Data Types";
     lesson.description = "Learn C++ variables, data types, conversions, constants, input, and practical applications.";
     lesson.delivery = cppVariablesAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C++ placeholder with the supplied authored lesson,
+// preserving its existing course ID and position in the learner path.
+for (const lesson of lessons.cpp) {
+  if (lesson.id === "cpp-03-control-flow") {
+    lesson.title = "C++: Control Flow";
+    lesson.description = "Learn C++ conditionals, switch statements, loops, logical operators, and loop-control techniques.";
+    lesson.delivery = cppControlFlowAuthoredDelivery;
     break;
   }
 }
