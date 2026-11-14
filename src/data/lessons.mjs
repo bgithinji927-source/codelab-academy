@@ -35,6 +35,7 @@ import javaModulesPackagesMarkdown from "./javaModulesPackagesLessonContent.mjs"
 import javaIntermediatePatternsMarkdown from "./javaIntermediatePatternsLessonContent.mjs";
 import javaInputValidationMarkdown from "./javaInputValidationLessonContent.mjs";
 import javaTestingDebuggingMarkdown from "./javaTestingDebuggingLessonContent.mjs";
+import cppSyntaxMarkdown from "./cppSyntaxLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1656,6 +1657,12 @@ const javaTestingDebuggingAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "java-mastery-03-testing-strategies-and-debugging",
   "A complete, four-part lesson on software testing, Java debugging, assertions, JUnit, test-driven development, and practical test strategies.",
   { 1: "B", 2: "C", 3: "B", 4: "C", 5: "A", 6: "B", 7: "B", 8: "C" }
+);
+const cppSyntaxAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cppSyntaxMarkdown.replace(/^# Part 4 of 4 — Lesson Complete\s*$/im, "## LESSON COMPLETE"),
+  "cpp-01-syntax-and-program-structure",
+  "A complete, four-part introduction to C++, program structure, syntax, namespaces, functions, header files, compilation, and multi-file projects.",
+  { 1: "B", 2: "C", 3: "B", 4: "C", 5: "A", 6: "B", 7: "C", 8: "C", 9: "B", 10: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3852,6 +3859,17 @@ for (const lesson of lessons.java) {
     lesson.title = "Java: Testing Strategies and Debugging";
     lesson.description = "Learn systematic Java testing and debugging using manual tests, JUnit, assertions, and practical strategies.";
     lesson.delivery = javaTestingDebuggingAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C++ placeholder with the supplied authored lesson,
+// preserving its existing course ID and position in the learner path.
+for (const lesson of lessons.cpp) {
+  if (lesson.id === "cpp-01-syntax-and-program-structure") {
+    lesson.title = "C++: Syntax and Program Structure";
+    lesson.description = "Learn C++ program structure, syntax, namespaces, functions, source files, and how to compile and run programs.";
+    lesson.delivery = cppSyntaxAuthoredDelivery;
     break;
   }
 }
