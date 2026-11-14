@@ -32,6 +32,7 @@ import javaControlFlowMarkdown from "./javaControlFlowLessonContent.mjs";
 import javaFunctionsMarkdown from "./javaFunctionsLessonContent.mjs";
 import javaCollectionsMarkdown from "./javaCollectionsLessonContent.mjs";
 import javaModulesPackagesMarkdown from "./javaModulesPackagesLessonContent.mjs";
+import javaIntermediatePatternsMarkdown from "./javaIntermediatePatternsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1635,6 +1636,12 @@ const javaModulesPackagesAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "java-modules-and-packages",
   "A complete, four-part lesson on Java packages, imports, access control, JPMS modules, module descriptors, and modular applications.",
   { 1: "B", 2: "C", 3: "B", 4: "C", 5: "D", 6: "B", 7: "D", 8: "B", 9: "C", 10: "B" }
+);
+const javaIntermediatePatternsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javaIntermediatePatternsMarkdown.replace(/^# PART 4 OF 4 — LESSON COMPLETE\s*$/m, "## LESSON COMPLETE"),
+  "java-mastery-01-intermediate-patterns-and-composition",
+  "A complete, four-part lesson on composition, dependency injection, loose coupling, and the Strategy, Factory, and Observer design patterns.",
+  { 1: "B", 2: "C", 3: "B", 4: "B", 5: "C", 6: "B", 7: "D", 8: "B", 9: "C", 10: "A" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3799,6 +3806,17 @@ for (const lesson of lessons.python) {
 for (const lesson of lessons.javascript) {
   if (lesson.id === "js-data-types" || lesson.id === "javascript-roadmap-data-types") {
     lesson.delivery = javascriptDataTypesAuthoredDelivery;
+  }
+}
+
+// Replace the matching generated Java placeholder with the supplied authored lesson,
+// preserving its existing course ID and position in the learner path.
+for (const lesson of lessons.java) {
+  if (lesson.id === "java-mastery-01-intermediate-patterns-and-composition") {
+    lesson.title = "Java: Intermediate Patterns and Composition";
+    lesson.description = "Learn composition, dependency injection, loose coupling, and practical Java design patterns.";
+    lesson.delivery = javaIntermediatePatternsAuthoredDelivery;
+    break;
   }
 }
 
