@@ -33,6 +33,7 @@ import javaFunctionsMarkdown from "./javaFunctionsLessonContent.mjs";
 import javaCollectionsMarkdown from "./javaCollectionsLessonContent.mjs";
 import javaModulesPackagesMarkdown from "./javaModulesPackagesLessonContent.mjs";
 import javaIntermediatePatternsMarkdown from "./javaIntermediatePatternsLessonContent.mjs";
+import javaInputValidationMarkdown from "./javaInputValidationLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1642,6 +1643,12 @@ const javaIntermediatePatternsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "java-mastery-01-intermediate-patterns-and-composition",
   "A complete, four-part lesson on composition, dependency injection, loose coupling, and the Strategy, Factory, and Observer design patterns.",
   { 1: "B", 2: "C", 3: "B", 4: "B", 5: "C", 6: "B", 7: "D", 8: "B", 9: "C", 10: "A" }
+);
+const javaInputValidationAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  javaInputValidationMarkdown.replace(/^# PART 4 OF 4 — LESSON COMPLETE\s*$/m, "## LESSON COMPLETE"),
+  "java-mastery-02-input-validation-and-failure-cases",
+  "A complete, four-part lesson on validating strings and numbers, handling Java exceptions, writing defensive code, and building reliable applications.",
+  { 1: "B", 2: "B", 3: "C", 4: "C", 5: "B", 6: "C", 7: "D", 8: "B", 9: "B", 10: "A" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3816,6 +3823,17 @@ for (const lesson of lessons.java) {
     lesson.title = "Java: Intermediate Patterns and Composition";
     lesson.description = "Learn composition, dependency injection, loose coupling, and practical Java design patterns.";
     lesson.delivery = javaIntermediatePatternsAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated Java placeholder with the supplied authored lesson,
+// preserving its existing course ID and position in the learner path.
+for (const lesson of lessons.java) {
+  if (lesson.id === "java-mastery-02-input-validation-and-failure-cases") {
+    lesson.title = "Java: Input Validation and Failure Cases";
+    lesson.description = "Validate input and handle errors safely with Java exceptions and defensive programming.";
+    lesson.delivery = javaInputValidationAuthoredDelivery;
     break;
   }
 }
