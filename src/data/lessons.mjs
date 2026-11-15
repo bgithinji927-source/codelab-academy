@@ -39,6 +39,7 @@ import cppSyntaxMarkdown from "./cppSyntaxLessonContent.mjs";
 import cppVariablesMarkdown from "./cppVariablesLessonContent.mjs";
 import cppControlFlowMarkdown from "./cppControlFlowLessonContent.mjs";
 import cppFunctionsMarkdown from "./cppFunctionsLessonContent.mjs";
+import cppCollectionsMarkdown from "./cppCollectionsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1684,6 +1685,12 @@ const cppFunctionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cpp-04-functions-and-reusable-logic",
   "A complete, four-part lesson on C++ functions, parameters, return values, scope, references, overloading, recursion, and multi-file organization.",
   { 1: "B", 2: "C", 3: "B", 4: "B", 5: "B", 6: "C", 7: "B", 8: "C", 9: "B", 10: "A", 11: "B", 12: "C" }
+);
+const cppCollectionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cppCollectionsMarkdown.replace(/^\*\*Part 4 of 4 — Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "cpp-05-collections-and-data",
+  "A complete, four-part lesson on C++ arrays, vectors, STL containers, maps, sets, stacks, queues, iterators, algorithms, and practical data management.",
+  { 1: "B", 2: "C", 3: "B", 4: "C", 5: "B", 6: "A", 7: "A", 8: "C", 9: "D", 10: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3924,6 +3931,17 @@ for (const lesson of lessons.cpp) {
     lesson.title = "C++: Functions and Reusable Logic";
     lesson.description = "Learn reusable C++ functions, parameters, return values, references, overloading, recursion, and program organization.";
     lesson.delivery = cppFunctionsAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C++ placeholder with the supplied authored lesson,
+// preserving its existing course ID and position in the learner path.
+for (const lesson of lessons.cpp) {
+  if (lesson.id === "cpp-05-collections-and-data") {
+    lesson.title = "C++: Collections and Data";
+    lesson.description = "Learn C++ arrays, vectors, STL containers, maps, sets, stacks, queues, and practical data-management techniques.";
+    lesson.delivery = cppCollectionsAuthoredDelivery;
     break;
   }
 }
