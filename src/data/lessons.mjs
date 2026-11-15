@@ -43,6 +43,7 @@ import cppCollectionsMarkdown from "./cppCollectionsLessonContent.mjs";
 import cSyntaxMarkdown from "./cSyntaxLessonContent.mjs";
 import cVariablesMarkdown from "./cVariablesLessonContent.mjs";
 import cControlFlowMarkdown from "./cControlFlowLessonContent.mjs";
+import cFunctionsMarkdown from "./cFunctionsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1712,6 +1713,12 @@ const cControlFlowAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "c-programming-03-control-flow",
   "A complete, four-part lesson on C conditions, logical operators, if and switch statements, loops, break, continue, and practical control-flow projects.",
   { 1: "B", 2: "C", 3: "B", 4: "B", 5: "C", 6: "A", 7: "C", 8: "B", 9: "B", 10: "C" }
+);
+const cFunctionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cFunctionsMarkdown.replace(/^\*\*Part 4 of 4 — Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "c-programming-04-functions-and-reusable-logic",
+  "A complete, four-part lesson on C function declarations, definitions, parameters, return values, scope, pointers, recursion, and modular program design.",
+  { 1: "B", 2: "B", 3: "C", 4: "B", 5: "C", 6: "B", 7: "C", 8: "A", 9: "B", 10: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3996,6 +4003,17 @@ for (const lesson of lessons["c-programming"] || []) {
     lesson.title = "C Programming: Control Flow";
     lesson.description = "Learn C conditionals, logical operators, switch statements, loops, and practical decision-making and repetition.";
     lesson.delivery = cControlFlowAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C Programming placeholder with the supplied
+// authored lesson while preserving its existing course ID and sequence position.
+for (const lesson of lessons["c-programming"] || []) {
+  if (lesson.id === "c-programming-04-functions-and-reusable-logic") {
+    lesson.title = "C Programming: Functions and Reusable Logic";
+    lesson.description = "Learn C function prototypes, return values, pointers, recursion, variable scope, and modular program organization.";
+    lesson.delivery = cFunctionsAuthoredDelivery;
     break;
   }
 }
