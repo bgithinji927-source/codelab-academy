@@ -1060,6 +1060,7 @@ const courses = [
 const OPEN_COURSE_IDS = new Set([
   "python",
   "javascript",
+  "java",
   "csharp",
   "cpp",
   "c-programming",
