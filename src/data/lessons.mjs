@@ -42,6 +42,7 @@ import cppFunctionsMarkdown from "./cppFunctionsLessonContent.mjs";
 import cppCollectionsMarkdown from "./cppCollectionsLessonContent.mjs";
 import cSyntaxMarkdown from "./cSyntaxLessonContent.mjs";
 import cVariablesMarkdown from "./cVariablesLessonContent.mjs";
+import cControlFlowMarkdown from "./cControlFlowLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1705,6 +1706,12 @@ const cVariablesAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "c-programming-02-variables-and-types",
   "A complete, four-part lesson on C variables, data types, initialization, constants, type conversion, arithmetic, formatted input and output, and practical programs.",
   { 1: "B", 2: "C", 3: "B", 4: "C", 5: "C", 6: "B", 7: "C", 8: "C", 9: "B", 10: "C" }
+);
+const cControlFlowAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cControlFlowMarkdown.replace(/^\*\*Part 4 of 4 — Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "c-programming-03-control-flow",
+  "A complete, four-part lesson on C conditions, logical operators, if and switch statements, loops, break, continue, and practical control-flow projects.",
+  { 1: "B", 2: "C", 3: "B", 4: "B", 5: "C", 6: "A", 7: "C", 8: "B", 9: "B", 10: "C" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3978,6 +3985,17 @@ for (const lesson of lessons["c-programming"] || []) {
     lesson.title = "C Programming: Variables and Types";
     lesson.description = "Learn C variables, fundamental data types, constants, conversion, arithmetic, format specifiers, and input/output.";
     lesson.delivery = cVariablesAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C Programming placeholder with the supplied
+// authored lesson while preserving its existing course ID and sequence position.
+for (const lesson of lessons["c-programming"] || []) {
+  if (lesson.id === "c-programming-03-control-flow") {
+    lesson.title = "C Programming: Control Flow";
+    lesson.description = "Learn C conditionals, logical operators, switch statements, loops, and practical decision-making and repetition.";
+    lesson.delivery = cControlFlowAuthoredDelivery;
     break;
   }
 }
