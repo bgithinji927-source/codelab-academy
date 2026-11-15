@@ -52,7 +52,7 @@ import LearnerAssessmentModal from "./components/LearnerAssessmentModal";
 import { getLessonsByCourse } from "./data/lessons.mjs";
 import { KAI_UI_EVENT, installKaiUiBridge } from "./utils/kaiUiBridge";
 
-function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCatalog, courseAccess }) {
+function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCatalog, courseAccess, isAdmin }) {
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
   const accessById = new globalThis.Map((courseAccess?.courses || []).map((item) => [String(item.courseId), item]));
   const visibleAccess = visibleCourses.map((course) => accessById.get(String(course.id))).filter(Boolean);
@@ -71,7 +71,7 @@ function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCa
       <div className="dashboard-category-grid">
         {visibleCourses.map((course) => {
           const access = accessById.get(String(course.id));
-          const isComingSoon = course.enrollmentStatus !== "open";
+          const isComingSoon = course.enrollmentStatus !== "open" && !isAdmin;
           const locked = Boolean(access?.locked && !isComingSoon);
           const completed = access?.status === "completed";
           const label = isComingSoon ? "Join waitlist" : locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
@@ -259,13 +259,13 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
           return;
         }
 
-        // If server returned no data, keep zero baseline and keep only the entry course open.
-        setCourseAccess(buildFallbackCourseAccess(courseCatalog));
+        // If server returned no data, keep zero baseline while preserving admin visibility.
+        setCourseAccess(buildFallbackCourseAccess(courseCatalog, user));
         setState(baseline);
       } catch (err) {
         console.error("Failed to load user progress:", err);
-        // On error, keep zero baseline and keep only the entry course open.
-        setCourseAccess(buildFallbackCourseAccess(courseCatalog));
+        // On error, keep zero baseline while preserving admin visibility.
+        setCourseAccess(buildFallbackCourseAccess(courseCatalog, user));
         setState(baseline);
       }
     }
@@ -606,6 +606,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
             onOpenCourse={openCourseWithKai}
             onViewCourses={onViewCourses}
             courseAccess={courseAccess}
+            isAdmin={isAdmin}
           />
         ) : (
           <>

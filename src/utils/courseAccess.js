@@ -1,10 +1,11 @@
 export const ENTRY_COURSE_ID = "python";
 
-export function buildFallbackCourseAccess(courseCatalog = []) {
+export function buildFallbackCourseAccess(courseCatalog = [], user = null) {
   const activeCourses = (courseCatalog || []).filter((course) => course && course.active !== false);
+  const isAdmin = Boolean(user?.isAdmin || user?.role === "admin");
   const entryIndex = Math.max(0, activeCourses.findIndex((course) => String(course.id) === ENTRY_COURSE_ID));
   const courses = activeCourses.map((course, index) => {
-    const isOpen = course.enrollmentStatus === "open";
+    const isOpen = isAdmin || course.enrollmentStatus === "open";
     return {
       courseId: String(course.id),
       courseTitle: course.title || "",

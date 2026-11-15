@@ -106,12 +106,13 @@ const categories = [
 ];
 
 function Courses({ initialCategory = null, onBack, user, onRequireAuth, onUserUpdated }) {
+  const isAdmin = Boolean(user?.isAdmin || user?.role === "admin");
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [pendingAssessmentCourse, setPendingAssessmentCourse] = useState(null);
   const [learningAssessments, setLearningAssessments] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [courseCatalog, setCourseCatalog] = useState(courses);
-  const [courseAccess, setCourseAccess] = useState(() => user?.id ? buildFallbackCourseAccess(courses) : null);
+  const [courseAccess, setCourseAccess] = useState(() => user?.id ? buildFallbackCourseAccess(courses, user) : null);
   const [waitlistedCourseIds, setWaitlistedCourseIds] = useState(() => new Set(
     (user?.waitlistedCourses || []).map((item) => String(item.courseId))
   ));
@@ -146,14 +147,14 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth, onUserUp
       .then(({ response, data }) => {
         if (!mounted) return;
         if (response.ok && data.success && data.user) {
-          setCourseAccess(data.user.courseAccess || data.courseAccess || buildFallbackCourseAccess(courseCatalog));
+          setCourseAccess(data.user.courseAccess || data.courseAccess || buildFallbackCourseAccess(courseCatalog, user));
           setLearningAssessments(data.user.learningAssessments || []);
         } else {
-          setCourseAccess(buildFallbackCourseAccess(courseCatalog));
+          setCourseAccess(buildFallbackCourseAccess(courseCatalog, user));
         }
       })
       .catch(() => {
-        if (mounted) setCourseAccess(buildFallbackCourseAccess(courseCatalog));
+        if (mounted) setCourseAccess(buildFallbackCourseAccess(courseCatalog, user));
       });
 
     return () => { mounted = false; };
@@ -394,7 +395,7 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth, onUserUp
               <div className="course-grid">
                 {visibleCourses.map((course) => {
                   const access = accessById.get(String(course.id));
-                  const isComingSoon = course.enrollmentStatus !== "open";
+                  const isComingSoon = course.enrollmentStatus !== "open" && !isAdmin;
                   const locked = Boolean(user?.id && access?.locked && !isComingSoon);
                   const isWaitlisted = waitlistedCourseIds.has(String(course.id));
                   const currentWaitlistState = waitlistState?.courseId === course.id ? waitlistState : null;
