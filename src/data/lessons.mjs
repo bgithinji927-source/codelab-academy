@@ -54,6 +54,7 @@ import gameEnginePipelineMarkdown from "./gameEnginePipelineLessonContent.mjs";
 import gameEngineInputsMarkdown from "./gameEngineInputsLessonContent.mjs";
 import gameEngineAlgorithmsMarkdown from "./gameEngineAlgorithmsLessonContent.mjs";
 import gameEngineStateMemoryMarkdown from "./gameEngineStateMemoryLessonContent.mjs";
+import gameEngineInterfacesMarkdown from "./gameEngineInterfacesLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1803,6 +1804,15 @@ const gameEngineStateMemoryAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "game-engine-04-state-and-memory",
   "A complete, four-part lesson on game state and transitions, memory, RAM and VRAM, C# stack and heap concepts, garbage collection, leaks, object pooling, optimization, persistence, and practical implementations.",
   { 1: "B", 2: "C", 3: "B", 4: "A", 5: "B", 6: "B", 7: "A", 8: "A", 9: "A", 10: "B" }
+);
+
+const gameEngineInterfacesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  gameEngineInterfacesMarkdown.replace(/\r\n/g, "\n")
+    .replace(/^\*\*(\d+)\. (.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "game-engine-05-interfaces-and-extensibility",
+  "A complete, four-part lesson on C# interfaces, polymorphism, extensible game architecture, SOLID principles, strategy, dependency injection, events, components, modules, safe contracts, and practical implementation.",
+  { 1: "B", 2: "C", 3: "B", 4: "C", 5: "D", 6: "B", 7: "A", 8: "C" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -4202,6 +4212,16 @@ for (const lesson of lessons["game-engine"] || []) {
     lesson.title = "Game Engine: State and Memory";
     lesson.description = "Learn to model game state, manage runtime memory and resources, optimize allocations, and save persistent data using C#.";
     lesson.delivery = gameEngineStateMemoryAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the existing fifth game-engine placeholder with the authored Interfaces lesson.
+for (const lesson of lessons["game-engine"] || []) {
+  if (lesson.id === "game-engine-05-interfaces-and-extensibility") {
+    lesson.title = "Game Engine: Interfaces and Extensibility";
+    lesson.description = "Learn to build extensible C# game systems using interfaces, polymorphism, SOLID, composition, events, dependency injection, and modules.";
+    lesson.delivery = gameEngineInterfacesAuthoredDelivery;
     break;
   }
 }
