@@ -40,6 +40,7 @@ import cppVariablesMarkdown from "./cppVariablesLessonContent.mjs";
 import cppControlFlowMarkdown from "./cppControlFlowLessonContent.mjs";
 import cppFunctionsMarkdown from "./cppFunctionsLessonContent.mjs";
 import cppCollectionsMarkdown from "./cppCollectionsLessonContent.mjs";
+import cSyntaxMarkdown from "./cSyntaxLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1691,6 +1692,12 @@ const cppCollectionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cpp-05-collections-and-data",
   "A complete, four-part lesson on C++ arrays, vectors, STL containers, maps, sets, stacks, queues, iterators, algorithms, and practical data management.",
   { 1: "B", 2: "C", 3: "B", 4: "C", 5: "B", 6: "A", 7: "A", 8: "C", 9: "D", 10: "B" }
+);
+const cSyntaxAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cSyntaxMarkdown.replace(/^\*\*Part 4 of 4 — Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "c-programming-01-syntax-and-program-structure",
+  "A complete, four-part introduction to C programming, syntax, program structure, compilation, errors, formatted input and output, and reusable functions.",
+  { 1: "B", 2: "B", 3: "C", 4: "B", 5: "C", 6: "C", 7: "C", 8: "B", 9: "A", 10: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -3942,6 +3949,17 @@ for (const lesson of lessons.cpp) {
     lesson.title = "C++: Collections and Data";
     lesson.description = "Learn C++ arrays, vectors, STL containers, maps, sets, stacks, queues, and practical data-management techniques.";
     lesson.delivery = cppCollectionsAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C Programming placeholder with the supplied
+// authored lesson while preserving its existing course ID and sequence position.
+for (const lesson of lessons["c-programming"] || []) {
+  if (lesson.id === "c-programming-01-syntax-and-program-structure") {
+    lesson.title = "C Programming: Syntax and Program Structure";
+    lesson.description = "Learn C program structure, syntax, identifiers, compilation, errors, input/output, and foundational program organization.";
+    lesson.delivery = cSyntaxAuthoredDelivery;
     break;
   }
 }
