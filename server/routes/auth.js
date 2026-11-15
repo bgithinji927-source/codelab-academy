@@ -90,6 +90,17 @@ router.post("/register", async (req, res) => {
 // ===============================
 // PROFILE
 // ===============================
+router.get("/me", ensureAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    return res.json({ success: true, user: serializeUser(user) });
+  } catch (error) {
+    console.error("Current user lookup error:", error);
+    return res.status(500).json({ success: false, message: "Could not load your account" });
+  }
+});
+
 router.patch("/profile", ensureAuth, async (req, res) => {
   try {
     const name = String(req.body?.name || "").trim();

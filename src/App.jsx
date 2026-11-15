@@ -16,6 +16,7 @@ import {
 } from "./pages/PublicPages";
 import { applyAppearance, appearanceStorageKey, normalizeAppearance } from "./utils/appearance";
 import { applyDesign, designStorageKey, normalizeDesign } from "./utils/design";
+import fetchWithAuth from "./utils/fetchWithAuth";
 
 const PUBLIC_PATHS = new Set(["/ai-tutor", "/roadmaps", "/challenges", "/pricing", "/about", "/demo"]);
 
@@ -176,6 +177,19 @@ function App() {
       if (savedUser) {
         const parsedUser = JSON.parse(savedUser);
         setUser(parsedUser);
+
+        // Refresh role and account metadata so an administrator promotion or
+        // email-based admin configuration is reflected without stale storage.
+        if (localStorage.getItem("codelabToken")) {
+          fetchWithAuth("/api/auth/me")
+            .then((response) => response.ok ? response.json() : null)
+            .then((data) => {
+              if (!data?.success || !data.user) return;
+              localStorage.setItem("codelabUser", JSON.stringify(data.user));
+              setUser(data.user);
+            })
+            .catch(() => {});
+        }
       }
     } catch (error) {
       console.error("Could not restore user:", error);
