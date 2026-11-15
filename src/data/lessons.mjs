@@ -53,6 +53,7 @@ import csharpCollectionsMarkdown from "./csharpCollectionsLessonContent.mjs";
 import gameEnginePipelineMarkdown from "./gameEnginePipelineLessonContent.mjs";
 import gameEngineInputsMarkdown from "./gameEngineInputsLessonContent.mjs";
 import gameEngineAlgorithmsMarkdown from "./gameEngineAlgorithmsLessonContent.mjs";
+import gameEngineStateMemoryMarkdown from "./gameEngineStateMemoryLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1793,6 +1794,15 @@ const gameEngineAlgorithmsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "game-engine-03-algorithms-and-decisions",
   "A complete, four-part lesson on game algorithms and rules, conditional decisions, difficulty, pseudocode and flowcharts, game AI, state machines, pathfinding, decision and behavior trees, and practical C# examples.",
   { 1: "B", 2: "C", 3: "B", 4: "A", 5: "A", 6: "A", 7: "A", 8: "A" }
+);
+
+const gameEngineStateMemoryAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  gameEngineStateMemoryMarkdown
+    .replace(/^\*\*(\d+)\. (.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "game-engine-04-state-and-memory",
+  "A complete, four-part lesson on game state and transitions, memory, RAM and VRAM, C# stack and heap concepts, garbage collection, leaks, object pooling, optimization, persistence, and practical implementations.",
+  { 1: "B", 2: "C", 3: "B", 4: "A", 5: "B", 6: "B", 7: "A", 8: "A", 9: "A", 10: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -4182,6 +4192,16 @@ for (const lesson of lessons["game-engine"] || []) {
     lesson.title = "Game Engine: Algorithms and Decisions";
     lesson.description = "Learn how algorithms implement game rules, drive decisions and AI, find paths, and organize behavior in C# game systems.";
     lesson.delivery = gameEngineAlgorithmsAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the existing fourth game-engine placeholder with the authored State and Memory lesson.
+for (const lesson of lessons["game-engine"] || []) {
+  if (lesson.id === "game-engine-04-state-and-memory") {
+    lesson.title = "Game Engine: State and Memory";
+    lesson.description = "Learn to model game state, manage runtime memory and resources, optimize allocations, and save persistent data using C#.";
+    lesson.delivery = gameEngineStateMemoryAuthoredDelivery;
     break;
   }
 }
