@@ -45,6 +45,7 @@ import cVariablesMarkdown from "./cVariablesLessonContent.mjs";
 import cControlFlowMarkdown from "./cControlFlowLessonContent.mjs";
 import cFunctionsMarkdown from "./cFunctionsLessonContent.mjs";
 import cCollectionsMarkdown from "./cCollectionsLessonContent.mjs";
+import csharpSyntaxMarkdown from "./csharpSyntaxLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1726,6 +1727,12 @@ const cCollectionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "c-programming-05-collections-and-data",
   "A complete, four-part lesson on C arrays, strings, structures, enumerations, unions, dynamic memory, linked lists, and practical data organization.",
   { 1: "B", 2: "C", 3: "A", 4: "B", 5: "C", 6: "A", 7: "B", 8: "C", 9: "C", 10: "B", 11: "B", 12: "C" }
+);
+const csharpSyntaxAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  csharpSyntaxMarkdown.replace(/^\*\*Part 4 of 4 — Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "csharp-01-syntax-and-program-structure",
+  "A complete, four-part introduction to C# and .NET, console projects, program structure, namespaces, classes, methods, syntax, and practical application development.",
+  { 1: "B", 2: "C", 3: "A", 4: "C", 5: "B", 6: "C", 7: "A", 8: "A", 9: "B", 10: "A", 11: "C", 12: "A" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -4032,6 +4039,17 @@ for (const lesson of lessons["c-programming"] || []) {
     lesson.title = "C Programming: Collections and Data";
     lesson.description = "Learn C arrays, strings, structures, enums, unions, dynamic allocation, linked lists, and other essential data structures.";
     lesson.delivery = cCollectionsAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C# placeholder with the supplied authored
+// lesson while preserving its existing course ID and sequence position.
+for (const lesson of lessons.csharp || []) {
+  if (lesson.id === "csharp-01-syntax-and-program-structure") {
+    lesson.title = "C# Programming: Syntax and Program Structure";
+    lesson.description = "Learn C# and .NET fundamentals, console application structure, syntax, namespaces, classes, methods, and project setup.";
+    lesson.delivery = csharpSyntaxAuthoredDelivery;
     break;
   }
 }
