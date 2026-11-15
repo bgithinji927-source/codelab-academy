@@ -48,6 +48,7 @@ import cCollectionsMarkdown from "./cCollectionsLessonContent.mjs";
 import csharpSyntaxMarkdown from "./csharpSyntaxLessonContent.mjs";
 import csharpVariablesMarkdown from "./csharpVariablesLessonContent.mjs";
 import csharpControlFlowMarkdown from "./csharpControlFlowLessonContent.mjs";
+import csharpFunctionsMarkdown from "./csharpFunctionsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1747,6 +1748,13 @@ const csharpControlFlowAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "csharp-03-control-flow",
   "A complete, four-part lesson on C# conditions, Boolean logic, decisions, switch statements, loops, iteration control, and practical applications.",
   { 1: "B", 2: "C", 3: "B", 4: "B", 5: "A", 6: "C", 7: "B", 8: "A" }
+);
+
+const csharpFunctionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  csharpFunctionsMarkdown.replace(/^# PART 4 OF 4 — LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "csharp-04-functions-and-reusable-logic",
+  "A complete, four-part lesson on C# methods, parameters and arguments, return values, overloading, ref/out/params, scope, recursion, practical programs, and reusable design.",
+  { 1: "B", 2: "C", 3: "B", 4: "A", 5: "C", 6: "B", 7: "A", 8: "C", 9: "B", 10: "C" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -4086,6 +4094,16 @@ for (const lesson of lessons.csharp || []) {
     lesson.title = "C# Programming: Control Flow";
     lesson.description = "Learn C# conditions, Boolean expressions, if and switch statements, loops, break, continue, return, and menu-based programs.";
     lesson.delivery = csharpControlFlowAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the existing fourth C# placeholder with the authored Functions lesson.
+for (const lesson of lessons.csharp || []) {
+  if (lesson.id === "csharp-04-functions-and-reusable-logic") {
+    lesson.title = "C# Programming: Functions and Reusable Logic";
+    lesson.description = "Learn to design and use reusable C# methods, parameters, return values, overloading, ref/out/params, recursion, and practical applications.";
+    lesson.delivery = csharpFunctionsAuthoredDelivery;
     break;
   }
 }
