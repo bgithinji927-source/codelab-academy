@@ -745,7 +745,7 @@ const courses = [
 
   {
     id: "cybersecurity-fundamentals",
-    title: "Cybersecurity Fundamentals",
+    title: "Cybersecurity Fundamentals: Security goals and the CIA triad",
     category: "Cyber Security",
     description: "Build a practical foundation in threats, risk, defense, and secure behavior.",
     level: "Beginner",
@@ -1054,4 +1054,22 @@ const courses = [
   },
 ];
 
-export default courses;
+// Keep enrollment availability explicit in the catalog. Courses that are not
+// listed here remain visible so learners can discover them, but are routed to
+// the waitlist instead of opening unfinished lessons.
+const OPEN_COURSE_IDS = new Set([
+  "python",
+  "javascript",
+  "csharp",
+  "cpp",
+  "c-programming",
+  "game-engine",
+  "cybersecurity-fundamentals",
+]);
+
+const courseCatalog = courses.map((course) => ({
+  ...course,
+  enrollmentStatus: OPEN_COURSE_IDS.has(course.id) ? "open" : "coming-soon",
+}));
+
+export default courseCatalog;

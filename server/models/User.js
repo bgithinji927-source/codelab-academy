@@ -59,6 +59,15 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
+    waitlistedCourses: [
+      {
+        _id: false,
+        courseId: { type: String, required: true },
+        courseTitle: { type: String, required: true },
+        joinedAt: { type: Date, default: Date.now },
+      },
+    ],
+
     kaiBackground: {
       type: String,
       enum: ["violet-aurora", "circuit-night", "neon-orbit", "terminal-green", "soft-study"],

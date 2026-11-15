@@ -22,6 +22,7 @@ function serializeUser(user) {
     designPreset: user.designPreset || "classic",
     kaiBackground: user.kaiBackground || null,
     learningAssessments: user.learningAssessments || [],
+    waitlistedCourses: user.waitlistedCourses || [],
     xp: user.xp,
     level: user.level,
     completedLessons: user.completedLessons,

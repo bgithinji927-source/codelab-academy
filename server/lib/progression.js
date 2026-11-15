@@ -1,3 +1,5 @@
+const { isAdministrator } = require("./admin");
+
 const DEFAULT_ENTRY_COURSE_ID = "python";
 
 function entryCourseId() {
@@ -71,10 +73,10 @@ function buildLearnerCourseAccess(user, courses = []) {
   activeCourses.forEach((course, index) => {
     const progressRecord = progressById.get(String(course.id));
     const progress = asPlainProgress(progressRecord);
-    // Courses are all available to explore. Kai gates the lessons inside a
-    // course sequentially; course-level readiness is retained as progress
-    // metadata but no longer hides or blocks the course itself.
-    const unlocked = true;
+    // Only deliberately published courses can be started by learners. Admins
+    // retain access to every catalog entry so they can review content before
+    // publication.
+    const unlocked = isAdministrator(user) || course.enrollmentStatus === "open";
     const completed = isComplete(progressRecord);
     const started = isStarted(progressRecord);
     const previousCourse = activeCourses[index - 1] || null;
@@ -82,8 +84,9 @@ function buildLearnerCourseAccess(user, courses = []) {
       ? progressById.get(String(previousCourse.id))
       : null;
 
-    let status = "locked";
-    if (unlocked) status = completed ? "completed" : started ? "in-progress" : "available";
+    const status = unlocked
+      ? (completed ? "completed" : started ? "in-progress" : "available")
+      : "coming-soon";
 
     access.push({
       courseId: String(course.id),
@@ -94,10 +97,13 @@ function buildLearnerCourseAccess(user, courses = []) {
       isEntry: index === entryIndex,
       locked: !unlocked,
       status,
+      enrollmentStatus: course.enrollmentStatus || "coming-soon",
       progress,
-      unlockReason: index === entryIndex
-        ? "Start here with Kai, or explore any available course."
-        : (started ? "Kai is tracking your progress." : "This course is open. Lessons unlock one at a time with Kai."),
+      unlockReason: unlocked
+        ? (index === entryIndex
+          ? "Start here with Kai, or explore any available course."
+          : (started ? "Kai is tracking your progress." : "This course is open. Lessons unlock one at a time with Kai."))
+        : "Coming soon. Join the waitlist to be notified when this course opens.",
       requiredCourseId: null,
       requiredCourseTitle: null,
       previousCourseReady: index === entryIndex ? true : isKaiReady(previousProgress),

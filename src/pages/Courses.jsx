@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   LockKeyhole,
   CircleCheck,
+  Clock,
   Smartphone,
   Gamepad2,
 } from "lucide-react";
@@ -104,13 +105,23 @@ const categories = [
   },
 ];
 
-function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
+function Courses({ initialCategory = null, onBack, user, onRequireAuth, onUserUpdated }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [pendingAssessmentCourse, setPendingAssessmentCourse] = useState(null);
   const [learningAssessments, setLearningAssessments] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [courseCatalog, setCourseCatalog] = useState(courses);
   const [courseAccess, setCourseAccess] = useState(() => user?.id ? buildFallbackCourseAccess(courses) : null);
+  const [waitlistedCourseIds, setWaitlistedCourseIds] = useState(() => new Set(
+    (user?.waitlistedCourses || []).map((item) => String(item.courseId))
+  ));
+  const [waitlistState, setWaitlistState] = useState(null);
+
+  useEffect(() => {
+    setWaitlistedCourseIds(new Set(
+      (user?.waitlistedCourses || []).map((item) => String(item.courseId))
+    ));
+  }, [user?.id, user?.waitlistedCourses]);
 
   useEffect(() => {
     let mounted = true;
@@ -147,6 +158,39 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
 
     return () => { mounted = false; };
   }, [user?.id]);
+
+  const joinWaitlist = async (course) => {
+    if (!user?.id) {
+      onRequireAuth?.();
+      return;
+    }
+
+    setWaitlistState({ courseId: course.id, status: "joining", message: "Joining waitlist..." });
+    try {
+      const response = await fetchWithAuth("/api/waitlist", {
+        method: "POST",
+        body: JSON.stringify({ courseId: course.id }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not join the waitlist");
+      }
+
+      const nextIds = new Set((data.waitlistedCourses || []).map((item) => String(item.courseId)));
+      nextIds.add(String(course.id));
+      setWaitlistedCourseIds(nextIds);
+      setWaitlistState({
+        courseId: course.id,
+        status: "joined",
+        message: data.message || "You are on the waitlist. We will let you know when this course opens.",
+      });
+      if (data.waitlistedCourses) {
+        onUserUpdated?.({ ...user, waitlistedCourses: data.waitlistedCourses });
+      }
+    } catch (error) {
+      setWaitlistState({ courseId: course.id, status: "error", message: error.message });
+    }
+  };
 
   if (pendingAssessmentCourse) {
     return (
@@ -194,7 +238,10 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
     : [];
   const ActiveIcon = activeCategory?.icon || Layers3;
   const accessById = new Map((courseAccess?.courses || []).map((item) => [String(item.courseId), item]));
-  const unlockedCount = visibleCourses.filter((course) => !accessById.get(String(course.id))?.locked).length;
+  const openCourseCount = visibleCourses.filter((course) => course.enrollmentStatus === "open").length;
+  const unlockedCount = courseAccess
+    ? visibleCourses.filter((course) => !accessById.get(String(course.id))?.locked).length
+    : openCourseCount;
 
   const selectCategory = (categoryName) => {
     setSelectedCategory(categoryName);
@@ -236,8 +283,8 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
           </h1>
           <p>
             {selectedCategory
-              ? `${courseAccess ? `${unlockedCount} of ${visibleCourses.length}` : visibleCourses.length} structured courses currently open in ${selectedCategory.toLowerCase()}. Lessons unlock sequentially with Kai.`
-              : "Choose a category from the sidebar to explore focused courses, guided lessons, and practical projects."}
+              ? `${unlockedCount} of ${visibleCourses.length} courses are open in ${selectedCategory.toLowerCase()}. Join the waitlist for courses coming soon.`
+              : "Choose a category to explore open courses, guided lessons, and courses coming soon. Join the waitlist for what you want to learn next."}
           </p>
         </div>
       </section>
@@ -311,7 +358,7 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
                       <span className="overview-card-copy">
                         <strong>{category.name}</strong>
                         <span>{category.description}</span>
-                        <small>{count} courses available</small>
+                        <small>{count} courses in the library</small>
                       </span>
                       <ArrowRight size={18} />
                     </button>
@@ -337,7 +384,7 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
                     </div>
                     <div>
                       <h2>{selectedCategory}</h2>
-                        <p>{courseAccess ? `${unlockedCount} of ${visibleCourses.length} courses open` : `${visibleCourses.length} courses available`}</p>
+                      <p>{unlockedCount} of {visibleCourses.length} courses open · {visibleCourses.length - openCourseCount} coming soon</p>
                     </div>
                   </div>
                 </div>
@@ -347,12 +394,15 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
               <div className="course-grid">
                 {visibleCourses.map((course) => {
                   const access = accessById.get(String(course.id));
-                  const locked = Boolean(user?.id && access?.locked);
+                  const isComingSoon = course.enrollmentStatus !== "open";
+                  const locked = Boolean(user?.id && access?.locked && !isComingSoon);
+                  const isWaitlisted = waitlistedCourseIds.has(String(course.id));
+                  const currentWaitlistState = waitlistState?.courseId === course.id ? waitlistState : null;
                   const completed = access?.status === "completed";
                   const label = locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
 
                   return (
-                    <article className={`course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""}`} key={course.id}>
+                    <article className={`course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""} ${isComingSoon ? "is-coming-soon" : ""}`} key={course.id}>
                       <div className="course-card-visual">
                         <div className="course-card-image">
                           <CourseLogo course={course} className="course-card-image-logo" />
@@ -362,14 +412,23 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
                             </span>
                           )}
                         </div>
-                        <span className="course-card-logo-label">{course.category}</span>
+                        <div className="course-card-visual-meta">
+                          <span className="course-card-logo-label">{course.category}</span>
+                          <span className={`course-availability-badge ${isComingSoon ? "coming-soon" : "open"}`}>
+                            {isComingSoon ? "Coming soon" : "Open now"}
+                          </span>
+                        </div>
                       </div>
                       <div className="course-card-content">
                         <span className="course-level">
                           {course.level || "Beginner"}
                         </span>
                         <h3>{course.title}</h3>
-                        <p>{locked ? (access?.unlockReason || "Kai will open this course when you are ready.") : course.description}</p>
+                        <p>{isComingSoon
+                          ? `This course is coming soon. Join the waitlist to be notified when ${course.title} opens.`
+                          : locked
+                            ? (access?.unlockReason || "Kai will open this course when you are ready.")
+                            : course.description}</p>
                         {access?.progress && access.progress.totalLessons > 0 && (
                           <span className="course-access-progress">{access.progress.lessonsCompleted}/{access.progress.totalLessons} lessons complete</span>
                         )}
@@ -377,10 +436,14 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
                       <div className="course-card-footer">
                         <button
                           type="button"
-                          className="start-course-button"
-                          disabled={locked}
-                          title={locked ? access?.unlockReason : label}
+                          className={`start-course-button ${isComingSoon ? "waitlist-course-button" : ""}`}
+                          disabled={locked || isWaitlisted || currentWaitlistState?.status === "joining"}
+                          title={isComingSoon ? (isWaitlisted ? "You are already on the waitlist" : "Join the waitlist") : (locked ? access?.unlockReason : label)}
                           onClick={() => {
+                            if (isComingSoon) {
+                              if (!isWaitlisted) joinWaitlist(course);
+                              return;
+                            }
                             if (locked) return;
                             if (!user?.id) {
                               onRequireAuth?.();
@@ -393,9 +456,18 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth }) {
                             }
                           }}
                         >
-                          {label}
-                          {locked ? <LockKeyhole size={17} /> : <ArrowRight size={17} />}
+                          {isComingSoon
+                            ? (isWaitlisted ? "On waitlist" : currentWaitlistState?.status === "joining" ? "Joining..." : "Join waitlist")
+                            : label}
+                          {isComingSoon
+                            ? (isWaitlisted || currentWaitlistState?.status === "joined" ? <CircleCheck size={17} /> : <Clock size={17} />)
+                            : (locked ? <LockKeyhole size={17} /> : <ArrowRight size={17} />)}
                         </button>
+                        {currentWaitlistState && currentWaitlistState.status !== "joining" && (
+                          <span className={`waitlist-feedback ${currentWaitlistState.status}`} role={currentWaitlistState.status === "error" ? "alert" : "status"}>
+                            {currentWaitlistState.message}
+                          </span>
+                        )}
                       </div>
                     </article>
                   );

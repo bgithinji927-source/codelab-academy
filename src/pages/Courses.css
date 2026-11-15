@@ -888,6 +888,51 @@
   text-transform: uppercase;
 }
 
+.course-card-visual-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.course-card-visual-meta .course-card-logo-label {
+  align-self: center;
+}
+
+.course-availability-badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.55px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.course-availability-badge.open {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.course-availability-badge.coming-soon {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+
+.course-grid .course-card.is-coming-soon {
+  border-color: #f0e4d6;
+}
+
+.course-grid .course-card.is-coming-soon .course-card-visual {
+  background: linear-gradient(135deg, #fffaf4 0%, #fff3e5 100%);
+  border-bottom-color: #f3dfc7;
+}
+
 .course-grid .course-card-content {
   flex: 1;
   padding: 16px 18px 14px;
@@ -908,6 +953,7 @@
 
 .course-card-footer {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   padding: 12px 18px;
@@ -927,6 +973,32 @@
 .course-grid .course-card-footer .start-course-button:hover {
   background: #6d28d9;
   color: #ffffff;
+}
+
+.course-grid .course-card-footer .start-course-button.waitlist-course-button {
+  background: #c2410c;
+}
+
+.course-grid .course-card-footer .start-course-button.waitlist-course-button:hover {
+  background: #9a3412;
+}
+
+.course-grid .course-card-footer .start-course-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
+.waitlist-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  color: #166534;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.waitlist-feedback.error {
+  color: #b91c1c;
 }
 
 @media (max-width: 600px) {

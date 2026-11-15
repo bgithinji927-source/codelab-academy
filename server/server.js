@@ -9,6 +9,7 @@ const authRoutes = require("./routes/auth");
 const kaiRoutes = require("./routes/kai");
 const challengeRoutes = require("./routes/challenges");
 const catalogRoutes = require("./routes/catalog");
+const waitlistRoutes = require("./routes/waitlist");
 const adminRoutes = require("./routes/admin");
 const videoRoutes = require("./routes/videos");
 const labRoutes = require("./routes/labs");
@@ -44,6 +45,9 @@ app.use("/api/challenges", challengeRoutes);
 
 // PUBLIC LEARNER CATALOG WITH ADMIN OVERRIDES
 app.use("/api/catalog", catalogRoutes);
+
+// PROTECTED LEARNER WAITLIST ACTIONS
+app.use("/api/waitlist", waitlistRoutes);
 
 // PROTECTED ADMIN CONTROL PANEL
 app.use("/api/admin", adminRoutes);

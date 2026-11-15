@@ -30,6 +30,7 @@ import {
   Settings as SettingsIcon,
   LockKeyhole,
   CircleCheck,
+  Clock,
   Menu,
   X,
 } from "lucide-react";
@@ -51,7 +52,7 @@ import LearnerAssessmentModal from "./components/LearnerAssessmentModal";
 import { getLessonsByCourse } from "./data/lessons.mjs";
 import { KAI_UI_EVENT, installKaiUiBridge } from "./utils/kaiUiBridge";
 
-function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAccess }) {
+function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCatalog, courseAccess }) {
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
   const accessById = new globalThis.Map((courseAccess?.courses || []).map((item) => [String(item.courseId), item]));
   const visibleAccess = visibleCourses.map((course) => accessById.get(String(course.id))).filter(Boolean);
@@ -70,47 +71,52 @@ function DashboardCategoryView({ category, onOpenCourse, courseCatalog, courseAc
       <div className="dashboard-category-grid">
         {visibleCourses.map((course) => {
           const access = accessById.get(String(course.id));
-          const locked = Boolean(access?.locked);
+          const isComingSoon = course.enrollmentStatus !== "open";
+          const locked = Boolean(access?.locked && !isComingSoon);
           const completed = access?.status === "completed";
-          const label = locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
+          const label = isComingSoon ? "Join waitlist" : locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
 
           return (
             <article
-              className={`dashboard-course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""} ${locked ? "" : "is-resumable"}`}
+              className={`dashboard-course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""} ${isComingSoon ? "is-coming-soon" : ""} ${locked && !isComingSoon ? "" : "is-resumable"}`}
               key={course.id}
-              role={locked ? undefined : "button"}
-              tabIndex={locked ? -1 : 0}
-              aria-label={locked ? `${course.title} is locked by Kai` : `${label}: ${course.title}`}
-              aria-disabled={locked || undefined}
+              role={locked && !isComingSoon ? undefined : "button"}
+              tabIndex={locked && !isComingSoon ? -1 : 0}
+              aria-label={isComingSoon ? `${course.title} is coming soon` : locked ? `${course.title} is locked by Kai` : `${label}: ${course.title}`}
+              aria-disabled={locked && !isComingSoon || undefined}
               onClick={(event) => {
-                if (!locked && !event.target.closest("button")) onOpenCourse(course);
+                if (!event.target.closest("button")) {
+                  if (isComingSoon) onViewCourses?.(category);
+                  else if (!locked) onOpenCourse(course);
+                }
               }}
               onKeyDown={(event) => {
-                if (!locked && !event.target.closest("button") && (event.key === "Enter" || event.key === " ")) {
+                if (!(locked && !isComingSoon) && !event.target.closest("button") && (event.key === "Enter" || event.key === " ")) {
                   event.preventDefault();
-                  onOpenCourse(course);
+                  if (isComingSoon) onViewCourses?.(category);
+                  else onOpenCourse(course);
                 }
               }}
             >
               <div className="dashboard-course-card-image">
                 <CourseLogo course={course} className="dashboard-course-card-image-logo" />
-                {(locked || completed) && (
+                {(isComingSoon || locked || completed) && (
                   <span className="dashboard-course-card-status-icon" aria-hidden="true">
-                    {locked ? <LockKeyhole size={15} /> : <CircleCheck size={15} />}
+                    {isComingSoon ? <Clock size={15} /> : locked ? <LockKeyhole size={15} /> : <CircleCheck size={15} />}
                   </span>
                 )}
               </div>
               <span className="dashboard-course-level">{course.level}</span>
               <h2>{course.title}</h2>
-              <p>{locked ? (access?.unlockReason || "Kai will open this course when you are ready.") : course.description}</p>
+              <p>{isComingSoon ? "Coming soon. Open the course library to join the waitlist." : locked ? (access?.unlockReason || "Kai will open this course when you are ready.") : course.description}</p>
               {access?.progress && access.progress.totalLessons > 0 && (
                 <div className="dashboard-course-access-progress" aria-label={`${access.progress.lessonsCompleted} of ${access.progress.totalLessons} lessons complete`}>
                   <span>{access.progress.lessonsCompleted}/{access.progress.totalLessons} lessons</span>
                   <span>{Math.round((access.progress.lessonsCompleted / access.progress.totalLessons) * 100)}%</span>
                 </div>
               )}
-              <button type="button" disabled={locked} title={locked ? access?.unlockReason : label} onClick={() => onOpenCourse(course)}>
-                {label} {locked ? <LockKeyhole size={16} /> : <ArrowRight size={16} />}
+              <button type="button" disabled={locked && !isComingSoon} title={isComingSoon ? "Open the course library to join the waitlist" : locked ? access?.unlockReason : label} onClick={() => isComingSoon ? onViewCourses?.(category) : onOpenCourse(course)}>
+                {label} {isComingSoon ? <Clock size={16} /> : locked ? <LockKeyhole size={16} /> : <ArrowRight size={16} />}
               </button>
             </article>
           );
@@ -598,6 +604,7 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
             category={selectedCategory}
             courseCatalog={courseCatalog}
             onOpenCourse={openCourseWithKai}
+            onViewCourses={onViewCourses}
             courseAccess={courseAccess}
           />
         ) : (

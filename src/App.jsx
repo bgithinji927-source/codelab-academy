@@ -352,6 +352,7 @@ function App() {
         onBack={closeCourses}
         user={user}
         onRequireAuth={() => setShowLogin(true)}
+        onUserUpdated={handleUserUpdated}
         onSelectCourse={(course) => {
           console.log("Selected course:", course);
         }}
