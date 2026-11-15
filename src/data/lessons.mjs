@@ -46,6 +46,7 @@ import cControlFlowMarkdown from "./cControlFlowLessonContent.mjs";
 import cFunctionsMarkdown from "./cFunctionsLessonContent.mjs";
 import cCollectionsMarkdown from "./cCollectionsLessonContent.mjs";
 import csharpSyntaxMarkdown from "./csharpSyntaxLessonContent.mjs";
+import csharpVariablesMarkdown from "./csharpVariablesLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1733,6 +1734,12 @@ const csharpSyntaxAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "csharp-01-syntax-and-program-structure",
   "A complete, four-part introduction to C# and .NET, console projects, program structure, namespaces, classes, methods, syntax, and practical application development.",
   { 1: "B", 2: "C", 3: "A", 4: "C", 5: "B", 6: "C", 7: "A", 8: "A", 9: "B", 10: "A", 11: "C", 12: "A" }
+);
+const csharpVariablesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  csharpVariablesMarkdown.replace(/^\*\*Part 4 of 4 — Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "csharp-02-variables-and-types",
+  "A complete, four-part lesson on C# variables, built-in data types, value and reference types, constants, type inference, conversion, parsing, nullability, and overflow.",
+  { 1: "B", 2: "C", 3: "B", 4: "C", 5: "B", 6: "C", 7: "A", 8: "B", 9: "B", 10: "A", 11: "B", 12: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -4050,6 +4057,17 @@ for (const lesson of lessons.csharp || []) {
     lesson.title = "C# Programming: Syntax and Program Structure";
     lesson.description = "Learn C# and .NET fundamentals, console application structure, syntax, namespaces, classes, methods, and project setup.";
     lesson.delivery = csharpSyntaxAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C# placeholder with the supplied authored
+// lesson while preserving its existing course ID and sequence position.
+for (const lesson of lessons.csharp || []) {
+  if (lesson.id === "csharp-02-variables-and-types") {
+    lesson.title = "C# Programming: Variables and Types";
+    lesson.description = "Learn C# variables, built-in types, constants, type inference and conversion, nullability, and safe input validation.";
+    lesson.delivery = csharpVariablesAuthoredDelivery;
     break;
   }
 }
