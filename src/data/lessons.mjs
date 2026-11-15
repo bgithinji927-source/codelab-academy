@@ -51,6 +51,7 @@ import csharpControlFlowMarkdown from "./csharpControlFlowLessonContent.mjs";
 import csharpFunctionsMarkdown from "./csharpFunctionsLessonContent.mjs";
 import csharpCollectionsMarkdown from "./csharpCollectionsLessonContent.mjs";
 import gameEnginePipelineMarkdown from "./gameEnginePipelineLessonContent.mjs";
+import gameEngineInputsMarkdown from "./gameEngineInputsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1773,6 +1774,15 @@ const gameEnginePipelineAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "game-engine-01-the-core-pipeline",
   "A complete, four-part introduction to the game engine pipeline, assets and initialization, game loops, input, logic, physics, collisions, animation, rendering, audio, and practical C# implementation.",
   { 1: "B", 2: "C", 3: "B", 4: "A", 5: "C", 6: "B", 7: "A", 8: "A" }
+);
+
+const gameEngineInputsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  gameEngineInputsMarkdown
+    .replace(/^\*\*(\d+)\. (.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "game-engine-02-inputs-and-representation",
+  "A complete, four-part lesson on player input devices, events and states, Boolean/numeric/vector representations, mappings, dead zones, sensitivity, practical C#, Unity input, and movement.",
+  { 1: "B", 2: "B", 3: "C", 4: "B", 5: "B", 6: "A", 7: "B", 8: "B" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -4142,6 +4152,16 @@ for (const lesson of lessons["game-engine"] || []) {
     lesson.title = "Game Engine: The Core Pipeline";
     lesson.description = "Learn how game assets, initialization, input, logic, physics, animation, rendering, and audio work together in a real-time engine pipeline.";
     lesson.delivery = gameEnginePipelineAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the existing second game-engine placeholder with the authored Inputs lesson.
+for (const lesson of lessons["game-engine"] || []) {
+  if (lesson.id === "game-engine-02-inputs-and-representation") {
+    lesson.title = "Game Engine: Inputs and Representation";
+    lesson.description = "Learn how player controls are received and represented as states, events, values, and vectors, then mapped to actions in C# and Unity.";
+    lesson.delivery = gameEngineInputsAuthoredDelivery;
     break;
   }
 }
