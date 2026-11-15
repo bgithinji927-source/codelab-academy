@@ -52,6 +52,7 @@ import csharpFunctionsMarkdown from "./csharpFunctionsLessonContent.mjs";
 import csharpCollectionsMarkdown from "./csharpCollectionsLessonContent.mjs";
 import gameEnginePipelineMarkdown from "./gameEnginePipelineLessonContent.mjs";
 import gameEngineInputsMarkdown from "./gameEngineInputsLessonContent.mjs";
+import gameEngineAlgorithmsMarkdown from "./gameEngineAlgorithmsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1783,6 +1784,15 @@ const gameEngineInputsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "game-engine-02-inputs-and-representation",
   "A complete, four-part lesson on player input devices, events and states, Boolean/numeric/vector representations, mappings, dead zones, sensitivity, practical C#, Unity input, and movement.",
   { 1: "B", 2: "B", 3: "C", 4: "B", 5: "B", 6: "A", 7: "B", 8: "B" }
+);
+
+const gameEngineAlgorithmsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  gameEngineAlgorithmsMarkdown
+    .replace(/^\*\*(\d+)\. (.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "game-engine-03-algorithms-and-decisions",
+  "A complete, four-part lesson on game algorithms and rules, conditional decisions, difficulty, pseudocode and flowcharts, game AI, state machines, pathfinding, decision and behavior trees, and practical C# examples.",
+  { 1: "B", 2: "C", 3: "B", 4: "A", 5: "A", 6: "A", 7: "A", 8: "A" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -4162,6 +4172,16 @@ for (const lesson of lessons["game-engine"] || []) {
     lesson.title = "Game Engine: Inputs and Representation";
     lesson.description = "Learn how player controls are received and represented as states, events, values, and vectors, then mapped to actions in C# and Unity.";
     lesson.delivery = gameEngineInputsAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the existing third game-engine placeholder with the authored Algorithms lesson.
+for (const lesson of lessons["game-engine"] || []) {
+  if (lesson.id === "game-engine-03-algorithms-and-decisions") {
+    lesson.title = "Game Engine: Algorithms and Decisions";
+    lesson.description = "Learn how algorithms implement game rules, drive decisions and AI, find paths, and organize behavior in C# game systems.";
+    lesson.delivery = gameEngineAlgorithmsAuthoredDelivery;
     break;
   }
 }
