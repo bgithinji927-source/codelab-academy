@@ -44,6 +44,7 @@ import cSyntaxMarkdown from "./cSyntaxLessonContent.mjs";
 import cVariablesMarkdown from "./cVariablesLessonContent.mjs";
 import cControlFlowMarkdown from "./cControlFlowLessonContent.mjs";
 import cFunctionsMarkdown from "./cFunctionsLessonContent.mjs";
+import cCollectionsMarkdown from "./cCollectionsLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1719,6 +1720,12 @@ const cFunctionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "c-programming-04-functions-and-reusable-logic",
   "A complete, four-part lesson on C function declarations, definitions, parameters, return values, scope, pointers, recursion, and modular program design.",
   { 1: "B", 2: "B", 3: "C", 4: "B", 5: "C", 6: "B", 7: "C", 8: "A", 9: "B", 10: "B" }
+);
+const cCollectionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cCollectionsMarkdown.replace(/^\*\*Part 4 of 4 — Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "c-programming-05-collections-and-data",
+  "A complete, four-part lesson on C arrays, strings, structures, enumerations, unions, dynamic memory, linked lists, and practical data organization.",
+  { 1: "B", 2: "C", 3: "A", 4: "B", 5: "C", 6: "A", 7: "B", 8: "C", 9: "C", 10: "B", 11: "B", 12: "C" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -4014,6 +4021,17 @@ for (const lesson of lessons["c-programming"] || []) {
     lesson.title = "C Programming: Functions and Reusable Logic";
     lesson.description = "Learn C function prototypes, return values, pointers, recursion, variable scope, and modular program organization.";
     lesson.delivery = cFunctionsAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching generated C Programming placeholder with the supplied
+// authored lesson while preserving its existing course ID and sequence position.
+for (const lesson of lessons["c-programming"] || []) {
+  if (lesson.id === "c-programming-05-collections-and-data") {
+    lesson.title = "C Programming: Collections and Data";
+    lesson.description = "Learn C arrays, strings, structures, enums, unions, dynamic allocation, linked lists, and other essential data structures.";
+    lesson.delivery = cCollectionsAuthoredDelivery;
     break;
   }
 }
