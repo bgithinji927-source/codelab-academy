@@ -395,12 +395,14 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth, onUserUp
               <div className="course-grid">
                 {visibleCourses.map((course) => {
                   const access = accessById.get(String(course.id));
-                  const isComingSoon = course.enrollmentStatus !== "open" && !isAdmin;
-                  const locked = Boolean(user?.id && access?.locked && !isComingSoon);
+                  const isComingSoon = course.enrollmentStatus !== "open";
+                  const canReview = Boolean(isAdmin && isComingSoon && !access?.locked);
+                  const locked = Boolean(user?.id && access?.locked && !canReview);
+                  const showWaitlist = isComingSoon && !canReview;
                   const isWaitlisted = waitlistedCourseIds.has(String(course.id));
                   const currentWaitlistState = waitlistState?.courseId === course.id ? waitlistState : null;
                   const completed = access?.status === "completed";
-                  const label = locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
+                  const label = showWaitlist ? (isAdmin ? "Review course" : "Join waitlist") : locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
 
                   return (
                     <article className={`course-card ${locked ? "is-locked" : ""} ${completed ? "is-completed" : ""} ${isComingSoon ? "is-coming-soon" : ""}`} key={course.id}>
@@ -426,7 +428,7 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth, onUserUp
                         </span>
                         <h3>{course.title}</h3>
                         <p>{isComingSoon
-                          ? `This course is coming soon. Join the waitlist to be notified when ${course.title} opens.`
+                          ? (isAdmin ? "Coming soon for learners. Available for administrator review." : `This course is coming soon. Join the waitlist to be notified when ${course.title} opens.`)
                           : locked
                             ? (access?.unlockReason || "Kai will open this course when you are ready.")
                             : course.description}</p>
@@ -437,11 +439,11 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth, onUserUp
                       <div className="course-card-footer">
                         <button
                           type="button"
-                          className={`start-course-button ${isComingSoon ? "waitlist-course-button" : ""}`}
-                          disabled={locked || isWaitlisted || currentWaitlistState?.status === "joining"}
-                          title={isComingSoon ? (isWaitlisted ? "You are already on the waitlist" : "Join the waitlist") : (locked ? access?.unlockReason : label)}
+                          className={`start-course-button ${showWaitlist ? "waitlist-course-button" : ""}`}
+                          disabled={(locked && !showWaitlist) || (showWaitlist && isWaitlisted) || currentWaitlistState?.status === "joining"}
+                          title={showWaitlist ? (isWaitlisted ? "You are already on the waitlist" : "Join the waitlist") : (locked ? access?.unlockReason : label)}
                           onClick={() => {
-                            if (isComingSoon) {
+                            if (showWaitlist) {
                               if (!isWaitlisted) joinWaitlist(course);
                               return;
                             }
@@ -457,10 +459,10 @@ function Courses({ initialCategory = null, onBack, user, onRequireAuth, onUserUp
                             }
                           }}
                         >
-                          {isComingSoon
+                          {showWaitlist
                             ? (isWaitlisted ? "On waitlist" : currentWaitlistState?.status === "joining" ? "Joining..." : "Join waitlist")
                             : label}
-                          {isComingSoon
+                          {showWaitlist
                             ? (isWaitlisted || currentWaitlistState?.status === "joined" ? <CircleCheck size={17} /> : <Clock size={17} />)
                             : (locked ? <LockKeyhole size={17} /> : <ArrowRight size={17} />)}
                         </button>

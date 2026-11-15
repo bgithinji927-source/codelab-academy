@@ -226,6 +226,31 @@ router.get("/users", async (req, res) => {
   }
 });
 
+router.get("/waitlist", async (req, res) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ success: false, databaseUnavailable: true, message: "MongoDB is not connected; waitlist records are unavailable." });
+    }
+    const users = await User.find({ "waitlistedCourses.0": { $exists: true } })
+      .select("name email waitlistedCourses")
+      .lean();
+    const entries = users.flatMap((user) => (user.waitlistedCourses || []).map((item) => ({
+      courseId: item.courseId,
+      courseTitle: item.courseTitle,
+      joinedAt: item.joinedAt,
+      learner: {
+        id: String(user._id),
+        name: user.name,
+        email: user.email,
+      },
+    }))).sort((a, b) => new Date(b.joinedAt || 0).getTime() - new Date(a.joinedAt || 0).getTime());
+    return res.json({ success: true, count: entries.length, entries });
+  } catch (error) {
+    console.error("Admin waitlist error:", error);
+    return res.status(500).json({ success: false, message: "Could not load the learner waitlist" });
+  }
+});
+
 router.patch("/users/:userId", async (req, res) => {
   try {
     const updates = pickFields(req.body || {}, ["role", "isActive", "xp", "level", "dayStreak", "badges"]);

@@ -56,7 +56,7 @@ function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCa
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
   const accessById = new globalThis.Map((courseAccess?.courses || []).map((item) => [String(item.courseId), item]));
   const visibleAccess = visibleCourses.map((course) => accessById.get(String(course.id))).filter(Boolean);
-  const unlockedCount = visibleAccess.filter((item) => !item.locked).length;
+  const openCount = visibleCourses.filter((course) => course.enrollmentStatus === "open").length;
 
   return (
     <section className="dashboard-category-view">
@@ -64,17 +64,19 @@ function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCa
         <div>
           <span className="dashboard-category-kicker">COURSE LIBRARY</span>
           <h1>{category}</h1>
-          <p>{courseAccess ? `${unlockedCount} courses open. Lessons unlock one at a time as Kai confirms your readiness.` : `${visibleCourses.length} courses available in this learning category.`}</p>
+          <p>{courseAccess ? `${openCount} courses open for learners. Coming-soon courses are available for administrator review.` : `${visibleCourses.length} courses available in this learning category.`}</p>
         </div>
-        <span className="dashboard-category-count">{courseAccess ? `${unlockedCount}/${visibleCourses.length} OPEN` : `${visibleCourses.length} COURSES`}</span>
+        <span className="dashboard-category-count">{courseAccess ? `${openCount}/${visibleCourses.length} OPEN` : `${visibleCourses.length} COURSES`}</span>
       </div>
       <div className="dashboard-category-grid">
         {visibleCourses.map((course) => {
           const access = accessById.get(String(course.id));
-          const isComingSoon = course.enrollmentStatus !== "open" && !isAdmin;
-          const locked = Boolean(access?.locked && !isComingSoon);
+          const isComingSoon = course.enrollmentStatus !== "open";
+          const canReview = Boolean(isAdmin && isComingSoon && !access?.locked);
+          const locked = Boolean(access?.locked && !canReview);
+          const showWaitlist = isComingSoon && !canReview;
           const completed = access?.status === "completed";
-          const label = isComingSoon ? "Join waitlist" : locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
+          const label = showWaitlist ? "Join waitlist" : locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
 
           return (
             <article
@@ -86,14 +88,14 @@ function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCa
               aria-disabled={locked && !isComingSoon || undefined}
               onClick={(event) => {
                 if (!event.target.closest("button")) {
-                  if (isComingSoon) onViewCourses?.(category);
+                  if (showWaitlist) onViewCourses?.(category);
                   else if (!locked) onOpenCourse(course);
                 }
               }}
               onKeyDown={(event) => {
                 if (!(locked && !isComingSoon) && !event.target.closest("button") && (event.key === "Enter" || event.key === " ")) {
                   event.preventDefault();
-                  if (isComingSoon) onViewCourses?.(category);
+                  if (showWaitlist) onViewCourses?.(category);
                   else onOpenCourse(course);
                 }
               }}
@@ -108,15 +110,15 @@ function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCa
               </div>
               <span className="dashboard-course-level">{course.level}</span>
               <h2>{course.title}</h2>
-              <p>{isComingSoon ? "Coming soon. Open the course library to join the waitlist." : locked ? (access?.unlockReason || "Kai will open this course when you are ready.") : course.description}</p>
+              <p>{showWaitlist ? "Coming soon. Open the course library to join the waitlist." : isComingSoon ? "Coming soon for learners. Available for administrator review." : locked ? (access?.unlockReason || "Kai will open this course when you are ready.") : course.description}</p>
               {access?.progress && access.progress.totalLessons > 0 && (
                 <div className="dashboard-course-access-progress" aria-label={`${access.progress.lessonsCompleted} of ${access.progress.totalLessons} lessons complete`}>
                   <span>{access.progress.lessonsCompleted}/{access.progress.totalLessons} lessons</span>
                   <span>{Math.round((access.progress.lessonsCompleted / access.progress.totalLessons) * 100)}%</span>
                 </div>
               )}
-              <button type="button" disabled={locked && !isComingSoon} title={isComingSoon ? "Open the course library to join the waitlist" : locked ? access?.unlockReason : label} onClick={() => isComingSoon ? onViewCourses?.(category) : onOpenCourse(course)}>
-                {label} {isComingSoon ? <Clock size={16} /> : locked ? <LockKeyhole size={16} /> : <ArrowRight size={16} />}
+              <button type="button" disabled={locked && !isComingSoon} title={showWaitlist ? "Open the course library to join the waitlist" : locked ? access?.unlockReason : label} onClick={() => showWaitlist ? onViewCourses?.(category) : onOpenCourse(course)}>
+                {label} {showWaitlist ? <Clock size={16} /> : locked ? <LockKeyhole size={16} /> : <ArrowRight size={16} />}
               </button>
             </article>
           );
