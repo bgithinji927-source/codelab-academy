@@ -50,6 +50,7 @@ import csharpVariablesMarkdown from "./csharpVariablesLessonContent.mjs";
 import csharpControlFlowMarkdown from "./csharpControlFlowLessonContent.mjs";
 import csharpFunctionsMarkdown from "./csharpFunctionsLessonContent.mjs";
 import csharpCollectionsMarkdown from "./csharpCollectionsLessonContent.mjs";
+import gameEnginePipelineMarkdown from "./gameEnginePipelineLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
@@ -1763,6 +1764,15 @@ const csharpCollectionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "csharp-05-collections-and-data",
   "A complete, four-part lesson on C# arrays, lists, dictionaries, sets, queues, stacks, linked collections, LINQ, and practical data applications.",
   { 1: "B", 2: "C", 3: "C", 4: "B", 5: "C", 6: "A", 7: "A", 8: "B", 9: "C", 10: "B", 11: "B", 12: "B" }
+);
+
+const gameEnginePipelineAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  gameEnginePipelineMarkdown
+    .replace(/^\*\*(\d+)\. (.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "game-engine-01-the-core-pipeline",
+  "A complete, four-part introduction to the game engine pipeline, assets and initialization, game loops, input, logic, physics, collisions, animation, rendering, audio, and practical C# implementation.",
+  { 1: "B", 2: "C", 3: "B", 4: "A", 5: "C", 6: "B", 7: "A", 8: "A" }
 );
 
 function makeJavaScriptMasteryLesson([id, title, focus, code, challenge, starterCode]) {
@@ -4122,6 +4132,16 @@ for (const lesson of lessons.csharp || []) {
     lesson.title = "C# Programming: Collections and Data";
     lesson.description = "Learn to store, retrieve, update, search, sort, and process data using C# arrays, generic collections, and LINQ.";
     lesson.delivery = csharpCollectionsAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the existing first game-engine placeholder with the authored core pipeline lesson.
+for (const lesson of lessons["game-engine"] || []) {
+  if (lesson.id === "game-engine-01-the-core-pipeline") {
+    lesson.title = "Game Engine: The Core Pipeline";
+    lesson.description = "Learn how game assets, initialization, input, logic, physics, animation, rendering, and audio work together in a real-time engine pipeline.";
+    lesson.delivery = gameEnginePipelineAuthoredDelivery;
     break;
   }
 }
