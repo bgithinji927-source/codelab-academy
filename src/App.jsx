@@ -384,6 +384,7 @@ function App() {
         user={user}
         onLogout={handleLogout}
         onViewCourses={openCourses}
+        onRequireAuth={() => setShowLogin(true)}
         onUserUpdated={handleUserUpdated}
       />
     );

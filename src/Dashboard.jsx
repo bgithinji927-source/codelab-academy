@@ -52,11 +52,39 @@ import LearnerAssessmentModal from "./components/LearnerAssessmentModal";
 import { getLessonsByCourse } from "./data/lessons.mjs";
 import { KAI_UI_EVENT, installKaiUiBridge } from "./utils/kaiUiBridge";
 
-function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCatalog, courseAccess, isAdmin }) {
+function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCatalog, courseAccess, isAdmin, user, onRequireAuth, onUserUpdated }) {
+  const [waitlistedCourseIds, setWaitlistedCourseIds] = useState(() => new Set(
+    (user?.waitlistedCourses || []).map((item) => String(item.courseId))
+  ));
+  const [waitlistState, setWaitlistState] = useState(null);
   const visibleCourses = courseCatalog.filter((course) => course.category === category && course.active !== false);
   const accessById = new globalThis.Map((courseAccess?.courses || []).map((item) => [String(item.courseId), item]));
   const visibleAccess = visibleCourses.map((course) => accessById.get(String(course.id))).filter(Boolean);
   const openCount = visibleCourses.filter((course) => course.enrollmentStatus === "open").length;
+
+  const joinWaitlist = async (course) => {
+    if (!user?.id) {
+      onRequireAuth?.();
+      return;
+    }
+
+    setWaitlistState({ courseId: course.id, status: "joining", message: "Joining waitlist..." });
+    try {
+      const response = await fetchWithAuth("/api/waitlist", {
+        method: "POST",
+        body: JSON.stringify({ courseId: course.id }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) throw new Error(data.message || "Could not join the waitlist");
+      const nextIds = new Set((data.waitlistedCourses || []).map((item) => String(item.courseId)));
+      nextIds.add(String(course.id));
+      setWaitlistedCourseIds(nextIds);
+      setWaitlistState({ courseId: course.id, status: "joined", message: data.message || "You are on the waitlist." });
+      onUserUpdated?.({ ...user, waitlistedCourses: data.waitlistedCourses || [] });
+    } catch (error) {
+      setWaitlistState({ courseId: course.id, status: "error", message: error.message });
+    }
+  };
 
   return (
     <section className="dashboard-category-view">
@@ -75,6 +103,8 @@ function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCa
           const canReview = Boolean(isAdmin && isComingSoon && !access?.locked);
           const locked = Boolean(access?.locked && !canReview);
           const showWaitlist = isComingSoon && !canReview;
+          const isWaitlisted = waitlistedCourseIds.has(String(course.id));
+          const currentWaitlistState = waitlistState?.courseId === course.id ? waitlistState : null;
           const completed = access?.status === "completed";
           const label = showWaitlist ? "Join waitlist" : locked ? "Locked by Kai" : completed ? "Review with Kai" : access?.status === "in-progress" ? "Continue with Kai" : "Start with Kai";
 
@@ -88,15 +118,15 @@ function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCa
               aria-disabled={locked && !isComingSoon || undefined}
               onClick={(event) => {
                 if (!event.target.closest("button")) {
-                  if (showWaitlist) onViewCourses?.(category);
-                  else if (!locked) onOpenCourse(course);
+                  if (showWaitlist) return;
+                  if (!locked) onOpenCourse(course);
                 }
               }}
               onKeyDown={(event) => {
                 if (!(locked && !isComingSoon) && !event.target.closest("button") && (event.key === "Enter" || event.key === " ")) {
                   event.preventDefault();
-                  if (showWaitlist) onViewCourses?.(category);
-                  else onOpenCourse(course);
+                  if (showWaitlist) return;
+                  onOpenCourse(course);
                 }
               }}
             >
@@ -117,9 +147,10 @@ function DashboardCategoryView({ category, onOpenCourse, onViewCourses, courseCa
                   <span>{Math.round((access.progress.lessonsCompleted / access.progress.totalLessons) * 100)}%</span>
                 </div>
               )}
-              <button type="button" disabled={locked && !isComingSoon} title={showWaitlist ? "Open the course library to join the waitlist" : locked ? access?.unlockReason : label} onClick={() => showWaitlist ? onViewCourses?.(category) : onOpenCourse(course)}>
-                {label} {showWaitlist ? <Clock size={16} /> : locked ? <LockKeyhole size={16} /> : <ArrowRight size={16} />}
+              <button type="button" disabled={(locked && !showWaitlist) || (showWaitlist && isWaitlisted) || currentWaitlistState?.status === "joining"} title={showWaitlist ? (isWaitlisted ? "You are already on the waitlist" : "Join the waitlist") : locked ? access?.unlockReason : label} onClick={() => showWaitlist ? joinWaitlist(course) : onOpenCourse(course)}>
+                {showWaitlist ? (isWaitlisted ? "On waitlist" : currentWaitlistState?.status === "joining" ? "Joining..." : "Join waitlist") : label} {showWaitlist ? (isWaitlisted ? <CircleCheck size={16} /> : <Clock size={16} />) : locked ? <LockKeyhole size={16} /> : <ArrowRight size={16} />}
               </button>
+              {currentWaitlistState && currentWaitlistState.status !== "joining" && <span className={`waitlist-feedback ${currentWaitlistState.status}`} role={currentWaitlistState.status === "error" ? "alert" : "status"}>{currentWaitlistState.message}</span>}
             </article>
           );
         })}
@@ -146,7 +177,7 @@ const sidebarItems = [
   { label: "Video Tutorials", Icon: VideoIcon, view: "videos" },
 ];
 
-function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
+function Dashboard({ user, onLogout, onViewCourses, onRequireAuth, onUserUpdated }) {
   const [activeView, setActiveView] = useState("dashboard");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -609,6 +640,9 @@ function Dashboard({ user, onLogout, onViewCourses, onUserUpdated }) {
             onViewCourses={onViewCourses}
             courseAccess={courseAccess}
             isAdmin={isAdmin}
+            user={user}
+            onRequireAuth={onRequireAuth}
+            onUserUpdated={onUserUpdated}
           />
         ) : (
           <>
