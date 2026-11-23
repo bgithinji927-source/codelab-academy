@@ -59,6 +59,7 @@ import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
+import cloudProviderSelectionMarkdown from "./cloudProviderSelectionLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1595,6 +1596,14 @@ const cloudRegionsZonesCostAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cloud-foundations-providers-03-regions-zones-and-cost",
   "A complete, four-part Cloud Engineering lesson on regions, availability zones, resilience, provider selection, cloud pricing, cost management, and deployment design.",
   { 1: "B", 2: "C", 3: "A", 4: "B", 5: "B", 6: "B", 7: "B", 8: "D" }
+);
+const cloudProviderSelectionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudProviderSelectionMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "cloud-foundations-providers-04-choosing-a-provider",
+  "A complete, four-part Cloud Engineering lesson on selecting AWS, Azure, or Google Cloud using requirements, cost, security, ecosystems, operations, proof of concepts, and decision matrices.",
+  { 1: "B", 2: "C", 3: "A", 4: "B", 5: "B", 6: "C", 7: "B", 8: "B" }
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4023,6 +4032,17 @@ for (const lesson of lessons["cloud-foundations-providers"] || []) {
     lesson.description = "Learn how cloud regions, availability zones, resilience, provider selection, pricing, and cost controls shape practical deployments.";
     lesson.level = "Beginner";
     lesson.delivery = cloudRegionsZonesCostAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the fourth Cloud Foundations placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-foundations-providers"] || []) {
+  if (lesson.id === "cloud-foundations-providers-04-choosing-a-provider") {
+    lesson.title = "Cloud Foundations: Choosing a Cloud Provider (AWS / Azure / GCP)";
+    lesson.description = "Learn how to select a cloud provider using application requirements, cost, security, operations, ecosystems, and evidence-based comparison.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudProviderSelectionAuthoredDelivery;
     break;
   }
 }
