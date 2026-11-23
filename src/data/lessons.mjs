@@ -57,6 +57,7 @@ import gameEngineStateMemoryMarkdown from "./gameEngineStateMemoryLessonContent.
 import gameEngineInterfacesMarkdown from "./gameEngineInterfacesLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
+import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1577,6 +1578,14 @@ const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cloud-foundations-providers-01-cloud-service-models",
   "A complete, four-part Cloud Engineering lesson on cloud service models, shared responsibility, AWS/Azure/GCP provider choices, practical labs, and a Kai assessment.",
   { 1: "B", 2: "A", 3: "C", 4: "B", 5: "A", 6: "B" }
+);
+const cloudSharedResponsibilityAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudSharedResponsibilityMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "cloud-foundations-providers-02-shared-responsibility",
+  "A complete, four-part Cloud Engineering lesson on shared responsibility, provider controls, customer-side guardrails, read-only audits, and a Kai assessment.",
+  { 1: "B", 2: "B", 3: "B", 4: "B", 5: "B", 6: "B" }
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -3983,6 +3992,17 @@ for (const lesson of lessons["cloud-foundations-providers"] || []) {
     lesson.description = "Learn cloud service models, shared responsibility, provider selection, practical labs, and cost-aware architecture decisions.";
     lesson.level = "Beginner";
     lesson.delivery = cloudFoundationsProvidersAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the second Cloud Foundations placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-foundations-providers"] || []) {
+  if (lesson.id === "cloud-foundations-providers-02-shared-responsibility") {
+    lesson.title = "Cloud Foundations: Shared Responsibility (AWS / Azure / GCP)";
+    lesson.description = "Learn how provider and customer duties split across cloud service models, managed services, identity, configuration, and compliance.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudSharedResponsibilityAuthoredDelivery;
     break;
   }
 }
