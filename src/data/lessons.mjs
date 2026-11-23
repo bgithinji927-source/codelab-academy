@@ -58,6 +58,7 @@ import gameEngineInterfacesMarkdown from "./gameEngineInterfacesLessonContent.mj
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
+import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1586,6 +1587,14 @@ const cloudSharedResponsibilityAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cloud-foundations-providers-02-shared-responsibility",
   "A complete, four-part Cloud Engineering lesson on shared responsibility, provider controls, customer-side guardrails, read-only audits, and a Kai assessment.",
   { 1: "B", 2: "B", 3: "B", 4: "B", 5: "B", 6: "B" }
+);
+const cloudRegionsZonesCostAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudRegionsZonesCostMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "cloud-foundations-providers-03-regions-zones-and-cost",
+  "A complete, four-part Cloud Engineering lesson on regions, availability zones, resilience, provider selection, cloud pricing, cost management, and deployment design.",
+  { 1: "B", 2: "C", 3: "A", 4: "B", 5: "B", 6: "B", 7: "B", 8: "D" }
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4003,6 +4012,17 @@ for (const lesson of lessons["cloud-foundations-providers"] || []) {
     lesson.description = "Learn how provider and customer duties split across cloud service models, managed services, identity, configuration, and compliance.";
     lesson.level = "Beginner";
     lesson.delivery = cloudSharedResponsibilityAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the third Cloud Foundations placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-foundations-providers"] || []) {
+  if (lesson.id === "cloud-foundations-providers-03-regions-zones-and-cost") {
+    lesson.title = "Cloud Foundations: Regions, Zones, and Cost (AWS / Azure / GCP)";
+    lesson.description = "Learn how cloud regions, availability zones, resilience, provider selection, pricing, and cost controls shape practical deployments.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudRegionsZonesCostAuthoredDelivery;
     break;
   }
 }
