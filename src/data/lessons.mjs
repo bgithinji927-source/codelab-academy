@@ -60,6 +60,7 @@ import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLesson
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
 import cloudProviderSelectionMarkdown from "./cloudProviderSelectionLessonContent.mjs";
+import cloudFoundationsCompositionMarkdown from "./cloudFoundationsCompositionLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1604,6 +1605,14 @@ const cloudProviderSelectionAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cloud-foundations-providers-04-choosing-a-provider",
   "A complete, four-part Cloud Engineering lesson on selecting AWS, Azure, or Google Cloud using requirements, cost, security, ecosystems, operations, proof of concepts, and decision matrices.",
   { 1: "B", 2: "C", 3: "A", 4: "B", 5: "B", 6: "C", 7: "B", 8: "B" }
+);
+const cloudFoundationsCompositionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudFoundationsCompositionMarkdown
+    .replace(/^# PART 4 OF 4\s*—\s*LESSON COMPLETE\s*$/im, "## LESSON COMPLETE")
+    .replace(/^\*\*Part 4 of 4\s*—\s*Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "cloud-foundations-providers-mastery-01-intermediate-patterns-and-composition",
+  "A complete, four-part intermediate Cloud Engineering lesson on composing services, APIs, queues, events, caching, serverless systems, infrastructure as code, secrets, observability, and failure-aware architecture.",
+  {}
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4043,6 +4052,17 @@ for (const lesson of lessons["cloud-foundations-providers"] || []) {
     lesson.description = "Learn how to select a cloud provider using application requirements, cost, security, operations, ecosystems, and evidence-based comparison.";
     lesson.level = "Beginner";
     lesson.delivery = cloudProviderSelectionAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching Cloud Foundations mastery placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-foundations-providers"] || []) {
+  if (lesson.id === "cloud-foundations-providers-mastery-01-intermediate-patterns-and-composition") {
+    lesson.title = "Cloud Foundations Providers: Intermediate Patterns and Composition";
+    lesson.description = "Compose reliable cloud systems with service boundaries, gateways, queues, caching, IaC, secrets, observability, and failure-aware patterns.";
+    lesson.level = "Intermediate";
+    lesson.delivery = cloudFoundationsCompositionAuthoredDelivery;
     break;
   }
 }
