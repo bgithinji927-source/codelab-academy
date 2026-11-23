@@ -56,6 +56,7 @@ import gameEngineAlgorithmsMarkdown from "./gameEngineAlgorithmsLessonContent.mj
 import gameEngineStateMemoryMarkdown from "./gameEngineStateMemoryLessonContent.mjs";
 import gameEngineInterfacesMarkdown from "./gameEngineInterfacesLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
+import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1568,6 +1569,15 @@ function makeAuthoredMarkdownDelivery(markdown, lessonId, intro, quizAnswers = {
     }),
   };
 }
+
+const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudFoundationsProvidersMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "cloud-foundations-providers-01-cloud-service-models",
+  "A complete, four-part Cloud Engineering lesson on cloud service models, shared responsibility, AWS/Azure/GCP provider choices, practical labs, and a Kai assessment.",
+  { 1: "B", 2: "A", 3: "C", 4: "B", 5: "A", 6: "B" }
+);
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
   javascriptIntroductionMarkdown,
@@ -3963,6 +3973,17 @@ lessons.python = uniquePythonLessons;
 for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
   if (lesson.id === "cybersecurity-fundamentals-01-security-goals-and-the-cia-triad") {
     lesson.delivery = cybersecurityCiaTriadDelivery;
+  }
+}
+
+// Replace the first Cloud Foundations placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-foundations-providers"] || []) {
+  if (lesson.id === "cloud-foundations-providers-01-cloud-service-models") {
+    lesson.title = "Cloud Foundations: Service Models and Provider Choices (AWS / Azure / GCP)";
+    lesson.description = "Learn cloud service models, shared responsibility, provider selection, practical labs, and cost-aware architecture decisions.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudFoundationsProvidersAuthoredDelivery;
+    break;
   }
 }
 
