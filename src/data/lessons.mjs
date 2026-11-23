@@ -61,6 +61,7 @@ import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLesson
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
 import cloudProviderSelectionMarkdown from "./cloudProviderSelectionLessonContent.mjs";
 import cloudFoundationsCompositionMarkdown from "./cloudFoundationsCompositionLessonContent.mjs";
+import linuxShellFilesystemMarkdown from "./linuxShellFilesystemLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1613,6 +1614,13 @@ const cloudFoundationsCompositionAuthoredDelivery = makeAuthoredMarkdownDelivery
   "cloud-foundations-providers-mastery-01-intermediate-patterns-and-composition",
   "A complete, four-part intermediate Cloud Engineering lesson on composing services, APIs, queues, events, caching, serverless systems, infrastructure as code, secrets, observability, and failure-aware architecture.",
   {}
+);
+const linuxShellFilesystemAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  linuxShellFilesystemMarkdown
+    .replace(/^\*\*Part 4 of 4\s*—\s*Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "cloud-linux-operations-01-shell-and-filesystem-navigation",
+  "A complete, four-part Linux for Cloud Operators lesson on shells, terminals, filesystem navigation, file operations, disk inspection, troubleshooting, and cloud server preparation.",
+  { 1: "B", 2: "B", 3: "C", 4: "A", 5: "C", 6: "B", 7: "B", 8: "A" }
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4063,6 +4071,17 @@ for (const lesson of lessons["cloud-foundations-providers"] || []) {
     lesson.description = "Compose reliable cloud systems with service boundaries, gateways, queues, caching, IaC, secrets, observability, and failure-aware patterns.";
     lesson.level = "Intermediate";
     lesson.delivery = cloudFoundationsCompositionAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching Linux for Cloud Operators placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-linux-operations"] || []) {
+  if (lesson.id === "cloud-linux-operations-01-shell-and-filesystem-navigation") {
+    lesson.title = "Linux for Cloud Operators: Shell and Filesystem Navigation";
+    lesson.description = "Learn Linux shells, terminals, filesystem paths, file operations, disk inspection, troubleshooting, and safe cloud server preparation.";
+    lesson.level = "Beginner";
+    lesson.delivery = linuxShellFilesystemAuthoredDelivery;
     break;
   }
 }
