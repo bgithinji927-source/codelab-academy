@@ -62,6 +62,7 @@ import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.
 import cloudProviderSelectionMarkdown from "./cloudProviderSelectionLessonContent.mjs";
 import cloudFoundationsCompositionMarkdown from "./cloudFoundationsCompositionLessonContent.mjs";
 import linuxShellFilesystemMarkdown from "./linuxShellFilesystemLessonContent.mjs";
+import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1621,6 +1622,13 @@ const linuxShellFilesystemAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cloud-linux-operations-01-shell-and-filesystem-navigation",
   "A complete, four-part Linux for Cloud Operators lesson on shells, terminals, filesystem navigation, file operations, disk inspection, troubleshooting, and cloud server preparation.",
   { 1: "B", 2: "B", 3: "C", 4: "A", 5: "C", 6: "B", 7: "B", 8: "A" }
+);
+const linuxProcessesServicesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  linuxProcessesServicesMarkdown
+    .replace(/^\*\*Part 4 of 4\s*—\s*Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "cloud-linux-operations-02-processes-and-services",
+  "A complete, four-part Linux for Cloud Operators lesson on processes, PIDs, signals, systemd services, resource monitoring, service logs, deployment, and troubleshooting.",
+  { 1: "B", 2: "C", 3: "B", 4: "A", 5: "A", 6: "C", 7: "B", 8: "A", 9: "A", 10: "B" }
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4082,6 +4090,17 @@ for (const lesson of lessons["cloud-linux-operations"] || []) {
     lesson.description = "Learn Linux shells, terminals, filesystem paths, file operations, disk inspection, troubleshooting, and safe cloud server preparation.";
     lesson.level = "Beginner";
     lesson.delivery = linuxShellFilesystemAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching Linux for Cloud Operators processes placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-linux-operations"] || []) {
+  if (lesson.id === "cloud-linux-operations-02-processes-and-services") {
+    lesson.title = "Linux for Cloud Operators: Processes and Services";
+    lesson.description = "Learn to inspect Linux processes, manage signals and systemd services, monitor resources, deploy a Node.js service, and troubleshoot failures.";
+    lesson.level = "Beginner";
+    lesson.delivery = linuxProcessesServicesAuthoredDelivery;
     break;
   }
 }
