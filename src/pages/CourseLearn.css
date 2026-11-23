@@ -4556,3 +4556,60 @@ html #root .learn-page.kai-light-mode.kai-firebox-mode .kai-rich-copyable .kai-t
     margin-left: auto;
   }
 }
+
+
+/* Final reference treatment for every lesson table, regardless of lesson theme. */
+html .learn-page .kai-rich-table-wrap table,
+html .learn-page .kai-markdown-table {
+  width: 100% !important;
+  min-width: 520px !important;
+  border: 1px solid #3b4652 !important;
+  border-collapse: collapse !important;
+  background: #151a20 !important;
+  color: #f1f5f9 !important;
+}
+html .learn-page .kai-rich-table-wrap th,
+html .learn-page .kai-rich-table-wrap td,
+html .learn-page .kai-markdown-table th,
+html .learn-page .kai-markdown-table td {
+  padding: .68rem .8rem !important;
+  border: 1px solid #3b4652 !important;
+  text-align: left !important;
+  vertical-align: top !important;
+  line-height: 1.45 !important;
+  background: #151a20 !important;
+  color: #f1f5f9 !important;
+}
+html .learn-page .kai-rich-table-wrap th,
+html .learn-page .kai-markdown-table th {
+  color: #f8fafc !important;
+  font-size: .9rem !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+html .learn-page .kai-rich-table-wrap td:first-child,
+html .learn-page .kai-markdown-table td:first-child {
+  color: #f8fafc !important;
+  font-weight: 750 !important;
+}
+html .learn-page .kai-rich-table-wrap tbody tr,
+html .learn-page .kai-rich-table-wrap tbody tr:nth-child(even),
+html .learn-page .kai-rich-table-wrap tbody tr:nth-child(odd),
+html .learn-page .kai-markdown-table tbody tr,
+html .learn-page .kai-markdown-table tbody tr:nth-child(even) {
+  background: #151a20 !important;
+}
+html .learn-page .kai-rich-table-wrap td span,
+html .learn-page .kai-rich-table-wrap td code,
+html .learn-page .kai-markdown-table td span,
+html .learn-page .kai-markdown-table td code {
+  color: inherit !important;
+}
+@media (max-width: 700px) {
+  html .learn-page .kai-rich-table-wrap th,
+  html .learn-page .kai-rich-table-wrap td,
+  html .learn-page .kai-markdown-table th,
+  html .learn-page .kai-markdown-table td { padding: .58rem .65rem !important; }
+}

@@ -434,3 +434,48 @@
 .learn-page.kai-light-mode .kai-rich-code-header > span {
   color: #334155;
 }
+
+
+/* Reference lesson tables: compact dark grid with a strong terminology column. */
+.kai-rich-table-wrap table {
+  width: 100%;
+  min-width: 520px;
+  border: 1px solid #3b4652;
+  border-collapse: collapse;
+  background: #151a20;
+  color: #f1f5f9;
+}
+.kai-rich-table-wrap th,
+.kai-rich-table-wrap td {
+  padding: .68rem .8rem;
+  border: 1px solid #3b4652;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.45;
+}
+.kai-rich-table-wrap th {
+  background: #151a20;
+  color: #f8fafc;
+  font-size: .9rem;
+  font-weight: 800;
+  text-align: center;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.kai-rich-table-wrap td:first-child {
+  color: #f8fafc;
+  font-weight: 750;
+}
+.kai-rich-table-wrap tbody tr,
+.kai-rich-table-wrap tbody tr:nth-child(even),
+.kai-rich-table-wrap tbody tr:nth-child(odd) {
+  background: #151a20;
+}
+.kai-rich-table-wrap td span,
+.kai-rich-table-wrap td code {
+  color: inherit;
+}
+@media (max-width: 700px) {
+  .kai-rich-table-wrap th,
+  .kai-rich-table-wrap td { padding: .58rem .65rem; }
+}
