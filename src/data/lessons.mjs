@@ -64,6 +64,7 @@ import cloudFoundationsCompositionMarkdown from "./cloudFoundationsCompositionLe
 import cloudNetworkingVpcsSubnetsMarkdown from "./cloudNetworkingVpcsSubnetsLessonContent.mjs";
 import cloudNetworkingRoutesGatewaysMarkdown from "./cloudNetworkingRoutesGatewaysLessonContent.mjs";
 import cloudNetworkingSecurityGroupsFirewallsMarkdown from "./cloudNetworkingSecurityGroupsFirewallsLessonContent.mjs";
+import cloudNetworkingPrivateServiceConnectivityMarkdown from "./cloudNetworkingPrivateServiceConnectivityLessonContent.mjs";
 import linuxShellFilesystemMarkdown from "./linuxShellFilesystemLessonContent.mjs";
 import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonContent.mjs";
 import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.mjs";
@@ -1643,6 +1644,13 @@ const cloudNetworkingSecurityGroupsFirewallsAuthoredDelivery = makeAuthoredMarkd
   "cloud-networking-03-security-groups-and-firewalls",
   "A complete, four-part Cloud Networking lesson on firewalls, security groups, Network ACLs, UFW, stateful and stateless filtering, least privilege, troubleshooting, and secure cloud architecture.",
   { 1: "B", 2: "C", 3: "B", 4: "B", 5: "B", 6: "C", 7: "A", 8: "C" }
+);
+const cloudNetworkingPrivateServiceConnectivityAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudNetworkingPrivateServiceConnectivityMarkdown
+    .replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "cloud-networking-04-private-service-connectivity",
+  "A complete, four-part Cloud Networking lesson on private endpoints, interface and gateway connectivity, private DNS, service access controls, peering comparisons, troubleshooting, and resilient design.",
+  {}
 );
 const linuxShellFilesystemAuthoredDelivery = makeAuthoredMarkdownDelivery(
   linuxShellFilesystemMarkdown
@@ -4161,6 +4169,16 @@ for (const lesson of lessons["cloud-networking"] || []) {
     lesson.description = "Learn how security groups, Network ACLs, UFW, and layered firewall controls protect cloud applications and how to troubleshoot blocked traffic safely.";
     lesson.level = "Beginner";
     lesson.delivery = cloudNetworkingSecurityGroupsFirewallsAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Networking Private Service Connectivity placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-networking"] || []) {
+  if (lesson.id === "cloud-networking-04-private-service-connectivity") {
+    lesson.title = "Cloud Networking Fundamentals: Private Service Connectivity";
+    lesson.description = "Learn how private endpoints, interface and gateway connectivity, private DNS, service policies, and peering keep cloud service traffic off public paths.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudNetworkingPrivateServiceConnectivityAuthoredDelivery;
     break;
   }
 }
