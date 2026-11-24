@@ -72,6 +72,7 @@ import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.
 import linuxLogsIncidentTriageMarkdown from "./linuxLogsIncidentTriageLessonContent.mjs";
 import linuxCloudCompositionMarkdown from "./linuxCloudCompositionLessonContent.mjs";
 import cloudContainersContainerImagesMarkdown from "./cloudContainersContainerImagesLessonContent.mjs";
+import cloudContainersDockerfilesBuildsMarkdown from "./cloudContainersDockerfilesBuildsLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1705,6 +1706,12 @@ const cloudContainersContainerImagesAuthoredDelivery = makeAuthoredMarkdownDeliv
   "cloud-containers-01-container-images",
   "A complete, four-part Docker and Containers lesson on image fundamentals, Dockerfiles, build caching, image optimisation, registries, security, and hands-on practice.",
   {}
+);
+const cloudContainersDockerfilesBuildsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudContainersDockerfilesBuildsMarkdown,
+  "cloud-containers-02-dockerfiles-and-builds",
+  "A complete, four-part Docker and Containers lesson on Dockerfiles, image builds, layers, caching, multi-stage images, practical development, security, and assessment.",
+  { 1: "A", 2: "B", 3: "A", 4: "A", 5: "B", 6: "B", 7: "B", 8: "B", 9: "A", 10: "B", 11: "A", 12: "B" }
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4269,6 +4276,16 @@ for (const lesson of lessons["cloud-containers"] || []) {
     lesson.description = "Learn how container images, layers, Dockerfiles, build caching, registries, image security, and hands-on delivery practices support repeatable application packaging.";
     lesson.level = "Beginner";
     lesson.delivery = cloudContainersContainerImagesAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Containers placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-containers"] || []) {
+  if (lesson.id === "cloud-containers-02-dockerfiles-and-builds") {
+    lesson.title = "Docker and Containers: Dockerfiles and Builds";
+    lesson.description = "Learn to write Dockerfiles, build and optimize images, use build caching and multi-stage builds, run containers securely, and diagnose image and runtime failures.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudContainersDockerfilesBuildsAuthoredDelivery;
     break;
   }
 }
