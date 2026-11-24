@@ -57,6 +57,7 @@ import gameEngineStateMemoryMarkdown from "./gameEngineStateMemoryLessonContent.
 import gameEngineInterfacesMarkdown from "./gameEngineInterfacesLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 import cybersecurityFundamentalsThreatsVulnerabilitiesRiskMarkdown from "./cybersecurityFundamentalsThreatsVulnerabilitiesRiskLessonContent.mjs";
+import cybersecurityFundamentalsDefenseInDepthMarkdown from "./cybersecurityFundamentalsDefenseInDepthLessonContent.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
@@ -1593,6 +1594,12 @@ const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = make
   cybersecurityFundamentalsThreatsVulnerabilitiesRiskMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
   "cybersecurity-fundamentals-02-threats-vulnerabilities-and-risk",
   "A complete, four-part Cybersecurity Fundamentals lesson on the CIA triad, assets, threats, vulnerabilities, exploits, controls, attack surface, vulnerability management, risk analysis, threat modeling, frameworks, and incident response.",
+  {}
+);
+const cybersecurityFundamentalsDefenseInDepthAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cybersecurityFundamentalsDefenseInDepthMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "cybersecurity-fundamentals-03-defense-in-depth",
+  "A complete, four-part Cybersecurity Fundamentals lesson on defense in depth, independent security layers, practical controls, segmentation, identity, detection, recovery, threat modeling, testing, and continuous improvement.",
   {}
 );
 
@@ -4146,6 +4153,16 @@ for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
     lesson.description = "Learn to identify assets, threats, vulnerabilities, exploits, controls, and attack surfaces; assess and prioritize risk; apply security controls and threat modeling; and plan effective incident response.";
     lesson.level = "Beginner";
     lesson.delivery = cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cybersecurity Fundamentals placeholder with the supplied authored lesson.
+for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
+  if (lesson.id === "cybersecurity-fundamentals-03-defense-in-depth") {
+    lesson.title = "Cybersecurity Fundamentals: Defense in Depth";
+    lesson.description = "Learn how independent layers of physical, network, identity, host, application, data, monitoring, recovery, and process controls work together to prevent, detect, contain, and recover from attacks.";
+    lesson.level = "Beginner";
+    lesson.delivery = cybersecurityFundamentalsDefenseInDepthAuthoredDelivery;
     break;
   }
 }
