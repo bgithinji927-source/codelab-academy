@@ -63,6 +63,7 @@ import cybersecurityFundamentalsIntermediatePatternsCompositionMarkdown from "./
 import networkingForCybersecurityIntroductionMarkdown from "./networkingForCybersecurityIntroductionLessonContent.mjs";
 import networkingForCybersecurityNetworkTypesMarkdown from "./networkingForCybersecurityNetworkTypesLessonContent.mjs";
 import networkingForCybersecurityTopologiesMarkdown from "./networkingForCybersecurityTopologiesLessonContent.mjs";
+import networkingForCybersecurityOsIModelMarkdown from "./networkingForCybersecurityOsIModelLessonContent.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
@@ -1636,6 +1637,12 @@ const networkingForCybersecurityTopologiesAuthoredDelivery = makeAuthoredMarkdow
   networkingForCybersecurityTopologiesMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
   "networking-for-cybersecurity-03-firewalls-and-segmentation",
   "A complete, four-part Networking for Cybersecurity lesson on physical and logical topologies, network architectures, redundancy, choke points, segmentation, DMZs, zero trust, cloud designs, and secure network-device configuration.",
+  {}
+);
+const networkingForCybersecurityOsIModelAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  networkingForCybersecurityOsIModelMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "networking-for-cybersecurity-04-packet-analysis-fundamentals",
+  "A complete, four-part Networking for Cybersecurity lesson on the seven-layer OSI model, encapsulation, TCP/IP comparison, layer-specific attacks and defences, troubleshooting, practical network analysis, and self-check tasks.",
   {}
 );
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4257,6 +4264,16 @@ for (const lesson of lessons["networking-for-cybersecurity"] || []) {
     lesson.description = "Learn physical and logical topologies, network architectures, redundancy, choke points, segmentation, DMZs, zero trust, cloud designs, and secure network-device configuration.";
     lesson.level = "Beginner";
     lesson.delivery = networkingForCybersecurityTopologiesAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Networking for Cybersecurity OSI placeholder with the supplied authored lesson.
+for (const lesson of lessons["networking-for-cybersecurity"] || []) {
+  if (lesson.id === "networking-for-cybersecurity-04-packet-analysis-fundamentals") {
+    lesson.title = "Networking for Cybersecurity: OSI Model: Understanding the 7 Layers";
+    lesson.description = "Understand the seven OSI layers, encapsulation, TCP/IP comparison, layer-specific attacks and defences, systematic troubleshooting, and practical network-security analysis.";
+    lesson.level = "Beginner";
+    lesson.delivery = networkingForCybersecurityOsIModelAuthoredDelivery;
     break;
   }
 }
