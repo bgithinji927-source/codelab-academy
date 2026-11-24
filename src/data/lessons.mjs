@@ -59,6 +59,7 @@ import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 import cybersecurityFundamentalsThreatsVulnerabilitiesRiskMarkdown from "./cybersecurityFundamentalsThreatsVulnerabilitiesRiskLessonContent.mjs";
 import cybersecurityFundamentalsDefenseInDepthMarkdown from "./cybersecurityFundamentalsDefenseInDepthLessonContent.mjs";
 import cybersecurityFundamentalsSecureHabitsCultureMarkdown from "./cybersecurityFundamentalsSecureHabitsCultureLessonContent.mjs";
+import cybersecurityFundamentalsIntermediatePatternsCompositionMarkdown from "./cybersecurityFundamentalsIntermediatePatternsCompositionLessonContent.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
@@ -1608,6 +1609,12 @@ const cybersecurityFundamentalsSecureHabitsCultureAuthoredDelivery = makeAuthore
   cybersecurityFundamentalsSecureHabitsCultureMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
   "cybersecurity-fundamentals-04-secure-habits-and-culture",
   "A complete, four-part Cybersecurity Fundamentals lesson on the human layer, secure habits, social engineering, password and device safety, reporting, just culture, leadership, training, security culture metrics, and a practical 90-day plan.",
+  {}
+);
+const cybersecurityFundamentalsIntermediatePatternsCompositionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cybersecurityFundamentalsIntermediatePatternsCompositionMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "cybersecurity-fundamentals-mastery-01-intermediate-patterns-and-composition",
+  "A complete, four-part Cybersecurity Fundamentals lesson on composing identity, authorisation, network, data, secrets, supply-chain, detection, recovery, and governance controls into secure systems.",
   {}
 );
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4189,6 +4196,16 @@ for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
     lesson.description = "Learn how secure habits and a healthy security culture reduce social engineering, password, device, data-sharing, reporting, and human-process risks through usable defaults, just culture, training, and measurable improvement.";
     lesson.level = "Beginner";
     lesson.delivery = cybersecurityFundamentalsSecureHabitsCultureAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cybersecurity Fundamentals mastery placeholder with the supplied authored lesson.
+for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
+  if (lesson.id === "cybersecurity-fundamentals-mastery-01-intermediate-patterns-and-composition") {
+    lesson.title = "Cybersecurity Fundamentals: Intermediate Patterns and Composition";
+    lesson.description = "Compose identity, authorisation, network, data, secrets, supply-chain, detection, recovery, and governance controls into secure systems, then threat model, test, monitor, and improve the whole design.";
+    lesson.level = "Beginner";
+    lesson.delivery = cybersecurityFundamentalsIntermediatePatternsCompositionAuthoredDelivery;
     break;
   }
 }
