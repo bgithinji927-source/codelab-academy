@@ -65,6 +65,7 @@ import linuxShellFilesystemMarkdown from "./linuxShellFilesystemLessonContent.mj
 import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonContent.mjs";
 import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.mjs";
 import linuxLogsIncidentTriageMarkdown from "./linuxLogsIncidentTriageLessonContent.mjs";
+import linuxCloudCompositionMarkdown from "./linuxCloudCompositionLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1646,6 +1647,14 @@ const linuxLogsIncidentTriageAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cloud-linux-operations-04-logs-and-incident-triage",
   "A complete, four-part Linux for Cloud Operators lesson on logs, journalctl, filtering, log rotation, incident triage, system health, service failures, disk pressure, authentication events, and safe recovery.",
   { 1: "B", 2: "C", 3: "A", 4: "B", 5: "C", 6: "A", 7: "B", 8: "B", 9: "A", 10: "B" }
+);
+const linuxCloudCompositionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  linuxCloudCompositionMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^\*\*Part 4 of 4\s*—\s*Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "cloud-linux-operations-mastery-01-intermediate-patterns-and-composition",
+  "A complete, four-part Cloud Linux Operations lesson on composing users, services, configuration, networking, automation, monitoring, health checks, and production operations.",
+  { 1: "B", 2: "C", 3: "B", 4: "A", 5: "B", 6: "B", 7: "A", 8: "A", 9: "B", 10: "A" }
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4139,6 +4148,16 @@ for (const lesson of lessons["cloud-linux-operations"] || []) {
     lesson.description = "Learn to read and filter Linux logs, investigate service failures, assess server health, triage incidents, and document safe recovery actions.";
     lesson.level = "Beginner";
     lesson.delivery = linuxLogsIncidentTriageAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Linux Operations mastery placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-linux-operations"] || []) {
+  if (lesson.id === "cloud-linux-operations-mastery-01-intermediate-patterns-and-composition") {
+    lesson.title = "Cloud Linux Operations: Intermediate Patterns and Composition";
+    lesson.description = "Compose complete Linux application environments with systemd, configuration, least privilege, reverse proxies, automation, monitoring, health checks, and safe operations.";
+    lesson.level = "Intermediate";
+    lesson.delivery = linuxCloudCompositionAuthoredDelivery;
     break;
   }
 }
