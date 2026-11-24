@@ -4146,6 +4146,15 @@ for (const lesson of lessons.python) {
 }
 lessons.python = uniquePythonLessons;
 
+const networkingCybersecurityBeginnerTitles = ["Introduction to Computer Networking", "Types of Computer Networks: LAN, WAN, MAN and PAN", "Network Topologies and Architectures", "OSI Model: Understanding the 7 Layers", "TCP/IP Model and Network Communication", "Networking Devices: Routers, Switches, Hubs and Access Points", "Introduction to IPv4 and IPv6 Addressing", "Subnetting and CIDR Notation", "Public IP vs Private IP Addresses", "MAC Addresses and ARP Protocol", "TCP vs UDP: Understanding Transport Protocols", "Essential Network Protocols: HTTP, HTTPS, FTP, SSH and Telnet", "DNS: Domain Name System Fundamentals", "DHCP: Dynamic Host Configuration Protocol", "NAT and Port Address Translation", "Routing Fundamentals and Routing Tables", "Switching, VLANs and Network Segmentation", "Wireless Networking: Wi-Fi Standards and Security", "Introduction to Network Security", "Common Network Attacks and Threats", "Firewalls: Types, Rules and Configuration", "VPNs, Tunneling and Secure Remote Access", "Network Access Control and Authentication", "Network Segmentation and Zero Trust Architecture", "Introduction to Network Reconnaissance", "Network Scanning with Nmap", "Packet Analysis with Wireshark", "Network Traffic Monitoring and Analysis", "Port Scanning and Service Enumeration", "Detecting Network Vulnerabilities and Misconfigurations", "Intrusion Detection and Prevention Systems (IDS/IPS)", "Network Security Monitoring and Log Analysis", "Secure Network Configuration and Hardening", "Detecting and Responding to Network-Based Attacks", "Network Forensics and Incident Investigation", "Practical Network Security Assessment: Final Project"];
+// Apply the requested beginner-level Networking for Cybersecurity catalog in place.
+// Preserve every existing lesson ID, position, URL, progress key, and delivery.
+for (const [index, title] of networkingCybersecurityBeginnerTitles.entries()) {
+  const lesson = lessons["networking-for-cybersecurity"]?.[index];
+  if (!lesson) continue;
+  lesson.title = `Networking for Cybersecurity: ${title}`;
+  lesson.level = "Beginner";
+}
 // Use the fully authored CIA Triad lesson for the Cybersecurity Fundamentals entry.
 for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
   if (lesson.id === "cybersecurity-fundamentals-01-security-goals-and-the-cia-triad") {
