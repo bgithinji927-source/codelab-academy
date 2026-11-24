@@ -83,6 +83,7 @@ import linuxCloudCompositionMarkdown from "./linuxCloudCompositionLessonContent.
 import linuxSecurityIntroductionMarkdown from "./linuxSecurityIntroductionLessonContent.mjs";
 import linuxSecurityArchitectureComponentsMarkdown from "./linuxSecurityArchitectureComponentsLessonContent.mjs";
 import linuxSecurityDistributionsCybersecurityMarkdown from "./linuxSecurityDistributionsCybersecurityLessonContent.mjs";
+import linuxSecurityUsersGroupsAuthenticationMarkdown from "./linuxSecurityUsersGroupsAuthenticationLessonContent.mjs";
 import cloudContainersContainerImagesMarkdown from "./cloudContainersContainerImagesLessonContent.mjs";
 import cloudContainersDockerfilesBuildsMarkdown from "./cloudContainersDockerfilesBuildsLessonContent.mjs";
 import cloudContainersVolumesNetworkingMarkdown from "./cloudContainersVolumesNetworkingLessonContent.mjs";
@@ -1673,6 +1674,12 @@ const linuxSecurityDistributionsCybersecurityAuthoredDelivery = makeAuthoredMark
   linuxSecurityDistributionsCybersecurityMarkdown.replace(/^# PART 4 OF 4\s*—\s*LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
   "linux-security-03-updates-and-system-hardening",
   "A complete, four-part Linux Security lesson on Linux distributions, distribution families, Kali, Parrot, BlackArch, Ubuntu, Debian, RHEL, package management, Nmap, Wireshark, virtual machines, authorised cybersecurity laboratories, environment selection, and a practical two-machine lab project.",
+  {}
+);
+const linuxSecurityUsersGroupsAuthenticationAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  linuxSecurityUsersGroupsAuthenticationMarkdown.replace(/^# PART 4 OF 4\s*—\s*LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "linux-security-04-logs-and-linux-auditing",
+  "A complete, four-part Linux Security lesson on users, groups, UIDs, GIDs, local account files, permissions, authentication, authorization, PAM, NSS, passwords, SSH keys, MFA, sudo, account auditing, troubleshooting, and a practical application-server security project.",
   {}
 );
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4292,6 +4299,16 @@ for (const lesson of lessons["linux-security"] || []) {
     lesson.description = "Learn how Linux distributions and families differ, compare Kali, Parrot, BlackArch, Ubuntu, Debian, and RHEL, manage packages, use authorised security tools, choose lab environments, and build a controlled cybersecurity laboratory.";
     lesson.level = "Beginner";
     lesson.delivery = linuxSecurityDistributionsCybersecurityAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Linux Security users, groups, and authentication placeholder with the supplied authored lesson.
+for (const lesson of lessons["linux-security"] || []) {
+  if (lesson.id === "linux-security-04-logs-and-linux-auditing") {
+    lesson.title = "Linux Users, Groups and Authentication";
+    lesson.description = "Learn how Linux identities, groups, UIDs, GIDs, account databases, permissions, authentication, authorization, PAM, NSS, passwords, SSH keys, MFA, sudo, auditing, and troubleshooting work together to secure application servers.";
+    lesson.level = "Beginner";
+    lesson.delivery = linuxSecurityUsersGroupsAuthenticationAuthoredDelivery;
     break;
   }
 }
