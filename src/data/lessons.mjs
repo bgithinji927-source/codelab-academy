@@ -61,6 +61,7 @@ import cybersecurityFundamentalsDefenseInDepthMarkdown from "./cybersecurityFund
 import cybersecurityFundamentalsSecureHabitsCultureMarkdown from "./cybersecurityFundamentalsSecureHabitsCultureLessonContent.mjs";
 import cybersecurityFundamentalsIntermediatePatternsCompositionMarkdown from "./cybersecurityFundamentalsIntermediatePatternsCompositionLessonContent.mjs";
 import networkingForCybersecurityIntroductionMarkdown from "./networkingForCybersecurityIntroductionLessonContent.mjs";
+import networkingForCybersecurityNetworkTypesMarkdown from "./networkingForCybersecurityNetworkTypesLessonContent.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
@@ -1622,6 +1623,12 @@ const networkingForCybersecurityIntroductionAuthoredDelivery = makeAuthoredMarkd
   networkingForCybersecurityIntroductionMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
   "networking-for-cybersecurity-01-tcp-ip-and-network-layers",
   "A complete, four-part Networking for Cybersecurity lesson on networks, devices, topologies, OSI and TCP/IP models, addressing, subnetting, protocols, core services, tools, wireless security, segmentation, and network-defence fundamentals.",
+  {}
+);
+const networkingForCybersecurityNetworkTypesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  networkingForCybersecurityNetworkTypesMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "networking-for-cybersecurity-02-dns-http-and-tls-traffic",
+  "A complete, four-part Networking for Cybersecurity lesson on PAN, LAN, MAN, WAN, related network types, ownership and trust, wired and wireless networks, VPNs, segmentation, design trade-offs, and network security controls.",
   {}
 );
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4223,6 +4230,16 @@ for (const lesson of lessons["networking-for-cybersecurity"] || []) {
     lesson.description = "Learn how networks connect devices, how packets move through layers and devices, and how addressing, protocols, core services, wireless, segmentation, and basic security controls fit together.";
     lesson.level = "Beginner";
     lesson.delivery = networkingForCybersecurityIntroductionAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Networking for Cybersecurity placeholder with the supplied authored lesson.
+for (const lesson of lessons["networking-for-cybersecurity"] || []) {
+  if (lesson.id === "networking-for-cybersecurity-02-dns-http-and-tls-traffic") {
+    lesson.title = "Networking for Cybersecurity: Types of Computer Networks: LAN, WAN, MAN and PAN";
+    lesson.description = "Learn how PANs, LANs, MANs, WANs, WLANs, intranets, extranets, VPNs, and cloud networks differ in scale, ownership, trust, performance, design, and security requirements.";
+    lesson.level = "Beginner";
+    lesson.delivery = networkingForCybersecurityNetworkTypesAuthoredDelivery;
     break;
   }
 }
