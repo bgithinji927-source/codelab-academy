@@ -71,6 +71,7 @@ import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonConten
 import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.mjs";
 import linuxLogsIncidentTriageMarkdown from "./linuxLogsIncidentTriageLessonContent.mjs";
 import linuxCloudCompositionMarkdown from "./linuxCloudCompositionLessonContent.mjs";
+import cloudContainersContainerImagesMarkdown from "./cloudContainersContainerImagesLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1697,6 +1698,13 @@ const linuxCloudCompositionAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cloud-linux-operations-mastery-01-intermediate-patterns-and-composition",
   "A complete, four-part Cloud Linux Operations lesson on composing users, services, configuration, networking, automation, monitoring, health checks, and production operations.",
   { 1: "B", 2: "C", 3: "B", 4: "A", 5: "B", 6: "B", 7: "A", 8: "A", 9: "B", 10: "A" }
+);
+
+const cloudContainersContainerImagesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudContainersContainerImagesMarkdown,
+  "cloud-containers-01-container-images",
+  "A complete, four-part Docker and Containers lesson on image fundamentals, Dockerfiles, build caching, image optimisation, registries, security, and hands-on practice.",
+  {}
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4251,6 +4259,16 @@ for (const lesson of lessons["cloud-linux-operations"] || []) {
     lesson.description = "Compose complete Linux application environments with systemd, configuration, least privilege, reverse proxies, automation, monitoring, health checks, and safe operations.";
     lesson.level = "Intermediate";
     lesson.delivery = linuxCloudCompositionAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Containers placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-containers"] || []) {
+  if (lesson.id === "cloud-containers-01-container-images") {
+    lesson.title = "Docker and Containers: Container Images";
+    lesson.description = "Learn how container images, layers, Dockerfiles, build caching, registries, image security, and hands-on delivery practices support repeatable application packaging.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudContainersContainerImagesAuthoredDelivery;
     break;
   }
 }
