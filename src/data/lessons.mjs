@@ -61,6 +61,7 @@ import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLesson
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
 import cloudProviderSelectionMarkdown from "./cloudProviderSelectionLessonContent.mjs";
 import cloudFoundationsCompositionMarkdown from "./cloudFoundationsCompositionLessonContent.mjs";
+import cloudNetworkingVpcsSubnetsMarkdown from "./cloudNetworkingVpcsSubnetsLessonContent.mjs";
 import linuxShellFilesystemMarkdown from "./linuxShellFilesystemLessonContent.mjs";
 import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonContent.mjs";
 import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.mjs";
@@ -1618,6 +1619,13 @@ const cloudFoundationsCompositionAuthoredDelivery = makeAuthoredMarkdownDelivery
   "cloud-foundations-providers-mastery-01-intermediate-patterns-and-composition",
   "A complete, four-part intermediate Cloud Engineering lesson on composing services, APIs, queues, events, caching, serverless systems, infrastructure as code, secrets, observability, and failure-aware architecture.",
   {}
+);
+const cloudNetworkingVpcsSubnetsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudNetworkingVpcsSubnetsMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "cloud-networking-01-vpcs-and-subnets",
+  "A complete, four-part Cloud Networking lesson on VPCs, subnets, CIDR calculations, route tables, gateways, security boundaries, Linux connectivity tests, and resilient network design.",
+  { 1: "B", 2: "B", 3: "C", 4: "B", 5: "A", 6: "A", 7: "A", 8: "B", 9: "A", 10: "A" }
 );
 const linuxShellFilesystemAuthoredDelivery = makeAuthoredMarkdownDelivery(
   linuxShellFilesystemMarkdown
@@ -4105,6 +4113,17 @@ for (const lesson of lessons["cloud-foundations-providers"] || []) {
     lesson.description = "Compose reliable cloud systems with service boundaries, gateways, queues, caching, IaC, secrets, observability, and failure-aware patterns.";
     lesson.level = "Intermediate";
     lesson.delivery = cloudFoundationsCompositionAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching Cloud Networking VPCs and subnets placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-networking"] || []) {
+  if (lesson.id === "cloud-networking-01-vpcs-and-subnets") {
+    lesson.title = "Cloud Networking Fundamentals: VPCs and Subnets";
+    lesson.description = "Learn how to design VPCs, divide networks into subnets, calculate CIDR ranges, configure gateways and routes, control traffic, and troubleshoot cloud connectivity.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudNetworkingVpcsSubnetsAuthoredDelivery;
     break;
   }
 }
