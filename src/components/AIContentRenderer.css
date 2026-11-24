@@ -62,49 +62,29 @@
 .kai-rich-note-list .kai-rich-text { margin-bottom: .35rem; }
 .kai-rich-bullet-list { margin: .35rem 0 .75rem; padding-left: 1.35rem; }
 .kai-rich-bullet-list li { margin: .3rem 0; padding-left: .2rem; color: #e5e2f5; }
-/* Animated lesson bullets: preserve native list semantics while replacing the
-   default marker with a small, low-distraction motion cue. */
+/* Static lesson markers: stronger prose points use stars, short list points
+   use checkmarks, and nested points use triangles. */
 .kai-rich-bullet-list { list-style: none; }
 .kai-rich-bullet-list > li { position: relative; padding-left: .85rem; }
 .kai-rich-bullet-list > li::before {
-  content: "";
+  content: "✓";
   position: absolute;
-  top: .78em;
+  top: .06em;
   left: 0;
-  width: .42rem;
-  height: .42rem;
-  border: 2px solid #9f8cff;
-  border-radius: 50%;
-  background: rgba(159, 140, 255, .16);
-  box-sizing: border-box;
-  transform: translateY(0) scale(1);
-  animation: kai-lesson-bullet-drift 2.8s ease-in-out infinite;
+  color: #9f8cff;
+  font-weight: 900;
 }
-.kai-rich-bullet-list > li:nth-child(2n)::before { animation-delay: -1.4s; }
-.kai-rich-bullet-list > li:nth-child(3n)::before { animation-delay: -.8s; }
 .kai-rich-bullet-list ul { list-style: none; margin-top: .35rem; margin-bottom: .15rem; }
 .kai-rich-bullet-list ul > li::before {
-  width: .34rem;
-  height: .34rem;
-  border-width: 1px;
-  background: transparent;
-}
-@keyframes kai-lesson-bullet-drift {
-  0%, 100% { transform: translateY(0) scale(1); opacity: .78; }
-  50% { transform: translateY(-2px) scale(1.08); opacity: 1; }
+  content: "►";
+  top: .08em;
+  color: #b7afff;
+  font-size: .72em;
 }
 .learn-page.kai-light-mode .kai-rich-bullet-list > li::before {
-  border-color: #7258d8;
-  background: rgba(114, 88, 216, .1);
+  color: #7258d8;
 }
-.learn-page.kai-light-mode .kai-rich-bullet-list ul > li::before { background: transparent; }
-@media (prefers-reduced-motion: reduce) {
-  .kai-rich-bullet-list > li::before {
-    animation: none;
-    transform: none;
-    opacity: .9;
-  }
-}
+.learn-page.kai-light-mode .kai-rich-bullet-list ul > li::before { color: #7258d8; }
 .kai-rich-suggestions { width: 100%; margin: .25rem 0 0; }
 .kai-rich-suggestions-title { margin: 0 0 .35rem; color: #cfd2ea; font-size: .9rem; }
 .kai-suggestion-links { display: flex; flex-direction: column; flex-wrap: nowrap; gap: .3rem; align-items: stretch; margin: 0 .35rem; }
@@ -159,16 +139,16 @@
   line-height: 1.78;
 }
 .kai-rich-text::before {
-  content: "";
+  content: "★";
   position: absolute;
-  top: 1.18rem;
-  left: -.39rem;
-  width: .55rem;
-  height: .55rem;
-  border: 2px solid #9f8cff;
-  border-radius: 50%;
-  background: transparent;
-  box-sizing: border-box;
+  top: .96rem;
+  left: -.58rem;
+  width: .8rem;
+  height: .8rem;
+  color: #9f8cff;
+  font-size: .78rem;
+  line-height: .8rem;
+  text-align: center;
 }
 .kai-rich-content ul,
 .kai-rich-content ol { max-width: 76ch; line-height: 1.7; }
