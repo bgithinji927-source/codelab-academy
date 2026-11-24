@@ -56,6 +56,7 @@ import gameEngineAlgorithmsMarkdown from "./gameEngineAlgorithmsLessonContent.mj
 import gameEngineStateMemoryMarkdown from "./gameEngineStateMemoryLessonContent.mjs";
 import gameEngineInterfacesMarkdown from "./gameEngineInterfacesLessonContent.mjs";
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
+import cybersecurityFundamentalsThreatsVulnerabilitiesRiskMarkdown from "./cybersecurityFundamentalsThreatsVulnerabilitiesRiskLessonContent.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
@@ -1588,6 +1589,12 @@ function makeAuthoredMarkdownDelivery(markdown, lessonId, intro, quizAnswers = {
     }),
   };
 }
+const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cybersecurityFundamentalsThreatsVulnerabilitiesRiskMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "cybersecurity-fundamentals-02-threats-vulnerabilities-and-risk",
+  "A complete, four-part Cybersecurity Fundamentals lesson on the CIA triad, assets, threats, vulnerabilities, exploits, controls, attack surface, vulnerability management, risk analysis, threat modeling, frameworks, and incident response.",
+  {}
+);
 
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cloudFoundationsProvidersMarkdown
@@ -4132,6 +4139,16 @@ for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
   }
 }
 
+// Replace the matching Cybersecurity Fundamentals placeholder with the supplied authored lesson.
+for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
+  if (lesson.id === "cybersecurity-fundamentals-02-threats-vulnerabilities-and-risk") {
+    lesson.title = "Cybersecurity Fundamentals: Threats, Vulnerabilities, and Risk";
+    lesson.description = "Learn to identify assets, threats, vulnerabilities, exploits, controls, and attack surfaces; assess and prioritize risk; apply security controls and threat modeling; and plan effective incident response.";
+    lesson.level = "Beginner";
+    lesson.delivery = cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery;
+    break;
+  }
+}
 // Replace the first Cloud Foundations placeholder with the supplied authored lesson.
 for (const lesson of lessons["cloud-foundations-providers"] || []) {
   if (lesson.id === "cloud-foundations-providers-01-cloud-service-models") {
