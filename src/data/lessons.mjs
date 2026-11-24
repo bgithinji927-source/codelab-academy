@@ -60,6 +60,7 @@ import cybersecurityFundamentalsThreatsVulnerabilitiesRiskMarkdown from "./cyber
 import cybersecurityFundamentalsDefenseInDepthMarkdown from "./cybersecurityFundamentalsDefenseInDepthLessonContent.mjs";
 import cybersecurityFundamentalsSecureHabitsCultureMarkdown from "./cybersecurityFundamentalsSecureHabitsCultureLessonContent.mjs";
 import cybersecurityFundamentalsIntermediatePatternsCompositionMarkdown from "./cybersecurityFundamentalsIntermediatePatternsCompositionLessonContent.mjs";
+import networkingForCybersecurityIntroductionMarkdown from "./networkingForCybersecurityIntroductionLessonContent.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
@@ -1615,6 +1616,12 @@ const cybersecurityFundamentalsIntermediatePatternsCompositionAuthoredDelivery =
   cybersecurityFundamentalsIntermediatePatternsCompositionMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
   "cybersecurity-fundamentals-mastery-01-intermediate-patterns-and-composition",
   "A complete, four-part Cybersecurity Fundamentals lesson on composing identity, authorisation, network, data, secrets, supply-chain, detection, recovery, and governance controls into secure systems.",
+  {}
+);
+const networkingForCybersecurityIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  networkingForCybersecurityIntroductionMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "networking-for-cybersecurity-01-tcp-ip-and-network-layers",
+  "A complete, four-part Networking for Cybersecurity lesson on networks, devices, topologies, OSI and TCP/IP models, addressing, subnetting, protocols, core services, tools, wireless security, segmentation, and network-defence fundamentals.",
   {}
 );
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4206,6 +4213,16 @@ for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
     lesson.description = "Compose identity, authorisation, network, data, secrets, supply-chain, detection, recovery, and governance controls into secure systems, then threat model, test, monitor, and improve the whole design.";
     lesson.level = "Beginner";
     lesson.delivery = cybersecurityFundamentalsIntermediatePatternsCompositionAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Networking for Cybersecurity placeholder with the supplied authored lesson.
+for (const lesson of lessons["networking-for-cybersecurity"] || []) {
+  if (lesson.id === "networking-for-cybersecurity-01-tcp-ip-and-network-layers") {
+    lesson.title = "Networking for Cybersecurity: Introduction to Computer Networking";
+    lesson.description = "Learn how networks connect devices, how packets move through layers and devices, and how addressing, protocols, core services, wireless, segmentation, and basic security controls fit together.";
+    lesson.level = "Beginner";
+    lesson.delivery = networkingForCybersecurityIntroductionAuthoredDelivery;
     break;
   }
 }
