@@ -65,6 +65,7 @@ import cloudNetworkingVpcsSubnetsMarkdown from "./cloudNetworkingVpcsSubnetsLess
 import cloudNetworkingRoutesGatewaysMarkdown from "./cloudNetworkingRoutesGatewaysLessonContent.mjs";
 import cloudNetworkingSecurityGroupsFirewallsMarkdown from "./cloudNetworkingSecurityGroupsFirewallsLessonContent.mjs";
 import cloudNetworkingPrivateServiceConnectivityMarkdown from "./cloudNetworkingPrivateServiceConnectivityLessonContent.mjs";
+import cloudNetworkingCompositionMarkdown from "./cloudNetworkingCompositionLessonContent.mjs";
 import linuxShellFilesystemMarkdown from "./linuxShellFilesystemLessonContent.mjs";
 import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonContent.mjs";
 import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.mjs";
@@ -1651,6 +1652,14 @@ const cloudNetworkingPrivateServiceConnectivityAuthoredDelivery = makeAuthoredMa
   "cloud-networking-04-private-service-connectivity",
   "A complete, four-part Cloud Networking lesson on private endpoints, interface and gateway connectivity, private DNS, service access controls, peering comparisons, troubleshooting, and resilient design.",
   {}
+);
+const cloudNetworkingCompositionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudNetworkingCompositionMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "cloud-networking-mastery-01-intermediate-patterns-and-composition",
+  "A complete, four-part intermediate Cloud Networking lesson on segmentation, hub-and-spoke architecture, VPNs, bastion access, DNS, load balancing, private connectivity, observability, automation, and composable design.",
+  { 1: "B", 2: "B", 3: "A", 4: "A", 5: "B", 6: "B", 7: "A", 8: "A" }
 );
 const linuxShellFilesystemAuthoredDelivery = makeAuthoredMarkdownDelivery(
   linuxShellFilesystemMarkdown
@@ -4179,6 +4188,16 @@ for (const lesson of lessons["cloud-networking"] || []) {
     lesson.description = "Learn how private endpoints, interface and gateway connectivity, private DNS, service policies, and peering keep cloud service traffic off public paths.";
     lesson.level = "Beginner";
     lesson.delivery = cloudNetworkingPrivateServiceConnectivityAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Networking mastery placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-networking"] || []) {
+  if (lesson.id === "cloud-networking-mastery-01-intermediate-patterns-and-composition") {
+    lesson.title = "Cloud Networking: Intermediate Patterns and Composition";
+    lesson.description = "Compose resilient cloud networks with segmentation, hub-and-spoke connectivity, VPNs, bastion access, DNS, load balancing, observability, and automation.";
+    lesson.level = "Intermediate";
+    lesson.delivery = cloudNetworkingCompositionAuthoredDelivery;
     break;
   }
 }
