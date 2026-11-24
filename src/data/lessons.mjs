@@ -58,6 +58,7 @@ import gameEngineInterfacesMarkdown from "./gameEngineInterfacesLessonContent.mj
 import cybersecurityCiaTriadDelivery from "./cybersecurityCiaTriadDelivery.mjs";
 import cybersecurityFundamentalsThreatsVulnerabilitiesRiskMarkdown from "./cybersecurityFundamentalsThreatsVulnerabilitiesRiskLessonContent.mjs";
 import cybersecurityFundamentalsDefenseInDepthMarkdown from "./cybersecurityFundamentalsDefenseInDepthLessonContent.mjs";
+import cybersecurityFundamentalsSecureHabitsCultureMarkdown from "./cybersecurityFundamentalsSecureHabitsCultureLessonContent.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
@@ -1603,6 +1604,12 @@ const cybersecurityFundamentalsDefenseInDepthAuthoredDelivery = makeAuthoredMark
   {}
 );
 
+const cybersecurityFundamentalsSecureHabitsCultureAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cybersecurityFundamentalsSecureHabitsCultureMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "cybersecurity-fundamentals-04-secure-habits-and-culture",
+  "A complete, four-part Cybersecurity Fundamentals lesson on the human layer, secure habits, social engineering, password and device safety, reporting, just culture, leadership, training, security culture metrics, and a practical 90-day plan.",
+  {}
+);
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cloudFoundationsProvidersMarkdown
     .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
@@ -4163,6 +4170,16 @@ for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
     lesson.description = "Learn how independent layers of physical, network, identity, host, application, data, monitoring, recovery, and process controls work together to prevent, detect, contain, and recover from attacks.";
     lesson.level = "Beginner";
     lesson.delivery = cybersecurityFundamentalsDefenseInDepthAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cybersecurity Fundamentals placeholder with the supplied authored lesson.
+for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
+  if (lesson.id === "cybersecurity-fundamentals-04-secure-habits-and-culture") {
+    lesson.title = "Cybersecurity Fundamentals: Secure Habits and Culture";
+    lesson.description = "Learn how secure habits and a healthy security culture reduce social engineering, password, device, data-sharing, reporting, and human-process risks through usable defaults, just culture, training, and measurable improvement.";
+    lesson.level = "Beginner";
+    lesson.delivery = cybersecurityFundamentalsSecureHabitsCultureAuthoredDelivery;
     break;
   }
 }
