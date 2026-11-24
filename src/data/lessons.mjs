@@ -64,6 +64,7 @@ import cloudFoundationsCompositionMarkdown from "./cloudFoundationsCompositionLe
 import linuxShellFilesystemMarkdown from "./linuxShellFilesystemLessonContent.mjs";
 import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonContent.mjs";
 import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.mjs";
+import linuxLogsIncidentTriageMarkdown from "./linuxLogsIncidentTriageLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1637,6 +1638,14 @@ const linuxUsersPermissionsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cloud-linux-operations-03-users-and-permissions",
   "A complete, four-part Linux for Cloud Operators lesson on users, groups, UIDs, permissions, ownership, umask, special permissions, ACLs, sudo, and service security.",
   { 1: "B", 2: "A", 3: "B", 4: "B", 5: "A", 6: "B", 7: "A", 8: "B", 9: "B", 10: "B" }
+);
+const linuxLogsIncidentTriageAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  linuxLogsIncidentTriageMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^\*\*Part 4 of 4\s*—\s*Lesson Complete\*\*\s*$/im, "## LESSON COMPLETE"),
+  "cloud-linux-operations-04-logs-and-incident-triage",
+  "A complete, four-part Linux for Cloud Operators lesson on logs, journalctl, filtering, log rotation, incident triage, system health, service failures, disk pressure, authentication events, and safe recovery.",
+  { 1: "B", 2: "C", 3: "A", 4: "B", 5: "C", 6: "A", 7: "B", 8: "B", 9: "A", 10: "B" }
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4123,7 +4132,16 @@ for (const lesson of lessons["cloud-linux-operations"] || []) {
     break;
   }
 }
-
+// Replace the matching Linux for Cloud Operators logs and incident triage placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-linux-operations"] || []) {
+  if (lesson.id === "cloud-linux-operations-04-logs-and-incident-triage") {
+    lesson.title = "Linux for Cloud Operators: Logs and Incident Triage";
+    lesson.description = "Learn to read and filter Linux logs, investigate service failures, assess server health, triage incidents, and document safe recovery actions.";
+    lesson.level = "Beginner";
+    lesson.delivery = linuxLogsIncidentTriageAuthoredDelivery;
+    break;
+  }
+}
 // Use the fully authored Python loops lesson for both historical loop entries.
 for (const lesson of lessons.python) {
   if (lesson.id === "python-loops" || lesson.id === "python-loops-roadmap") {
