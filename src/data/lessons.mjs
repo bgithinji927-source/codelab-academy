@@ -62,6 +62,7 @@ import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.
 import cloudProviderSelectionMarkdown from "./cloudProviderSelectionLessonContent.mjs";
 import cloudFoundationsCompositionMarkdown from "./cloudFoundationsCompositionLessonContent.mjs";
 import cloudNetworkingVpcsSubnetsMarkdown from "./cloudNetworkingVpcsSubnetsLessonContent.mjs";
+import cloudNetworkingRoutesGatewaysMarkdown from "./cloudNetworkingRoutesGatewaysLessonContent.mjs";
 import linuxShellFilesystemMarkdown from "./linuxShellFilesystemLessonContent.mjs";
 import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonContent.mjs";
 import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.mjs";
@@ -1626,6 +1627,13 @@ const cloudNetworkingVpcsSubnetsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "cloud-networking-01-vpcs-and-subnets",
   "A complete, four-part Cloud Networking lesson on VPCs, subnets, CIDR calculations, route tables, gateways, security boundaries, Linux connectivity tests, and resilient network design.",
   { 1: "B", 2: "B", 3: "C", 4: "B", 5: "A", 6: "A", 7: "A", 8: "B", 9: "A", 10: "A" }
+);
+const cloudNetworkingRoutesGatewaysAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudNetworkingRoutesGatewaysMarkdown
+    .replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "cloud-networking-02-routes-and-gateways",
+  "A complete, four-part Cloud Networking lesson on routing tables, longest-prefix matching, gateways, NAT, Linux route inspection, layered troubleshooting, and safe network design.",
+  {}
 );
 const linuxShellFilesystemAuthoredDelivery = makeAuthoredMarkdownDelivery(
   linuxShellFilesystemMarkdown
@@ -4124,6 +4132,16 @@ for (const lesson of lessons["cloud-networking"] || []) {
     lesson.description = "Learn how to design VPCs, divide networks into subnets, calculate CIDR ranges, configure gateways and routes, control traffic, and troubleshoot cloud connectivity.";
     lesson.level = "Beginner";
     lesson.delivery = cloudNetworkingVpcsSubnetsAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Networking Routes and Gateways placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-networking"] || []) {
+  if (lesson.id === "cloud-networking-02-routes-and-gateways") {
+    lesson.title = "Cloud Networking Fundamentals: Routes and Gateways";
+    lesson.description = "Learn how packets use route tables and gateways, how public and private subnets differ, how NAT works, and how to troubleshoot cloud connectivity safely.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudNetworkingRoutesGatewaysAuthoredDelivery;
     break;
   }
 }
