@@ -74,6 +74,7 @@ import linuxCloudCompositionMarkdown from "./linuxCloudCompositionLessonContent.
 import cloudContainersContainerImagesMarkdown from "./cloudContainersContainerImagesLessonContent.mjs";
 import cloudContainersDockerfilesBuildsMarkdown from "./cloudContainersDockerfilesBuildsLessonContent.mjs";
 import cloudContainersVolumesNetworkingMarkdown from "./cloudContainersVolumesNetworkingLessonContent.mjs";
+import cloudContainersContainerHealthDeliveryMarkdown from "./cloudContainersContainerHealthDeliveryLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1719,6 +1720,12 @@ const cloudContainersVolumesNetworkingAuthoredDelivery = makeAuthoredMarkdownDel
   "cloud-containers-03-volumes-and-networking",
   "A complete, four-part Docker and Containers lesson on persistent volumes, bind mounts, tmpfs, container networking, Docker Compose, troubleshooting, service isolation, and practical backup and recovery.",
   {}
+);
+const cloudContainersContainerHealthDeliveryAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudContainersContainerHealthDeliveryMarkdown,
+  "cloud-containers-04-container-health-and-delivery",
+  "A complete, four-part Docker and Containers lesson on container health checks, liveness and readiness, monitoring, resource and restart management, registries, CI/CD, production delivery, security, deployment strategies, and rollback.",
+  { 1: "B", 2: "B", 3: "B", 4: "A", 5: "B", 6: "C", 7: "B", 8: "A" }
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4303,6 +4310,16 @@ for (const lesson of lessons["cloud-containers"] || []) {
     lesson.description = "Learn to manage persistent data with volumes, bind mounts, and tmpfs; connect containers with networks; use Docker Compose; and troubleshoot, back up, and recover containerized services safely.";
     lesson.level = "Beginner";
     lesson.delivery = cloudContainersVolumesNetworkingAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Containers placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-containers"] || []) {
+  if (lesson.id === "cloud-containers-04-container-health-and-delivery") {
+    lesson.title = "Docker and Containers: Container Health and Delivery";
+    lesson.description = "Learn to configure container health checks, monitor dependencies and resources, deliver images through registries and CI/CD, deploy safely to a VPS, and recover with secure rollback strategies.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudContainersContainerHealthDeliveryAuthoredDelivery;
     break;
   }
 }
