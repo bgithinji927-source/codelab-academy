@@ -73,6 +73,7 @@ import linuxLogsIncidentTriageMarkdown from "./linuxLogsIncidentTriageLessonCont
 import linuxCloudCompositionMarkdown from "./linuxCloudCompositionLessonContent.mjs";
 import cloudContainersContainerImagesMarkdown from "./cloudContainersContainerImagesLessonContent.mjs";
 import cloudContainersDockerfilesBuildsMarkdown from "./cloudContainersDockerfilesBuildsLessonContent.mjs";
+import cloudContainersVolumesNetworkingMarkdown from "./cloudContainersVolumesNetworkingLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1712,6 +1713,12 @@ const cloudContainersDockerfilesBuildsAuthoredDelivery = makeAuthoredMarkdownDel
   "cloud-containers-02-dockerfiles-and-builds",
   "A complete, four-part Docker and Containers lesson on Dockerfiles, image builds, layers, caching, multi-stage images, practical development, security, and assessment.",
   { 1: "A", 2: "B", 3: "A", 4: "A", 5: "B", 6: "B", 7: "B", 8: "B", 9: "A", 10: "B", 11: "A", 12: "B" }
+);
+const cloudContainersVolumesNetworkingAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudContainersVolumesNetworkingMarkdown,
+  "cloud-containers-03-volumes-and-networking",
+  "A complete, four-part Docker and Containers lesson on persistent volumes, bind mounts, tmpfs, container networking, Docker Compose, troubleshooting, service isolation, and practical backup and recovery.",
+  {}
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4286,6 +4293,16 @@ for (const lesson of lessons["cloud-containers"] || []) {
     lesson.description = "Learn to write Dockerfiles, build and optimize images, use build caching and multi-stage builds, run containers securely, and diagnose image and runtime failures.";
     lesson.level = "Beginner";
     lesson.delivery = cloudContainersDockerfilesBuildsAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Containers placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-containers"] || []) {
+  if (lesson.id === "cloud-containers-03-volumes-and-networking") {
+    lesson.title = "Docker and Containers: Volumes and Networking";
+    lesson.description = "Learn to manage persistent data with volumes, bind mounts, and tmpfs; connect containers with networks; use Docker Compose; and troubleshoot, back up, and recover containerized services safely.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudContainersVolumesNetworkingAuthoredDelivery;
     break;
   }
 }
