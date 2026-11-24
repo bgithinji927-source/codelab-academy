@@ -81,6 +81,7 @@ import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.
 import linuxLogsIncidentTriageMarkdown from "./linuxLogsIncidentTriageLessonContent.mjs";
 import linuxCloudCompositionMarkdown from "./linuxCloudCompositionLessonContent.mjs";
 import linuxSecurityIntroductionMarkdown from "./linuxSecurityIntroductionLessonContent.mjs";
+import linuxSecurityArchitectureComponentsMarkdown from "./linuxSecurityArchitectureComponentsLessonContent.mjs";
 import cloudContainersContainerImagesMarkdown from "./cloudContainersContainerImagesLessonContent.mjs";
 import cloudContainersDockerfilesBuildsMarkdown from "./cloudContainersDockerfilesBuildsLessonContent.mjs";
 import cloudContainersVolumesNetworkingMarkdown from "./cloudContainersVolumesNetworkingLessonContent.mjs";
@@ -1658,6 +1659,14 @@ const linuxSecurityIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
   "linux-security-01-users-groups-and-permissions",
   "A complete, four-part Introduction to Linux Security lesson on Linux security fundamentals, users and groups, permissions, sudo, authentication, SSH, hardening, firewalls, mandatory access control, monitoring, incident investigation, file integrity, backups, and a practical server-hardening project.",
   { 1: "B", 2: "B", 3: "C", 4: "A", 5: "A", 6: "B", 7: "A", 8: "B", 9: "A", 10: "B" }
+);
+const linuxSecurityArchitectureComponentsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  linuxSecurityArchitectureComponentsMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# Part 4 of 4\s*—\s*LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "linux-security-02-processes-and-services",
+  "A complete, four-part Linux Security lesson on Linux architecture, hardware, the kernel, user and kernel space, system calls, processes, threads, memory, filesystems, users and groups, authentication, permissions, sudo, SELinux, AppArmor, firewalls, SSH, logging, containers, troubleshooting, and secure application-server design.",
+  { 1: "B", 2: "A", 3: "C", 4: "B", 5: "A", 6: "C", 7: "A", 8: "A", 9: "B", 10: "C" }
 );
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cloudFoundationsProvidersMarkdown
@@ -4256,6 +4265,16 @@ for (const lesson of lessons["linux-security"] || []) {
     lesson.description = "Learn Linux security fundamentals, least privilege, users and groups, permissions, sudo, authentication, SSH, hardening, firewalls, monitoring, incident investigation, file integrity, backups, and practical server protection.";
     lesson.level = "Beginner";
     lesson.delivery = linuxSecurityIntroductionAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Linux Security architecture placeholder with the supplied authored lesson.
+for (const lesson of lessons["linux-security"] || []) {
+  if (lesson.id === "linux-security-02-processes-and-services") {
+    lesson.title = "Linux Architecture and Security Components";
+    lesson.description = "Learn how Linux hardware, the kernel, system libraries, user space, system calls, processes, memory, filesystems, identities, permissions, security modules, firewalls, SSH, logging, and containers work together to protect an application server.";
+    lesson.level = "Beginner";
+    lesson.delivery = linuxSecurityArchitectureComponentsAuthoredDelivery;
     break;
   }
 }
