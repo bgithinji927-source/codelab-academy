@@ -62,6 +62,7 @@ import cybersecurityFundamentalsSecureHabitsCultureMarkdown from "./cybersecurit
 import cybersecurityFundamentalsIntermediatePatternsCompositionMarkdown from "./cybersecurityFundamentalsIntermediatePatternsCompositionLessonContent.mjs";
 import networkingForCybersecurityIntroductionMarkdown from "./networkingForCybersecurityIntroductionLessonContent.mjs";
 import networkingForCybersecurityNetworkTypesMarkdown from "./networkingForCybersecurityNetworkTypesLessonContent.mjs";
+import networkingForCybersecurityTopologiesMarkdown from "./networkingForCybersecurityTopologiesLessonContent.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
@@ -1629,6 +1630,12 @@ const networkingForCybersecurityNetworkTypesAuthoredDelivery = makeAuthoredMarkd
   networkingForCybersecurityNetworkTypesMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
   "networking-for-cybersecurity-02-dns-http-and-tls-traffic",
   "A complete, four-part Networking for Cybersecurity lesson on PAN, LAN, MAN, WAN, related network types, ownership and trust, wired and wireless networks, VPNs, segmentation, design trade-offs, and network security controls.",
+  {}
+);
+const networkingForCybersecurityTopologiesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  networkingForCybersecurityTopologiesMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
+  "networking-for-cybersecurity-03-firewalls-and-segmentation",
+  "A complete, four-part Networking for Cybersecurity lesson on physical and logical topologies, network architectures, redundancy, choke points, segmentation, DMZs, zero trust, cloud designs, and secure network-device configuration.",
   {}
 );
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4240,6 +4247,16 @@ for (const lesson of lessons["networking-for-cybersecurity"] || []) {
     lesson.description = "Learn how PANs, LANs, MANs, WANs, WLANs, intranets, extranets, VPNs, and cloud networks differ in scale, ownership, trust, performance, design, and security requirements.";
     lesson.level = "Beginner";
     lesson.delivery = networkingForCybersecurityNetworkTypesAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Networking for Cybersecurity placeholder with the supplied authored lesson.
+for (const lesson of lessons["networking-for-cybersecurity"] || []) {
+  if (lesson.id === "networking-for-cybersecurity-03-firewalls-and-segmentation") {
+    lesson.title = "Networking for Cybersecurity: Network Topologies and Architectures";
+    lesson.description = "Learn physical and logical topologies, network architectures, redundancy, choke points, segmentation, DMZs, zero trust, cloud designs, and secure network-device configuration.";
+    lesson.level = "Beginner";
+    lesson.delivery = networkingForCybersecurityTopologiesAuthoredDelivery;
     break;
   }
 }
