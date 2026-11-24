@@ -4189,6 +4189,44 @@ for (const lesson of lessons.python) {
 lessons.python = uniquePythonLessons;
 
 const networkingCybersecurityBeginnerTitles = ["Introduction to Computer Networking", "Types of Computer Networks: LAN, WAN, MAN and PAN", "Network Topologies and Architectures", "OSI Model: Understanding the 7 Layers", "TCP/IP Model and Network Communication", "Networking Devices: Routers, Switches, Hubs and Access Points", "Introduction to IPv4 and IPv6 Addressing", "Subnetting and CIDR Notation", "Public IP vs Private IP Addresses", "MAC Addresses and ARP Protocol", "TCP vs UDP: Understanding Transport Protocols", "Essential Network Protocols: HTTP, HTTPS, FTP, SSH and Telnet", "DNS: Domain Name System Fundamentals", "DHCP: Dynamic Host Configuration Protocol", "NAT and Port Address Translation", "Routing Fundamentals and Routing Tables", "Switching, VLANs and Network Segmentation", "Wireless Networking: Wi-Fi Standards and Security", "Introduction to Network Security", "Common Network Attacks and Threats", "Firewalls: Types, Rules and Configuration", "VPNs, Tunneling and Secure Remote Access", "Network Access Control and Authentication", "Network Segmentation and Zero Trust Architecture", "Introduction to Network Reconnaissance", "Network Scanning with Nmap", "Packet Analysis with Wireshark", "Network Traffic Monitoring and Analysis", "Port Scanning and Service Enumeration", "Detecting Network Vulnerabilities and Misconfigurations", "Intrusion Detection and Prevention Systems (IDS/IPS)", "Network Security Monitoring and Log Analysis", "Secure Network Configuration and Hardening", "Detecting and Responding to Network-Based Attacks", "Network Forensics and Incident Investigation", "Practical Network Security Assessment: Final Project"];
+const linuxSecurityLessonTitles = [
+  "Introduction to Linux Security",
+  "Linux Architecture and Security Components",
+  "Linux Distributions for Cybersecurity",
+  "Linux Users, Groups and Authentication",
+  "Linux File Permissions and Ownership",
+  "Linux Privilege Management and sudo",
+  "Linux Security Updates and Patch Management",
+  "Securing Linux File Systems and Directories",
+  "Managing SUID, SGID and Sticky Bit Permissions",
+  "Linux Password Policies and Account Security",
+  "SSH Security and Remote Access Hardening",
+  "Linux Service Management and Attack Surface Reduction",
+  "Linux Networking and Security Configuration",
+  "Managing Linux Firewalls with UFW",
+  "Advanced Firewall Management with iptables and nftables",
+  "Securing Network Services and Open Ports",
+  "DNS Security and Network Configuration",
+  "VPN Configuration and Secure Network Tunneling",
+  "Linux Mandatory Access Control: SELinux Fundamentals",
+  "AppArmor: Application Security and Profiles",
+  "Linux Kernel Security and Module Management",
+  "Process Isolation and Resource Security",
+  "Secure File Transfer and Data Protection",
+  "Encryption and Cryptographic Tools in Linux",
+  "Linux System Logs and Security Auditing",
+  "Monitoring Processes and Detecting Suspicious Activities",
+  "Linux Intrusion Detection Systems",
+  "File Integrity Monitoring and Detection",
+  "Malware Detection and Rootkit Investigation",
+  "Linux Vulnerability Assessment and Security Scanning",
+  "Linux Server Security Hardening",
+  "Linux Audit Framework (auditd) and Security Policies",
+  "Linux Incident Response and Investigation",
+  "Linux Forensics and Evidence Collection",
+  "Linux Security Automation with Bash Scripting",
+  "Practical Linux Security Assessment: Final Project",
+];
 // Apply the requested beginner-level Networking for Cybersecurity catalog in place.
 // Preserve every existing lesson ID, position, URL, progress key, and delivery.
 for (const [index, title] of networkingCybersecurityBeginnerTitles.entries()) {
@@ -4196,6 +4234,13 @@ for (const [index, title] of networkingCybersecurityBeginnerTitles.entries()) {
   if (!lesson) continue;
   lesson.title = `Networking for Cybersecurity: ${title}`;
   lesson.level = "Beginner";
+}
+// Apply the requested Linux Security catalog in place.
+// Preserve every existing lesson ID, position, URL, progress key, and delivery.
+for (const [index, title] of linuxSecurityLessonTitles.entries()) {
+  const lesson = lessons["linux-security"]?.[index];
+  if (!lesson) continue;
+  lesson.title = title;
 }
 // Use the fully authored CIA Triad lesson for the Cybersecurity Fundamentals entry.
 for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
