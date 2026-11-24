@@ -63,6 +63,7 @@ import cloudProviderSelectionMarkdown from "./cloudProviderSelectionLessonConten
 import cloudFoundationsCompositionMarkdown from "./cloudFoundationsCompositionLessonContent.mjs";
 import cloudNetworkingVpcsSubnetsMarkdown from "./cloudNetworkingVpcsSubnetsLessonContent.mjs";
 import cloudNetworkingRoutesGatewaysMarkdown from "./cloudNetworkingRoutesGatewaysLessonContent.mjs";
+import cloudNetworkingSecurityGroupsFirewallsMarkdown from "./cloudNetworkingSecurityGroupsFirewallsLessonContent.mjs";
 import linuxShellFilesystemMarkdown from "./linuxShellFilesystemLessonContent.mjs";
 import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonContent.mjs";
 import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.mjs";
@@ -1634,6 +1635,14 @@ const cloudNetworkingRoutesGatewaysAuthoredDelivery = makeAuthoredMarkdownDelive
   "cloud-networking-02-routes-and-gateways",
   "A complete, four-part Cloud Networking lesson on routing tables, longest-prefix matching, gateways, NAT, Linux route inspection, layered troubleshooting, and safe network design.",
   {}
+);
+const cloudNetworkingSecurityGroupsFirewallsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudNetworkingSecurityGroupsFirewallsMarkdown
+    .replace(/^\*\*(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2")
+    .replace(/^# LESSON COMPLETE\s*$/im, "## LESSON COMPLETE"),
+  "cloud-networking-03-security-groups-and-firewalls",
+  "A complete, four-part Cloud Networking lesson on firewalls, security groups, Network ACLs, UFW, stateful and stateless filtering, least privilege, troubleshooting, and secure cloud architecture.",
+  { 1: "B", 2: "C", 3: "B", 4: "B", 5: "B", 6: "C", 7: "A", 8: "C" }
 );
 const linuxShellFilesystemAuthoredDelivery = makeAuthoredMarkdownDelivery(
   linuxShellFilesystemMarkdown
@@ -4142,6 +4151,16 @@ for (const lesson of lessons["cloud-networking"] || []) {
     lesson.description = "Learn how packets use route tables and gateways, how public and private subnets differ, how NAT works, and how to troubleshoot cloud connectivity safely.";
     lesson.level = "Beginner";
     lesson.delivery = cloudNetworkingRoutesGatewaysAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Networking Security Groups and Firewalls placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-networking"] || []) {
+  if (lesson.id === "cloud-networking-03-security-groups-and-firewalls") {
+    lesson.title = "Cloud Networking Fundamentals: Security Groups and Firewalls";
+    lesson.description = "Learn how security groups, Network ACLs, UFW, and layered firewall controls protect cloud applications and how to troubleshoot blocked traffic safely.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudNetworkingSecurityGroupsFirewallsAuthoredDelivery;
     break;
   }
 }
