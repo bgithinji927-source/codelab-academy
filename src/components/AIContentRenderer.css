@@ -207,6 +207,31 @@
   color: inherit;
 }
 
+/* Keep lesson bullets clear of the paragraph accent line and readable at a glance. */
+.kai-rich-content .kai-rich-bullet-list {
+  margin: .45rem 0 .9rem;
+  padding-left: 2.25rem;
+  line-height: 1.78;
+}
+.kai-rich-content .kai-rich-bullet-list > li {
+  position: relative;
+  margin: .42rem 0;
+  padding-left: .45rem;
+  font-size: 1.03em;
+}
+.kai-rich-content .kai-rich-bullet-list > li::before {
+  left: -1.7rem;
+  width: 1.1rem;
+  font-size: 1.02rem;
+  line-height: 1.5;
+  text-align: center;
+}
+.kai-rich-content .kai-rich-bullet-list ul,
+.kai-rich-content .kai-rich-bullet-list ol {
+  margin-top: .42rem;
+  padding-left: 1.65rem;
+}
+
 .kai-rich-text a,
 .kai-rich-quote a {
   color: #b9b1ff;
