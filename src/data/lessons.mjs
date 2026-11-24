@@ -80,6 +80,7 @@ import linuxProcessesServicesMarkdown from "./linuxProcessesServicesLessonConten
 import linuxUsersPermissionsMarkdown from "./linuxUsersPermissionsLessonContent.mjs";
 import linuxLogsIncidentTriageMarkdown from "./linuxLogsIncidentTriageLessonContent.mjs";
 import linuxCloudCompositionMarkdown from "./linuxCloudCompositionLessonContent.mjs";
+import linuxSecurityIntroductionMarkdown from "./linuxSecurityIntroductionLessonContent.mjs";
 import cloudContainersContainerImagesMarkdown from "./cloudContainersContainerImagesLessonContent.mjs";
 import cloudContainersDockerfilesBuildsMarkdown from "./cloudContainersDockerfilesBuildsLessonContent.mjs";
 import cloudContainersVolumesNetworkingMarkdown from "./cloudContainersVolumesNetworkingLessonContent.mjs";
@@ -1651,6 +1652,12 @@ const networkingForCybersecurityTcpIpModelAuthoredDelivery = makeAuthoredMarkdow
   "networking-for-cybersecurity-mastery-01-intermediate-patterns-and-composition",
   "A complete, four-part Networking for Cybersecurity lesson on the TCP/IP model, protocols, encapsulation, addressing, routing, DNS, DHCP, ICMP, NAT, TLS, firewalls, packet analysis, network scanning, segmentation, practical investigation, and cybersecurity assessment.",
   { 1: "B", 2: "C", 3: "C", 4: "B", 5: "A", 6: "C", 7: "D", 8: "A", 9: "A", 10: "B" }
+);
+const linuxSecurityIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  linuxSecurityIntroductionMarkdown,
+  "linux-security-01-users-groups-and-permissions",
+  "A complete, four-part Introduction to Linux Security lesson on Linux security fundamentals, users and groups, permissions, sudo, authentication, SSH, hardening, firewalls, mandatory access control, monitoring, incident investigation, file integrity, backups, and a practical server-hardening project.",
+  { 1: "B", 2: "B", 3: "C", 4: "A", 5: "A", 6: "B", 7: "A", 8: "B", 9: "A", 10: "B" }
 );
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cloudFoundationsProvidersMarkdown
@@ -4241,6 +4248,16 @@ for (const [index, title] of linuxSecurityLessonTitles.entries()) {
   const lesson = lessons["linux-security"]?.[index];
   if (!lesson) continue;
   lesson.title = title;
+}
+// Replace the matching Linux Security introduction placeholder with the supplied authored lesson.
+for (const lesson of lessons["linux-security"] || []) {
+  if (lesson.id === "linux-security-01-users-groups-and-permissions") {
+    lesson.title = "Introduction to Linux Security";
+    lesson.description = "Learn Linux security fundamentals, least privilege, users and groups, permissions, sudo, authentication, SSH, hardening, firewalls, monitoring, incident investigation, file integrity, backups, and practical server protection.";
+    lesson.level = "Beginner";
+    lesson.delivery = linuxSecurityIntroductionAuthoredDelivery;
+    break;
+  }
 }
 // Use the fully authored CIA Triad lesson for the Cybersecurity Fundamentals entry.
 for (const lesson of lessons["cybersecurity-fundamentals"] || []) {
