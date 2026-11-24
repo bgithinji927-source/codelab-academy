@@ -64,6 +64,7 @@ import networkingForCybersecurityIntroductionMarkdown from "./networkingForCyber
 import networkingForCybersecurityNetworkTypesMarkdown from "./networkingForCybersecurityNetworkTypesLessonContent.mjs";
 import networkingForCybersecurityTopologiesMarkdown from "./networkingForCybersecurityTopologiesLessonContent.mjs";
 import networkingForCybersecurityOsIModelMarkdown from "./networkingForCybersecurityOsIModelLessonContent.mjs";
+import networkingForCybersecurityTcpIpModelMarkdown from "./networkingForCybersecurityTcpIpModelLessonContent.mjs";
 import cloudFoundationsProvidersMarkdown from "./cloudFoundationsProvidersLessonContent.mjs";
 import cloudSharedResponsibilityMarkdown from "./cloudSharedResponsibilityLessonContent.mjs";
 import cloudRegionsZonesCostMarkdown from "./cloudRegionsZonesCostLessonContent.mjs";
@@ -1644,6 +1645,12 @@ const networkingForCybersecurityOsIModelAuthoredDelivery = makeAuthoredMarkdownD
   "networking-for-cybersecurity-04-packet-analysis-fundamentals",
   "A complete, four-part Networking for Cybersecurity lesson on the seven-layer OSI model, encapsulation, TCP/IP comparison, layer-specific attacks and defences, troubleshooting, practical network analysis, and self-check tasks.",
   {}
+);
+const networkingForCybersecurityTcpIpModelAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  networkingForCybersecurityTcpIpModelMarkdown,
+  "networking-for-cybersecurity-mastery-01-intermediate-patterns-and-composition",
+  "A complete, four-part Networking for Cybersecurity lesson on the TCP/IP model, protocols, encapsulation, addressing, routing, DNS, DHCP, ICMP, NAT, TLS, firewalls, packet analysis, network scanning, segmentation, practical investigation, and cybersecurity assessment.",
+  { 1: "B", 2: "C", 3: "C", 4: "B", 5: "A", 6: "C", 7: "D", 8: "A", 9: "A", 10: "B" }
 );
 const cloudFoundationsProvidersAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cloudFoundationsProvidersMarkdown
@@ -4274,6 +4281,16 @@ for (const lesson of lessons["networking-for-cybersecurity"] || []) {
     lesson.description = "Understand the seven OSI layers, encapsulation, TCP/IP comparison, layer-specific attacks and defences, systematic troubleshooting, and practical network-security analysis.";
     lesson.level = "Beginner";
     lesson.delivery = networkingForCybersecurityOsIModelAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Networking for Cybersecurity TCP/IP placeholder with the supplied authored lesson.
+for (const lesson of lessons["networking-for-cybersecurity"] || []) {
+  if (lesson.id === "networking-for-cybersecurity-mastery-01-intermediate-patterns-and-composition") {
+    lesson.title = "Networking for Cybersecurity: TCP/IP Model and Network Communication";
+    lesson.description = "Understand how TCP/IP layers, protocols, addressing, routing, DNS, DHCP, TLS, firewalls, packet analysis, scanning, and segmentation work together in cybersecurity practice.";
+    lesson.level = "Beginner";
+    lesson.delivery = networkingForCybersecurityTcpIpModelAuthoredDelivery;
     break;
   }
 }
