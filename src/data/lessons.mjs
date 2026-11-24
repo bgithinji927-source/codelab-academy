@@ -75,6 +75,7 @@ import cloudContainersContainerImagesMarkdown from "./cloudContainersContainerIm
 import cloudContainersDockerfilesBuildsMarkdown from "./cloudContainersDockerfilesBuildsLessonContent.mjs";
 import cloudContainersVolumesNetworkingMarkdown from "./cloudContainersVolumesNetworkingLessonContent.mjs";
 import cloudContainersContainerHealthDeliveryMarkdown from "./cloudContainersContainerHealthDeliveryLessonContent.mjs";
+import cloudContainersIntermediatePatternsCompositionMarkdown from "./cloudContainersIntermediatePatternsCompositionLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1726,6 +1727,12 @@ const cloudContainersContainerHealthDeliveryAuthoredDelivery = makeAuthoredMarkd
   "cloud-containers-04-container-health-and-delivery",
   "A complete, four-part Docker and Containers lesson on container health checks, liveness and readiness, monitoring, resource and restart management, registries, CI/CD, production delivery, security, deployment strategies, and rollback.",
   { 1: "B", 2: "B", 3: "B", 4: "A", 5: "B", 6: "C", 7: "B", 8: "A" }
+);
+const cloudContainersIntermediatePatternsCompositionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cloudContainersIntermediatePatternsCompositionMarkdown,
+  "cloud-containers-mastery-01-intermediate-patterns-and-composition",
+  "A complete, four-part Cloud Containers lesson on composing containerized systems, Kubernetes workloads, probes, configuration, secrets, sidecars, jobs, delivery pipelines, scaling, observability, troubleshooting, security, and rollback.",
+  {}
 );
 
 const javascriptIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4320,6 +4327,16 @@ for (const lesson of lessons["cloud-containers"] || []) {
     lesson.description = "Learn to configure container health checks, monitor dependencies and resources, deliver images through registries and CI/CD, deploy safely to a VPS, and recover with secure rollback strategies.";
     lesson.level = "Beginner";
     lesson.delivery = cloudContainersContainerHealthDeliveryAuthoredDelivery;
+    break;
+  }
+}
+// Replace the matching Cloud Containers mastery placeholder with the supplied authored lesson.
+for (const lesson of lessons["cloud-containers"] || []) {
+  if (lesson.id === "cloud-containers-mastery-01-intermediate-patterns-and-composition") {
+    lesson.title = "Cloud Containers: Intermediate Patterns and Composition";
+    lesson.description = "Compose reliable cloud container systems with Kubernetes workloads, probes, resources, configuration, secrets, sidecars, jobs, delivery pipelines, scaling, observability, troubleshooting, security, and rollback.";
+    lesson.level = "Beginner";
+    lesson.delivery = cloudContainersIntermediatePatternsCompositionAuthoredDelivery;
     break;
   }
 }
