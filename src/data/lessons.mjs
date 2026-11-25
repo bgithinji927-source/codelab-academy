@@ -5025,6 +5025,55 @@ for (const lesson of lessons.html || []) {
   }
 }
 
+// Remap the existing CSS lesson placeholders in place. This is intentionally a
+// title-only positional remap so IDs, progress keys, URLs, and ordering remain
+// unchanged.
+const cssLessonTitles = [
+  "Introduction to CSS and Web Styling",
+  "Understanding CSS Syntax, Rules and Declarations",
+  "Ways of Adding CSS: Inline, Internal and External",
+  "CSS Selectors and Combinators",
+  "CSS Properties, Values and Units",
+  "CSS Comments and Code Organization",
+  "Working with CSS Colors and Color Systems",
+  "Background Colors, Images and Gradients",
+  "CSS Font Properties and Typography",
+  "Text Alignment, Decoration and Transformation",
+  "Styling Links, Lists and Text Elements",
+  "CSS Borders, Outlines and Shadows",
+  "Understanding the CSS Box Model",
+  "Width, Height, Padding and Margins",
+  "CSS Display Property and Element Visibility",
+  "CSS Positioning: Static, Relative, Absolute, Fixed and Sticky",
+  "CSS Overflow and Z-Index",
+  "CSS Units: px, %, em, rem, vh and vw",
+  "Introduction to CSS Layout Techniques",
+  "Flexbox Fundamentals and Container Properties",
+  "Flexbox Alignment, Ordering and Responsive Layouts",
+  "CSS Grid Fundamentals and Grid Containers",
+  "Grid Rows, Columns, Areas and Alignment",
+  "Combining CSS Grid and Flexbox",
+  "Introduction to Responsive Web Design",
+  "CSS Media Queries and Breakpoints",
+  "Mobile-First and Desktop-First Design",
+  "Responsive Images and Fluid Layouts",
+  "CSS Variables and Custom Properties",
+  "CSS Functions: calc(), min(), max() and clamp()",
+  "CSS Transitions and Transformations",
+  "CSS Animations and Keyframes",
+  "CSS Pseudo-Classes and Pseudo-Elements",
+  "CSS Filters, Blend Modes and Visual Effects",
+  "CSS Specificity, Inheritance and the Cascade",
+  "CSS Architecture, Maintainability and Performance",
+  "CSS Final Project: Building a Modern Responsive Website Interface",
+];
+if (lessons.css?.length !== cssLessonTitles.length) {
+  throw new Error(`Expected ${cssLessonTitles.length} CSS lesson placeholders, found ${lessons.css?.length ?? 0}`);
+}
+lessons.css.forEach((lesson, index) => {
+  lesson.title = cssLessonTitles[index];
+});
+
 // Keep the learner path predictable even when lessons are added, generated, or
 // edited later. The original order is preserved within the same difficulty so
 // related topics and project milestones remain in their intended sequence.
