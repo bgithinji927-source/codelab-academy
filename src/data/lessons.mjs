@@ -4888,6 +4888,58 @@ Object.entries(lessons).forEach(([courseId, courseLessons]) => {
   });
 });
 
+// Remap the existing HTML lesson placeholders in place. The title list is
+// intentionally positional so lesson IDs, progress keys, URLs, and course
+// ordering remain unchanged. This runs after delivery generation so the
+// title-only remap does not rewrite any existing lesson content.
+const htmlLessonTitles = [
+  "Introduction to HTML and Web Development",
+  "Understanding HTML Elements and Tags",
+  "HTML Document Structure and Boilerplate",
+  "HTML Attributes and Their Usage",
+  "HTML Headings and Paragraphs",
+  "HTML Text Formatting and Semantic Meaning",
+  "Working with HTML Links and Hyperlinks",
+  "Creating Ordered and Unordered Lists",
+  "Nested Lists and Description Lists",
+  "Working with HTML Images",
+  "Image Paths, File Formats and Alternative Text",
+  "HTML Entities and Special Characters",
+  "Introduction to Semantic HTML5",
+  "HTML Div and Span Elements",
+  "Header, Navigation, Main and Footer Elements",
+  "Sections, Articles and Aside Elements",
+  "HTML Comments and Code Organization",
+  "Creating HTML Tables",
+  "Table Rows, Columns, Headers and Captions",
+  "Table Merging: Rowspan and Colspan",
+  "Introduction to HTML Forms",
+  "Form Inputs and Input Types",
+  "Labels, Placeholders and Form Validation",
+  "Select, Textarea, Buttons and Fieldsets",
+  "HTML Audio and Video Elements",
+  "Embedding External Content with iframe",
+  "HTML5 Canvas and SVG Fundamentals",
+  "HTML Data Attributes and Custom Attributes",
+  "HTML Details, Summary and Dialog Elements",
+  "HTML Metadata and Document Head",
+  "Web Accessibility and ARIA Fundamentals",
+  "Accessible Forms and Semantic Navigation",
+  "HTML SEO and Search Engine Optimization",
+  "HTML Validation and Browser Developer Tools",
+  "HTML Security Best Practices and Safe Content Embedding",
+  "Building a Complete Multi-Page Website Using HTML",
+  "HTML Final Project: Creating a Responsive-Ready Website Structure",
+];
+if (lessons.html?.length !== htmlLessonTitles.length) {
+  throw new Error(`Expected ${htmlLessonTitles.length} HTML lesson placeholders, found ${lessons.html?.length ?? 0}`);
+}
+lessons.html.forEach((lesson, index) => {
+  const title = htmlLessonTitles[index];
+  lesson.title = title;
+  lesson.description = `Learn ${title.toLowerCase()} through guided explanations, practical HTML work, and a four-part assessment.`;
+});
+
 // Keep the learner path predictable even when lessons are added, generated, or
 // edited later. The original order is preserved within the same difficulty so
 // related topics and project milestones remain in their intended sequence.
