@@ -89,6 +89,7 @@ import cloudContainersDockerfilesBuildsMarkdown from "./cloudContainersDockerfil
 import cloudContainersVolumesNetworkingMarkdown from "./cloudContainersVolumesNetworkingLessonContent.mjs";
 import cloudContainersContainerHealthDeliveryMarkdown from "./cloudContainersContainerHealthDeliveryLessonContent.mjs";
 import cloudContainersIntermediatePatternsCompositionMarkdown from "./cloudContainersIntermediatePatternsCompositionLessonContent.mjs";
+import htmlIntroductionMarkdown from "./htmlIntroductionLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1601,6 +1602,12 @@ function makeAuthoredMarkdownDelivery(markdown, lessonId, intro, quizAnswers = {
     }),
   };
 }
+const htmlIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  htmlIntroductionMarkdown,
+  "html-01-web-foundations",
+  "A complete, four-part introduction to HTML and web development covering how the web works, HTML fundamentals, styling and behaviour, accessibility, SEO, performance, security, debugging, publishing, practical tasks, and self-check questions.",
+  {}
+);
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cybersecurityFundamentalsThreatsVulnerabilitiesRiskMarkdown.replace(/^\*\*Q(\d+)\.\s+(.+?)\*\*$/gm, "**Question $1**\n\n$2"),
   "cybersecurity-fundamentals-02-threats-vulnerabilities-and-risk",
@@ -4939,6 +4946,16 @@ lessons.html.forEach((lesson, index) => {
   lesson.title = title;
   lesson.description = `Learn ${title.toLowerCase()} through guided explanations, practical HTML work, and a four-part assessment.`;
 });
+// Replace the existing first HTML placeholder with the authored introduction
+// while preserving its lesson identity and original position.
+for (const lesson of lessons.html || []) {
+  if (lesson.id === "html-01-web-foundations") {
+    lesson.title = "Introduction to HTML and Web Development";
+    lesson.description = "Learn how the web works and build a complete HTML foundation through structure, styling, behaviour, accessibility, security, practical tasks, and self-check questions.";
+    lesson.delivery = htmlIntroductionAuthoredDelivery;
+    break;
+  }
+}
 
 // Keep the learner path predictable even when lessons are added, generated, or
 // edited later. The original order is preserved within the same difficulty so
