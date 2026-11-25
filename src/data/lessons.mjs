@@ -94,6 +94,7 @@ import htmlElementsTagsMarkdown from "./htmlElementsTagsLessonContent.mjs";
 import htmlDocumentStructureMarkdown from "./htmlDocumentStructureLessonContent.mjs";
 import htmlAttributesUsageMarkdown from "./htmlAttributesUsageLessonContent.mjs";
 import htmlHeadingsParagraphsMarkdown from "./htmlHeadingsParagraphsLessonContent.mjs";
+import cssIntroductionMarkdown from "./cssIntroductionLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1634,6 +1635,12 @@ const htmlHeadingsParagraphsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   htmlHeadingsParagraphsMarkdown,
   "html-05-components-and-reuse",
   "A complete, four-part HTML lesson on heading hierarchy, paragraphs, text-level semantics, whitespace, quotations, code, time, accessibility, SEO, security, validation, and a practical Harbor Goods guide project.",
+  {}
+);
+const cssIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cssIntroductionMarkdown,
+  "css-01-web-foundations",
+  "A complete, four-part introduction to CSS and web styling covering CSS syntax, selectors, cascade, colors, typography, box model, layout, responsive design, accessibility, performance, security, debugging, and a practical Harbor Goods home page project.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5073,6 +5080,16 @@ if (lessons.css?.length !== cssLessonTitles.length) {
 lessons.css.forEach((lesson, index) => {
   lesson.title = cssLessonTitles[index];
 });
+// Replace the existing first CSS placeholder with the authored introduction
+// lesson while preserving its lesson identity and original position.
+for (const lesson of lessons.css || []) {
+  if (lesson.id === "css-01-web-foundations") {
+    lesson.title = "Introduction to CSS and Web Styling";
+    lesson.description = "Learn how CSS controls the appearance, layout, responsiveness, accessibility, performance, and security of a practical Harbor Goods website interface.";
+    lesson.delivery = cssIntroductionAuthoredDelivery;
+    break;
+  }
+}
 
 // Keep the learner path predictable even when lessons are added, generated, or
 // edited later. The original order is preserved within the same difficulty so
