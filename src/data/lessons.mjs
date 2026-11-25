@@ -91,6 +91,7 @@ import cloudContainersContainerHealthDeliveryMarkdown from "./cloudContainersCon
 import cloudContainersIntermediatePatternsCompositionMarkdown from "./cloudContainersIntermediatePatternsCompositionLessonContent.mjs";
 import htmlIntroductionMarkdown from "./htmlIntroductionLessonContent.mjs";
 import htmlElementsTagsMarkdown from "./htmlElementsTagsLessonContent.mjs";
+import htmlDocumentStructureMarkdown from "./htmlDocumentStructureLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1613,6 +1614,12 @@ const htmlElementsTagsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   htmlElementsTagsMarkdown,
   "html-02-structure-and-semantics",
   "A complete, four-part HTML lesson on tags, elements, attributes, void elements, HTML element families, nesting, content models, accessibility, security, troubleshooting, practical page building, and self-check questions.",
+  {}
+);
+const htmlDocumentStructureAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  htmlDocumentStructureMarkdown,
+  "html-03-state-and-interaction",
+  "A complete, four-part HTML lesson on document structure, boilerplate, doctypes, head metadata, scripts and styles, body content, page paths, browser parsing, accessibility, security, validation, and a practical Harbor Goods starter template.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4970,6 +4977,16 @@ for (const lesson of lessons.html || []) {
     lesson.title = "Understanding HTML Elements and Tags";
     lesson.description = "Learn how HTML tags, elements, attributes, void elements, nesting, content models, accessibility, security, and troubleshooting work through a practical Harbor Goods page project.";
     lesson.delivery = htmlElementsTagsAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing third HTML placeholder with the authored document
+// structure and boilerplate lesson while preserving its lesson identity.
+for (const lesson of lessons.html || []) {
+  if (lesson.id === "html-03-state-and-interaction") {
+    lesson.title = "HTML Document Structure and Boilerplate";
+    lesson.description = "Learn how HTML documents are assembled from a doctype, html, head, and body, then build a reusable boilerplate template with metadata, styles, scripts, paths, accessibility, and validation checks.";
+    lesson.delivery = htmlDocumentStructureAuthoredDelivery;
     break;
   }
 }
