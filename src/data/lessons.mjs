@@ -90,6 +90,7 @@ import cloudContainersVolumesNetworkingMarkdown from "./cloudContainersVolumesNe
 import cloudContainersContainerHealthDeliveryMarkdown from "./cloudContainersContainerHealthDeliveryLessonContent.mjs";
 import cloudContainersIntermediatePatternsCompositionMarkdown from "./cloudContainersIntermediatePatternsCompositionLessonContent.mjs";
 import htmlIntroductionMarkdown from "./htmlIntroductionLessonContent.mjs";
+import htmlElementsTagsMarkdown from "./htmlElementsTagsLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1606,6 +1607,12 @@ const htmlIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
   htmlIntroductionMarkdown,
   "html-01-web-foundations",
   "A complete, four-part introduction to HTML and web development covering how the web works, HTML fundamentals, styling and behaviour, accessibility, SEO, performance, security, debugging, publishing, practical tasks, and self-check questions.",
+  {}
+);
+const htmlElementsTagsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  htmlElementsTagsMarkdown,
+  "html-02-structure-and-semantics",
+  "A complete, four-part HTML lesson on tags, elements, attributes, void elements, HTML element families, nesting, content models, accessibility, security, troubleshooting, practical page building, and self-check questions.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4953,6 +4960,16 @@ for (const lesson of lessons.html || []) {
     lesson.title = "Introduction to HTML and Web Development";
     lesson.description = "Learn how the web works and build a complete HTML foundation through structure, styling, behaviour, accessibility, security, practical tasks, and self-check questions.";
     lesson.delivery = htmlIntroductionAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing second HTML placeholder with the authored elements and
+// tags lesson while preserving its lesson identity and original position.
+for (const lesson of lessons.html || []) {
+  if (lesson.id === "html-02-structure-and-semantics") {
+    lesson.title = "Understanding HTML Elements and Tags";
+    lesson.description = "Learn how HTML tags, elements, attributes, void elements, nesting, content models, accessibility, security, and troubleshooting work through a practical Harbor Goods page project.";
+    lesson.delivery = htmlElementsTagsAuthoredDelivery;
     break;
   }
 }
