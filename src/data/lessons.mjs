@@ -92,6 +92,7 @@ import cloudContainersIntermediatePatternsCompositionMarkdown from "./cloudConta
 import htmlIntroductionMarkdown from "./htmlIntroductionLessonContent.mjs";
 import htmlElementsTagsMarkdown from "./htmlElementsTagsLessonContent.mjs";
 import htmlDocumentStructureMarkdown from "./htmlDocumentStructureLessonContent.mjs";
+import htmlAttributesUsageMarkdown from "./htmlAttributesUsageLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1620,6 +1621,12 @@ const htmlDocumentStructureAuthoredDelivery = makeAuthoredMarkdownDelivery(
   htmlDocumentStructureMarkdown,
   "html-03-state-and-interaction",
   "A complete, four-part HTML lesson on document structure, boilerplate, doctypes, head metadata, scripts and styles, body content, page paths, browser parsing, accessibility, security, validation, and a practical Harbor Goods starter template.",
+  {}
+);
+const htmlAttributesUsageAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  htmlAttributesUsageMarkdown,
+  "html-04-requests-and-responses",
+  "A complete, four-part HTML lesson on attribute syntax, value and boolean attributes, global and element-specific attributes, links, images, forms, data attributes, accessibility, security, validation, and practical Harbor Goods page work.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -4987,6 +4994,16 @@ for (const lesson of lessons.html || []) {
     lesson.title = "HTML Document Structure and Boilerplate";
     lesson.description = "Learn how HTML documents are assembled from a doctype, html, head, and body, then build a reusable boilerplate template with metadata, styles, scripts, paths, accessibility, and validation checks.";
     lesson.delivery = htmlDocumentStructureAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing fourth HTML placeholder with the authored attributes
+// lesson while preserving its lesson identity and original position.
+for (const lesson of lessons.html || []) {
+  if (lesson.id === "html-04-requests-and-responses") {
+    lesson.title = "HTML Attributes and Their Usage";
+    lesson.description = "Learn how HTML attributes control links, images, forms, styling, accessibility, behavior, security, and custom data through a practical Harbor Goods page project.";
+    lesson.delivery = htmlAttributesUsageAuthoredDelivery;
     break;
   }
 }
