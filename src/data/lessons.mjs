@@ -95,6 +95,7 @@ import htmlDocumentStructureMarkdown from "./htmlDocumentStructureLessonContent.
 import htmlAttributesUsageMarkdown from "./htmlAttributesUsageLessonContent.mjs";
 import htmlHeadingsParagraphsMarkdown from "./htmlHeadingsParagraphsLessonContent.mjs";
 import cssIntroductionMarkdown from "./cssIntroductionLessonContent.mjs";
+import cssSyntaxRulesMarkdown from "./cssSyntaxRulesLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1641,6 +1642,12 @@ const cssIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cssIntroductionMarkdown,
   "css-01-web-foundations",
   "A complete, four-part introduction to CSS and web styling covering CSS syntax, selectors, cascade, colors, typography, box model, layout, responsive design, accessibility, performance, security, debugging, and a practical Harbor Goods home page project.",
+  {}
+);
+const cssSyntaxRulesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cssSyntaxRulesMarkdown.replace(/^# PART 4 OF 4 — LESSON COMPLETE\s*$/im, "## Lesson complete"),
+  "css-02-structure-and-semantics",
+  "A complete, four-part CSS lesson on syntax, selectors, properties, values, declarations, comments, formatting, external stylesheets, browser parsing, common errors, accessibility, validation, and a practical styled CodeLab Academy page.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5087,6 +5094,16 @@ for (const lesson of lessons.css || []) {
     lesson.title = "Introduction to CSS and Web Styling";
     lesson.description = "Learn how CSS controls the appearance, layout, responsiveness, accessibility, performance, and security of a practical Harbor Goods website interface.";
     lesson.delivery = cssIntroductionAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing second CSS placeholder with the authored syntax, rules,
+// and declarations lesson while preserving its lesson identity and position.
+for (const lesson of lessons.css || []) {
+  if (lesson.id === "css-02-structure-and-semantics") {
+    lesson.title = "Understanding CSS Syntax, Rules and Declarations";
+    lesson.description = "Learn CSS selectors, properties, values, declarations, comments, formatting, stylesheet linking, browser parsing, and common syntax errors through practical examples and a styled CodeLab Academy page.";
+    lesson.delivery = cssSyntaxRulesAuthoredDelivery;
     break;
   }
 }
