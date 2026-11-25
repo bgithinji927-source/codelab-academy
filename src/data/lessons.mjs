@@ -93,6 +93,7 @@ import htmlIntroductionMarkdown from "./htmlIntroductionLessonContent.mjs";
 import htmlElementsTagsMarkdown from "./htmlElementsTagsLessonContent.mjs";
 import htmlDocumentStructureMarkdown from "./htmlDocumentStructureLessonContent.mjs";
 import htmlAttributesUsageMarkdown from "./htmlAttributesUsageLessonContent.mjs";
+import htmlHeadingsParagraphsMarkdown from "./htmlHeadingsParagraphsLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1627,6 +1628,12 @@ const htmlAttributesUsageAuthoredDelivery = makeAuthoredMarkdownDelivery(
   htmlAttributesUsageMarkdown,
   "html-04-requests-and-responses",
   "A complete, four-part HTML lesson on attribute syntax, value and boolean attributes, global and element-specific attributes, links, images, forms, data attributes, accessibility, security, validation, and practical Harbor Goods page work.",
+  {}
+);
+const htmlHeadingsParagraphsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  htmlHeadingsParagraphsMarkdown,
+  "html-05-components-and-reuse",
+  "A complete, four-part HTML lesson on heading hierarchy, paragraphs, text-level semantics, whitespace, quotations, code, time, accessibility, SEO, security, validation, and a practical Harbor Goods guide project.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5004,6 +5011,16 @@ for (const lesson of lessons.html || []) {
     lesson.title = "HTML Attributes and Their Usage";
     lesson.description = "Learn how HTML attributes control links, images, forms, styling, accessibility, behavior, security, and custom data through a practical Harbor Goods page project.";
     lesson.delivery = htmlAttributesUsageAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing fifth HTML placeholder with the authored headings and
+// paragraphs lesson while preserving its lesson identity and original position.
+for (const lesson of lessons.html || []) {
+  if (lesson.id === "html-05-components-and-reuse") {
+    lesson.title = "HTML Headings and Paragraphs";
+    lesson.description = "Learn how to structure readable HTML with heading hierarchy, paragraphs, text-level semantics, quotations, code, whitespace, accessibility, and SEO through a practical Harbor Goods guide project.";
+    lesson.delivery = htmlHeadingsParagraphsAuthoredDelivery;
     break;
   }
 }
