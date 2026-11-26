@@ -96,6 +96,7 @@ import htmlAttributesUsageMarkdown from "./htmlAttributesUsageLessonContent.mjs"
 import htmlHeadingsParagraphsMarkdown from "./htmlHeadingsParagraphsLessonContent.mjs";
 import cssIntroductionMarkdown from "./cssIntroductionLessonContent.mjs";
 import cssSyntaxRulesMarkdown from "./cssSyntaxRulesLessonContent.mjs";
+import cssAddingMethodsMarkdown from "./cssAddingMethodsLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1648,6 +1649,12 @@ const cssSyntaxRulesAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cssSyntaxRulesMarkdown.replace(/^# PART 4 OF 4 — LESSON COMPLETE\s*$/im, "## Lesson complete"),
   "css-02-structure-and-semantics",
   "A complete, four-part CSS lesson on syntax, selectors, properties, values, declarations, comments, formatting, external stylesheets, browser parsing, common errors, accessibility, validation, and a practical styled CodeLab Academy page.",
+  {}
+);
+const cssAddingMethodsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cssAddingMethodsMarkdown.replace(/^# PART 4 OF 4 — LESSON COMPLETE\s*$/im, "## Lesson complete"),
+  "css-03-state-and-interaction",
+  "A complete, four-part CSS lesson on inline, internal, and external stylesheets, including practical exercises, stylesheet paths, the cascade, reusable project structure, debugging, and a three-method assessment project.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5104,6 +5111,16 @@ for (const lesson of lessons.css || []) {
     lesson.title = "Understanding CSS Syntax, Rules and Declarations";
     lesson.description = "Learn CSS selectors, properties, values, declarations, comments, formatting, stylesheet linking, browser parsing, and common syntax errors through practical examples and a styled CodeLab Academy page.";
     lesson.delivery = cssSyntaxRulesAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing third CSS placeholder with the authored lesson on
+// inline, internal, and external CSS while preserving its lesson identity.
+for (const lesson of lessons.css || []) {
+  if (lesson.id === "css-03-state-and-interaction") {
+    lesson.title = "Ways of Adding CSS: Inline, Internal and External";
+    lesson.description = "Learn how to apply CSS inline, internally, and externally, compare their trade-offs, connect stylesheets, understand the cascade, and build a practical three-method CSS project with self-check questions.";
+    lesson.delivery = cssAddingMethodsAuthoredDelivery;
     break;
   }
 }
