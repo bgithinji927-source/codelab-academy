@@ -97,6 +97,7 @@ import htmlHeadingsParagraphsMarkdown from "./htmlHeadingsParagraphsLessonConten
 import cssIntroductionMarkdown from "./cssIntroductionLessonContent.mjs";
 import cssSyntaxRulesMarkdown from "./cssSyntaxRulesLessonContent.mjs";
 import cssAddingMethodsMarkdown from "./cssAddingMethodsLessonContent.mjs";
+import cssSelectorsCombinatorsMarkdown from "./cssSelectorsCombinatorsLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1655,6 +1656,12 @@ const cssAddingMethodsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cssAddingMethodsMarkdown.replace(/^# PART 4 OF 4 — LESSON COMPLETE\s*$/im, "## Lesson complete"),
   "css-03-state-and-interaction",
   "A complete, four-part CSS lesson on inline, internal, and external stylesheets, including practical exercises, stylesheet paths, the cascade, reusable project structure, debugging, and a three-method assessment project.",
+  {}
+);
+const cssSelectorsCombinatorsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cssSelectorsCombinatorsMarkdown,
+  "css-04-requests-and-responses",
+  "A complete, four-part CSS lesson on selectors, combinators, pseudo-classes, pseudo-elements, specificity, accessibility, security, JavaScript selector APIs, debugging, browser support, and a practical Harbor Goods selector lab.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5121,6 +5128,16 @@ for (const lesson of lessons.css || []) {
     lesson.title = "Ways of Adding CSS: Inline, Internal and External";
     lesson.description = "Learn how to apply CSS inline, internally, and externally, compare their trade-offs, connect stylesheets, understand the cascade, and build a practical three-method CSS project with self-check questions.";
     lesson.delivery = cssAddingMethodsAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing fourth CSS placeholder with the authored selectors and
+// combinators lesson while preserving its lesson identity and position.
+for (const lesson of lessons.css || []) {
+  if (lesson.id === "css-04-requests-and-responses") {
+    lesson.title = "CSS Selectors and Combinators";
+    lesson.description = "Learn to write and debug CSS selectors, combinators, pseudo-classes, pseudo-elements, and specificity-aware rules while applying accessibility, security, and progressive-enhancement practices in a practical selector lab.";
+    lesson.delivery = cssSelectorsCombinatorsAuthoredDelivery;
     break;
   }
 }
