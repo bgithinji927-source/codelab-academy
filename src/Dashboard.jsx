@@ -453,9 +453,8 @@ function Dashboard({ user, onLogout, onViewCourses, onRequireAuth, onUserUpdated
           }
         }}
         onBack={() => {
-          setSelectedCourse(null);
           setSelectedLessonId(null);
-          setActiveView("dashboard");
+          setActiveView("lessons");
           setSelectedCategory(null);
         }}
       />

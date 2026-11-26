@@ -1910,10 +1910,10 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
           type="button"
           className="learn-back"
           onClick={onBack}
-          aria-label="Back to courses"
+          aria-label="Back to lessons"
         >
           <ArrowLeft size={17} />
-          <span>Courses</span>
+          <span>Lessons</span>
         </button>
 
         <div className="learn-course-title">
@@ -2322,7 +2322,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
           <div className="lesson-actions lesson-actions-bottom">
             <button type="button" className="back-lesson" onClick={handlePreviousLesson}>
               <ArrowLeft size={17} />
-              {currentLessonIndex > 0 ? "Back to Previous Lesson" : "Back to Courses"}
+              {currentLessonIndex > 0 ? "Back to Previous Lesson" : "Back to Lessons"}
             </button>
           </div>
           <div
