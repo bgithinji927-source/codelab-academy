@@ -983,6 +983,20 @@ function makeCyberCourseLessons(courseId, courseTitle, topics) {
   }));
 }
 
+function makeWindowsSecurityLessons(courseId, courseTitle, topics) {
+  const lessons = makeCyberCourseLessons(courseId, courseTitle, topics);
+  const legacyIds = [
+    "windows-security-01-windows-accounts-and-policies",
+    "windows-security-02-defender-and-host-firewalls",
+    "windows-security-03-event-viewer-and-security-logs",
+    "windows-security-04-windows-endpoint-hardening",
+  ];
+  lessons.slice(0, legacyIds.length).forEach((lesson, index) => {
+    lesson.id = legacyIds[index];
+  });
+  return lessons;
+}
+
 const cyberCourseLessonPlans = {
   "cybersecurity-fundamentals": makeCyberCourseLessons(
     "cybersecurity-fundamentals",
@@ -999,10 +1013,47 @@ const cyberCourseLessonPlans = {
     "Linux Security",
     ["Users, groups, and permissions", "Processes and services", "Updates and system hardening", "Logs and Linux auditing"]
   ),
-  "windows-security": makeCyberCourseLessons(
+  "windows-security": makeWindowsSecurityLessons(
     "windows-security",
     "Windows Security",
-    ["Windows accounts and policies", "Defender and host firewalls", "Event Viewer and security logs", "Windows endpoint hardening"]
+    [
+      "Introduction to Windows Security",
+      "Windows Operating System Architecture and Security Components",
+      "Windows Editions and Security Features",
+      "Windows Users, Groups and Account Management",
+      "Windows File Systems, Permissions and Ownership",
+      "Windows Authentication and Access Control",
+      "Windows Security Updates and Patch Management",
+      "Windows Defender Antivirus and Microsoft Defender",
+      "Windows Firewall: Configuration and Management",
+      "User Account Control (UAC) and Privilege Management",
+      "Windows Secure Boot and Trusted Platform Module (TPM)",
+      "Windows Registry Security and Configuration",
+      "Windows Networking Fundamentals and Security",
+      "Managing Windows Firewall Rules and Network Profiles",
+      "Windows Remote Desktop Security",
+      "Securing Network Services and Open Ports",
+      "Windows Network Authentication and Credential Security",
+      "VPN Configuration and Secure Remote Connectivity",
+      "Windows Security Policies and Group Policy",
+      "NTFS Permissions and Advanced Access Control",
+      "BitLocker Drive Encryption and Data Protection",
+      "Windows Credential Manager and Password Security",
+      "Windows Defender Exploit Protection",
+      "Application Control and Windows Security Restrictions",
+      "Windows Event Viewer and Security Logs",
+      "Windows Process Management and Suspicious Activity Detection",
+      "Windows Task Scheduler and Persistence Mechanisms",
+      "Malware Detection and Analysis in Windows",
+      "Windows PowerShell Security and Execution Policies",
+      "Windows Vulnerability Assessment and Security Scanning",
+      "Windows Advanced Threat Protection and Endpoint Security",
+      "Sysinternals Tools for Windows Security Investigation",
+      "Windows System Hardening and Attack Surface Reduction",
+      "Windows Incident Response and Threat Investigation",
+      "Windows Digital Forensics and Evidence Collection",
+      "Practical Windows Security Assessment: Final Project",
+    ]
   ),
   "cryptography": makeCyberCourseLessons(
     "cryptography",
@@ -3327,7 +3378,7 @@ Object.values(lessons).forEach((courseLessons) => {
     });
   }
   const hasMasteryProject = courseLessons.some((lesson) => /mastery project|capstone|project:/i.test(lesson.title || ""));
-  if (!hasMasteryProject) courseLessons.push(makeMasteryProjectLesson(courseId, courseLessons));
+  if (courseId !== "windows-security" && !hasMasteryProject) courseLessons.push(makeMasteryProjectLesson(courseId, courseLessons));
   const totalLessons = courseLessons.length;
   courseLessons.forEach((lesson, index) => {
     const level = getProgressiveLevel(index, totalLessons);
