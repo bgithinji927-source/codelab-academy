@@ -293,6 +293,81 @@ html[data-theme="light"] .dashboard-course-card:hover {
   transform: translateY(-2px);
 }
 
+html[data-appearance-mode="light"] .dashboard-category-grid,
+html[data-theme="light"] .dashboard-category-grid {
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+}
+
+html[data-appearance-mode="light"] .dashboard-category-grid .dashboard-course-card,
+html[data-theme="light"] .dashboard-category-grid .dashboard-course-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  box-sizing: border-box !important;
+  min-height: 430px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+html[data-appearance-mode="light"] .dashboard-course-card-image,
+html[data-theme="light"] .dashboard-course-card-image {
+  position: relative;
+  display: grid !important;
+  flex: 0 0 235px;
+  place-items: center;
+  width: 100% !important;
+  height: 235px !important;
+  overflow: hidden;
+  border-bottom: 1px solid var(--light-layout-border);
+  background: color-mix(in srgb, var(--light-layout-accent) 10%, var(--light-layout-surface)) !important;
+}
+
+html[data-appearance-mode="light"] .dashboard-course-card-image-logo,
+html[data-theme="light"] .dashboard-course-card-image-logo {
+  position: relative;
+  z-index: 1;
+  width: 170px !important;
+  height: 170px !important;
+  object-fit: contain;
+}
+
+html[data-appearance-mode="light"] .dashboard-category-grid .dashboard-course-card > .dashboard-course-level,
+html[data-theme="light"] .dashboard-category-grid .dashboard-course-card > h2,
+html[data-theme="light"] .dashboard-category-grid .dashboard-course-card > p,
+html[data-appearance-mode="light"] .dashboard-category-grid .dashboard-course-card > .dashboard-course-access-progress,
+html[data-theme="light"] .dashboard-category-grid .dashboard-course-card > button,
+html[data-appearance-mode="light"] .dashboard-category-grid .dashboard-course-card > button {
+  margin-right: 18px !important;
+  margin-left: 18px !important;
+}
+
+html[data-appearance-mode="light"] .dashboard-category-grid .dashboard-course-card > .dashboard-course-level,
+html[data-theme="light"] .dashboard-category-grid .dashboard-course-card > .dashboard-course-level {
+  margin-top: 16px;
+}
+
+html[data-appearance-mode="light"] .dashboard-category-grid .dashboard-course-card > h2,
+html[data-theme="light"] .dashboard-category-grid .dashboard-course-card > h2 {
+  margin-bottom: 7px;
+  font-size: 18px;
+}
+
+html[data-appearance-mode="light"] .dashboard-category-grid .dashboard-course-card > p,
+html[data-theme="light"] .dashboard-category-grid .dashboard-course-card > p {
+  min-height: 50px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+html[data-appearance-mode="light"] .dashboard-category-grid .dashboard-course-card > button,
+html[data-theme="light"] .dashboard-category-grid .dashboard-course-card > button {
+  width: auto !important;
+  margin-top: auto;
+  margin-bottom: 18px;
+}
+
 html[data-appearance-mode="light"] .course-card h3,
 html[data-theme="light"] .course-card h3,
 html[data-appearance-mode="light"] .course-card p,
