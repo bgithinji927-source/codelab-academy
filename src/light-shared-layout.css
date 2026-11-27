@@ -414,6 +414,108 @@ html[data-theme="light"] .course-card.is-locked {
   background: var(--light-layout-input) !important;
 }
 
+/* Course lesson library */
+html[data-appearance-mode="light"] .lessons-page,
+html[data-theme="light"] .lessons-page {
+  min-width: 0;
+  min-height: 100vh;
+  background: var(--light-layout-bg) !important;
+  color: var(--light-layout-text) !important;
+}
+
+html[data-appearance-mode="light"] .lessons-header,
+html[data-theme="light"] .lessons-header {
+  border-color: var(--light-layout-border) !important;
+  background: var(--light-layout-surface) !important;
+  color: var(--light-layout-text) !important;
+}
+
+html[data-appearance-mode="light"] .lessons-back,
+html[data-theme="light"] .lessons-back {
+  border-color: var(--light-layout-accent) !important;
+  background: transparent !important;
+  color: var(--light-layout-accent) !important;
+}
+
+html[data-appearance-mode="light"] .lessons-course-mark,
+html[data-theme="light"] .lessons-course-mark {
+  border-color: var(--light-layout-border) !important;
+  background: var(--light-layout-input) !important;
+}
+
+html[data-appearance-mode="light"] .lessons-heading-copy h1,
+html[data-theme="light"] .lessons-heading-copy h1,
+html[data-appearance-mode="light"] .lessons-intro h2,
+html[data-theme="light"] .lessons-intro h2,
+html[data-appearance-mode="light"] .lesson-library-card h3,
+html[data-theme="light"] .lesson-library-card h3 {
+  color: var(--light-layout-text) !important;
+}
+
+html[data-appearance-mode="light"] .lessons-heading-copy p,
+html[data-theme="light"] .lessons-heading-copy p,
+html[data-appearance-mode="light"] .lessons-intro p,
+html[data-theme="light"] .lessons-intro p,
+html[data-appearance-mode="light"] .lesson-library-card p,
+html[data-theme="light"] .lesson-library-card p {
+  color: var(--light-layout-muted) !important;
+}
+
+html[data-appearance-mode="light"] .lessons-kicker,
+html[data-theme="light"] .lessons-kicker,
+html[data-appearance-mode="light"] .lessons-progress,
+html[data-theme="light"] .lessons-progress,
+html[data-appearance-mode="light"] .lessons-readiness-note,
+html[data-theme="light"] .lessons-readiness-note,
+html[data-appearance-mode="light"] .lesson-card-status,
+html[data-theme="light"] .lesson-card-status {
+  color: var(--light-layout-accent) !important;
+}
+
+html[data-appearance-mode="light"] .lesson-library-card,
+html[data-theme="light"] .lesson-library-card {
+  min-width: 0;
+  border-color: var(--light-layout-border) !important;
+  background: var(--light-layout-surface) !important;
+  color: var(--light-layout-text) !important;
+  box-shadow: 0 5px 18px color-mix(in srgb, var(--light-layout-border) 28%, transparent) !important;
+}
+
+html[data-appearance-mode="light"] .lesson-library-card.is-locked,
+html[data-theme="light"] .lesson-library-card.is-locked {
+  border-color: var(--light-layout-border) !important;
+  background: var(--light-layout-input) !important;
+}
+
+html[data-appearance-mode="light"] .lesson-card-level.level-beginner,
+html[data-theme="light"] .lesson-card-level.level-beginner {
+  color: var(--light-layout-accent) !important;
+}
+
+html[data-appearance-mode="light"] .lesson-card-level.level-intermediate,
+html[data-theme="light"] .lesson-card-level.level-intermediate {
+  color: var(--theme-info, #2563eb) !important;
+}
+
+html[data-appearance-mode="light"] .lesson-card-level.level-advanced,
+html[data-theme="light"] .lesson-card-level.level-advanced {
+  color: var(--theme-accent, #7c3aed) !important;
+}
+
+html[data-appearance-mode="light"] .lesson-library-card button,
+html[data-theme="light"] .lesson-library-card button {
+  border-color: var(--light-layout-accent) !important;
+  background: var(--light-layout-accent) !important;
+  color: var(--theme-accent-text, #ffffff) !important;
+}
+
+html[data-appearance-mode="light"] .lesson-library-card.is-locked button,
+html[data-theme="light"] .lesson-library-card.is-locked button {
+  border-color: var(--light-layout-border) !important;
+  background: var(--light-layout-input) !important;
+  color: var(--light-layout-muted) !important;
+}
+
 /* Kai teaching, courses, challenges, and admin panels retain usable widths. */
 html[data-appearance-mode="light"] .kai-page,
 html[data-theme="light"] .kai-page,
