@@ -98,6 +98,7 @@ import cssIntroductionMarkdown from "./cssIntroductionLessonContent.mjs";
 import cssSyntaxRulesMarkdown from "./cssSyntaxRulesLessonContent.mjs";
 import cssAddingMethodsMarkdown from "./cssAddingMethodsLessonContent.mjs";
 import cssSelectorsCombinatorsMarkdown from "./cssSelectorsCombinatorsLessonContent.mjs";
+import cssPropertiesValuesUnitsMarkdown from "./cssPropertiesValuesUnitsLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1662,6 +1663,12 @@ const cssSelectorsCombinatorsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cssSelectorsCombinatorsMarkdown,
   "css-04-requests-and-responses",
   "A complete, four-part CSS lesson on selectors, combinators, pseudo-classes, pseudo-elements, specificity, accessibility, security, JavaScript selector APIs, debugging, browser support, and a practical Harbor Goods selector lab.",
+  {}
+);
+const cssPropertiesValuesUnitsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  cssPropertiesValuesUnitsMarkdown,
+  "css-05-components-and-reuse",
+  "Learn how CSS properties, values, units, colours, sizing, layout, inheritance, accessibility, debugging, and safe styling choices work together in a practical Harbor Goods values-and-units lab.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5138,6 +5145,16 @@ for (const lesson of lessons.css || []) {
     lesson.title = "CSS Selectors and Combinators";
     lesson.description = "Learn to write and debug CSS selectors, combinators, pseudo-classes, pseudo-elements, and specificity-aware rules while applying accessibility, security, and progressive-enhancement practices in a practical selector lab.";
     lesson.delivery = cssSelectorsCombinatorsAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing fifth CSS placeholder with the authored properties,
+// values, and units lesson while preserving its lesson identity and position.
+for (const lesson of lessons.css || []) {
+  if (lesson.id === "css-05-components-and-reuse") {
+    lesson.title = "CSS Properties, Values and Units";
+    lesson.description = "Learn how CSS properties, values, units, colours, sizing, layout, inheritance, accessibility, debugging, and safe styling choices work together in a practical Harbor Goods values-and-units lab.";
+    lesson.delivery = cssPropertiesValuesUnitsAuthoredDelivery;
     break;
   }
 }
