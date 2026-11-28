@@ -102,6 +102,7 @@ import cssPropertiesValuesUnitsMarkdown from "./cssPropertiesValuesUnitsLessonCo
 import windowsSecurityIntroductionMarkdown from "./windowsSecurityIntroductionLessonContent.mjs";
 import windowsSecurityArchitectureComponentsMarkdown from "./windowsSecurityArchitectureComponentsLessonContent.mjs";
 import windowsSecurityEditionsFeaturesMarkdown from "./windowsSecurityEditionsFeaturesLessonContent.mjs";
+import windowsSecurityUsersGroupsAccountManagementMarkdown from "./windowsSecurityUsersGroupsAccountManagementLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1741,6 +1742,12 @@ const windowsSecurityEditionsFeaturesAuthoredDelivery = makeAuthoredMarkdownDeli
   windowsSecurityEditionsFeaturesMarkdown,
   "windows-security-03-event-viewer-and-security-logs",
   "A practical, four-part Windows Security lesson on Windows editions, versions and builds, edition-specific protections, Defender, SmartScreen, Firewall, UAC, accounts, Hello, Secure Boot, TPM, BitLocker, memory integrity, Smart App Control, business security tools, hardening, safe habits, troubleshooting, and a guided security audit.",
+  {}
+);
+const windowsSecurityUsersGroupsAccountManagementAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  windowsSecurityUsersGroupsAccountManagementMarkdown,
+  "windows-security-04-windows-endpoint-hardening",
+  "A complete, four-part Windows Security lesson on local, Microsoft, domain, service, and built-in accounts; security groups; SIDs; account policies; PowerShell and Command Prompt account management; permissions; auditing; practical account administration; and a Kai assessment.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5257,6 +5264,17 @@ for (const lesson of lessons["windows-security"] || []) {
     lesson.title = "Windows Editions and Security Features";
     lesson.description = "A practical, four-part Windows Security lesson on Windows editions, versions and builds, edition-specific protections, Defender, SmartScreen, Firewall, UAC, accounts, Hello, Secure Boot, TPM, BitLocker, memory integrity, Smart App Control, business security tools, hardening, safe habits, troubleshooting, and a guided security audit.";
     lesson.delivery = windowsSecurityEditionsFeaturesAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching Windows Security users, groups, and account-management placeholder with the supplied authored lesson.
+for (const lesson of lessons["windows-security"] || []) {
+  if (lesson.id === "windows-security-04-windows-endpoint-hardening") {
+    lesson.title = "Windows Security: Windows Users, Groups and Account Management";
+    lesson.description = "Learn Windows user accounts, local and domain groups, SIDs, account policies, PowerShell and Command Prompt administration, permissions, auditing, least privilege, and safe account-management practices.";
+    lesson.level = "Beginner";
+    lesson.delivery = windowsSecurityUsersGroupsAccountManagementAuthoredDelivery;
     break;
   }
 }
