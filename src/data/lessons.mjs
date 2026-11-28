@@ -103,6 +103,7 @@ import windowsSecurityIntroductionMarkdown from "./windowsSecurityIntroductionLe
 import windowsSecurityArchitectureComponentsMarkdown from "./windowsSecurityArchitectureComponentsLessonContent.mjs";
 import windowsSecurityEditionsFeaturesMarkdown from "./windowsSecurityEditionsFeaturesLessonContent.mjs";
 import windowsSecurityUsersGroupsAccountManagementMarkdown from "./windowsSecurityUsersGroupsAccountManagementLessonContent.mjs";
+import windowsSecurityFileSystemsPermissionsOwnershipMarkdown from "./windowsSecurityFileSystemsPermissionsOwnershipLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1748,6 +1749,12 @@ const windowsSecurityUsersGroupsAccountManagementAuthoredDelivery = makeAuthored
   windowsSecurityUsersGroupsAccountManagementMarkdown,
   "windows-security-04-windows-endpoint-hardening",
   "A complete, four-part Windows Security lesson on local, Microsoft, domain, service, and built-in accounts; security groups; SIDs; account policies; PowerShell and Command Prompt account management; permissions; auditing; practical account administration; and a Kai assessment.",
+  {}
+);
+const windowsSecurityFileSystemsPermissionsOwnershipAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  windowsSecurityFileSystemsPermissionsOwnershipMarkdown,
+  "windows-security-05-windows-file-systems-permissions-and-ownership",
+  "A complete, four-part Windows Security lesson on Windows file systems, NTFS, paths, metadata, ACLs, DACLs, SACLs, permissions, ownership, inheritance, share permissions, PowerShell, icacls, takeown, encryption, auditing, and a practical file-security project.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5275,6 +5282,17 @@ for (const lesson of lessons["windows-security"] || []) {
     lesson.description = "Learn Windows user accounts, local and domain groups, SIDs, account policies, PowerShell and Command Prompt administration, permissions, auditing, least privilege, and safe account-management practices.";
     lesson.level = "Beginner";
     lesson.delivery = windowsSecurityUsersGroupsAccountManagementAuthoredDelivery;
+    break;
+  }
+}
+
+// Replace the matching Windows Security file-systems placeholder with the supplied authored lesson.
+for (const lesson of lessons["windows-security"] || []) {
+  if (lesson.id === "windows-security-05-windows-file-systems-permissions-and-ownership") {
+    lesson.title = "Windows Security: Windows File Systems, Permissions and Ownership";
+    lesson.description = "Learn Windows file systems, NTFS, paths, metadata, ACLs, permissions, ownership, inheritance, share permissions, PowerShell, icacls, takeown, encryption, auditing, and practical file-security administration.";
+    lesson.level = "Beginner";
+    lesson.delivery = windowsSecurityFileSystemsPermissionsOwnershipAuthoredDelivery;
     break;
   }
 }
