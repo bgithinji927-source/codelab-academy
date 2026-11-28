@@ -4487,6 +4487,44 @@ const identityAccessManagementLessonTitles = [
   "Implementing IAM with Linux, Windows and Cloud Platforms",
   "Practical IAM Projects, Security Assessment and Final Examination",
 ];
+const webApplicationSecurityLessonTitles = [
+  "Introduction to Web Application Security",
+  "Web Application Architecture and Security Components",
+  "HTTP and HTTPS Security Fundamentals",
+  "How Browsers and Web Servers Communicate",
+  "Frontend and Backend Security",
+  "Common Web Application Vulnerabilities",
+  "Web Authentication Mechanisms",
+  "Password Security and Secure Password Storage",
+  "Session Management and Session Security",
+  "Cookies and Cookie Security Attributes",
+  "Multi-Factor Authentication in Web Applications",
+  "Single Sign-On and Identity Federation",
+  "Introduction to OWASP Top 10",
+  "Broken Access Control",
+  "Cryptographic Failures",
+  "Injection Vulnerabilities",
+  "SQL Injection (SQLi)",
+  "Cross-Site Scripting (XSS)",
+  "Cross-Site Request Forgery (CSRF)",
+  "Server-Side Request Forgery (SSRF)",
+  "Security Misconfiguration",
+  "Vulnerable and Outdated Components",
+  "File Upload Vulnerabilities",
+  "Path Traversal and Directory Traversal",
+  "Local and Remote File Inclusion",
+  "Server-Side Template Injection (SSTI)",
+  "XML External Entity (XXE) Attacks",
+  "Clickjacking and UI Redressing",
+  "API Security Vulnerabilities",
+  "Secure Coding Principles and Input Validation",
+  "Output Encoding and Security Headers",
+  "Database Security and Query Protection",
+  "CORS, Content Security Policy and Browser Security",
+  "Web Application Firewalls and Rate Limiting",
+  "Web Application Penetration Testing and Vulnerability Assessment",
+  "Secure Web Application Projects, Security Auditing and Final Assessment",
+];
 // Apply the requested beginner-level Networking for Cybersecurity catalog in place.
 // Preserve every existing lesson ID, position, URL, progress key, and delivery.
 for (const [index, title] of networkingCybersecurityBeginnerTitles.entries()) {
@@ -4522,6 +4560,16 @@ for (const [index, title] of identityAccessManagementLessonTitles.entries()) {
   const lesson = lessons["identity-access-management"][index];
   lesson.title = `Identity & Access Management: ${title}`;
   lesson.description = `Learn ${title.toLowerCase()} through guided identity and access management explanations, practical exercises, and security-focused assessment.`;
+}
+// Apply the requested Web Application Security catalog in place while
+// preserving every existing lesson ID, position, URL, progress key, and delivery.
+if ((lessons["web-application-security"]?.length ?? 0) !== webApplicationSecurityLessonTitles.length) {
+  throw new Error(`Expected ${webApplicationSecurityLessonTitles.length} Web Application Security lesson entries, found ${lessons["web-application-security"]?.length ?? 0}`);
+}
+for (const [index, title] of webApplicationSecurityLessonTitles.entries()) {
+  const lesson = lessons["web-application-security"][index];
+  lesson.title = `Web Application Security: ${title}`;
+  lesson.description = `Learn ${title.toLowerCase()} through guided web application security explanations, practical exercises, and security-focused assessment.`;
 }
 // Replace the matching Linux Security introduction placeholder with the supplied authored lesson.
 for (const lesson of lessons["linux-security"] || []) {
