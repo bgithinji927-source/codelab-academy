@@ -99,6 +99,7 @@ import cssSyntaxRulesMarkdown from "./cssSyntaxRulesLessonContent.mjs";
 import cssAddingMethodsMarkdown from "./cssAddingMethodsLessonContent.mjs";
 import cssSelectorsCombinatorsMarkdown from "./cssSelectorsCombinatorsLessonContent.mjs";
 import cssPropertiesValuesUnitsMarkdown from "./cssPropertiesValuesUnitsLessonContent.mjs";
+import windowsSecurityIntroductionMarkdown from "./windowsSecurityIntroductionLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1720,6 +1721,12 @@ const cssPropertiesValuesUnitsAuthoredDelivery = makeAuthoredMarkdownDelivery(
   cssPropertiesValuesUnitsMarkdown,
   "css-05-components-and-reuse",
   "Learn how CSS properties, values, units, colours, sizing, layout, inheritance, accessibility, debugging, and safe styling choices work together in a practical Harbor Goods values-and-units lab.",
+  {}
+);
+const windowsSecurityIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  windowsSecurityIntroductionMarkdown,
+  "windows-security-01-windows-accounts-and-policies",
+  "A complete, four-part introduction to Windows Security covering the CIA triad, Windows security architecture, accounts, authentication, Defender, Firewall, UAC, updates, PowerShell inspection, security logs, practical hardening, and a guided Windows Security Assessment project.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5206,6 +5213,16 @@ for (const lesson of lessons.css || []) {
     lesson.title = "CSS Properties, Values and Units";
     lesson.description = "Learn how CSS properties, values, units, colours, sizing, layout, inheritance, accessibility, debugging, and safe styling choices work together in a practical Harbor Goods values-and-units lab.";
     lesson.delivery = cssPropertiesValuesUnitsAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing first Windows Security placeholder with the authored
+// introduction while preserving its legacy identity, position, and URL key.
+for (const lesson of lessons["windows-security"] || []) {
+  if (lesson.id === "windows-security-01-windows-accounts-and-policies") {
+    lesson.title = "Introduction to Windows Security";
+    lesson.description = "A complete, four-part introduction to Windows Security covering the CIA triad, Windows security architecture, accounts, authentication, Defender, Firewall, UAC, updates, PowerShell inspection, security logs, practical hardening, and a guided Windows Security Assessment project.";
+    lesson.delivery = windowsSecurityIntroductionAuthoredDelivery;
     break;
   }
 }
