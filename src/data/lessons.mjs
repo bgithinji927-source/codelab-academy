@@ -101,6 +101,7 @@ import cssSelectorsCombinatorsMarkdown from "./cssSelectorsCombinatorsLessonCont
 import cssPropertiesValuesUnitsMarkdown from "./cssPropertiesValuesUnitsLessonContent.mjs";
 import windowsSecurityIntroductionMarkdown from "./windowsSecurityIntroductionLessonContent.mjs";
 import windowsSecurityArchitectureComponentsMarkdown from "./windowsSecurityArchitectureComponentsLessonContent.mjs";
+import windowsSecurityEditionsFeaturesMarkdown from "./windowsSecurityEditionsFeaturesLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1734,6 +1735,12 @@ const windowsSecurityArchitectureComponentsAuthoredDelivery = makeAuthoredMarkdo
   windowsSecurityArchitectureComponentsMarkdown,
   "windows-security-02-defender-and-host-firewalls",
   "A complete, four-part Windows Security lesson on Windows operating system architecture, user mode and kernel mode, the Windows kernel and Executive, drivers, processes, memory, NTFS, SIDs, access tokens, ACLs, the Security Reference Monitor, authentication, security policies, practical inspection, and a security architecture assessment project.",
+  {}
+);
+const windowsSecurityEditionsFeaturesAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  windowsSecurityEditionsFeaturesMarkdown,
+  "windows-security-03-event-viewer-and-security-logs",
+  "A practical, four-part Windows Security lesson on Windows editions, versions and builds, edition-specific protections, Defender, SmartScreen, Firewall, UAC, accounts, Hello, Secure Boot, TPM, BitLocker, memory integrity, Smart App Control, business security tools, hardening, safe habits, troubleshooting, and a guided security audit.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5240,6 +5247,16 @@ for (const lesson of lessons["windows-security"] || []) {
     lesson.title = "Windows Operating System Architecture and Security Components";
     lesson.description = "A complete, four-part Windows Security lesson on Windows operating system architecture, user mode and kernel mode, the Windows kernel and Executive, drivers, processes, memory, NTFS, SIDs, access tokens, ACLs, the Security Reference Monitor, authentication, security policies, practical inspection, and a security architecture assessment project.";
     lesson.delivery = windowsSecurityArchitectureComponentsAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing third Windows Security placeholder with the authored
+// editions and security features lesson while preserving its legacy identity.
+for (const lesson of lessons["windows-security"] || []) {
+  if (lesson.id === "windows-security-03-event-viewer-and-security-logs") {
+    lesson.title = "Windows Editions and Security Features";
+    lesson.description = "A practical, four-part Windows Security lesson on Windows editions, versions and builds, edition-specific protections, Defender, SmartScreen, Firewall, UAC, accounts, Hello, Secure Boot, TPM, BitLocker, memory integrity, Smart App Control, business security tools, hardening, safe habits, troubleshooting, and a guided security audit.";
+    lesson.delivery = windowsSecurityEditionsFeaturesAuthoredDelivery;
     break;
   }
 }
