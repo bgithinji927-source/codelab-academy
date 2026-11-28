@@ -100,6 +100,7 @@ import cssAddingMethodsMarkdown from "./cssAddingMethodsLessonContent.mjs";
 import cssSelectorsCombinatorsMarkdown from "./cssSelectorsCombinatorsLessonContent.mjs";
 import cssPropertiesValuesUnitsMarkdown from "./cssPropertiesValuesUnitsLessonContent.mjs";
 import windowsSecurityIntroductionMarkdown from "./windowsSecurityIntroductionLessonContent.mjs";
+import windowsSecurityArchitectureComponentsMarkdown from "./windowsSecurityArchitectureComponentsLessonContent.mjs";
 
 // EXPANDED COURSE LESSON BUILDER
 // ============================================
@@ -1727,6 +1728,12 @@ const windowsSecurityIntroductionAuthoredDelivery = makeAuthoredMarkdownDelivery
   windowsSecurityIntroductionMarkdown,
   "windows-security-01-windows-accounts-and-policies",
   "A complete, four-part introduction to Windows Security covering the CIA triad, Windows security architecture, accounts, authentication, Defender, Firewall, UAC, updates, PowerShell inspection, security logs, practical hardening, and a guided Windows Security Assessment project.",
+  {}
+);
+const windowsSecurityArchitectureComponentsAuthoredDelivery = makeAuthoredMarkdownDelivery(
+  windowsSecurityArchitectureComponentsMarkdown,
+  "windows-security-02-defender-and-host-firewalls",
+  "A complete, four-part Windows Security lesson on Windows operating system architecture, user mode and kernel mode, the Windows kernel and Executive, drivers, processes, memory, NTFS, SIDs, access tokens, ACLs, the Security Reference Monitor, authentication, security policies, practical inspection, and a security architecture assessment project.",
   {}
 );
 const cybersecurityFundamentalsThreatsVulnerabilitiesRiskAuthoredDelivery = makeAuthoredMarkdownDelivery(
@@ -5223,6 +5230,16 @@ for (const lesson of lessons["windows-security"] || []) {
     lesson.title = "Introduction to Windows Security";
     lesson.description = "A complete, four-part introduction to Windows Security covering the CIA triad, Windows security architecture, accounts, authentication, Defender, Firewall, UAC, updates, PowerShell inspection, security logs, practical hardening, and a guided Windows Security Assessment project.";
     lesson.delivery = windowsSecurityIntroductionAuthoredDelivery;
+    break;
+  }
+}
+// Replace the existing second Windows Security placeholder with the authored
+// architecture lesson while preserving its legacy identity and position.
+for (const lesson of lessons["windows-security"] || []) {
+  if (lesson.id === "windows-security-02-defender-and-host-firewalls") {
+    lesson.title = "Windows Operating System Architecture and Security Components";
+    lesson.description = "A complete, four-part Windows Security lesson on Windows operating system architecture, user mode and kernel mode, the Windows kernel and Executive, drivers, processes, memory, NTFS, SIDs, access tokens, ACLs, the Security Reference Monitor, authentication, security policies, practical inspection, and a security architecture assessment project.";
+    lesson.delivery = windowsSecurityArchitectureComponentsAuthoredDelivery;
     break;
   }
 }
