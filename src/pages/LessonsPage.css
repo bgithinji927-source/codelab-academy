@@ -58,6 +58,11 @@
 .lesson-library-card p { margin: 0; color: var(--terminal-muted, #86aa91); font-size: 12px; line-height: 1.5; }
 .lesson-library-card button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 100%; margin-top: 18px; padding: 10px 12px; border: 1px solid var(--terminal-green, #39ff14); background: var(--terminal-green, #39ff14); color: #020702; font: inherit; font-size: 12px; font-weight: 900; cursor: pointer; }
 .lesson-library-card.is-locked button { border-color: #244536; background: #08150f; color: #6b9877; cursor: not-allowed; }
+.module-coming-soon-card { min-height: 210px; display: flex; flex-direction: column; justify-content: space-between; padding: 18px; border: 1px solid #7c3aed; background: linear-gradient(145deg, rgba(124, 58, 237, .18), #09180f); }
+.module-coming-soon-number { color: #c4b5fd; font-size: 30px; font-weight: 900; letter-spacing: -.06em; }
+.module-coming-soon-copy h3 { margin: 10px 0 7px; font-size: 17px; }
+.module-coming-soon-copy p { margin: 0; color: var(--terminal-muted, #86aa91); font-size: 12px; line-height: 1.5; }
+.module-coming-soon-card a { display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 100%; margin-top: 18px; padding: 10px 12px; border: 1px solid #c4b5fd; background: #c4b5fd; color: #160b2f; font-size: 12px; font-weight: 900; text-decoration: none; }
 
 @media (max-width: 900px) { .lessons-header { grid-template-columns: auto 60px minmax(0,1fr); } .lessons-progress { grid-column: 3; } .lessons-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 600px) { .lessons-header { grid-template-columns: 52px 1fr; } .lessons-back { grid-column: 1 / -1; justify-self: start; } .lessons-course-mark { grid-column: 1; grid-row: 2; width: 52px; height: 52px; } .lessons-course-mark .course-logo { width: 42px; height: 42px; } .lessons-heading-copy { grid-column: 2; grid-row: 2; } .lessons-progress { grid-column: 2; } .lessons-content { width: min(100% - 24px, 540px); padding-top: 24px; } .lessons-intro { display: block; } .lessons-readiness-note { margin-top: 16px; } .lessons-grid { grid-template-columns: 1fr; } }

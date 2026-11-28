@@ -1,11 +1,13 @@
 import { ArrowLeft, BookOpen, CheckCircle2, LockKeyhole, PlayCircle } from "lucide-react";
 import { getLessonsByCourse } from "../data/lessons.mjs";
 import CourseLogo from "../components/CourseLogo";
+import { FIRST_MODULE_LESSON_COUNT, MODULE_2_DOCS_URL } from "../utils/courseModuleGate.mjs";
 import "./LessonsPage.css";
 
 function LessonsPage({ course, courseAccess, user, onOpenLesson, onBack }) {
   const lessons = getLessonsByCourse(course?.id);
   const isAdmin = Boolean(user?.isAdmin || user?.role === "admin");
+  const visibleLessons = isAdmin ? lessons : lessons.slice(0, FIRST_MODULE_LESSON_COUNT);
   const completedLessons = Math.max(0, Number(courseAccess?.progress?.lessonsCompleted) || 0);
   const nextLessonIndex = Math.min(completedLessons, Math.max(lessons.length - 1, 0));
 
@@ -35,7 +37,7 @@ function LessonsPage({ course, courseAccess, user, onOpenLesson, onBack }) {
         </div>
 
         <div className="lessons-grid">
-          {lessons.map((lesson, index) => {
+          {visibleLessons.map((lesson, index) => {
             const completed = index < completedLessons;
             const unlocked = isAdmin || index <= nextLessonIndex;
             return (
@@ -58,6 +60,17 @@ function LessonsPage({ course, courseAccess, user, onOpenLesson, onBack }) {
               </article>
             );
           })}
+          {!isAdmin && lessons.length > FIRST_MODULE_LESSON_COUNT && (
+            <article className="module-coming-soon-card">
+              <div className="module-coming-soon-number">06</div>
+              <div className="module-coming-soon-copy">
+                <span className="lessons-kicker">MODULE 2</span>
+                <h3>Module 2 is coming soon</h3>
+                <p>The next five lessons will be released in the second module. Learn more about what is coming next.</p>
+              </div>
+              <a href={MODULE_2_DOCS_URL}>Learn more <PlayCircle size={16} /></a>
+            </article>
+          )}
         </div>
       </main>
     </section>

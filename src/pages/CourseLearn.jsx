@@ -26,6 +26,7 @@ import { DEFAULT_KAI_BACKGROUND, KAI_BACKGROUND_IMAGE_URLS, kaiBackgroundStorage
 import AIContentRenderer, { CodeBlock, KaiVideoPlayer } from "../components/AIContentRenderer";
 import AuthoredLesson from "../components/AuthoredLesson";
 import { authoredDeliveryToContext, normalizeAuthoredDelivery } from "../utils/authoredLesson.mjs";
+import { FIRST_MODULE_LESSON_COUNT, MODULE_2_DOCS_URL } from "../utils/courseModuleGate.mjs";
 import "./CourseLearn.css";
 
 const KAI_UI_MODE_KEY = "codelabKaiUiMode:v2";
@@ -620,16 +621,20 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         const serverLesson = stateData.currentLesson || {};
         const idIndex = courseLessons.findIndex((item) => String(item.id) === String(serverLesson.id));
         const serverIndex = Number.isInteger(Number(serverLesson.index)) ? Number(serverLesson.index) : 0;
-        const safeIndex = idIndex >= 0
+        const learnerLessonLimit = isAdmin
+          ? courseLessons.length
+          : Math.min(FIRST_MODULE_LESSON_COUNT, courseLessons.length);
+        const uncappedSafeIndex = idIndex >= 0
           ? idIndex
           : Math.min(Math.max(serverIndex, 0), courseLessons.length - 1);
+        const safeIndex = Math.min(uncappedSafeIndex, Math.max(learnerLessonLimit - 1, 0));
         const requestedIndex = initialLessonId
           ? courseLessons.findIndex((item) => String(item.id) === String(initialLessonId))
           : -1;
         const completedCount = Math.max(0, Number(stateData.courseProgress?.lessonsCompleted) || 0);
         const safeRequestedIndex = isAdmin && requestedIndex >= 0
           ? requestedIndex
-          : requestedIndex >= 0 && requestedIndex <= completedCount
+          : requestedIndex >= 0 && requestedIndex < learnerLessonLimit && requestedIndex <= completedCount
             ? requestedIndex
             : safeIndex;
         const activeLesson = courseLessons[safeRequestedIndex];
@@ -1043,6 +1048,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
       isKaiTyping ||
       isAdvancing ||
       viewingLessonIndex !== null ||
+      (!isAdmin && currentLessonIndex >= FIRST_MODULE_LESSON_COUNT - 1) ||
       currentLessonIndex >= allLessons.length - 1
     ) {
       return;
@@ -1868,6 +1874,9 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
     ? Math.round((actualCompletedLessons / allLessons.length) * 100)
     : 0;
   const isFinalLesson = allLessons.length > 0 && currentLessonIndex >= allLessons.length - 1;
+  const isModuleTwoComingSoon = !isAdmin
+    && allLessons.length > FIRST_MODULE_LESSON_COUNT
+    && currentLessonIndex >= FIRST_MODULE_LESSON_COUNT - 1;
 
   // ============================================
   // MAIN UI
@@ -1937,7 +1946,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             </button>
             {isLessonMenuOpen && (
               <div className="lesson-picker-menu" role="listbox" aria-label="Course lessons">
-                {allLessons.map((item, index) => {
+                {(isAdmin ? allLessons : allLessons.slice(0, FIRST_MODULE_LESSON_COUNT)).map((item, index) => {
                   const isLocked = !isAdmin && index > serverLessonIndex;
                   const isSelected = index === currentLessonIndex;
                   const isCurrent = index === serverLessonIndex;
@@ -1962,6 +1971,13 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
                     </button>
                   );
                 })}
+                {!isAdmin && allLessons.length > FIRST_MODULE_LESSON_COUNT && (
+                  <div className="lesson-picker-module-card">
+                    <strong>Module 2 is coming soon</strong>
+                    <span>The next five lessons will be released soon.</span>
+                    <a href={MODULE_2_DOCS_URL}>Learn more <ArrowRight size={13} /></a>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -2041,6 +2057,7 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
             onClick={handleNextLesson}
               disabled={
                 isFinalLesson ||
+                isModuleTwoComingSoon ||
                 isReviewingPastLesson ||
                 !lessonCompletionReady ||
                 !assessmentPassed ||
@@ -2093,6 +2110,18 @@ function CourseLearn({ user, course, initialLessonId = null, onBack, nextCourse 
         {/* ======================================
             CHAT
         ====================================== */}
+
+        {isModuleTwoComingSoon && (
+          <section className="module-coming-soon-card learn-module-coming-soon" aria-labelledby="module-two-coming-soon-title">
+            <div className="module-coming-soon-number">06</div>
+            <div className="module-coming-soon-copy">
+              <span className="kai-lab-kicker">MODULE 2</span>
+              <h2 id="module-two-coming-soon-title">Module 2 is coming soon</h2>
+              <p>You have reached the end of the first module. The next five lessons will be released soon.</p>
+            </div>
+            <a href={MODULE_2_DOCS_URL}>Learn more <ArrowRight size={16} /></a>
+          </section>
+        )}
 
         {availableLabs.length > 0 && (
           <section className="kai-lab-panel" aria-labelledby="kai-lab-title">
