@@ -4413,6 +4413,42 @@ const linuxSecurityLessonTitles = [
   "Linux Security Automation with Bash Scripting",
   "Practical Linux Security Assessment: Final Project",
 ];
+const cryptographyLessonTitles = [
+  "Introduction to Cryptography",
+  "History and Evolution of Cryptography",
+  "Cryptography Fundamentals",
+  "Plaintext and Ciphertext",
+  "Encryption and Decryption",
+  "Symmetric Encryption",
+  "Asymmetric Encryption",
+  "Caesar Cipher",
+  "Substitution and Transposition Ciphers",
+  "AES Encryption",
+  "DES and 3DES",
+  "RSA Cryptography",
+  "Elliptic Curve Cryptography (ECC)",
+  "Hashing Fundamentals",
+  "MD5 and SHA Algorithms",
+  "Digital Signatures",
+  "Public Key Infrastructure (PKI)",
+  "Digital Certificates",
+  "Key Generation and Management",
+  "Diffie-Hellman Key Exchange",
+  "TLS and SSL",
+  "HTTPS and Secure Communication",
+  "Cryptographic Protocols",
+  "Message Authentication Codes (MAC)",
+  "HMAC",
+  "Password Hashing and Salting",
+  "Password Security",
+  "End-to-End Encryption",
+  "Database Encryption",
+  "File and Disk Encryption",
+  "Cryptography in Network Security",
+  "Cryptography in Web Applications",
+  "Cryptographic Attacks",
+  "Cryptanalysis Fundamentals",
+];
 // Apply the requested beginner-level Networking for Cybersecurity catalog in place.
 // Preserve every existing lesson ID, position, URL, progress key, and delivery.
 for (const [index, title] of networkingCybersecurityBeginnerTitles.entries()) {
@@ -4427,6 +4463,17 @@ for (const [index, title] of linuxSecurityLessonTitles.entries()) {
   const lesson = lessons["linux-security"]?.[index];
   if (!lesson) continue;
   lesson.title = title;
+}
+// Apply the requested Cryptography catalog in place while preserving every
+// existing lesson ID, position, URL, progress key, and delivery. The course
+// retains its two existing mastery entries after these 34 titled lessons.
+if ((lessons.cryptography?.length ?? 0) < cryptographyLessonTitles.length) {
+  throw new Error(`Expected at least ${cryptographyLessonTitles.length} Cryptography lesson entries, found ${lessons.cryptography?.length ?? 0}`);
+}
+for (const [index, title] of cryptographyLessonTitles.entries()) {
+  const lesson = lessons.cryptography[index];
+  lesson.title = `Cryptography: ${title}`;
+  lesson.description = `Learn ${title.toLowerCase()} through guided cryptography explanations, practical exercises, and security-focused assessment.`;
 }
 // Replace the matching Linux Security introduction placeholder with the supplied authored lesson.
 for (const lesson of lessons["linux-security"] || []) {
