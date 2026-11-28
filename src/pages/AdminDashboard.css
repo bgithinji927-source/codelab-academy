@@ -1415,3 +1415,162 @@
     justify-self: start;
   }
 }
+
+
+/* =========================================
+   SUPABASE-STYLE ADMIN DATA TABLES
+========================================= */
+.admin-page .admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #2b313b;
+  border-radius: 3px;
+  background: #0f1117;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.admin-page .admin-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #0f1117;
+}
+
+.admin-page .admin-table th,
+.admin-page .admin-table td {
+  padding: 12px 14px;
+  border-right: 1px solid #2b313b;
+  border-bottom: 1px solid #2b313b;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.admin-page .admin-table th:last-child,
+.admin-page .admin-table td:last-child {
+  border-right: 0;
+}
+
+.admin-page .admin-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-page .admin-table th {
+  color: #e5e7eb;
+  background: #151922;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.3;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.admin-page .admin-table td {
+  color: #d1d5db;
+  background: #0f1117;
+  font-size: 13px;
+  line-height: 1.45;
+  transition: background 140ms ease;
+}
+
+.admin-page .admin-table tbody tr:hover td {
+  background: #171b24;
+}
+
+.admin-page .admin-table td strong {
+  color: #f3f4f6;
+  font-weight: 650;
+}
+
+.admin-page .admin-table td small {
+  display: block;
+  margin-top: 3px;
+  color: #8b93a1;
+  font-size: 11px;
+}
+
+.admin-page .admin-table .admin-user-cell small {
+  margin-top: 2px;
+}
+
+.admin-page .admin-table .admin-avatar {
+  border: 1px solid #3b4351;
+  color: #dbeafe;
+  background: #1d2633;
+  box-shadow: none;
+}
+
+.admin-page .admin-table select,
+.admin-page .admin-table .admin-number-input {
+  min-height: 34px;
+  border: 1px solid #3b4351;
+  border-radius: 3px;
+  background: #171b24;
+  color: #e5e7eb;
+  box-shadow: none;
+}
+
+.admin-page .admin-table select:focus,
+.admin-page .admin-table .admin-number-input:focus {
+  border-color: #6b8afd;
+  box-shadow: 0 0 0 2px rgba(107, 138, 253, 0.18);
+}
+
+.admin-page .admin-table .admin-status-toggle {
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.admin-page .admin-table .admin-status-toggle.on {
+  border-color: #285d45;
+  background: #12271f;
+  color: #7ee2ae;
+}
+
+.admin-page .admin-table .admin-status-toggle.off {
+  border-color: #634d2a;
+  background: #2a2114;
+  color: #f1c77b;
+}
+
+.admin-page .admin-table .admin-icon-action {
+  min-width: 32px;
+  min-height: 32px;
+  border-color: #3b4351;
+  border-radius: 3px;
+  background: #171b24;
+  color: #cbd5e1;
+}
+
+.admin-page .admin-table .admin-icon-action:hover {
+  border-color: #6b8afd;
+  background: #202738;
+  color: #eef2ff;
+}
+
+.admin-page .admin-table .admin-text-action {
+  color: #9aa7ff;
+}
+
+.admin-page .admin-table .admin-text-action:hover {
+  color: #c7ceff;
+}
+
+.admin-page .admin-table .admin-progress-copy {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.admin-page .admin-table-wrap .admin-empty {
+  border-top: 0;
+  background: #0f1117;
+  color: #8b93a1;
+}
+
+@media (max-width: 760px) {
+  .admin-page .admin-table th,
+  .admin-page .admin-table td {
+    padding: 11px 12px;
+  }
+}
