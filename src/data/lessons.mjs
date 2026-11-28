@@ -4449,6 +4449,44 @@ const cryptographyLessonTitles = [
   "Cryptographic Attacks",
   "Cryptanalysis Fundamentals",
 ];
+const identityAccessManagementLessonTitles = [
+  "Introduction to Identity and Access Management",
+  "Identity Management Fundamentals",
+  "Core Components of IAM Architecture",
+  "Digital Identities and Identity Lifecycle",
+  "Users, Groups, Roles and Permissions",
+  "Authentication, Authorization and Accounting (AAA)",
+  "Introduction to Authentication",
+  "Password-Based Authentication",
+  "Multi-Factor Authentication (MFA)",
+  "Biometric Authentication",
+  "Token-Based Authentication",
+  "Certificate-Based Authentication",
+  "Passwordless Authentication",
+  "Single Sign-On (SSO)",
+  "Introduction to Authorization",
+  "Role-Based Access Control (RBAC)",
+  "Attribute-Based Access Control (ABAC)",
+  "Discretionary Access Control (DAC)",
+  "Mandatory Access Control (MAC)",
+  "Access Control Lists (ACLs)",
+  "Principle of Least Privilege",
+  "Privileged Access Management (PAM)",
+  "LDAP and Directory Services",
+  "Active Directory Architecture",
+  "Kerberos Authentication",
+  "OAuth 2.0 Fundamentals",
+  "OpenID Connect (OIDC)",
+  "Security Assertion Markup Language (SAML)",
+  "Identity Federation and Trust Relationships",
+  "Identity Provisioning and Deprovisioning",
+  "Identity Governance and Administration (IGA)",
+  "Access Reviews and Audit Trails",
+  "Identity Threats and Common IAM Attacks",
+  "IAM Security Monitoring and Incident Response",
+  "Implementing IAM with Linux, Windows and Cloud Platforms",
+  "Practical IAM Projects, Security Assessment and Final Examination",
+];
 // Apply the requested beginner-level Networking for Cybersecurity catalog in place.
 // Preserve every existing lesson ID, position, URL, progress key, and delivery.
 for (const [index, title] of networkingCybersecurityBeginnerTitles.entries()) {
@@ -4474,6 +4512,16 @@ for (const [index, title] of cryptographyLessonTitles.entries()) {
   const lesson = lessons.cryptography[index];
   lesson.title = `Cryptography: ${title}`;
   lesson.description = `Learn ${title.toLowerCase()} through guided cryptography explanations, practical exercises, and security-focused assessment.`;
+}
+// Apply the requested Identity & Access Management catalog in place while
+// preserving every existing lesson ID, position, URL, progress key, and delivery.
+if ((lessons["identity-access-management"]?.length ?? 0) !== identityAccessManagementLessonTitles.length) {
+  throw new Error(`Expected ${identityAccessManagementLessonTitles.length} Identity & Access Management lesson entries, found ${lessons["identity-access-management"]?.length ?? 0}`);
+}
+for (const [index, title] of identityAccessManagementLessonTitles.entries()) {
+  const lesson = lessons["identity-access-management"][index];
+  lesson.title = `Identity & Access Management: ${title}`;
+  lesson.description = `Learn ${title.toLowerCase()} through guided identity and access management explanations, practical exercises, and security-focused assessment.`;
 }
 // Replace the matching Linux Security introduction placeholder with the supplied authored lesson.
 for (const lesson of lessons["linux-security"] || []) {
